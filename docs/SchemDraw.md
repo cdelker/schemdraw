@@ -34,11 +34,11 @@ or directly by downloading the package and running
 
 ### Links
 
-The most current version can be found in the source code git repository:
-https://bitbucket.org/cdelker/schemdraw
+Source code git repository:
+    [https://bitbucket.org/cdelker/schemdraw](https://bitbucket.org/cdelker/schemdraw)
 
-This documentation is available online:
-http://www.collindelker.com/schemdraw/
+This documentation available online:
+    [http://www.collindelker.com/schemdraw/](http://www.collindelker.com/schemdraw/)
 
 
 ## Basic Usage

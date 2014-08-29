@@ -6,8 +6,11 @@ SchemDraw is a python package for producing high-quality electrical circuit sche
         import SchemDraw as schem
         import SchemDraw.elements as e
         d = schem.Drawing()
-        d.add( e.RES, label='100K$\Omega$' )
+        V1 = d.add( e.SOURCE_V, label='10V' )
+        d.add( e.RES, d='right', label='100K$\Omega$' )
         d.add( e.CAP, d='down', botlabel='0.1$\mu$F' )
+        d.add( e.LINE, to=V1.start )
+        d.add( e.GND )
         d.draw()
         d.save( 'testschematic.png' )
 
@@ -27,6 +30,15 @@ SchemDraw can be installed from pip using
 or directly by downloading the package and running
 
         python setup.py install
+
+
+### Links
+
+The most current version can be found in the source code git repository:
+https://bitbucket.org/cdelker/schemdraw
+
+This documentation is available online:
+http://www.collindelker.com/schemdraw/
 
 
 ## Basic Usage

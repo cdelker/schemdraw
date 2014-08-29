@@ -5,8 +5,11 @@
 <pre><code>    import SchemDraw as schem
     import SchemDraw.elements as e
     d = schem.Drawing()
-    d.add( e.RES, label='100K$\Omega$' )
+    V1 = d.add( e.SOURCE_V, label='10V' )
+    d.add( e.RES, d='right', label='100K$\Omega$' )
     d.add( e.CAP, d='down', botlabel='0.1$\mu$F' )
+    d.add( e.LINE, to=V1.start )
+    d.add( e.GND )
     d.draw()
     d.save( 'testschematic.png' )
 </code></pre>
@@ -30,6 +33,14 @@
 
 <pre><code>    python setup.py install
 </code></pre>
+
+<h3 id="links">Links</h3>
+
+<p>The most current version can be found in the source code git repository:
+https://bitbucket.org/cdelker/schemdraw</p>
+
+<p>This documentation is available online:
+http://www.collindelker.com/schemdraw/</p>
 
 <h2 id="basicusage">Basic Usage</h2>
 

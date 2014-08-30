@@ -13,4 +13,4 @@ The most current version can be found in the source code git repository:
 https://bitbucket.org/cdelker/schemdraw
 
 Documentation is available in the docs folder or online:
-http://www.collindelker.com/schemdraw/
+http://cdelker.bitbucket.org/SchemDraw.html

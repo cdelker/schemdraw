@@ -3,11 +3,11 @@ from distutils.core import setup
 setup(
     name = 'SchemDraw',
     packages = ['SchemDraw'],
-    version = '0.1.1',
+    version = '0.1.2',
     description = 'Electrical circuit schematic drawing',
     author = 'Collin J. Delker',
     author_email = 'developer@collindelker.com',
-    url = 'http://www.collindelker.com/schemdraw/',
+    url = 'http://cdelker.bitbucket.org/SchemDraw.html',
     keywords = ['circuit', 'schematic', 'electrical'],
     install_requires=['numpy', 'matplotlib'],
     classifiers = [

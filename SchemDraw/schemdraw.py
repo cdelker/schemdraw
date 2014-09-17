@@ -63,7 +63,7 @@ def _merge_elements( elm_def ):
 # Main drawing class
 #--------------------------------------------------------------------
 class Drawing():
-    def __init__(self, unit=3.0, inches_per_unit=0.5, txtofst=0.1, fontsize=16, font='sans-serif'):
+    def __init__(self, unit=3.0, inches_per_unit=0.5, txtofst=0.1, fontsize=16, font='sans-serif', color='black'):
         """ Set up a new circuit drawing.
     unit : Full length of a resistor element in matplotlib plot units.
            Inner portion of resistor is length 1.
@@ -79,6 +79,7 @@ class Drawing():
         self.txtofst = txtofst
         self.fontsize = fontsize
         self.font = font
+        self.color = color
 
         # State variables
         self.here = np.array([0,0])
@@ -185,12 +186,12 @@ Other:
 
 
 
-    def save(self, fname ):
+    def save(self, fname, transparent=True ):
         """ Save figure to file.
             fname : filename to save.
                     File type automatically determined from extension.
         """
-        self.fig.savefig( fname, bbox_extra_artists=self.ax.get_default_bbox_extra_artists(), bbox_inches='tight' )
+        self.fig.savefig( fname, bbox_extra_artists=self.ax.get_default_bbox_extra_artists(), bbox_inches='tight', transparent=transparent )
 
 
     # Functions to help define specific elements
@@ -309,7 +310,7 @@ Other:
 
         # Get some parameters
         self.shapes = self.defn.get( 'shapes', [] )
-        self.color  = kwargs.get( 'color', self.defn.get('color', 'black' ) )
+        self.color  = kwargs.get( 'color', self.defn.get('color', drawing.color ) )
         totlen      = kwargs.get( 'l', drawing.unit   )
 
         # Determine theta angle of element
@@ -649,7 +650,7 @@ Other:
                 xy = self.translate( xy - self.ofst)
                 rad  = s.get('radius', 1)
                 fill = s.get('fill', False)
-                fillcolor = s.get('fillcolor', 'black')
+                fillcolor = s.get('fillcolor', self.color)
                 circ = plt.Circle( xy=xy, radius=rad, ec=self.color,
                                    fc=fillcolor, fill=fill, zorder=3 )
                 ax.add_patch(circ)
@@ -658,7 +659,7 @@ Other:
                 xy = self.translate( xy - self.ofst )
                 closed = s.get('closed', True)
                 fill = s.get('fill', False)
-                fillcolor = s.get('fillcolor', 'black')
+                fillcolor = s.get('fillcolor', self.color)
                 poly = plt.Polygon( xy=xy, closed=closed, ec=self.color,
                                     fc=fillcolor, fill=fill, zorder=3 )
                 ax.add_patch(poly)
@@ -697,7 +698,7 @@ Other:
                     darrow = np.dot( [dx,dy], m )
 
                     ax.arrow( s[0], s[1], darrow[0], darrow[1], head_width=.15,
-                              head_length=.25, color='black' )
+                              head_length=.25, color=self.color )
 
             elif s.get('shape') == 'arrow':
                 start = np.array(s.get('start', [0,0] ) )

@@ -17,6 +17,9 @@ mpl.rcParams['figure.subplot.left']   = 0.05
 mpl.rcParams['figure.subplot.bottom'] = 0.05
 mpl.rcParams['figure.subplot.right']  = 0.95
 mpl.rcParams['figure.subplot.top']    = 0.90
+mpl.rcParams['font.family'] = 'sans-serif'
+mpl.rcParams['mathtext.fontset'] = 'stixsans'
+mpl.rcParams['mathtext.default'] = 'regular'
 
 #--------------------------------------------------------------------
 # Define transformation matricies
@@ -47,10 +50,11 @@ def _merge_elements( elm_def ):
         base_elm = elm_def['base']
         elm_def.pop('base')
 
-        elm_def['paths']  = elm_def.get('paths',[] ) + base_elm.get( 'paths',  [] )
-        elm_def['labels'] = elm_def.get('labels',[]) + base_elm.get( 'labels', [] )
-        elm_def['shapes'] = elm_def.get('shapes',[]) + base_elm.get( 'shapes', [] )
-
+        elm_def['paths']   = elm_def.get('paths',[] ) + base_elm.get( 'paths',  [] )
+        elm_def['labels']  = elm_def.get('labels',[]) + base_elm.get( 'labels', [] )
+        elm_def['shapes']  = elm_def.get('shapes',[]) + base_elm.get( 'shapes', [] )
+        elm_def['anchors'] = dict(list(elm_def.get('anchors',{}).items()) + list(base_elm.get( 'anchors', {} ).items()))
+        
         for i in base_elm:
             # Everything that's not a list. New key/values overwrite old.
             # If base has a base, will be added and loop will pick it up.
@@ -186,12 +190,12 @@ Other:
 
 
 
-    def save(self, fname, transparent=True ):
+    def save(self, fname, transparent=True, dpi=72 ):
         """ Save figure to file.
             fname : filename to save.
                     File type automatically determined from extension.
         """
-        self.fig.savefig( fname, bbox_extra_artists=self.ax.get_default_bbox_extra_artists(), bbox_inches='tight', transparent=transparent )
+        self.fig.savefig( fname, bbox_extra_artists=self.ax.get_default_bbox_extra_artists(), bbox_inches='tight', transparent=transparent, dpi=dpi )
 
 
     # Functions to help define specific elements
@@ -648,7 +652,7 @@ Other:
             if s.get('shape') == 'circle':
                 xy = np.array(s.get('center', [0,0]))
                 xy = self.translate( xy - self.ofst)
-                rad  = s.get('radius', 1)
+                rad  = s.get('radius', 1) * self.z
                 fill = s.get('fill', False)
                 fillcolor = s.get('fillcolor', self.color)
                 circ = plt.Circle( xy=xy, radius=rad, ec=self.color,
@@ -666,10 +670,13 @@ Other:
             elif s.get('shape') == 'arc':
                 xy = np.array(s.get('center', [0,0] ) )
                 xy = self.translate( xy - self.ofst )
-                w = s.get('width',     1  )
-                h = s.get('height',    1  )
+
+                w = s.get('width',     1  ) * self.z
+                h = s.get('height',    1  ) * self.z
                 th1 = s.get('theta1',  35 )
                 th2 = s.get('theta2', -35 )
+                if self.reverse: th1, th2 = th2, th1
+
                 angle = s.get('angle', self.theta )
                 arc = Arc( xy, width=w, height=h, theta1=th1,
                            theta2=th2, angle=angle, color=self.color )

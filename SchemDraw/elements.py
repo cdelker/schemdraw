@@ -159,7 +159,6 @@ DOT_OPEN = {
                     'fillcolor' : 'white' } ],
     'theta'   : 0,
     'extend'  : False,
-    'move_cur': False
     }
 
 DOT = {
@@ -172,7 +171,6 @@ DOT = {
                    'fillcolor' : 'black' }  ],
     'theta'   : 0,
     'extend'  : False,
-    'move_cur': False
     }
 
 LINE = { 'name'  : 'LINE', 'paths' : [ _np.array([[0,0]]) ] }

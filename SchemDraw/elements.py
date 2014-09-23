@@ -56,9 +56,9 @@ Possible dictionary keys:
     lblloc: ['top', 'bot', 'lft', 'rgt'] default location for text label.
             Defaults to 'top'.
     lblofst: Default distance between element and text label.
-    labels: List of (label, pos) tuples defining text labels to always draw
-            in the element.
-
+    labels: List of (label, pos, align) tuples defining text labels to always draw
+            in the element. Align is (horiz, vert) tuple of
+            (['center', 'left', right'], ['center', 'bottom', 'top'])
 '''
 
 import numpy as _np
@@ -175,13 +175,21 @@ DOT = {
 
 LINE = { 'name'  : 'LINE', 'paths' : [ _np.array([[0,0]]) ] }
 
-LABEL = {
+# Label centered over a gap
+GAP_LABEL = {
     'name'    : 'LABEL',
     'paths'   : [ [[0,0],_gap,[1,0]] ],
     'lblloc'  : 'center',
     'lblofst' : 0,
-    #'extend'  : False,
     'color'   : 'white'
+    }
+
+# Label at the specific location
+LABEL = {
+    'name' : 'LABEL',
+    'lblloc' : 'center',
+    'lblofst' : 0,
+    'move_cur' : False
     }
 
 
@@ -222,6 +230,17 @@ _oa_back = 2.5
 _oa_xlen = _oa_back * _np.sqrt(3)/2
 _oa_lblx = _oa_xlen/8
 _oa_pluslen = .2
+OPAMP_NOSIGN = {
+    'name'  : 'OPAMP_NOSIGN',
+    'paths'   : [ [[0,0],[0,_oa_back/2],[_oa_xlen,0],[0,-_oa_back/2],[0,0], _gap, [_oa_xlen,0]], # Triangle
+                ],
+    'anchors' : { 'center' : [_oa_xlen/2,0],
+                  'in1'    : [0,_oa_back/4],
+                  'in2'    : [0,-_oa_back/4],
+                  'out'    : [_oa_xlen,0]  },
+    'extend'  : False,
+    }
+
 OPAMP = {
     'name'  : 'OPAMP',
     'paths'   : [ [[0,0],[0,_oa_back/2],[_oa_xlen,0],[0,-_oa_back/2],[0,0], _gap, [_oa_xlen,0]], # Triangle

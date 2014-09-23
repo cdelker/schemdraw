@@ -245,7 +245,7 @@ Elements are connected with lines and dot elements. Dots don't change the curren
 
 ### Label element
 
-The LABEL element can be used to add a label to a blank space, such as marking the voltage between output terminals
+The LABEL element can be used to add a label anywhere. The GAP_LABEL is like an "invisible" element, which can be used for marking the voltage between output terminals.
 
 ![](img/label.png)
 

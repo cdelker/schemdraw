@@ -58,9 +58,47 @@ def _merge_elements( elm_def ):
         for i in base_elm:
             # Everything that's not a list. New key/values overwrite old.
             # If base has a base, will be added and loop will pick it up.
-            if i not in ['paths','labels','shapes'] and i not in elm_def:
+            if i not in ['paths','labels','shapes','anchors'] and i not in elm_def:
                 elm_def[i] = base_elm[i]
     return elm_def
+
+
+#--------------------------------------------------------------------
+def group_elements( drawing, anchors={} ):
+    ''' Combine all elements in a drawing into a single element that can be added to
+        another drawing. Returns an element definition.
+
+        drawing: The drawing object. All elements in the drawing will be combined.
+        anchors: New anchor dictionary to use for the new element.
+    '''
+    new_elm = {'paths' :[],
+               'shapes':[],
+               'labels'  :[],
+               'anchors':{} }
+    for elm in drawing._elm_list:
+        new_elm['paths'].extend( elm.paths )
+        for s in elm.shapes:
+            s = s.copy()
+            if s['shape'] == 'circle':
+                s['center'] = elm.translate( s['center'] - elm.ofst )
+            elif s['shape'] == 'poly':
+                s['xy'] = elm.translate( s['xy'] - elm.ofst )
+            elif s['shape'] == 'arc':
+                s['center'] = elm.translate( s['center'] - elm.ofst )            
+            elif s['shape'] == 'arrow':
+                s['start'] = elm.translate( s['start'] - elm.ofst )
+                s['end']   = elm.translate( s['start'] - elm.ofst )
+            new_elm['shapes'].append( s )
+
+        new_elm['anchors'] = anchors
+
+        for label, loc, align in elm.strs:
+            loc = elm.translate( np.array(loc) )
+            new_elm['labels'].append( (label, loc, align) )
+        new_elm['extend'] = False
+    
+    return new_elm
+
 
 
 #--------------------------------------------------------------------
@@ -432,7 +470,11 @@ Other:
 
         txtlist = self.defn.get( 'labels', [] )
         for txtlbl in txtlist:
-            self.strs.append( ( (txtlbl[0], np.array(txtlbl[1])-self.ofst, ('center', 'center') ) ) )
+            if len(txtlbl) > 2:
+                align = txtlbl[2]
+            else:
+                align = ('center','center')
+            self.strs.append( ( (txtlbl[0], np.array(txtlbl[1])-self.ofst, align ) ) )
 
         self.z = kwargs.get( 'zoom', 1 )
 

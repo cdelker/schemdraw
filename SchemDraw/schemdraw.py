@@ -92,10 +92,11 @@ def group_elements( drawing, anchors={} ):
 
         new_elm['anchors'] = anchors
 
-        for label, loc, align in elm.strs:
+        for label, loc, align, size in elm.strs:
             loc = elm.translate( np.array(loc) )
-            new_elm['labels'].append( (label, loc, align) )
+            new_elm['labels'].append( {'label':label, 'pos':loc, 'align':align, 'size':size} )
         new_elm['extend'] = False
+        new_elm['drop'] = drawing.here
     
     return new_elm
 
@@ -344,6 +345,7 @@ Labels [Default = no label]:
 Other:
     move_cur : move the cursor after drawing. Default=True.
     color    : matplotlib color for element. e.g. 'red', '#34a4e6', (.8,0,.8)
+    ls       : line style. same as matplotlib: ['-', ':', '--']
     """
         # Flatten element def with base elements
         self.defn   = elm_def.copy()
@@ -353,6 +355,7 @@ Other:
         # Get some parameters
         self.shapes = self.defn.get( 'shapes', [] )
         self.color  = kwargs.get( 'color', self.defn.get('color', drawing.color ) )
+        self.ls     = kwargs.get( 'ls', self.defn.get('ls', '-') )
         totlen      = kwargs.get( 'l', drawing.unit   )
 
         # Determine theta angle of element
@@ -410,7 +413,7 @@ Other:
                 totlen = _distance( self.trans, endpt )
             elif 'tox' in kwargs:
                 # Allow either full coordinate (only keeping x), or just an x value
-                if isinstance( kwargs['tox'], float ):
+                if isinstance( kwargs['tox'], float ) or isinstance( kwargs['tox'], int ):
                     x = float(kwargs['tox'])
                 else:
                     x = kwargs['tox'][0]
@@ -418,7 +421,7 @@ Other:
                 totlen = _distance( self.trans, endpt )
             elif 'toy' in kwargs:
                 # Allow either full coordinate (only keeping y), or just a y value
-                if isinstance( kwargs['toy'], float):
+                if isinstance( kwargs['toy'], float) or isinstance( kwargs['toy'], int):
                     y = kwargs['toy']
                 else:
                     y = kwargs['toy'][1]
@@ -470,11 +473,10 @@ Other:
 
         txtlist = self.defn.get( 'labels', [] )
         for txtlbl in txtlist:
-            if len(txtlbl) > 2:
-                align = txtlbl[2]
-            else:
-                align = ('center','center')
-            self.strs.append( ( (txtlbl[0], np.array(txtlbl[1])-self.ofst, align ) ) )
+            align = txtlbl.get('align',('center','center') )
+            size  = txtlbl.get('size', drawing.fontsize )
+            pos   = txtlbl.get('pos', [0,0] )
+            self.strs.append( ( (txtlbl['label'], np.array(pos)-self.ofst, align, size ) ) )
 
         self.z = kwargs.get( 'zoom', 1 )
 
@@ -552,13 +554,14 @@ Other:
         return xmin, ymin, xmax, ymax
 
 
-    def add_label( self, label, loc='top', ofst=None, align=None ):
+    def add_label( self, label, loc='top', ofst=None, align=None, size=None ):
         """ Add a label at the appropriate position
             label: text label to add
             loc: location for the label ['top', 'bot', 'lft', 'rgt'].
             txtofst: unit offset between element bounding box and label.
             align: alignment tuple for (horizontal, vertical):
                    (['center', 'left', 'right'], ['center', 'top', 'bottom'])
+            size: font size
         """
         if isinstance(ofst,list) and loc is not 'center':
             raise TypeError( 'Offset must not be list for loc=%s'%loc )
@@ -613,6 +616,9 @@ Other:
         ymax = self.ymax
         ymin = self.ymin
 
+        if size==None:
+            size=16
+
         if self.flip:
             ymax, ymin = ymin, ymax
             if loc=='top' or loc=='bot':
@@ -628,27 +634,27 @@ Other:
                 for i, lbltxt in enumerate(label):
                     xdiv = (xmax-xmin)/(len(label)+1)
                     lbl_pt = [ xmin+xdiv*(i+1), ymax+ofst ]
-                    self.strs.append( (label[i], lbl_pt, align) )
+                    self.strs.append( (label[i], lbl_pt, align, size) )
             elif loc=='bot':
                 for i, lbltxt in enumerate(label):
                     xdiv = (xmax-xmin)/(len(label)+1)
                     lbl_pt = [ xmin+xdiv*(i+1), ymin-ofst ]
-                    self.strs.append( (label[i], lbl_pt, align) )
+                    self.strs.append( (label[i], lbl_pt, align, size) )
             elif loc=='lft':
                 for i, lbltxt in enumerate(label):
                     ydiv = (ymax-ymin)/(len(label)+1)
                     lbl_pt = [ xmin-ofst, ymin+ydiv*(i+1) ]
-                    self.strs.append( (label[i], lbl_pt, align) )
+                    self.strs.append( (label[i], lbl_pt, align, size) )
             elif loc=='rgt':
                 for i, lbltxt in enumerate(label):
                     ydiv = (ymax-ymin)/(len(label)+1)
                     lbl_pt = [ xmax+ofst, ymin+ydiv*(i+1) ]
-                    self.strs.append( (label[i], lbl_pt, align) )
+                    self.strs.append( (label[i], lbl_pt, align, size) )
             elif loc=='center':
                 for i, lbltxt in enumerate(label):
                     xdiv = (xmax-xmin)/(len(label)+1)
                     lbl_pt = [ xmin+xdiv*(i+1), ofst ]
-                    self.strs.append( (label[i], lbl_pt, align) )
+                    self.strs.append( (label[i], lbl_pt, align, size) )
         elif isinstance( label, str ):
             # Place in center
             if loc=='top':
@@ -664,7 +670,7 @@ Other:
                     lbl_pt = [(xmax+xmin)/2+ofst[0], (ymax+ymin)/2+ofst[1]]
                 else:
                     lbl_pt = [(xmax+xmin)/2, (ymax+ymin)/2+ofst]
-            self.strs.append( (label, lbl_pt, align) )
+            self.strs.append( (label, lbl_pt, align, size) )
 
 
     def translate(self, pt, doflip=True):
@@ -688,7 +694,7 @@ Other:
         """
         for path in self.paths:
             ax.plot( path[:,0], path[:,1], color=self.color, lw=1,
-                     solid_capstyle='round' )
+                     solid_capstyle='round', ls=self.ls )
 
         for s in self.shapes:
             if s.get('shape') == 'circle':
@@ -760,9 +766,10 @@ Other:
                          head_width=hw, head_length=hl,
                          length_includes_head=True, color=self.color)
 
-        for label, loc, align in self.strs:
+        for label, loc, align, size in self.strs:
             loc = self.translate( np.array(loc) )
             ha = align[0]
             va = align[1]
             ax.text( loc[0], loc[1], label, transform=ax.transData,
-                     horizontalalignment=ha, verticalalignment=va )
+                     horizontalalignment=ha, verticalalignment=va,
+                     fontsize=size )

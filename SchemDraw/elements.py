@@ -59,6 +59,13 @@ Possible dictionary keys:
     labels: List of (label, pos, align) tuples defining text labels to always draw
             in the element. Align is (horiz, vert) tuple of
             (['center', 'left', right'], ['center', 'bottom', 'top'])
+    labels: list of label dictionaries. Each label has keys:
+            'label' : string label
+            'pos'   : xy position
+            'align' : (['center', 'left', right'], ['center', 'bottom', 'top']) alignment
+            'size'  : font size
+
+
 '''
 
 import numpy as _np
@@ -109,7 +116,7 @@ CAP = {   # Straight capacitor
 CAP_P = {   # Polarized
     'name'  : 'CAP_P',
     'base'  : CAP,
-    'labels'  : [('+', [-_cap_gap,_cap_gap])],
+    'labels' : [ {'label':'+', 'pos':[-_cap_gap,_cap_gap]} ]
     }
 
 CAP2 = {  # Curved capacitor
@@ -126,7 +133,7 @@ CAP2 = {  # Curved capacitor
 CAP2_P = {   # Polarized
     'name'  : 'CAP2_P',
     'base'  : CAP2,
-    'labels'  : [('+', [-_cap_gap,_cap_gap])],
+    'labels' : [ {'label':'+', 'pos':[-_cap_gap,_cap_gap]} ]
     }
 
 
@@ -146,6 +153,23 @@ DIODE_F = {
                     'xy'   : _np.array([[0,_rh],[_rh*1.4,0],[0,-_rh]]),
                     'fill' : True } ]
     }
+
+LED = {
+    'name':'LED',
+    'base':DIODE,
+    'shapes':[ { 'shape':'arrow',
+                 'start': [_rh,_rh*1.5],
+                 'end'  : [_rh*2,_rh*3.25],
+                   'headwidth' : .17,
+                   'headlength' : .2 },
+
+               { 'shape':'arrow',
+                 'start': [_rh*.1,_rh*1.5],
+                 'end'  : [_rh*1.1,_rh*3.25],
+                   'headwidth' : .17,
+                   'headlength' : .2 }, ]
+    }
+
 
 # Connection dots, lines
 _dotr = .075
@@ -172,6 +196,28 @@ DOT = {
     'theta'   : 0,
     'extend'  : False,
     }
+    
+ELLIPSIS = {
+    'name' : 'ELLIPSIS',
+    'shapes'  : [{ 'shape':'circle',
+                  'center':[.5,0],
+                  'radius':_dotr/2,
+                  'fill':True,
+                  'fillcolor':'black'},
+                { 'shape':'circle',
+                  'center':[1,0],
+                  'radius':_dotr/2,
+                  'fill':True,
+                  'fillcolor':'black'},
+                { 'shape':'circle',
+                  'center':[1.5,0],
+                  'radius':_dotr/2,
+                  'fill':True,
+                  'fillcolor':'black'} ],
+    'extend' : False,
+    'drop'   : [2,0]
+    }
+
 
 LINE = { 'name'  : 'LINE', 'paths' : [ _np.array([[0,0]]) ] }
 
@@ -182,6 +228,10 @@ GAP_LABEL = {
     'lblloc'  : 'center',
     'lblofst' : 0,
     'color'   : 'white'
+    }
+
+GAP = {
+    'base' : GAP_LABEL
     }
 
 # Label at the specific location
@@ -448,19 +498,19 @@ SOURCE_CONT_I = {
 METER_V = {
     'name'  : 'METER_V',
     'base' : SOURCE,
-    'labels' : [('V', [.5,0])],
+    'labels' : [ {'label':'V', 'pos':[.5,0]} ]
     }
 
 METER_I = {
     'name'  : 'METER_I',
     'base' : SOURCE,
-    'labels' : [('I', [.5,0])],
+    'labels' : [ {'label':'I', 'pos':[.5,0]} ]
     }
 
 METER_OHM = {
     'name'  : 'METER_OHM',
     'base' : SOURCE,
-    'labels' : [('$\Omega$', [.5,0])],
+    'labels' : [ {'label':'$\Omega$', 'pos':[.5,0]} ]
     }
 
 
@@ -480,7 +530,7 @@ ARROW_I = {
     'name'  : 'ARROW_I',
     'shapes' : [ { 'shape' : 'arrow',
                    'start' : [0,0],
-                   'end'   : [2,0],#0.55,0],
+                   'end'   : [2,0],
                    'headwidth' : .2,
                    'headlength' : .3 } ],
     'anchors' : { 'center' : [1,0]},
@@ -598,3 +648,144 @@ SWITCH_SPDT2_CLOSE = {
                    'theta2' : 70,
                    'arrow'  : 'cw' } ]
     }
+
+
+
+
+def blackbox( w, h, linputs=None, rinputs=None, tinputs=None, binputs=None, mainlabel='', leadlen=0.5 ):
+    ''' Generate a black-box element consisting of rectangle with inputs on each side.
+    
+        w, h : width and height of rectangle
+        mainlabel : main box label
+        leadlen   : length of lead extensions
+        linputs, rinputs, tinputs, binputs: dictionary input definition for each side
+        of the box. Default to no inputs. Dictionary keys:
+            cnt : number of inputs for that side
+            labels: list of string labels for each input. drawn inside the box. default is blank.
+            plabels: list of pin label strings. drawn outside the box. Default is blank.
+            loc: list of pin locations (0 to 1), along side. Defaults to evenly spaced pins.
+            leads: True/False, draw leads coming out of box. Default=True.
+            lblofst: float offset for labels. Default=.15
+            plblofst: float offset for pin labels. Default=.1
+            lblsize: font size for labels. Default=16
+            plblsize: font size for pin labels. Default=12
+
+        Anchors will be generated on each pin matching label names if provided. If no 
+        labels, anchors are named 'inL1', 'inL2', ... 'inR1', 'inR2', 'inT1', 'inB1', etc.
+
+    '''
+    box = {
+           'paths' : [ [[0,0],[w,0],[w,h],[0,h],[0,0]] ],
+           'anchors':{},
+           'labels':[],
+           'extend':False, }
+
+    if mainlabel is not None:
+        box['labels'].append( {'label':mainlabel, 'pos':[w/2,h*2/3] })
+    
+    for side, sidelabel in [('left',linputs),('right',rinputs),('top',tinputs),('bottom',binputs)]:
+        if sidelabel==None: continue
+        cnt        = sidelabel.get('cnt',0)
+        sidelabels = sidelabel.get('labels',[])
+        plabels    = sidelabel.get('plabels',[])
+        loc        = sidelabel.get('loc',None)
+        leads      = sidelabel.get('leads',True)
+        lblofst    = sidelabel.get('lblofst',.15)
+        plblofst   = sidelabel.get('plblofst',.1)
+        lblsize    = sidelabel.get('lblsize',16)
+        plblsize   = sidelabel.get('plblsize',12)
+        
+        # Determine pin spacings
+        if side=='left':
+            x0 = 0
+            dx = 0
+            if cnt > 1:
+                y0 = h/(cnt+2)
+                dy = (h-2*y0)/(cnt-1)
+            else:
+                y0 = h/2
+                dy = 0
+            lblpos = _np.array([lblofst,0])
+            lblalign = ('left','center')
+            plblpos = _np.array([-plblofst,0])
+            plblalign = ('right','bottom')
+            leadext = _np.array([-leadlen,0])
+        elif side=='right':
+            x0 = w
+            dx = 0
+            if cnt > 1:
+                y0 = h/(cnt+2)
+                dy = (h-2*y0)/(cnt-1)
+            else:
+                y0 = h/2
+                dy = 0
+            lblpos = _np.array([-lblofst,0])
+            lblalign = ('right','center')
+            plblpos = _np.array([plblofst,0])
+            plblalign = ('left','bottom')
+            leadext = _np.array([leadlen,0])
+        elif side=='top':
+            y0 = h
+            dy = 0
+            if cnt > 1:
+                x0 = w/(cnt+2)
+                dx = (w-2*x0)/(cnt-1)
+            else:
+                x0 = w/2
+                dx = 0
+            lblpos = _np.array([0,-lblofst])
+            lblalign = ('center','top')
+            plblpos = _np.array([plblofst,0])
+            plblalign = ('left','bottom')
+            leadext = _np.array([0,leadlen])
+        elif side=='bottom':
+            y0 = 0
+            dy = 0
+            if cnt > 1:
+                x0 = w/(cnt+2)
+                dx = (w-2*x0)/(cnt-1)
+            else:
+                x0 = w/2
+                dx = 0
+            lblpos = _np.array([0,lblofst])
+            lblalign = ('center','bottom')
+            plblpos = _np.array([plblofst,-plblofst])
+            plblalign = ('left','top')
+            leadext = _np.array([0,-leadlen])
+        
+        # Add each input
+        for i in range(cnt):
+            if 'loc' in sidelabel:
+                # Custom-spaced labels
+                if dx>0:
+                    x = sidelabel['loc'][i] * w
+                    y = y0
+                elif dy>0:
+                    y = sidelabel['loc'][i] * h
+                    x = x0
+            else:
+                # Evenly-spaced labels
+                x = x0 + dx*i
+                y = y0 + dy*i
+            
+            # Anchor name use label for pin, otherwise use 'inL1', etc.
+            if len(sidelabels)==cnt:
+                aname = sidelabels[i]
+            else:
+                aname = 'in' + side[0].upper() + str(i+1)
+            
+            # Add lead lines
+            if leads:
+                box['paths'].append( [[x,y],_np.array([x,y])+leadext] )
+                box['anchors'][aname] = _np.array([x,y])+leadext   
+            else:
+                box['anchors'][aname] = [x,y]            
+    
+            # Add labels
+            if len(sidelabels)==cnt:
+                box['labels'].append( {'label':sidelabels[i], 'pos':_np.array([x,y])+lblpos, 'align':lblalign, 'size':lblsize } )
+            
+            if len(plabels)==cnt:
+                box['labels'].append( {'label':plabels[i], 'pos':_np.array([x,y])+plblpos, 'align':plblalign, 'size':plblsize }  )
+
+    return box

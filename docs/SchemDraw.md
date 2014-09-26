@@ -158,6 +158,7 @@ Other element arguments include:
 
         move_cur : move the cursor after drawing. Default=True.
         color    : matplotlib color. e.g. 'red', '#34a4e6', (.8,0,.8)
+        ls       : [':', '--', '-'] linestyle (same as matplotlib).
 
 
 ### Drawing parameters
@@ -587,6 +588,7 @@ Possible dictionary keys:
         lblofst: Default distance between element and text label.
         labels: List of (label, pos) tuples defining text labels to always draw
                 in the element.
+        ls    : [':', '--', '-'] linestyle (same as matplotlib). Only applies to paths.
 
 
 Using the 'base' key, a new element can be defined as an extension of some base element. As an example, let's define a sinusoidal voltage source (the SOURCE_SIN element). It can be based on a SOURCE element, with the addition of a path to draw a sine wave inside the circle. A path can be created using standard numpy processing, so first we'll make a sine wave path. Since the circle is centered at [.5,0], center the sine wave there too:

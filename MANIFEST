@@ -11,9 +11,11 @@ SchemDraw/schemdraw.py
 docs/SchemDraw.html
 docs/SchemDraw.md
 docs/img/2term.png
+docs/img/555blinker.png
 docs/img/JK.png
 docs/img/SR-Latch.png
 docs/img/SR_latch_gate.png
+docs/img/TL.png
 docs/img/and_inputnot.png
 docs/img/bjt.png
 docs/img/bjt_anchors.png
@@ -28,6 +30,7 @@ docs/img/examples.ipynb
 docs/img/fet.png
 docs/img/fet_anchors.png
 docs/img/full_add.png
+docs/img/fulladd_blackbox.png
 docs/img/gates.png
 docs/img/grounds.png
 docs/img/half_add.png
@@ -42,6 +45,10 @@ docs/img/nots.png
 docs/img/opamp.png
 docs/img/opamp_anchor.png
 docs/img/pot.png
+docs/img/smu.png
 docs/img/sources.png
 docs/img/switches.png
 docs/img/testschematic.png
+docs/img/.ipynb_checkpoints/doc_images-checkpoint.ipynb
+docs/img/.ipynb_checkpoints/examples-checkpoint.ipynb
+docs/img/.ipynb_checkpoints/logicgate_images-checkpoint.ipynb

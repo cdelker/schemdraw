@@ -6,3 +6,10 @@ v0.1.3, 09/21/2014
     - Added transparent and dpi options to save() function
     - Fixed issues with zooming and rotating elements with arcs
     - LaTeX typesetting uses sans-serif, regular fonts for consistency
+    
+v0.1.4, 09/30/2014
+    - Added elements: LED, OPAMP_NOSIGN, GAP_LABEL, ELLIPSIS
+    - Add function to group several elements into one
+    - Add blackbox() function to generate box elements with arbitrary inputs
+    - Allow element definition to specify label alignment
+    - Added linestyle to element kwargs and definition

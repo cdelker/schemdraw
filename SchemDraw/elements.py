@@ -770,9 +770,12 @@ def blackbox( w, h, linputs=None, rinputs=None, tinputs=None, binputs=None, main
             
             # Anchor name use label for pin, otherwise use 'inL1', etc.
             if len(sidelabels)==cnt:
-                aname = sidelabels[i]
+                import re
+                aname = re.sub(r'\W+', '', sidelabels[i])
             else:
                 aname = 'in' + side[0].upper() + str(i+1)
+            
+            if aname in box['anchors']: aname = aname + '_%d'%i
             
             # Add lead lines
             if leads:

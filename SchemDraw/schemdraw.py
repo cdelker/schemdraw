@@ -353,6 +353,7 @@ Other:
             self.defn = _merge_elements( self.defn )
 
         # Get some parameters
+        self.drawing = drawing
         self.shapes = self.defn.get( 'shapes', [] )
         self.color  = kwargs.get( 'color', self.defn.get('color', drawing.color ) )
         self.ls     = kwargs.get( 'ls', self.defn.get('ls', '-') )
@@ -465,11 +466,11 @@ Other:
             rgtlabel = kwargs.get( 'rgtlabel', None )
             lftlabel = kwargs.get( 'lftlabel', None )
             self.lbl_ofst = kwargs.get( 'lblofst', self.defn.get( 'lblofst', drawing.txtofst ) )
-            if label is not None:    self.add_label( label, dfltlbl,  ofst=self.lbl_ofst )
-            if toplabel is not None: self.add_label( toplabel, 'top', ofst=self.lbl_ofst )
-            if botlabel is not None: self.add_label( botlabel, 'bot', ofst=self.lbl_ofst )
-            if rgtlabel is not None: self.add_label( rgtlabel, 'rgt', ofst=self.lbl_ofst )
-            if lftlabel is not None: self.add_label( lftlabel, 'lft', ofst=self.lbl_ofst )
+            if label is not None:    self.add_label( label, dfltlbl,  ofst=self.lbl_ofst, size=drawing.fontsize )
+            if toplabel is not None: self.add_label( toplabel, 'top', ofst=self.lbl_ofst, size=drawing.fontsize )
+            if botlabel is not None: self.add_label( botlabel, 'bot', ofst=self.lbl_ofst, size=drawing.fontsize )
+            if rgtlabel is not None: self.add_label( rgtlabel, 'rgt', ofst=self.lbl_ofst, size=drawing.fontsize )
+            if lftlabel is not None: self.add_label( lftlabel, 'lft', ofst=self.lbl_ofst, size=drawing.fontsize )
 
         txtlist = self.defn.get( 'labels', [] )
         for txtlbl in txtlist:
@@ -500,6 +501,8 @@ Other:
             setattr(self, 'center', (self.paths[0][0] + self.paths[0][-1])/2 )
         if 'anchors' in self.defn:
             for aname, apoint in self.defn['anchors'].items():
+                if getattr( self, aname, None) is not None: # Try not to clobber element parameter names!
+                    aname = 'anchor_' + aname
                 setattr(self, aname, self.translate(np.array(apoint)-self.ofst))
 
         # Translated end point for new drawing position
@@ -617,7 +620,7 @@ Other:
         ymin = self.ymin
 
         if size==None:
-            size=16
+            size=self.drawing.fontsize
 
         if self.flip:
             ymax, ymin = ymin, ymax

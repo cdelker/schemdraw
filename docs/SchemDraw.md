@@ -316,6 +316,40 @@ As an example, the following line generates a 3-input NAND gate with one input p
 
 ![](img/and_inputnot.png)
 
+
+### Black-box elements
+
+Elements drawn as boxes, such as integrated circuits, can be generated using the elements.blackbox() function. An arbitrary number of inputs/outputs can be drawn to each side of the box. The inputs can be evenly spaced (default) or arbitrarily placed anywhere along each edge. The function takes the arguments:
+        w, h : width and height of rectangle
+        mainlabel : main box label, drawn in center
+        leadlen   : length of lead extensions
+        linputs, rinputs, tinputs, binputs: dictionary input definition for each side
+        of the box. Default to no inputs. Dictionary keys:
+            cnt : number of inputs for that side
+            labels: list of string labels for each input. drawn inside the box. default is blank.
+            plabels: list of pin label strings. drawn outside the box. Default is blank.
+            loc: list of pin locations (0 to 1), along side. Defaults to evenly spaced pins.
+            leads: True/False, draw leads coming out of box. Default=True.
+            lblofst: float offset for labels. Default=.15
+            plblofst: float offset for pin labels. Default=.1
+            lblsize: font size for labels. Default=16
+            plblsize: font size for pin labels. Default=12
+
+Anchors to each input will be automatically generated using the 'labels' keyword for each side of the box if provided. Duplicate input names will be appended with a number. If not provided, the anchors will be named 'inL1', 'inL2'... for the left side, for the right side 'inR1', inR2', etc.
+
+For example, a full-adder box can be made with inputs on all sides:
+
+        tinputs = {'cnt':2, 'labels':['b','a']}
+        rinputs = {'cnt':1, 'labels':['$c_{in}$']}
+        linputs = {'cnt':1, 'labels':['$c_{out}$']}
+        binputs = {'cnt':1, 'labels':['$s$']}
+        B = e.blackbox( d.unit, d.unit, linputs=linputs, binputs=binputs, tinputs=tinputs, rinputs=rinputs )
+
+![](img/fulladd_blackbox.png)
+
+See the [555-timer circuit] example below for a more complete usage of blackbox().
+
+
 -----------------------------------------------------------
 
 ## Examples
@@ -526,6 +560,61 @@ A slightly more complicated logic gate example. Note the use of the LaTeX comman
         d.draw()
 
 ![](img/JK.png)
+
+
+### 555-timer circuit
+
+This example shows use of the blackbox() function to draw a 555-timer integrated circuit.
+
+        d = schem.Drawing()
+        left = {'cnt':3,
+                'labels':['TRG','THR','DIS'],
+                'plabels':['2','6','7'],
+                'loc':[.2,.35,.75],
+                'lblsize':12,
+                }
+        right = {'cnt':2,
+                 'labels':['CTL','OUT'],
+                 'plabels':['5','3'],
+                'lblsize':12,
+                 }
+        top = {'cnt':2,
+               'labels':['RST','Vcc'],
+               'plabels':['4','8'],
+               'lblsize':12,
+               }
+        bot = {'cnt':1,
+               'labels':['GND'],
+               'plabels':['1'],
+               'lblsize':12,
+                }
+
+        IC555 = e.blackbox(d.unit*1.5, d.unit*2.25, 
+                           linputs=left, rinputs=right, tinputs=top, binputs=bot,
+                           leadlen=1, mainlabel='555' )
+        T = d.add( IC555 )
+        BOT = d.add( e.GND, xy=T.GND )  # Note: Anchors named same as pin labels
+        d.add( e.DOT )
+        d.add( e.RES, endpts=[T.DIS, T.THR], label='Rb' )
+        d.add( e.RES, d='up', xy=T.DIS, label='Ra', rgtlabel='+Vcc' )
+        d.add( e.LINE, endpts=[T.THR, T.TRG])
+        d.add( e.CAP, xy=T.TRG, d='down', toy=BOT.start, label='C', l=d.unit/2 )
+        d.add( e.LINE, d='right', tox=BOT.start )
+        d.add( e.CAP, d='down', xy=T.CTL, toy=BOT.start, botlabel='.01$\mu$F' )
+        d.add( e.DOT )
+        d.add( e.DOT, xy=T.DIS )
+        d.add( e.DOT, xy=T.THR )
+        d.add( e.DOT, xy=T.TRG )
+        d.add( e.LINE, endpts=[T.RST,T.Vcc] )
+        d.add( e.DOT )
+        d.add( e.LINE, d='up', l=d.unit/4, rgtlabel='+Vcc' )
+        d.add( e.RES, xy=T.OUT, d='right', label='330')
+        d.add( e.LED, flip=True, d='down', toy=BOT.start )
+        d.add( e.LINE, d='left', tox=BOT.start )
+        d.draw()
+
+![](img/555blinker.png)
+
 
 -----------------------------------------------------------
 

@@ -132,7 +132,9 @@ A label string can be added to the element using the 'label' argument (default p
             Add a string label to the element.
         lblofst : offset between text label and element
 
-A label can also be defined as a list of strings. In this case, the strings will be evenly spaced along the length of the element. This is useful for labeling polarities, for example label=['+','$v_o$','-'].
+A label can also be defined as a list of strings. In this case, the strings will be evenly spaced along the length of the element. This is useful for labeling polarities, for example 
+        
+        label=['+','$v_o$','-'].
 
 Labels can also be added to an element after it is added to the drawing using the element's add_label() method. This allows arbitrary positions and infinite number of labels.
 
@@ -215,11 +217,17 @@ Grounds don't move the current drawing position.
 
 ![](img/switches.png)
 
+![](img/buttons.png)
+
 ### Potentiometer
 
 Potentiometer is defined with one additional anchor for the 'tap'.
 
 ![](img/pot.png)
+
+### Speaker
+
+![](img/speaker.png)
 
 ### Opamp
 
@@ -237,6 +245,8 @@ Transistors also define three anchors as shown below.
 Types of transistors are shown below:
 
 ![](img/bjt.png)
+
+![](img/fet.png)
 
 ### Connecting elements
 

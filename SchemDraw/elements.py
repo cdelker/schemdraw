@@ -494,6 +494,30 @@ SOURCE_CONT_I = {
                    'end'   : [.25,0] } ]
     }
 
+# Batteries
+_batw = _rh*.75
+_bat1 = _rh*1.5
+_bat2 = _rh*.75
+BAT_CELL = {
+    'name'  : 'BAT_CELL',
+    'paths' : [ [[0,_bat1],[0,-_bat1] ],
+                [[_batw,_bat2],[_batw,-_bat2]],
+                [[0,0],_gap,[_batw,0]]
+              ]
+    }
+
+BATTERY = {
+    'name'  : 'BATTERY',
+    'paths' : [ [[0,_bat1],[0,-_bat1] ],
+                [[_batw,_bat2],[_batw,-_bat2]],
+                [[_batw*2,_bat1],[_batw*2,-_bat1] ],
+                [[_batw*3,_bat2],[_batw*3,-_bat2]],
+                [[0,0],_gap,[_batw*3,0]]
+              ]
+    }
+
+
+
 # Meters
 METER_V = {
     'name'  : 'METER_V',
@@ -649,7 +673,60 @@ SWITCH_SPDT2_CLOSE = {
                    'arrow'  : 'cw' } ]
     }
 
+# Pushbuttons
+BUTTON = {
+    'name'  : 'BUTTON',
+    'paths'  : [ [ [0,0],_gap,[_sw_dot_r,.3],[1-_sw_dot_r,.3],_gap,[.5,.3],[.5,.5],_gap,[1,0] ] ],
+    'shapes' : [ { 'shape'  : 'circle',
+                   'center' : [_sw_dot_r,0],
+                   'radius' : _sw_dot_r },
+                 { 'shape'  : 'circle',
+                   'center' : [1-_sw_dot_r,0],
+                   'radius' : _sw_dot_r } ]
+    }
 
+BUTTON_NC = {
+    'name'  : 'BUTTON_NC',
+    'paths'  : [ [ [0,0],_gap,[_sw_dot_r,-_sw_dot_r-.05],[1-_sw_dot_r,-_sw_dot_r-.05],_gap,[.5,-_sw_dot_r-.05],[.5,_sw_dot_r+.15],_gap,[1,0] ] ],
+    'shapes' : [ { 'shape'  : 'circle',
+                   'center' : [_sw_dot_r,0],
+                   'radius' : _sw_dot_r },
+                 { 'shape'  : 'circle',
+                   'center' : [1-_sw_dot_r,0],
+                   'radius' : _sw_dot_r } ]
+    }
+
+
+# Speakers, bulbs, etc.
+_sph = .5
+SPEAKER = {
+    'name'  : 'SPEAKER',
+    'paths'  : [ [ [0,0],[_rh,0] ],
+                 [ [0,-_sph],[_rh,-_sph]]
+            ],
+    'drop'   : [0,-_sph],
+    'extend' : False,
+    'shapes' : [ { 'shape' : 'poly',
+                   'xy'    : [ [_rh,_sph/2],[_rh,-_sph*1.5],[_rh*2,-_sph*1.5],[_rh*2,_sph/2] ] },
+                 { 'shape' : 'poly',
+                   'xy'    : [ [_rh*2,_sph/2], [_rh*3.5,_sph*1.25],[_rh*3.5,-_sph*2.25],[_rh*2,-_sph*1.5] ],
+                   'closed' : False } ]
+    }
+
+_a = .25
+_b = .7
+_t = _np.linspace(1.4,3.6*_np.pi,100)
+_x = _a*_t - _b*_np.sin(_t)
+_y = _a - _b * _np.cos(_t)
+_x = (_x - _x[0])  # Scale to about the right size
+_x = _x / _x[-1]
+_y = (_y - _y[0]) * .25
+_bulb_path = _np.transpose(_np.vstack((_x,_y)))
+BULB = {
+    'name'  : 'BULB',
+    'base' : SOURCE,
+    'paths': [_bulb_path]
+    }
 
 
 def blackbox( w, h, linputs=None, rinputs=None, tinputs=None, binputs=None, mainlabel='', leadlen=0.5 ):

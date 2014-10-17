@@ -206,8 +206,10 @@ Other:
         ax.autoscale_view(True)  # This autoscales all the shapes too
         xlim = np.array(ax.get_xlim())
         ylim = np.array(ax.get_ylim())
-        xlim = xlim + xlim * .05  # Add a 5% border to pick up lost pixels
-        ylim = ylim + ylim * .05
+        xlim[0] = xlim[0]-.1   # Add a .1 unit border to pick up lost pixels
+        ylim[0] = ylim[0]-.1
+        xlim[1] = xlim[1]+.1
+        ylim[1] = ylim[1]+.1
         ax.set_xlim( xlim )
         ax.set_ylim( ylim )
         w = xlim[1]-xlim[0]

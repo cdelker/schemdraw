@@ -123,6 +123,7 @@ class Drawing():
         self.fontsize = fontsize
         self.font = font
         self.color = color
+        self.lw = 1
 
         # State variables
         self.here = np.array([0,0])
@@ -191,15 +192,20 @@ Other:
             self.here, self.theta = self._state.pop()
 
 
-    def draw(self, showframe=False):
+    def draw(self, ax=None, showframe=False):
         """ Draw the diagram.
+            ax : matplotlib axis to draw to.
             shwoframe : Show the plot frame/axis. Useful for debugging.
         """
 
         mpl.rcParams['font.size'] = self.fontsize
         mpl.rcParams['font.family'] = self.font
 
-        fig, ax = plt.subplots()
+        if ax==None:
+            fig, ax = plt.subplots()
+        else:
+            fig = ax.gcf()
+
         for e in self._elm_list:
             e.draw(ax)
 
@@ -348,6 +354,7 @@ Other:
     move_cur : move the cursor after drawing. Default=True.
     color    : matplotlib color for element. e.g. 'red', '#34a4e6', (.8,0,.8)
     ls       : line style. same as matplotlib: ['-', ':', '--']
+    lw       : line width. same as matplotlib. Default=1
     """
         # Flatten element def with base elements
         self.defn   = elm_def.copy()
@@ -359,6 +366,7 @@ Other:
         self.shapes = self.defn.get( 'shapes', [] )
         self.color  = kwargs.get( 'color', self.defn.get('color', drawing.color ) )
         self.ls     = kwargs.get( 'ls', self.defn.get('ls', '-') )
+        self.lw     = kwargs.get( 'lw', self.defn.get('lw', drawing.lw) )
         totlen      = kwargs.get( 'l', drawing.unit   )
 
         # Determine theta angle of element
@@ -698,7 +706,7 @@ Other:
             showframe : Draw the axis frame. Useful for debugging.
         """
         for path in self.paths:
-            ax.plot( path[:,0], path[:,1], color=self.color, lw=1,
+            ax.plot( path[:,0], path[:,1], color=self.color, lw=self.lw,
                      solid_capstyle='round', ls=self.ls )
 
         for s in self.shapes:

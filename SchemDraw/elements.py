@@ -87,7 +87,12 @@ RES = {
 RES_VAR = {
     'name'  : 'RES_VAR',
     'base'  : RES,
-    'paths' : [ [[.5*_rw,-_rh*3],[5.5*_rw,_rh*3],[4.*_rw,2.5*_rh],_gap,[5.5*_rw,_rh*3],[5.8*_rw,1.9*_rh]] ]
+    'shapes' : [ { 'shape' : 'arrow',
+                   'start' : [1.5*_rw,-_rh*2],
+                   'end'   : [4.5*_rw,_rw*3.5],
+                   'headwidth' : .12,
+                   'headlength' : .2 } ],
+    'paths' : [ [[1.5*_rw,-_rh*2],[4.5*_rw,_rw*3.5]] ]
      }
 
 RBOX = {
@@ -107,21 +112,21 @@ POT = {
     'anchors' : { 'tap' : [_rw*3,_rw*1.5] }
      }
 
-_cap_gap = 0.2
+_cap_gap = 0.18
 CAP = {   # Straight capacitor
     'name'  : 'CAP',
-    'paths'   : [ [[0,0],[0,_rh],[0,-_rh],_gap,[_cap_gap,_rh],[_cap_gap,-_rh],[_cap_gap,0]] ],
+    'paths'   : [ [[0,0],_gap,[0,_rh],[0,-_rh],_gap,[_cap_gap,_rh],[_cap_gap,-_rh],_gap,[_cap_gap,0]] ],
     }
 
 CAP_P = {   # Polarized
     'name'  : 'CAP_P',
     'base'  : CAP,
-    'labels' : [ {'label':'+', 'pos':[-_cap_gap,_cap_gap]} ]
+    'labels' : [ {'label':'+', 'pos':[-_cap_gap*1.2,_cap_gap]} ]
     }
 
 CAP2 = {  # Curved capacitor
     'name'  : 'CAP2',
-    'paths'   : [ [[0,0],[0,_rh],[0,-_rh],_gap,[_cap_gap,0]] ],
+    'paths'   : [ [[0,0],_gap,[0,_rh],[0,-_rh],_gap,[_cap_gap,0]] ],
     'shapes'  : [ { 'shape'  : 'arc',
                     'center' :[(_cap_gap*1.5),0],
                     'theta1' : 120,
@@ -133,9 +138,17 @@ CAP2 = {  # Curved capacitor
 CAP2_P = {   # Polarized
     'name'  : 'CAP2_P',
     'base'  : CAP2,
-    'labels' : [ {'label':'+', 'pos':[-_cap_gap,_cap_gap]} ]
+    'labels' : [ {'label':'+', 'pos':[-_cap_gap*1.2,_cap_gap]} ]
     }
 
+_cap_gap = 0.2
+XTAL = {   # Crystal
+    'name'  : 'XTAL',
+    'paths'   : [ [[0,0],_gap,[0,_rh],[0,-_rh],_gap,
+                   [_cap_gap/2,_rh],[_cap_gap/2,-_rh],[_cap_gap*1.5,-_rh],[_cap_gap*1.5,_rh],[_cap_gap/2,_rh],_gap,
+                   [_cap_gap*2,_rh],[_cap_gap*2,-_rh],_gap,[_cap_gap*2,0]],
+                ],
+    }
 
 DIODE = {
     'name'  : 'DIODE',
@@ -154,20 +167,104 @@ DIODE_F = {
                     'fill' : True } ]
     }
 
+_sd = .1
+SCHOTTKY = {  # Schottky diode
+    'name' : 'SCHOTTKY',
+    'base' : DIODE,
+    'paths' : [ [[_rh*1.4,_rh], [_rh*1.4-_sd,_rh],  [_rh*1.4-_sd,_rh-_sd]],
+                [[_rh*1.4,-_rh], [_rh*1.4+_sd,-_rh], [_rh*1.4+_sd,-_rh+_sd]] ]
+}
+
+SCHOTTKY_F = {
+    'name' : 'SCHOTTKY_F',
+    'base' : DIODE_F,
+    'paths' : [ [[_rh*1.4,_rh], [_rh*1.4-_sd,_rh],  [_rh*1.4-_sd,_rh-_sd]],
+                [[_rh*1.4,-_rh], [_rh*1.4+_sd,-_rh], [_rh*1.4+_sd,-_rh+_sd]] ]
+}
+
+ZENER = {  # Zener diode
+    'name' : 'ZENER',
+    'base' : DIODE,
+    'paths' : [ [[_rh*1.4,_rh],  [_rh*1.4+_sd,_rh+_sd]],
+                [[_rh*1.4,-_rh], [_rh*1.4-_sd,-_rh-_sd]] ]
+}
+
+ZENER_F = {
+    'name' : 'ZENER_F',
+    'base' : DIODE_F,
+    'paths' : [ [[_rh*1.4,_rh],  [_rh*1.4+_sd,_rh+_sd]],
+                [[_rh*1.4,-_rh], [_rh*1.4-_sd,-_rh-_sd]] ]
+}
+
 LED = {
     'name':'LED',
     'base':DIODE,
+    'paths' : [[[_rh,_rh*1.5],[_rh*2,_rh*3.25]]],  # Duplicate arrow with a path to work around matplotlib autoscale bug.
     'shapes':[ { 'shape':'arrow',
                  'start': [_rh,_rh*1.5],
                  'end'  : [_rh*2,_rh*3.25],
-                   'headwidth' : .17,
+                   'headwidth' : .12,
                    'headlength' : .2 },
-
                { 'shape':'arrow',
                  'start': [_rh*.1,_rh*1.5],
                  'end'  : [_rh*1.1,_rh*3.25],
-                   'headwidth' : .17,
+                   'headwidth' : .12,
                    'headlength' : .2 }, ]
+    }
+
+# LED with squiggle light
+x = _np.linspace(-1,1)
+y = -x*(x-.7)*(x+.7)/2 + _rh*2.5
+x = _np.linspace(_rh*.75,_rh*1.25)
+theta = 20
+c = _np.cos( _np.radians(theta) )
+s = _np.sin( _np.radians(theta) )
+m = _np.array( [[c,s],[-s,c]] )
+p = _np.transpose(_np.vstack((x,y)))
+p = _np.dot( p, m )
+p2 = _np.transpose(_np.vstack((x-.2,y)))
+p2 = _np.dot( p2, m )
+LED2 = {
+    'name'   : 'LED2',
+    'base'   : DIODE,
+    'paths'  : [p,p2],
+    'shapes' : [ {'shape':'arrow',
+                  'start' : p[1],
+                  'end'   : p[0],
+                  'headwidth' : .07,
+                  'headlength' : .08
+                 },
+                 {'shape':'arrow',
+                  'start' : p2[1],
+                  'end'   : p2[0],
+                  'headwidth' : .07,
+                  'headlength' : .08
+                 } ]
+    }
+
+
+_mr = 0.2
+MEMRISTOR = { 
+    'name'  : 'MEMRISTOR',
+    'paths' : [ [[0,_mr*1.25],[_mr*5,_mr*1.25],[_mr*5,_mr*-1.25],[0,_mr*-1.25],[0,_mr*1.25]],
+                [[0,0],[_mr,0],[_mr,-_mr*.75],[_mr*2,-_mr*.75],[_mr*2,_mr*.75],[_mr*3,_mr*.75],[_mr*3,-_mr*.75],[_mr*4,-_mr*.75],[_mr*4,0],[_mr*5,0]],
+              ],
+    'shapes' : [ {'shape':'poly', 
+                  'xy' : [[0,_mr*1.25],[0,-_mr*1.25],[_mr/2,-_mr*1.25],[_mr/2,_mr*1.25] ],
+                  'fill' : True
+                 }
+               ]
+    }
+
+_mrv = .25
+MEMRISTOR2 = { 
+    'name'  : 'MEMRISTOR2',
+    'paths' : [ [[0,0],[0,_mrv],[_mr,_mrv],[_mr,-_mrv],[_mr*2,-_mrv],[_mr*2,_mrv],
+                 [_mr*3,_mrv],[_mr*3,-_mrv],[_mr*4,-_mrv],[_mr*4,_mrv],
+                 [_mr*5,_mrv],[_mr*5,-_mrv],[_mr*6,-_mrv],[_mr*6,0],
+                 [_mr*7,0]],
+
+              ],
     }
 
 
@@ -721,11 +818,11 @@ _y = _a - _b * _np.cos(_t)
 _x = (_x - _x[0])  # Scale to about the right size
 _x = _x / _x[-1]
 _y = (_y - _y[0]) * .25
-_bulb_path = _np.transpose(_np.vstack((_x,_y)))
-BULB = {
-    'name'  : 'BULB',
+_lamp_path = _np.transpose(_np.vstack((_x,_y)))
+LAMP = {
+    'name'  : 'LAMP',
     'base' : SOURCE,
-    'paths': [_bulb_path]
+    'paths': [_lamp_path]
     }
 
 

@@ -7,7 +7,7 @@ SchemDraw is a python package for producing high-quality electrical circuit sche
         d.add( e.RES, label='100K$\Omega$' )
         d.add( e.CAP, d='down', botlabel='0.1$\mu$F' )
         d.draw()
-        d.save( 'schematic.png' )
+        d.save( 'schematic.eps' )
 
 Documentation is available in the docs folder or online:
 http://cdelker.bitbucket.org/SchemDraw/SchemDraw.html

@@ -12,11 +12,19 @@ SchemDraw is a python package for producing high-quality electrical circuit sche
         d.add( e.LINE, to=V1.start )
         d.add( e.GND )
         d.draw()
-        d.save( 'testschematic.png' )
+        d.save( 'testschematic.eps' )
 
-![](img/testschematic.png)
+![](img/testschematic.svg)
 
-Using an IPython Notebook in inline mode is recommended for the easy creation of these diagrams. Note that the images in this document were saved in PNG format for web compatibility. Better quality will be achieved using a vector format such as eps or svg.
+Using an IPython Notebook in inline mode is recommended for the easy creation of these diagrams. 
+For best results, change the inline format to SVG with the following in the first notebook cell.
+Images will look best when saved in a vector format, such as svg, eps, or pdf.
+
+        %matplotlib inline
+        %config InlineBackend.figure_format = 'svg'
+
+**Safari Users:** Due to a bug in the Safari browser (at least to version 8.0.5) not all the lines in SVG images are rendered!
+Please use Chrome, Firefox, or another browser. The bug is also present in the Mac OS Finder previews.
 
 
 ## Installation
@@ -98,7 +106,7 @@ If only a starting coordinate is given, the direction defaults to the last eleme
 
 Some elements define extra anchors. These are positions that can be used to position this element, or other elements connecting to it. For example, an opamp defines three anchor points: in1, in2, and out.
 
-![](img/opamp.png)
+![](img/opamp.svg)
 
 When placing the opamp, it can then be located with respect to the correct terminal. The following will place an opamp with in2 connected to the endpoint of the resistor:
 
@@ -109,7 +117,7 @@ Then, to place a resistor on the output
 
         d.add( e.RES, xy=op.out, label='Ro' )
 
-![](img/opamp_anchor.png)
+![](img/opamp_anchor.svg)
 
 All elements have at least three anchors: 'start', 'end', and 'center'.
 
@@ -143,7 +151,7 @@ Labels can also be added to an element after it is added to the drawing using th
         D1.add_label( 'a', loc='lft' )
         D1.add_label( 'b', loc='rgt' )
 
-![](img/label_positions.png)
+![](img/label_positions.svg)
 
 The add_label() method takes the following arguments:
 
@@ -199,66 +207,66 @@ A number of common elements are predefined in the SchemDraw.elements module.
 
 ### 2-Terminal Elements
 
-![](img/2term.png)
+![](img/2term.svg)
 
 ### Sources and meters
 
-![](img/sources.png)
+![](img/sources.svg)
 
-![](img/meters.png)
+![](img/meters.svg)
 
 ### Grounds
 
 Grounds don't move the current drawing position.
 
-![](img/grounds.png)
+![](img/grounds.svg)
 
 ### Switches
 
-![](img/switches.png)
+![](img/switches.svg)
 
-![](img/buttons.png)
+![](img/buttons.svg)
 
 ### Potentiometer
 
 Potentiometer is defined with one additional anchor for the 'tap'.
 
-![](img/pot.png)
+![](img/pot.svg)
 
 ### Speaker
 
-![](img/speaker.png)
+![](img/speaker.svg)
 
 ### Opamp
 
 An opamp defines three anchors, in1, in2, and out.
 
-![](img/opamp.png)
+![](img/opamp.svg)
 
 ### Transistors
 
 Transistors also define three anchors as shown below.
 
-![](img/bjt_anchors.png)
-![](img/fet_anchors.png)
+![](img/bjt_anchors.svg)
+![](img/fet_anchors.svg)
 
 Types of transistors are shown below:
 
-![](img/bjt.png)
+![](img/bjt.svg)
 
-![](img/fet.png)
+![](img/fet.svg)
 
 ### Connecting elements
 
 Elements are connected with lines and dot elements. Dots don't change the current drawing position.
 
-![](img/connectors.png)
+![](img/connectors.svg)
 
 ### Label element
 
 The LABEL element can be used to add a label anywhere. The GAP_LABEL is like an "invisible" element, which can be used for marking the voltage between output terminals.
 
-![](img/label.png)
+![](img/label.svg)
 
 
 ### Current Arrow
@@ -275,7 +283,7 @@ For example:
         R1 = d.add( e.RES )
         d.labelI( R1, '10mA' )
 
-![](img/labeli.png)
+![](img/labeli.svg)
 
 
 ### Loop currents
@@ -295,7 +303,7 @@ For example:
         L1 = d.add( e.INDUCTOR, d='up' )
         d.loopI( [R1, C1, D1, L1], d='cw', label='$I_1$' )
 
-![](img/loopi.png)
+![](img/loopi.svg)
 
 
 
@@ -307,7 +315,7 @@ Logic gates can be drawn by including the logic module:
 
 Typical AND, OR, NAND, NOR, XOR, XNOR, and NOT gates with 2, 3, or 4 inputs are predefined. Anchors are defined as 'in1', 'in2', etc for each input, and 'out' for the output.
 
-![](img/gates.png)
+![](img/gates.svg)
 
 Two functions are available to generate more complicated, multi-input gates. The andgate() method is defined:
         inputs    : number of inputs to gate.
@@ -324,7 +332,7 @@ As an example, the following line generates a 3-input NAND gate with one input p
 
         l.andgate(inputs=3, nand=True, inputnots=[1] )
 
-![](img/and_inputnot.png)
+![](img/and_inputnot.svg)
 
 
 ### Black-box elements
@@ -355,7 +363,7 @@ For example, a full-adder box can be made with inputs on all sides:
         binputs = {'cnt':1, 'labels':['$s$']}
         B = e.blackbox( d.unit, d.unit, linputs=linputs, binputs=binputs, tinputs=tinputs, rinputs=rinputs )
 
-![](img/fulladd_blackbox.png)
+![](img/fulladd_blackbox.svg)
 
 See the [555-timer circuit] example below for a more complete usage of blackbox().
 
@@ -398,7 +406,7 @@ This example demonstrates use of push() and pop() and using 'tox' and 'toy' keyw
         d.add( e.DOT, label='b')
         d.draw()
 
-![](img/ex01.png)
+![](img/ex01.svg)
 
 
 ### Capacitor discharging
@@ -416,7 +424,7 @@ Shows how to connect to a switch element anchors.
         d.add( e.DOT )
         d.draw()
 
-![](img/cap-charge.png)
+![](img/cap-charge.svg)
 
 
 ### Inverting Opamp
@@ -441,7 +449,7 @@ Shows how to connect to an opamp
         d.add( e.LINE, d='right', l=d.unit/4, rgtlabel='$v_{o}$' )
         d.draw()
 
-![](img/inv_opamp.png)
+![](img/inv_opamp.svg)
 
 
 ### Capacitor network
@@ -461,7 +469,7 @@ Another good problem to torture ECE201 students. Shows how to place an element u
         C7.add_label( '5.6nF', loc='center', ofst=[-.3,-.1], align=('right','bottom') )
         d.draw()
 
-![](img/cap-net.png)
+![](img/cap-net.svg)
 
 
 ### S-R Latch
@@ -505,7 +513,7 @@ Demonstrates using transistors
         d.add( e.LINE, xy=TOP.center, d='up', l=d.unit/8, rgtlabel='Vcc' )
         d.draw()
 
-![](img/SR-Latch.png)
+![](img/SR-Latch.svg)
 
 ### Half-adder
 
@@ -524,7 +532,7 @@ Demonstrate using logic gates
         d.add( e.LINE, to=C.in2 )
         d.draw()
 
-![](img/half_add.png)
+![](img/half_add.svg)
 
 ### JK Flip-flop
 
@@ -569,7 +577,7 @@ A slightly more complicated logic gate example. Note the use of the LaTeX comman
         d.add( e.LINE, d='left', xy=C.center, l=d.unit/4, lftlabel='$CLK$' )
         d.draw()
 
-![](img/JK.png)
+![](img/JK.svg)
 
 
 ### 555-timer circuit
@@ -623,7 +631,7 @@ This example shows use of the blackbox() function to draw a 555-timer integrated
         d.add( e.LINE, d='left', tox=BOT.start )
         d.draw()
 
-![](img/555blinker.png)
+![](img/555blinker.svg)
 
 
 -----------------------------------------------------------
@@ -703,3 +711,19 @@ Then define the element dictionary. It's just a SOURCE element with an additiona
             'base'  : SOURCE,
             'paths' : [ sin_path ]
             }
+
+
+-----------------------------------------------------------
+
+## XKCD Mode!
+
+For something fun, you can turn on Matplotlib's XKCD mode to get "hand-drawn" schematics. (May not work in all image formats or cases...)
+
+        import matplotlib.pyplot as plt
+        plt.xkcd()    
+        d = schem.Drawing()
+        ...
+        d.draw()
+
+![](img/ex_xkcd.png)
+

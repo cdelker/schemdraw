@@ -106,7 +106,7 @@ def group_elements( drawing, anchors={} ):
 # Main drawing class
 #--------------------------------------------------------------------
 class Drawing():
-    def __init__(self, unit=3.0, inches_per_unit=0.5, txtofst=0.1, fontsize=16, font='sans-serif', color='black'):
+    def __init__(self, unit=3.0, inches_per_unit=0.5, txtofst=0.1, fontsize=16, font='sans-serif', color='black', lw=1.5):
         """ Set up a new circuit drawing.
     unit : Full length of a resistor element in matplotlib plot units.
            Inner portion of resistor is length 1.
@@ -114,6 +114,8 @@ class Drawing():
     txtofst  : Default distance from element to text label
     fontsize : Default font size
     font     : matplotlib font-family
+    color    : default color for elements
+    lw       : default line width
     """
 
         # Default values
@@ -123,7 +125,7 @@ class Drawing():
         self.fontsize = fontsize
         self.font = font
         self.color = color
-        self.lw = 1
+        self.lw = lw
 
         # State variables
         self.here = np.array([0,0])
@@ -204,12 +206,13 @@ Other:
         if ax==None:
             fig, ax = plt.subplots()
         else:
-            fig = ax.gcf()
+            fig = ax.get_figure()
 
         for e in self._elm_list:
             e.draw(ax)
 
         ax.autoscale_view(True)  # This autoscales all the shapes too
+        # NOTE: arrows don't seem to be included in autoscale!
         xlim = np.array(ax.get_xlim())
         ylim = np.array(ax.get_ylim())
         xlim[0] = xlim[0]-.1   # Add a .1 unit border to pick up lost pixels
@@ -234,7 +237,6 @@ Other:
         # Grow the figure size so that elements are always the same
         # Do after show() because it messes with size.
         ax.get_figure().set_size_inches( self.inches_per_unit*w, self.inches_per_unit*h )
-
 
 
     def save(self, fname, transparent=True, dpi=72 ):
@@ -717,7 +719,7 @@ Other:
                 fill = s.get('fill', False)
                 fillcolor = s.get('fillcolor', self.color)
                 circ = plt.Circle( xy=xy, radius=rad, ec=self.color,
-                                   fc=fillcolor, fill=fill, zorder=3 )
+                                   fc=fillcolor, fill=fill, zorder=3, lw=self.lw )
                 ax.add_patch(circ)
             elif s.get('shape') == 'poly':
                 xy = np.array(s.get('xy', [[0,0]]))
@@ -726,7 +728,7 @@ Other:
                 fill = s.get('fill', False)
                 fillcolor = s.get('fillcolor', self.color)
                 poly = plt.Polygon( xy=xy, closed=closed, ec=self.color,
-                                    fc=fillcolor, fill=fill, zorder=3 )
+                                    fc=fillcolor, fill=fill, zorder=3, lw=self.lw )
                 ax.add_patch(poly)
             elif s.get('shape') == 'arc':
                 xy = np.array(s.get('center', [0,0] ) )
@@ -740,7 +742,7 @@ Other:
 
                 angle = s.get('angle', self.theta )
                 arc = Arc( xy, width=w, height=h, theta1=th1,
-                           theta2=th2, angle=angle, color=self.color )
+                           theta2=th2, angle=angle, color=self.color, lw=self.lw )
                 ax.add_patch(arc)
 
                 # Add an arrowhead to the arc
@@ -777,7 +779,7 @@ Other:
                 hl   = s.get('headlength', .2 )
                 ax.arrow(start[0], start[1], end[0]-start[0], end[1]-start[1],
                          head_width=hw, head_length=hl,
-                         length_includes_head=True, color=self.color)
+                         length_includes_head=True, color=self.color, lw=self.lw)
 
         for label, loc, align, size in self.strs:
             loc = self.translate( np.array(loc) )

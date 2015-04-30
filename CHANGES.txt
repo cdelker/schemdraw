@@ -13,3 +13,12 @@ v0.1.4, 09/30/2014
     - Add blackbox() function to generate box elements with arbitrary inputs
     - Allow element definition to specify label alignment
     - Added linestyle to element kwargs and definition
+
+v0.2.0 04/29/2015
+    - Added elements: 
+      BATTERY, BAT_CELL, SPEAKER, BUTTON, BUTTON_NC, XTAL, MEMRISTOR,
+      SCHOTTKY, ZENER, LED2
+    - Added default line width argument to drawing() class. Default width is now 1.5.
+    - Converted documentation to use all vector-based images
+    - Added XKCD-mode example
+    

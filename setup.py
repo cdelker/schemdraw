@@ -3,7 +3,7 @@ from distutils.core import setup
 setup(
     name = 'SchemDraw',
     packages = ['SchemDraw'],
-    version = '0.1.4',
+    version = '0.2.0',
     description = 'Electrical circuit schematic drawing',
     author = 'Collin J. Delker',
     author_email = 'developer@collindelker.com',
@@ -14,7 +14,7 @@ setup(
     'Programming Language :: Python',
     'Programming Language :: Python :: 2',
     'Programming Language :: Python :: 3',
-    'Development Status :: 3 - Alpha',
+    'Development Status :: 4 - Beta',
     'License :: OSI Approved :: MIT License',
     'Operating System :: OS Independent',
     'Intended Audience :: Education',

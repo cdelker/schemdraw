@@ -53,7 +53,11 @@ def _merge_elements( elm_def ):
         elm_def['paths']   = elm_def.get('paths',[] ) + base_elm.get( 'paths',  [] )
         elm_def['labels']  = elm_def.get('labels',[]) + base_elm.get( 'labels', [] )
         elm_def['shapes']  = elm_def.get('shapes',[]) + base_elm.get( 'shapes', [] )
-        elm_def['anchors'] = dict(list(elm_def.get('anchors',{}).items()) + list(base_elm.get( 'anchors', {} ).items()))
+        
+        # New anchors with same name should overwrite old
+        d = base_elm.get('anchors',{}).copy()
+        d.update(elm_def.get('anchors',{}))
+        elm_def['anchors'] = d
         
         for i in base_elm:
             # Everything that's not a list. New key/values overwrite old.

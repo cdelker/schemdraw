@@ -198,10 +198,11 @@ Other:
             self.here, self.theta = self._state.pop()
 
 
-    def draw(self, ax=None, showframe=False):
+    def draw(self, ax=None, showframe=False, showplot=True):
         """ Draw the diagram.
             ax : matplotlib axis to draw to.
             shwoframe : Show the plot frame/axis. Useful for debugging.
+            showplot : Show the plot in matplotlib window in non-interactive mode.
         """
 
         mpl.rcParams['font.size'] = self.fontsize
@@ -235,7 +236,7 @@ Other:
 
         self.ax = ax
         self.fig = ax.get_figure()
-        if not plt.isinteractive():
+        if not plt.isinteractive() and showplot:
             plt.show()
 
         # Grow the figure size so that elements are always the same

@@ -100,6 +100,30 @@ L56.055 94.595" style="fill:none;stroke:#000000;stroke-linejoin:miter;stroke-wid
     <!-- 10V -->
     <defs>
      <path d="
+M12.4062 8.29688
+L28.5156 8.29688
+L28.5156 63.9219
+L10.9844 60.4062
+L10.9844 69.3906
+L28.4219 72.9062
+L38.2812 72.9062
+L38.2812 8.29688
+L54.3906 8.29688
+L54.3906 0
+L12.4062 0
+z
+" id="BitstreamVeraSans-Roman-31"/>
+     <path d="
+M28.6094 0
+L0.78125 72.9062
+L11.0781 72.9062
+L34.1875 11.5312
+L57.3281 72.9062
+L67.5781 72.9062
+L39.7969 0
+z
+" id="BitstreamVeraSans-Roman-56"/>
+     <path d="
 M31.7812 66.4062
 Q24.1719 66.4062 20.3281 58.9062
 Q16.5 51.4219 16.5 36.375
@@ -118,30 +142,6 @@ Q19.5312 -1.42188 13.0625 8.26562
 Q6.59375 17.9688 6.59375 36.375
 Q6.59375 54.8281 13.0625 64.5156
 Q19.5312 74.2188 31.7812 74.2188" id="BitstreamVeraSans-Roman-30"/>
-     <path d="
-M28.6094 0
-L0.78125 72.9062
-L11.0781 72.9062
-L34.1875 11.5312
-L57.3281 72.9062
-L67.5781 72.9062
-L39.7969 0
-z
-" id="BitstreamVeraSans-Roman-56"/>
-     <path d="
-M12.4062 8.29688
-L28.5156 8.29688
-L28.5156 63.9219
-L10.9844 60.4062
-L10.9844 69.3906
-L28.4219 72.9062
-L38.2812 72.9062
-L38.2812 8.29688
-L54.3906 8.29688
-L54.3906 0
-L12.4062 0
-z
-" id="BitstreamVeraSans-Roman-31"/>
     </defs>
     <g transform="translate(7.2 83.71)scale(0.16 -0.16)">
      <use xlink:href="#BitstreamVeraSans-Roman-31"/>
@@ -229,13 +229,6 @@ Q44.7031 6.09375 48.2031 6.09375
 z
 " id="STIXNonUnicode-Regular-e1a1"/>
      <path d="
-M10.6875 12.4062
-L21 12.4062
-L21 0
-L10.6875 0
-z
-" id="BitstreamVeraSans-Roman-2e"/>
-     <path d="
 M9.8125 72.9062
 L51.7031 72.9062
 L51.7031 64.5938
@@ -248,6 +241,13 @@ L19.6719 0
 L9.8125 0
 z
 " id="BitstreamVeraSans-Roman-46"/>
+     <path d="
+M10.6875 12.4062
+L21 12.4062
+L21 0
+L10.6875 0
+z
+" id="BitstreamVeraSans-Roman-2e"/>
     </defs>
     <g transform="translate(164.595 83.535)scale(0.16 -0.16)">
      <use transform="translate(0.0 0.78125)" xlink:href="#BitstreamVeraSans-Roman-30"/>

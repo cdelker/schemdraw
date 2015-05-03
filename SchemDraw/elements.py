@@ -466,18 +466,22 @@ BJT_NPN = {
     'base' : BJT,
     'shapes' : [ { 'shape' : 'arrow',
                    'start' : [_bjt_v,-_bjt_a],
-                   'end'   : [_bjt_emx,-_bjt_emy] }  ]
+                   'end'   : [_bjt_emx,-_bjt_emy],
+                   'headwidth' : 0.2
+                    }  ]
     }
 
 BJT_PNP = {
     'name'  : 'BJT_PNP',
     'base' : BJT,
     'shapes' : [ { 'shape' : 'arrow',
-                   'end'    : [_bjt_v,_bjt_a],
-                   'start'   : [_bjt_emx,_bjt_emy] } ],
+                   'end'   : [_bjt_v,_bjt_a],
+                   'start' : [_bjt_emx,_bjt_emy],
+                   'headwidth' : 0.2
+                    } ],
     'anchors' : { 'base'      : [0, 0],
-                  'emitter' : [_bjt_emx,_bjt_emy+_bjt_a],
-                  'collector'   : [_bjt_emx,-_bjt_emy-_bjt_a] }
+                  'emitter'   : [_bjt_emx,_bjt_emy+_bjt_a],
+                  'collector' : [_bjt_emx,-_bjt_emy-_bjt_a] }
      }
 
 BJT_NPN_C = {
@@ -495,6 +499,15 @@ BJT_PNP_C = {
                    'center' : [_bjt_r,0],
                    'radius' : _bjt_r  }]
     }
+
+# BJT's with two collectors
+_bjt_2c_dy = -.25
+BJT_PNP_2C = {
+    'name' : 'BJT_PNP_2C',
+    'base' : BJT_PNP,
+    'paths' : [ [[_bjt_v,-_bjt_a-_bjt_2c_dy],[_bjt_emx,-_bjt_emy-_bjt_2c_dy]] ],
+    'anchors' : {'C2' : [_bjt_emx,-_bjt_emy-_bjt_2c_dy] }
+}
 
 # Inductor without spiraling
 _ind_w = .25

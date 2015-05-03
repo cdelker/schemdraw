@@ -21,4 +21,9 @@ v0.2.0 04/29/2015
     - Added default line width argument to drawing() class. Default width is now 1.5.
     - Converted documentation to use all vector-based images
     - Added XKCD-mode example
-    
+
+v0.2.1 05/03/2015
+    - Fixed anchor names when element overwrites base anchor, such as BJT_PNP.
+    - Added showplot keyword to draw() for non-interactive mode.
+    - Added 2-collector BJT.
+    - Documentation: added gallery of schematics.

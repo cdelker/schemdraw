@@ -15,19 +15,24 @@
 </code></pre>
 
 <figure>
-<img src="img/testschematic.svg" alt="" />
+<img src="img/testschematic.png" alt="" />
 <figcaption></figcaption></figure>
 
+<h2 id="gallery">Gallery</h2>
+
+<p>A <a href="gallery.html">gallery of circuits</a> is here, in addition to the examples on this page.</p>
+
+<h2 id="usageinipython">Usage in iPython</h2>
+
 <p>Using an IPython Notebook in inline mode is recommended for the easy creation of these diagrams.
-For best results, change the inline format to SVG with the following in the first notebook cell.
 Images will look best when saved in a vector format, such as svg, eps, or pdf.</p>
 
 <pre><code>    %matplotlib inline
     %config InlineBackend.figure_format = 'svg'
 </code></pre>
 
-<p><strong>Safari Users:</strong> Due to a bug in the Safari browser (at least to version 8.0.5) not all the lines in SVG images are rendered!
-Please use Chrome, Firefox, or another browser. The bug is also present in the Mac OS Finder previews.</p>
+<p><strong>Safari Users:</strong> Due to a bug in the Safari browser (at least to version 8.0.5) not all the lines in svg images are rendered!
+Please use Chrome, Firefox, or another browser, or use png for inline image previews. The bug is also present in the Mac OS Finder previews.</p>
 
 <h2 id="installation">Installation</h2>
 
@@ -111,7 +116,7 @@ Please use Chrome, Firefox, or another browser. The bug is also present in the M
 <p>Some elements define extra anchors. These are positions that can be used to position this element, or other elements connecting to it. For example, an opamp defines three anchor points: in1, in2, and out.</p>
 
 <figure>
-<img src="img/opamp.svg" alt="" />
+<img src="img/opamp.png" alt="" />
 <figcaption></figcaption></figure>
 
 <p>When placing the opamp, it can then be located with respect to the correct terminal. The following will place an opamp with in2 connected to the endpoint of the resistor:</p>
@@ -126,7 +131,7 @@ Please use Chrome, Firefox, or another browser. The bug is also present in the M
 </code></pre>
 
 <figure>
-<img src="img/opamp_anchor.svg" alt="" />
+<img src="img/opamp_anchor.png" alt="" />
 <figcaption></figcaption></figure>
 
 <p>All elements have at least three anchors: &#8216;start&#8217;, &#8216;end&#8217;, and &#8216;center&#8217;.</p>
@@ -164,7 +169,7 @@ Please use Chrome, Firefox, or another browser. The bug is also present in the M
 </code></pre>
 
 <figure>
-<img src="img/label_positions.svg" alt="" />
+<img src="img/label_positions.png" alt="" />
 <figcaption></figcaption></figure>
 
 <p>The add_label() method takes the following arguments:</p>
@@ -222,17 +227,17 @@ Please use Chrome, Firefox, or another browser. The bug is also present in the M
 <h3 id="2-terminalelements">2-Terminal Elements</h3>
 
 <figure>
-<img src="img/2term.svg" alt="" />
+<img src="img/2term.png" alt="" />
 <figcaption></figcaption></figure>
 
 <h3 id="sourcesandmeters">Sources and meters</h3>
 
 <figure>
-<img src="img/sources.svg" alt="" />
+<img src="img/sources.png" alt="" />
 <figcaption></figcaption></figure>
 
 <figure>
-<img src="img/meters.svg" alt="" />
+<img src="img/meters.png" alt="" />
 <figcaption></figcaption></figure>
 
 <h3 id="grounds">Grounds</h3>
@@ -240,17 +245,17 @@ Please use Chrome, Firefox, or another browser. The bug is also present in the M
 <p>Grounds don&#8217;t move the current drawing position.</p>
 
 <figure>
-<img src="img/grounds.svg" alt="" />
+<img src="img/grounds.png" alt="" />
 <figcaption></figcaption></figure>
 
 <h3 id="switches">Switches</h3>
 
 <figure>
-<img src="img/switches.svg" alt="" />
+<img src="img/switches.png" alt="" />
 <figcaption></figcaption></figure>
 
 <figure>
-<img src="img/buttons.svg" alt="" />
+<img src="img/buttons.png" alt="" />
 <figcaption></figcaption></figure>
 
 <h3 id="potentiometer">Potentiometer</h3>
@@ -258,13 +263,13 @@ Please use Chrome, Firefox, or another browser. The bug is also present in the M
 <p>Potentiometer is defined with one additional anchor for the &#8216;tap&#8217;.</p>
 
 <figure>
-<img src="img/pot.svg" alt="" />
+<img src="img/pot.png" alt="" />
 <figcaption></figcaption></figure>
 
 <h3 id="speaker">Speaker</h3>
 
 <figure>
-<img src="img/speaker.svg" alt="" />
+<img src="img/speaker.png" alt="" />
 <figcaption></figcaption></figure>
 
 <h3 id="opamp">Opamp</h3>
@@ -272,24 +277,24 @@ Please use Chrome, Firefox, or another browser. The bug is also present in the M
 <p>An opamp defines three anchors, in1, in2, and out.</p>
 
 <figure>
-<img src="img/opamp.svg" alt="" />
+<img src="img/opamp.png" alt="" />
 <figcaption></figcaption></figure>
 
 <h3 id="transistors">Transistors</h3>
 
 <p>Transistors also define three anchors as shown below.</p>
 
-<p><img src="img/bjt_anchors.svg" alt="" />
-<img src="img/fet_anchors.svg" alt="" /></p>
+<p><img src="img/bjt_anchors.png" alt="" />
+<img src="img/fet_anchors.png" alt="" /></p>
 
 <p>Types of transistors are shown below:</p>
 
 <figure>
-<img src="img/bjt.svg" alt="" />
+<img src="img/bjt.png" alt="" />
 <figcaption></figcaption></figure>
 
 <figure>
-<img src="img/fet.svg" alt="" />
+<img src="img/fet.png" alt="" />
 <figcaption></figcaption></figure>
 
 <h3 id="connectingelements">Connecting elements</h3>
@@ -297,7 +302,7 @@ Please use Chrome, Firefox, or another browser. The bug is also present in the M
 <p>Elements are connected with lines and dot elements. Dots don&#8217;t change the current drawing position.</p>
 
 <figure>
-<img src="img/connectors.svg" alt="" />
+<img src="img/connectors.png" alt="" />
 <figcaption></figcaption></figure>
 
 <h3 id="labelelement">Label element</h3>
@@ -305,7 +310,7 @@ Please use Chrome, Firefox, or another browser. The bug is also present in the M
 <p>The LABEL element can be used to add a label anywhere. The GAP_LABEL is like an &#8220;invisible&#8221; element, which can be used for marking the voltage between output terminals.</p>
 
 <figure>
-<img src="img/label.svg" alt="" />
+<img src="img/label.png" alt="" />
 <figcaption></figcaption></figure>
 
 <h3 id="currentarrow">Current Arrow</h3>
@@ -324,7 +329,7 @@ Please use Chrome, Firefox, or another browser. The bug is also present in the M
 </code></pre>
 
 <figure>
-<img src="img/labeli.svg" alt="" />
+<img src="img/labeli.png" alt="" />
 <figcaption></figcaption></figure>
 
 <h3 id="loopcurrents">Loop currents</h3>
@@ -346,7 +351,7 @@ Please use Chrome, Firefox, or another browser. The bug is also present in the M
 </code></pre>
 
 <figure>
-<img src="img/loopi.svg" alt="" />
+<img src="img/loopi.png" alt="" />
 <figcaption></figcaption></figure>
 
 <h3 id="logicgates">Logic Gates</h3>
@@ -359,7 +364,7 @@ Please use Chrome, Firefox, or another browser. The bug is also present in the M
 <p>Typical AND, OR, NAND, NOR, XOR, XNOR, and NOT gates with 2, 3, or 4 inputs are predefined. Anchors are defined as &#8216;in1&#8217;, &#8216;in2&#8217;, etc for each input, and &#8216;out&#8217; for the output.</p>
 
 <figure>
-<img src="img/gates.svg" alt="" />
+<img src="img/gates.png" alt="" />
 <figcaption></figcaption></figure>
 
 <p>Two functions are available to generate more complicated, multi-input gates. The andgate() method is defined:
@@ -379,7 +384,7 @@ Please use Chrome, Firefox, or another browser. The bug is also present in the M
 </code></pre>
 
 <figure>
-<img src="img/and_inputnot.svg" alt="" />
+<img src="img/and_inputnot.png" alt="" />
 <figcaption></figcaption></figure>
 
 <h3 id="black-boxelements">Black-box elements</h3>
@@ -412,7 +417,7 @@ Please use Chrome, Firefox, or another browser. The bug is also present in the M
 </code></pre>
 
 <figure>
-<img src="img/fulladd_blackbox.svg" alt="" />
+<img src="img/fulladd_blackbox.png" alt="" />
 <figcaption></figcaption></figure>
 
 <p>See the <a href="#555-timercircuit">555-timer circuit</a> example below for a more complete usage of blackbox().</p>
@@ -457,7 +462,7 @@ Please use Chrome, Firefox, or another browser. The bug is also present in the M
 </code></pre>
 
 <figure>
-<img src="img/ex01.svg" alt="" />
+<img src="img/ex01.png" alt="" />
 <figcaption></figcaption></figure>
 
 <h3 id="capacitordischarging">Capacitor discharging</h3>
@@ -477,7 +482,7 @@ Please use Chrome, Firefox, or another browser. The bug is also present in the M
 </code></pre>
 
 <figure>
-<img src="img/cap-charge.svg" alt="" />
+<img src="img/cap-charge.png" alt="" />
 <figcaption></figcaption></figure>
 
 <h3 id="invertingopamp">Inverting Opamp</h3>
@@ -504,7 +509,7 @@ Please use Chrome, Firefox, or another browser. The bug is also present in the M
 </code></pre>
 
 <figure>
-<img src="img/inv_opamp.svg" alt="" />
+<img src="img/inv_opamp.png" alt="" />
 <figcaption></figcaption></figure>
 
 <h3 id="capacitornetwork">Capacitor network</h3>
@@ -526,7 +531,7 @@ Please use Chrome, Firefox, or another browser. The bug is also present in the M
 </code></pre>
 
 <figure>
-<img src="img/cap-net.svg" alt="" />
+<img src="img/cap-net.png" alt="" />
 <figcaption></figcaption></figure>
 
 <h3 id="s-rlatch">S-R Latch</h3>
@@ -572,7 +577,7 @@ Please use Chrome, Firefox, or another browser. The bug is also present in the M
 </code></pre>
 
 <figure>
-<img src="img/SR-Latch.svg" alt="" />
+<img src="img/SR-Latch.png" alt="" />
 <figcaption></figcaption></figure>
 
 <h3 id="half-adder">Half-adder</h3>
@@ -594,7 +599,7 @@ Please use Chrome, Firefox, or another browser. The bug is also present in the M
 </code></pre>
 
 <figure>
-<img src="img/half_add.svg" alt="" />
+<img src="img/half_add.png" alt="" />
 <figcaption></figcaption></figure>
 
 <h3 id="jkflip-flop">JK Flip-flop</h3>
@@ -642,7 +647,7 @@ Please use Chrome, Firefox, or another browser. The bug is also present in the M
 </code></pre>
 
 <figure>
-<img src="img/JK.svg" alt="" />
+<img src="img/JK.png" alt="" />
 <figcaption></figcaption></figure>
 
 <h3 id="555-timercircuit">555-timer circuit</h3>
@@ -698,7 +703,7 @@ Please use Chrome, Firefox, or another browser. The bug is also present in the M
 </code></pre>
 
 <figure>
-<img src="img/555blinker.svg" alt="" />
+<img src="img/555blinker.png" alt="" />
 <figcaption></figcaption></figure>
 
 <hr />

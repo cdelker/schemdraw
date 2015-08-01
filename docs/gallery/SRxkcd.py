@@ -1,8 +1,6 @@
 import matplotlib.pyplot as plt
 plt.xkcd()
 
-import sys
-sys.path.insert(0, '../../')
 import SchemDraw as schem
 import SchemDraw.elements as e
 

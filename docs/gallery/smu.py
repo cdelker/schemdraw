@@ -1,6 +1,4 @@
 # Another example of grouping elements together. This one defines anchors within the group. 
-import sys
-sys.path.insert(0, '../../')
 import SchemDraw as schem
 import SchemDraw.elements as e
 import numpy as np

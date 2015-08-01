@@ -24,6 +24,7 @@ A [gallery of circuits](gallery.html) is here, in addition to the examples on th
 
 Using an IPython Notebook in inline mode is recommended for the easy creation of these diagrams. 
 Images will look best when saved in a vector format, such as svg, eps, or pdf.
+Place this code at the very beginning of the notebook, *before* importing SchemDraw:
 
         %matplotlib inline
         %config InlineBackend.figure_format = 'svg'

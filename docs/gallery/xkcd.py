@@ -1,9 +1,5 @@
 import matplotlib.pyplot as plt
 
-import sys
-sys.path.insert(0,'./SchemDraw')
-
-
 import SchemDraw as schem
 import SchemDraw.elements as e
 

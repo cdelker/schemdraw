@@ -201,7 +201,7 @@ Other:
     def draw(self, ax=None, showframe=False, showplot=True):
         """ Draw the diagram.
             ax : matplotlib axis to draw to.
-            shwoframe : Show the plot frame/axis. Useful for debugging.
+            showframe : Show the plot frame/axis. Useful for debugging.
             showplot : Show the plot in matplotlib window in non-interactive mode.
         """
 

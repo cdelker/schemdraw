@@ -267,6 +267,10 @@ MEMRISTOR2 = {
               ],
     }
 
+JJ = {   # Josphson Junction
+    'name'  : 'JJ',
+    'paths' : [ [[0,0],_gap,[-_rh,_rh],[_rh,-_rh],_gap,[_rh,_rh],[-_rh,-_rh],_gap,[0,0]] ],
+    }
 
 # Connection dots, lines
 _dotr = .075

@@ -1,2 +1,8 @@
 dist
 build
+.idea/.name
+.idea/misc.xml
+.idea/modules.xml
+.idea/schemdraw.iml
+.idea/vcs.xml
+.idea/workspace.xml

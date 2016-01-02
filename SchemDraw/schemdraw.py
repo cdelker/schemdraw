@@ -68,7 +68,7 @@ def _merge_elements( elm_def ):
 
 
 #--------------------------------------------------------------------
-def group_elements( drawing, anchors={} ):
+def group_elements( drawing, anchors={} ): # TODO Fix mutable default argument
     ''' Combine all elements in a drawing into a single element that can be added to
         another drawing. Returns an element definition.
 
@@ -109,7 +109,7 @@ def group_elements( drawing, anchors={} ):
 #--------------------------------------------------------------------
 # Main drawing class
 #--------------------------------------------------------------------
-class Drawing():
+class Drawing(object):
     def __init__(self, unit=3.0, inches_per_unit=0.5, txtofst=0.1, fontsize=16, font='sans-serif', color='black', lw=1.5):
         """ Set up a new circuit drawing.
     unit : Full length of a resistor element in matplotlib plot units.
@@ -321,7 +321,7 @@ Other:
 #--------------------------------------------------------------------
 # Circuit element class
 #--------------------------------------------------------------------
-class Element():
+class Element(object):
     def __init__(self, elm_def, drawing, **kwargs):
         """ Initialize the element.
 elm_def  : element definition dictionary (see below)

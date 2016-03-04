@@ -77,8 +77,39 @@ _gap = [_np.nan, _np.nan]   # To leave a break in the plot
 _rh = 0.25      # Resistor height
 _rw = 1.0 / 6   # Full (inner) length of resistor is 1.0 data unit
 
-# Basic elements
+# Drawing Functions
+def _cycloid(loops=4, ofst=(0,0), a=.06, b=.19, norm=True, vertical=False, flip=False):
+    ''' Generate a prolate cycloid (inductor spiral) that
+        will always start and end at y=0.
+        loops = Number of loops
+        a, b = parameters. b>a for prolate (loopy) cycloid
+        norm = Normalize the length to 1 [True/False]
+        vertical, flip = Control the orientation of cycloid
+    '''
+    yint = _np.arccos(a/b) # y-intercept
+    t = _np.linspace(yint, 2*(loops+1)*_np.pi-yint, num=loops*50)
+    x = a*t - b*_np.sin(t)
+    y = a   - b*_np.cos(t)
+    x = x - x[0] # Shift to start at 0,0
 
+    if norm:
+        x = x / (x[-1]-x[0])      # Normalize length to 1
+    
+    if flip:
+        y = -y
+    
+    y = y * (max(y)-min(y))/(_rh) # Normalize to resistor width
+    
+    if vertical:
+        x, y = y, x
+
+    x = x + ofst[0]
+    y = y + ofst[1]
+    
+    path = _np.transpose(_np.vstack((x,y)))
+    return path
+
+# Basic elements
 RES = {
     'name'  : 'RES',
     'paths' : [ [[0,0],[0.5*_rw,_rh],[1.5*_rw,-_rh],[2.5*_rw,_rh],[3.5*_rw,-_rh],[4.5*_rw,_rh],[5.5*_rw,-_rh],[6*_rw,0]] ],
@@ -111,6 +142,7 @@ POT = {
     'lblloc' : 'bot',
     'anchors' : { 'tap' : [_rw*3,_rw*1.5] }
      }
+
 
 _cap_gap = 0.18
 CAP = {   # Straight capacitor
@@ -528,20 +560,9 @@ INDUCTOR = {
     'paths' : [ [[0,0],_gap,[1,0] ] ],
     'shapes' : _ind_shape_list }
 
-# Inductor with spiraling - "Prolate cycloid"
-# Magic numbers that work to look like an inductor spiral
-_a = .25
-_b = .6
-_t = _np.linspace(1.4,9.55*_np.pi,100)
-_x = _a*_t - _b*_np.sin(_t)
-_y = _a - _b * _np.cos(_t)
-_x = (_x - _x[0])  # Scale to about the right size
-_x = _x / _x[-1]
-_y = (_y - _y[0]) * .4
-_ind_path = _np.transpose(_np.vstack((_x,_y)))
 INDUCTOR2 = {
     'name'  : 'INDUCTOR2',
-    'paths' : [ _ind_path ]
+    'paths' : [ _cycloid(loops=4) ]
     }
 
 # Independent sources
@@ -842,6 +863,90 @@ LAMP = {
     'paths': [_lamp_path]
     }
 
+
+def transformer(t1=4, t2=4, core=True, ltaps=None, rtaps=None, loop=False):
+    ''' Transformer element
+        t1 = Turns on primary (left) side
+        t2 = Turns on secondary (right) side
+        core = Draw the core (parallel lines) [default=True]
+        ltaps = Dictionary of name:position pairs, position is the turn number from the top to tap
+                Each tap defines an anchor point but does not draw anything.
+        rtaps = Same as ltaps, on right side
+        loop = Use spiral/cycloid (loopy) style [default=False]
+    '''
+    # Set initial parameters
+    ind_w = .4
+    lbot = 0
+    ltop = t1*ind_w
+    right_ofst = t1*ind_w/2    
+    rtop = (ltop+lbot)/2 + t2*ind_w/2
+    rbot = (ltop+lbot)/2 - t2*ind_w/2
+
+    element = {'name' : 'TRANSFORMER',
+               'extend' : False,
+               'paths' : [] }
+
+    # Adjust for loops or core
+    ind_gap = .75    
+    if loop:
+        ind_gap = ind_gap + .4
+    if core:
+        ind_gap = ind_gap + .25
+
+    ltapx = 0
+    rtapx = ind_gap        
+
+    # Draw coils
+    if loop:
+        c1 = _cycloid(loops=t1, ofst=(0,0), norm=False, vertical=True)
+        c2 = _cycloid(loops=t2, ofst=(ind_gap,-rtop+ltop), norm=False, flip=True, vertical=True) 
+        ltapx = min([i[0] for i in c1])
+        rtapx = max([i[0] for i in c2])
+        ltop = c1[-1][1]
+        rtop = c2[-1][1]
+        element['paths'].extend([c1, c2])
+    else:
+        shapes = []
+        for i in range(t1):
+            shapes.append( {'shape':'arc',
+                            'center':[0, ltop-(i*ind_w+ind_w/2)],
+                            'theta1' : 270,
+                            'theta2' : 90,
+                            'width'  : ind_w,
+                            'height' : ind_w } )    
+        for i in range(t2):
+            shapes.append( {'shape':'arc',
+                            'center':[ind_gap, rtop-(i*ind_w+ind_w/2)],
+                            'theta1' : 90,
+                            'theta2' : 270,
+                            'width' : ind_w,
+                            'height' : ind_w })
+        element['shapes'] = shapes
+
+    # Add the core
+    if core:
+        top = max(ltop, rtop)
+        bot = min(lbot, rbot)
+        center = ind_gap/2
+        core_w = ind_gap/10
+        element['paths'].extend( [[[center-core_w, top],[center-core_w, bot]],
+                                  [[center+core_w, top],[center+core_w, bot]]] )
+        
+    anchors = {'p1' : [0,ltop], 
+               'p2' : [0,lbot],
+               's1' : [ind_gap, rtop],
+               's2' : [ind_gap, rbot]}
+
+    if ltaps:
+        for name, pos in ltaps.items():
+            anchors[name] = [ltapx, ltop - pos * ind_w]
+    if rtaps:
+        for name, pos in rtaps.items():
+            anchors[name] = [rtapx, rtop - pos * ind_w]
+
+    element['anchors'] = anchors
+    return element
+    
 
 def blackbox( w, h, linputs=None, rinputs=None, tinputs=None, binputs=None, mainlabel='', leadlen=0.5 ):
     ''' Generate a black-box element consisting of rectangle with inputs on each side.

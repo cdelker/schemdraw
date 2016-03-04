@@ -68,7 +68,7 @@ def _merge_elements( elm_def ):
 
 
 #--------------------------------------------------------------------
-def group_elements( drawing, anchors={} ): # TODO Fix mutable default argument
+def group_elements( drawing, anchors=None ):
     ''' Combine all elements in a drawing into a single element that can be added to
         another drawing. Returns an element definition.
 
@@ -94,7 +94,8 @@ def group_elements( drawing, anchors={} ): # TODO Fix mutable default argument
                 s['end']   = elm.translate( s['start'] - elm.ofst )
             new_elm['shapes'].append( s )
 
-        new_elm['anchors'] = anchors
+        if anchors is not None:
+            new_elm['anchors'] = anchors
 
         for label, loc, align, size in elm.strs:
             loc = elm.translate( np.array(loc) )
@@ -103,7 +104,6 @@ def group_elements( drawing, anchors={} ): # TODO Fix mutable default argument
         new_elm['drop'] = drawing.here
     
     return new_elm
-
 
 
 #--------------------------------------------------------------------

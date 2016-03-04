@@ -29,9 +29,6 @@ Place this code at the very beginning of the notebook, *before* importing SchemD
         %matplotlib inline
         %config InlineBackend.figure_format = 'svg'
 
-**Safari Users:** Due to a bug in the Safari browser (at least to version 8.0.5) not all the lines in svg images are rendered!
-Please use Chrome, Firefox, or another browser, or use png for inline image previews. The bug is also present in the Mac OS Finder previews.
-
 
 ## Installation
 
@@ -273,6 +270,34 @@ Elements are connected with lines and dot elements. Dots don't change the curren
 The LABEL element can be used to add a label anywhere. The GAP_LABEL is like an "invisible" element, which can be used for marking the voltage between output terminals.
 
 ![](img/label.png)
+
+### Transformers
+
+Transformer elements can be generated using the transformer() function. Parameters are:
+
+        t1    : Number of turns on primary (left) side
+        t2    : Number of turns on secondary (right) side
+        core  : Draw the core (parallel lines) [default=False]
+        ltaps : Dictionary of name:position pairs, position is the turn number from the top to tap
+                Each tap defines an anchor point but does not draw anything.
+        rtaps : Same as ltaps, on right side
+        loop  : Use spiral/cycloid (loopy) style [default=False]
+
+![](img/transform.png)
+
+Two transformers with cycloid=False (left) cycloid=True (right). Anchor names are p1, p2 for the primary (left) side,
+and s1, s2 for the secondary (right) side.
+
+Example usage with taps:
+
+        xf = d.add( e.transformer(t1=4, t2=8, rtaps={'B':3}, loop=False ) )
+        d.add(e.LINE, xy=xf.s1, l=d.unit/4)
+        d.add(e.LINE, xy=xf.s2, l=d.unit/4)
+        d.add(e.LINE, xy=xf.p1, l=d.unit/4, d='left')
+        d.add(e.LINE, xy=xf.p2, l=d.unit/4, d='left')
+        d.add(e.LINE, xy=xf.B, l=d.unit/2, d='right', rgtlabel='B')
+    
+![](img/xform_tap.png)
 
 
 ### Current Arrow

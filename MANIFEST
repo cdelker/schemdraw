@@ -8,6 +8,7 @@ SchemDraw/__init__.py
 SchemDraw/elements.py
 SchemDraw/logic.py
 SchemDraw/schemdraw.py
+SchemDraw/testing.py
 docs/SchemDraw.html
 docs/SchemDraw.md
 docs/gallery.html
@@ -102,6 +103,10 @@ docs/img/switches.png
 docs/img/switches.svg
 docs/img/testschematic.png
 docs/img/testschematic.svg
+docs/img/transform.png
+docs/img/transform.svg
+docs/img/xform_tap.png
+docs/img/xform_tap.svg
 docs/img/.ipynb_checkpoints/doc_images-checkpoint.ipynb
 docs/img/.ipynb_checkpoints/examples-checkpoint.ipynb
 docs/img/.ipynb_checkpoints/logicgate_images-checkpoint.ipynb

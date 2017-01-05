@@ -406,6 +406,30 @@ GND_CHASSIS = {
     'extend'  : False,
     'theta'   : 0
     }
+    
+_chgnd_dx = _rh*.75
+_chgnd_dy = _rh
+VSS = {
+    'name'  : 'VSS',
+    'paths'    : [ [[0,0],[0,-_gnd_lead]],
+                   [[0,-_gnd_lead],[-_chgnd_dx,-_gnd_lead]],
+                   [[0,-_gnd_lead],[_chgnd_dx,-_gnd_lead]]  ],
+    'move_cur': False,
+    'extend'  : False,
+    'theta'   : 0
+    }
+
+_chgnd_dx = _rh*.75
+_chgnd_dy = _rh
+VDD = {
+    'name'  : 'VDD',
+    'paths'    : [ [[0,0],[0,_gnd_lead]],
+                   [[0,_gnd_lead],[-_chgnd_dx,_gnd_lead]],
+                   [[0,_gnd_lead],[_chgnd_dx,_gnd_lead]]  ],
+    'move_cur': False,
+    'extend'  : False,
+    'theta'   : 0
+    }
 
 
 # Opamp
@@ -458,6 +482,27 @@ NFET = {
                   'gate'   : [_fetw+_fet_gap+_fetl+_fetr,-_fetl-_fetw/2] }
      }
 
+NFET4 = {
+    'name'  : 'NFET4',
+    'paths'  : [ [ [0,0],[0,-_fetl],[_fetw,-_fetl],[_fetw,-_fetl-_fetw],[0,-_fetl-_fetw],[0,-2*_fetl-_fetw] ],
+                 [ [_fetw+_fet_gap,-_fetl],[_fetw+_fet_gap,-_fetl-_fetw] ],
+                 #~ [ [0,-_fetl-_fetw/2], [_fetw,-_fetl-_fetw/2] ],
+                 [ [_fetw+_fet_gap,-_fetl-_fetw/2], [_fetw+_fet_gap+_fetl+_fetr,-_fetl-_fetw/2] ] ],
+    'shapes' : [
+               { 'shape' : 'arrow',
+                   'start' : [0,-_fetl-_fetw/2],
+                   'end'   : [_fetw,-_fetl-_fetw/2],
+                   'headwidth' : 0.2
+                    }  ],
+    'extend'  : False,
+    'drop'    : _np.array([0,-2*_fetl-_fetw]),
+    'lblloc' : 'lft',
+    'anchors' : { 'source' : [0, -2*_fetl-_fetw],
+                  'drain'  : [0, 0],
+                  'gate'   : [_fetw+_fet_gap+_fetl+_fetr,-_fetl-_fetw/2],
+                  'bulk'   : [0,-_fetl-_fetw/2]  }
+     }
+
 PFET = {
     'name'  : 'PFET',
     'paths'  : [ [ [0,0],[0,-_fetl],[_fetw,-_fetl],[_fetw,-_fetl-_fetw],[0,-_fetl-_fetw],[0,-2*_fetl-_fetw] ],
@@ -473,6 +518,26 @@ PFET = {
                   'drain'  : [0, -2*_fetl-_fetw],
                   'gate'   : [_fetw+_fet_gap+_fetl+_fetr,-_fetl-_fetw/2] }
      }
+
+PFET4 = {
+    'name'  : 'PFET4',
+    'paths'  : [ [ [0,0],[0,-_fetl],[_fetw,-_fetl],[_fetw,-_fetl-_fetw],[0,-_fetl-_fetw],[0,-2*_fetl-_fetw] ],
+                 [ [_fetw+_fet_gap,-_fetl],[_fetw+_fet_gap,-_fetl-_fetw] ],
+                 [ [_fetw+_fet_gap,-_fetl-_fetw/2], [_fetw+_fet_gap+_fetl+_fetr,-_fetl-_fetw/2] ] ],
+    'shapes' : [ { 'shape' : 'arrow',
+                   'start' : [_fetw,-_fetl-_fetw/2],
+                   'end'   : [0,-_fetl-_fetw/2],
+                   'headwidth' : 0.2
+                    }  ],
+    'extend'  : False,
+    'drop'    : _np.array([0,-2*_fetl-_fetw]),
+    'lblloc' : 'lft',
+    'anchors' : { 'source' : [0, 0],
+                  'drain'  : [0, -2*_fetl-_fetw],
+                  'gate'   : [_fetw+_fet_gap+_fetl+_fetr,-_fetl-_fetw/2],
+                  'bulk'   : [0,-_fetl-_fetw/2] }
+     }
+
 
 
 # BJT transistors

@@ -1,8 +1,9 @@
+<link rel="stylesheet" href="css/splendor.css">
 
-# SchemDraw Gallery
+## SchemDraw Gallery
 
 
-## Charging capacitor
+### Charging capacitor
 
 ![](gallery/cap_charge.png)
 
@@ -10,7 +11,7 @@
 
 
 -----------------------------------------------------------
-## Loop Currents
+### Loop Currents
 
 ![](gallery/loop_current.png)
 
@@ -18,7 +19,7 @@
 
 
 -----------------------------------------------------------
-## Operational Amplifier
+### Operational Amplifier
 
 ![](gallery/opamp.png)
 
@@ -26,7 +27,7 @@
 
 
 -----------------------------------------------------------
-## Source-Measure-Unit (SMU)
+### Source-Measure-Unit (SMU)
 
 This example demonstrates grouping elements into a unit. 
 Each SMU is grouped into a unit which is then placed where needed.
@@ -37,7 +38,7 @@ Each SMU is grouped into a unit which is then placed where needed.
 
 
 -----------------------------------------------------------
-## SR Latch
+### SR Latch
 
 ![](gallery/SR.png)
 
@@ -45,7 +46,7 @@ Each SMU is grouped into a unit which is then placed where needed.
 
 
 -----------------------------------------------------------
-## Resistor circle
+### Resistor circle
 
 Shows creation of elements within for loop, angled elements with automatic label positioning, and colors.
 
@@ -56,7 +57,7 @@ Shows creation of elements within for loop, angled elements with automatic label
 
 
 -----------------------------------------------------------
-## Power Supply
+### Power Supply
 
 ![](gallery/powersupply.png)
 
@@ -65,7 +66,7 @@ Shows creation of elements within for loop, angled elements with automatic label
 
 
 -----------------------------------------------------------
-## 741 Op-Amp
+### 741 Op-Amp
 
 Internal schematic of a 741 IC.
 
@@ -75,7 +76,7 @@ Internal schematic of a 741 IC.
 
 
 -----------------------------------------------------------
-## XKCD Mode
+### XKCD Mode
 
 Turn on Matplotlib's XKCD mode for some hand-drawn looks!
 

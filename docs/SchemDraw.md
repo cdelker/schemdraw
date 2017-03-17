@@ -1,5 +1,6 @@
+<link rel="stylesheet" href="css/splendor.css">
 
-# SchemDraw
+## SchemDraw
 
 SchemDraw is a python package for producing high-quality electrical circuit schematic diagrams. Typical usage:
 
@@ -16,11 +17,11 @@ SchemDraw is a python package for producing high-quality electrical circuit sche
 
 ![](img/testschematic.png)
 
-## Gallery
+### Gallery
 
 A [gallery of circuits](gallery.html) is here, in addition to the examples on this page.
 
-## Usage in iPython
+### Usage in iPython
 
 Using an IPython Notebook in inline mode is recommended for the easy creation of these diagrams. 
 Images will look best when saved in a vector format, such as svg, eps, or pdf.
@@ -30,7 +31,7 @@ Place this code at the very beginning of the notebook, *before* importing SchemD
         %config InlineBackend.figure_format = 'svg'
 
 
-## Installation
+### Installation
 
 SchemDraw can be run under Python 2 or Python 3, and requires the numpy and matplotlib packages.
 
@@ -43,7 +44,7 @@ or directly by downloading the package and running
         python setup.py install
 
 
-### Links
+#### Links
 
 Source code git repository:
     [https://bitbucket.org/cdelker/schemdraw](https://bitbucket.org/cdelker/schemdraw)
@@ -55,7 +56,7 @@ If you find this package useful, or use it in any published work, I would love t
 
 
 
-## Basic Usage
+### Basic Usage
 
 SchemDraw works on the principle of creating a drawing object, and then adding elements to it. Common elements are defined in SchemDraw.elements, and additional elements can easily be created (see [Defining New Elements]).
 
@@ -76,11 +77,11 @@ And finish by calling draw(), and save() for a image file:
         d.save( 'testschematic.pdf' )
 
 
-### Element properties
+#### Element properties
 
 The add() method takes a number of arguments to define the element position. The first argument is the element definition dictionary.
 
-#### Position and direction
+##### Position and direction
 
 The position of each element can be specified in a number of ways. If no position is given, it will start at the current drawing position, typically where the previous element ends, and in the current drawing direction.
 
@@ -105,7 +106,7 @@ If only a starting coordinate is given, the direction defaults to the last eleme
         theta   : angle (in degrees) to draw the element. Overrides 'd'.
 
 
-#### Anchoring
+##### Anchoring
 
 Some elements define extra anchors. These are positions that can be used to position this element, or other elements connecting to it. For example, an opamp defines three anchor points: in1, in2, and out.
 
@@ -125,7 +126,7 @@ Then, to place a resistor on the output
 All elements have at least three anchors: 'start', 'end', and 'center'.
 
 
-#### Element orientation
+##### Element orientation
 
 An element can be reversed (for example a diode), or flipped vertically using the arguments:
 
@@ -165,7 +166,7 @@ The add_label() method takes the following arguments:
                (['center', 'left', 'right'], ['center', 'top', 'bottom'])
 
 
-#### Other
+##### Other
 
 Other element arguments include:
 
@@ -174,7 +175,7 @@ Other element arguments include:
         ls       : [':', '--', '-'] linestyle (same as matplotlib).
 
 
-### Drawing parameters
+#### Drawing parameters
 
 When setting up a new schematic drawing, a few parameters are available to set the overall drawing size. Arguments to Drawing() are:
 
@@ -186,7 +187,7 @@ When setting up a new schematic drawing, a few parameters are available to set t
         font     : matplotlib font-family. Default='sans-serif'.
 
 
-### Drawing state
+#### Drawing state
 
 The drawing state (current position and direction), can be saved and recalled using:
 
@@ -195,7 +196,7 @@ The drawing state (current position and direction), can be saved and recalled us
         d.pop()    # Recall the drawing state
 
 
-### Saving an image
+#### Saving an image
 
 The final image can be saved to a file using d.save(). The filename extension determines the type of file to be saved. Any matplotlib-compatible file format can be used. Saving in a vector-based format, such as eps, pdf, or svg, is recommended for best quality.
 
@@ -204,49 +205,49 @@ The final image can be saved to a file using d.save(). The filename extension de
 
 -----------------------------------------------------------
 
-## Elements
+### Elements
 
 A number of common elements are predefined in the SchemDraw.elements module.
 
-### 2-Terminal Elements
+#### 2-Terminal Elements
 
 ![](img/2term.png)
 
-### Sources and meters
+#### Sources and meters
 
 ![](img/sources.png)
 
 ![](img/meters.png)
 
-### Grounds
+#### Grounds
 
 Grounds don't move the current drawing position.
 
 ![](img/grounds.png)
 
-### Switches
+#### Switches
 
 ![](img/switches.png)
 
 ![](img/buttons.png)
 
-### Potentiometer
+#### Potentiometer
 
 Potentiometer is defined with one additional anchor for the 'tap'.
 
 ![](img/pot.png)
 
-### Speaker
+#### Speaker
 
 ![](img/speaker.png)
 
-### Opamp
+#### Opamp
 
 An opamp defines three anchors, in1, in2, and out.
 
 ![](img/opamp.png)
 
-### Transistors
+#### Transistors
 
 Transistors also define three anchors as shown below.
 
@@ -259,19 +260,19 @@ Types of transistors are shown below:
 
 ![](img/fet.png)
 
-### Connecting elements
+#### Connecting elements
 
 Elements are connected with lines and dot elements. Dots don't change the current drawing position.
 
 ![](img/connectors.png)
 
-### Label element
+#### Label element
 
 The LABEL element can be used to add a label anywhere. The GAP_LABEL is like an "invisible" element, which can be used for marking the voltage between output terminals.
 
 ![](img/label.png)
 
-### Transformers
+#### Transformers
 
 Transformer elements can be generated using the transformer() function. Parameters are:
 
@@ -300,7 +301,7 @@ Example usage with taps:
 ![](img/xform_tap.png)
 
 
-### Current Arrow
+#### Current Arrow
 
 To label the current through an element, the ARROWI element is defined. Typically, it can be added alongside an existing element using the drawing's labelI() method, which takes the arguments:
         elm       : element to add arrow to
@@ -317,7 +318,7 @@ For example:
 ![](img/labeli.png)
 
 
-### Loop currents
+#### Loop currents
 
 Loop currents can be added using the drawing's loopI() method:
         elm_list : boundary elements in order of top, right, bot, left
@@ -338,7 +339,7 @@ For example:
 
 
 
-### Logic Gates
+#### Logic Gates
 
 Logic gates can be drawn by including the logic module:
 
@@ -366,7 +367,7 @@ As an example, the following line generates a 3-input NAND gate with one input p
 ![](img/and_inputnot.png)
 
 
-### Black-box elements
+#### Black-box elements
 
 Elements drawn as boxes, such as integrated circuits, can be generated using the elements.blackbox() function. An arbitrary number of inputs/outputs can be drawn to each side of the box. The inputs can be evenly spaced (default) or arbitrarily placed anywhere along each edge. The function takes the arguments:
         w, h : width and height of rectangle
@@ -401,11 +402,11 @@ See the [555-timer circuit] example below for a more complete usage of blackbox(
 
 -----------------------------------------------------------
 
-## Examples
+### Examples
 
 Following are examples of more complicated circuit diagrams. Most are useless circuits made for torturing ECE201 students. Further examples can be found in the ipynb ipython notebooks the docs folder.
 
-### Example 1
+#### Example 1
 
 This example demonstrates use of push() and pop() and using 'tox' and 'toy' keywords.
 
@@ -440,7 +441,7 @@ This example demonstrates use of push() and pop() and using 'tox' and 'toy' keyw
 ![](img/ex01.png)
 
 
-### Capacitor discharging
+#### Capacitor discharging
 
 Shows how to connect to a switch element anchors.
 
@@ -458,7 +459,7 @@ Shows how to connect to a switch element anchors.
 ![](img/cap-charge.png)
 
 
-### Inverting Opamp
+#### Inverting Opamp
 
 Shows how to connect to an opamp
 
@@ -483,7 +484,7 @@ Shows how to connect to an opamp
 ![](img/inv_opamp.png)
 
 
-### Capacitor network
+#### Capacitor network
 
 Another good problem to torture ECE201 students. Shows how to place an element using 'endpts' to cross a diagonal.
 
@@ -503,7 +504,7 @@ Another good problem to torture ECE201 students. Shows how to place an element u
 ![](img/cap-net.png)
 
 
-### S-R Latch
+#### S-R Latch
 
 Demonstrates using transistors
 
@@ -546,7 +547,7 @@ Demonstrates using transistors
 
 ![](img/SR-Latch.png)
 
-### Half-adder
+#### Half-adder
 
 Demonstrate using logic gates
 
@@ -565,7 +566,7 @@ Demonstrate using logic gates
 
 ![](img/half_add.png)
 
-### JK Flip-flop
+#### JK Flip-flop
 
 A slightly more complicated logic gate example. Note the use of the LaTeX command **\\overline{Q}** in the label to draw a bar over the output label.
 
@@ -611,7 +612,7 @@ A slightly more complicated logic gate example. Note the use of the LaTeX comman
 ![](img/JK.png)
 
 
-### 555-timer circuit
+#### 555-timer circuit
 
 This example shows use of the blackbox() function to draw a 555-timer integrated circuit.
 
@@ -667,7 +668,7 @@ This example shows use of the blackbox() function to draw a 555-timer integrated
 
 -----------------------------------------------------------
 
-## Defining New Elements
+### Defining New Elements
 
 New elements can be defined by creating a python dictionary describing how the element should be drawn. An element can be made up of paths and/or shapes. A path is simply a list of xy coordinates which will be plotted with matplotlib. A shape is a predefined matplotlib patch, such as a circle (defined by center and radius).
 
@@ -746,7 +747,7 @@ Then define the element dictionary. It's just a SOURCE element with an additiona
 
 -----------------------------------------------------------
 
-## XKCD Mode!
+### XKCD Mode!
 
 For something fun, you can turn on Matplotlib's XKCD mode to get "hand-drawn" schematics. (May not work in all image formats or cases...)
 

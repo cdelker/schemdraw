@@ -1,4 +1,6 @@
-<h1 id="schemdraw">SchemDraw</h1>
+<p><link rel="stylesheet" href="css/splendor.css"></p>
+
+<h2 id="schemdraw">SchemDraw</h2>
 
 <p>SchemDraw is a python package for producing high-quality electrical circuit schematic diagrams. Typical usage:</p>
 
@@ -18,11 +20,11 @@
 <img src="img/testschematic.png" alt="" />
 </figure>
 
-<h2 id="gallery">Gallery</h2>
+<h3 id="gallery">Gallery</h3>
 
 <p>A <a href="gallery.html">gallery of circuits</a> is here, in addition to the examples on this page.</p>
 
-<h2 id="usageinipython">Usage in iPython</h2>
+<h3 id="usageinipython">Usage in iPython</h3>
 
 <p>Using an IPython Notebook in inline mode is recommended for the easy creation of these diagrams.
 Images will look best when saved in a vector format, such as svg, eps, or pdf.
@@ -32,7 +34,7 @@ Place this code at the very beginning of the notebook, <em>before</em> importing
     %config InlineBackend.figure_format = 'svg'
 </code></pre>
 
-<h2 id="installation">Installation</h2>
+<h3 id="installation">Installation</h3>
 
 <p>SchemDraw can be run under Python 2 or Python 3, and requires the numpy and matplotlib packages.</p>
 
@@ -46,7 +48,7 @@ Place this code at the very beginning of the notebook, <em>before</em> importing
 <pre><code>    python setup.py install
 </code></pre>
 
-<h3 id="links">Links</h3>
+<h4 id="links">Links</h4>
 
 <p>Source code git repository:
  <a href="https://bitbucket.org/cdelker/schemdraw">https://bitbucket.org/cdelker/schemdraw</a></p>
@@ -56,7 +58,7 @@ Place this code at the very beginning of the notebook, <em>before</em> importing
 
 <p>If you find this package useful, or use it in any published work, I would love to hear about it! Email any comments, questions, or suggestions to developer@collindelker.com.</p>
 
-<h2 id="basicusage">Basic Usage</h2>
+<h3 id="basicusage">Basic Usage</h3>
 
 <p>SchemDraw works on the principle of creating a drawing object, and then adding elements to it. Common elements are defined in SchemDraw.elements, and additional elements can easily be created (see <a href="#definingnewelements">Defining New Elements</a>).</p>
 
@@ -79,11 +81,11 @@ Place this code at the very beginning of the notebook, <em>before</em> importing
     d.save( 'testschematic.pdf' )
 </code></pre>
 
-<h3 id="elementproperties">Element properties</h3>
+<h4 id="elementproperties">Element properties</h4>
 
 <p>The add() method takes a number of arguments to define the element position. The first argument is the element definition dictionary.</p>
 
-<h4 id="positionanddirection">Position and direction</h4>
+<h5 id="positionanddirection">Position and direction</h5>
 
 <p>The position of each element can be specified in a number of ways. If no position is given, it will start at the current drawing position, typically where the previous element ends, and in the current drawing direction.</p>
 
@@ -109,7 +111,7 @@ Place this code at the very beginning of the notebook, <em>before</em> importing
     theta   : angle (in degrees) to draw the element. Overrides 'd'.
 </code></pre>
 
-<h4 id="anchoring">Anchoring</h4>
+<h5 id="anchoring">Anchoring</h5>
 
 <p>Some elements define extra anchors. These are positions that can be used to position this element, or other elements connecting to it. For example, an opamp defines three anchor points: in1, in2, and out.</p>
 
@@ -134,7 +136,7 @@ Place this code at the very beginning of the notebook, <em>before</em> importing
 
 <p>All elements have at least three anchors: &#8216;start&#8217;, &#8216;end&#8217;, and &#8216;center&#8217;.</p>
 
-<h4 id="elementorientation">Element orientation</h4>
+<h5 id="elementorientation">Element orientation</h5>
 
 <p>An element can be reversed (for example a diode), or flipped vertically using the arguments:</p>
 
@@ -179,7 +181,7 @@ Place this code at the very beginning of the notebook, <em>before</em> importing
            (['center', 'left', 'right'], ['center', 'top', 'bottom'])
 </code></pre>
 
-<h4 id="other">Other</h4>
+<h5 id="other">Other</h5>
 
 <p>Other element arguments include:</p>
 
@@ -188,7 +190,7 @@ Place this code at the very beginning of the notebook, <em>before</em> importing
     ls       : [':', '--', '-'] linestyle (same as matplotlib).
 </code></pre>
 
-<h3 id="drawingparameters">Drawing parameters</h3>
+<h4 id="drawingparameters">Drawing parameters</h4>
 
 <p>When setting up a new schematic drawing, a few parameters are available to set the overall drawing size. Arguments to Drawing() are:</p>
 
@@ -200,7 +202,7 @@ Place this code at the very beginning of the notebook, <em>before</em> importing
     font     : matplotlib font-family. Default='sans-serif'.
 </code></pre>
 
-<h3 id="drawingstate">Drawing state</h3>
+<h4 id="drawingstate">Drawing state</h4>
 
 <p>The drawing state (current position and direction), can be saved and recalled using:</p>
 
@@ -209,7 +211,7 @@ Place this code at the very beginning of the notebook, <em>before</em> importing
     d.pop()    # Recall the drawing state
 </code></pre>
 
-<h3 id="savinganimage">Saving an image</h3>
+<h4 id="savinganimage">Saving an image</h4>
 
 <p>The final image can be saved to a file using d.save(). The filename extension determines the type of file to be saved. Any matplotlib-compatible file format can be used. Saving in a vector-based format, such as eps, pdf, or svg, is recommended for best quality.</p>
 
@@ -218,17 +220,17 @@ Place this code at the very beginning of the notebook, <em>before</em> importing
 
 <hr />
 
-<h2 id="elements">Elements</h2>
+<h3 id="elements">Elements</h3>
 
 <p>A number of common elements are predefined in the SchemDraw.elements module.</p>
 
-<h3 id="2-terminalelements">2-Terminal Elements</h3>
+<h4 id="2-terminalelements">2-Terminal Elements</h4>
 
 <figure>
 <img src="img/2term.png" alt="" />
 </figure>
 
-<h3 id="sourcesandmeters">Sources and meters</h3>
+<h4 id="sourcesandmeters">Sources and meters</h4>
 
 <figure>
 <img src="img/sources.png" alt="" />
@@ -238,7 +240,7 @@ Place this code at the very beginning of the notebook, <em>before</em> importing
 <img src="img/meters.png" alt="" />
 </figure>
 
-<h3 id="grounds">Grounds</h3>
+<h4 id="grounds">Grounds</h4>
 
 <p>Grounds don&#8217;t move the current drawing position.</p>
 
@@ -246,7 +248,7 @@ Place this code at the very beginning of the notebook, <em>before</em> importing
 <img src="img/grounds.png" alt="" />
 </figure>
 
-<h3 id="switches">Switches</h3>
+<h4 id="switches">Switches</h4>
 
 <figure>
 <img src="img/switches.png" alt="" />
@@ -256,7 +258,7 @@ Place this code at the very beginning of the notebook, <em>before</em> importing
 <img src="img/buttons.png" alt="" />
 </figure>
 
-<h3 id="potentiometer">Potentiometer</h3>
+<h4 id="potentiometer">Potentiometer</h4>
 
 <p>Potentiometer is defined with one additional anchor for the &#8216;tap&#8217;.</p>
 
@@ -264,13 +266,13 @@ Place this code at the very beginning of the notebook, <em>before</em> importing
 <img src="img/pot.png" alt="" />
 </figure>
 
-<h3 id="speaker">Speaker</h3>
+<h4 id="speaker">Speaker</h4>
 
 <figure>
 <img src="img/speaker.png" alt="" />
 </figure>
 
-<h3 id="opamp">Opamp</h3>
+<h4 id="opamp">Opamp</h4>
 
 <p>An opamp defines three anchors, in1, in2, and out.</p>
 
@@ -278,7 +280,7 @@ Place this code at the very beginning of the notebook, <em>before</em> importing
 <img src="img/opamp.png" alt="" />
 </figure>
 
-<h3 id="transistors">Transistors</h3>
+<h4 id="transistors">Transistors</h4>
 
 <p>Transistors also define three anchors as shown below.</p>
 
@@ -295,7 +297,7 @@ Place this code at the very beginning of the notebook, <em>before</em> importing
 <img src="img/fet.png" alt="" />
 </figure>
 
-<h3 id="connectingelements">Connecting elements</h3>
+<h4 id="connectingelements">Connecting elements</h4>
 
 <p>Elements are connected with lines and dot elements. Dots don&#8217;t change the current drawing position.</p>
 
@@ -303,7 +305,7 @@ Place this code at the very beginning of the notebook, <em>before</em> importing
 <img src="img/connectors.png" alt="" />
 </figure>
 
-<h3 id="labelelement">Label element</h3>
+<h4 id="labelelement">Label element</h4>
 
 <p>The LABEL element can be used to add a label anywhere. The GAP_LABEL is like an &#8220;invisible&#8221; element, which can be used for marking the voltage between output terminals.</p>
 
@@ -311,7 +313,7 @@ Place this code at the very beginning of the notebook, <em>before</em> importing
 <img src="img/label.png" alt="" />
 </figure>
 
-<h3 id="transformers">Transformers</h3>
+<h4 id="transformers">Transformers</h4>
 
 <p>Transformer elements can be generated using the transformer() function. Parameters are:</p>
 
@@ -345,7 +347,7 @@ and s1, s2 for the secondary (right) side.</p>
 <img src="img/xform_tap.png" alt="" />
 </figure>
 
-<h3 id="currentarrow">Current Arrow</h3>
+<h4 id="currentarrow">Current Arrow</h4>
 
 <p>To label the current through an element, the ARROWI element is defined. Typically, it can be added alongside an existing element using the drawing&#8217;s labelI() method, which takes the arguments:
  elm : element to add arrow to
@@ -364,7 +366,7 @@ and s1, s2 for the secondary (right) side.</p>
 <img src="img/labeli.png" alt="" />
 </figure>
 
-<h3 id="loopcurrents">Loop currents</h3>
+<h4 id="loopcurrents">Loop currents</h4>
 
 <p>Loop currents can be added using the drawing&#8217;s loopI() method:
  elm_list : boundary elements in order of top, right, bot, left
@@ -386,7 +388,7 @@ and s1, s2 for the secondary (right) side.</p>
 <img src="img/loopi.png" alt="" />
 </figure>
 
-<h3 id="logicgates">Logic Gates</h3>
+<h4 id="logicgates">Logic Gates</h4>
 
 <p>Logic gates can be drawn by including the logic module:</p>
 
@@ -419,7 +421,7 @@ and s1, s2 for the secondary (right) side.</p>
 <img src="img/and_inputnot.png" alt="" />
 </figure>
 
-<h3 id="black-boxelements">Black-box elements</h3>
+<h4 id="black-boxelements">Black-box elements</h4>
 
 <p>Elements drawn as boxes, such as integrated circuits, can be generated using the elements.blackbox() function. An arbitrary number of inputs/outputs can be drawn to each side of the box. The inputs can be evenly spaced (default) or arbitrarily placed anywhere along each edge. The function takes the arguments:
  w, h : width and height of rectangle
@@ -456,11 +458,11 @@ and s1, s2 for the secondary (right) side.</p>
 
 <hr />
 
-<h2 id="examples">Examples</h2>
+<h3 id="examples">Examples</h3>
 
 <p>Following are examples of more complicated circuit diagrams. Most are useless circuits made for torturing ECE201 students. Further examples can be found in the ipynb ipython notebooks the docs folder.</p>
 
-<h3 id="example1">Example 1</h3>
+<h4 id="example1">Example 1</h4>
 
 <p>This example demonstrates use of push() and pop() and using &#8216;tox&#8217; and &#8216;toy&#8217; keywords.</p>
 
@@ -497,7 +499,7 @@ and s1, s2 for the secondary (right) side.</p>
 <img src="img/ex01.png" alt="" />
 </figure>
 
-<h3 id="capacitordischarging">Capacitor discharging</h3>
+<h4 id="capacitordischarging">Capacitor discharging</h4>
 
 <p>Shows how to connect to a switch element anchors.</p>
 
@@ -517,7 +519,7 @@ and s1, s2 for the secondary (right) side.</p>
 <img src="img/cap-charge.png" alt="" />
 </figure>
 
-<h3 id="invertingopamp">Inverting Opamp</h3>
+<h4 id="invertingopamp">Inverting Opamp</h4>
 
 <p>Shows how to connect to an opamp</p>
 
@@ -544,7 +546,7 @@ and s1, s2 for the secondary (right) side.</p>
 <img src="img/inv_opamp.png" alt="" />
 </figure>
 
-<h3 id="capacitornetwork">Capacitor network</h3>
+<h4 id="capacitornetwork">Capacitor network</h4>
 
 <p>Another good problem to torture ECE201 students. Shows how to place an element using &#8216;endpts&#8217; to cross a diagonal.</p>
 
@@ -566,7 +568,7 @@ and s1, s2 for the secondary (right) side.</p>
 <img src="img/cap-net.png" alt="" />
 </figure>
 
-<h3 id="s-rlatch">S-R Latch</h3>
+<h4 id="s-rlatch">S-R Latch</h4>
 
 <p>Demonstrates using transistors</p>
 
@@ -612,7 +614,7 @@ and s1, s2 for the secondary (right) side.</p>
 <img src="img/SR-Latch.png" alt="" />
 </figure>
 
-<h3 id="half-adder">Half-adder</h3>
+<h4 id="half-adder">Half-adder</h4>
 
 <p>Demonstrate using logic gates</p>
 
@@ -634,7 +636,7 @@ and s1, s2 for the secondary (right) side.</p>
 <img src="img/half_add.png" alt="" />
 </figure>
 
-<h3 id="jkflip-flop">JK Flip-flop</h3>
+<h4 id="jkflip-flop">JK Flip-flop</h4>
 
 <p>A slightly more complicated logic gate example. Note the use of the LaTeX command <strong>\overline{Q}</strong> in the label to draw a bar over the output label.</p>
 
@@ -682,7 +684,7 @@ and s1, s2 for the secondary (right) side.</p>
 <img src="img/JK.png" alt="" />
 </figure>
 
-<h3 id="555-timercircuit">555-timer circuit</h3>
+<h4 id="555-timercircuit">555-timer circuit</h4>
 
 <p>This example shows use of the blackbox() function to draw a 555-timer integrated circuit.</p>
 
@@ -740,7 +742,7 @@ and s1, s2 for the secondary (right) side.</p>
 
 <hr />
 
-<h2 id="definingnewelements">Defining New Elements</h2>
+<h3 id="definingnewelements">Defining New Elements</h3>
 
 <p>New elements can be defined by creating a python dictionary describing how the element should be drawn. An element can be made up of paths and/or shapes. A path is simply a list of xy coordinates which will be plotted with matplotlib. A shape is a predefined matplotlib patch, such as a circle (defined by center and radius).</p>
 
@@ -820,7 +822,7 @@ and translate the element to its final position. A standard resistor is
 
 <hr />
 
-<h2 id="xkcdmode">XKCD Mode!</h2>
+<h3 id="xkcdmode">XKCD Mode!</h3>
 
 <p>For something fun, you can turn on Matplotlib&#8217;s XKCD mode to get &#8220;hand-drawn&#8221; schematics. (May not work in all image formats or cases&#8230;)</p>
 

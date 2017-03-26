@@ -1,0 +1,678 @@
+<p><link rel="stylesheet" href="css/codehilite.css"></p>
+<h2>SchemDraw</h2>
+<p>SchemDraw is a python package for producing high-quality electrical circuit schematic diagrams. Typical usage:</p>
+<div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">SchemDraw</span> <span class="kn">as</span> <span class="nn">schem</span>
+<span class="kn">import</span> <span class="nn">SchemDraw.elements</span> <span class="kn">as</span> <span class="nn">e</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">schem</span><span class="o">.</span><span class="n">Drawing</span><span class="p">()</span>
+<span class="n">V1</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">SOURCE_V</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;10V&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">RES</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;100K$\Omega$&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">CAP</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;down&#39;</span><span class="p">,</span> <span class="n">botlabel</span><span class="o">=</span><span class="s1">&#39;0.1$\mu$F&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">to</span><span class="o">=</span><span class="n">V1</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">GND</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+<span class="n">d</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;testschematic.eps&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<p><img alt="" src="img/testschematic.svg" /></p>
+<h3>Gallery</h3>
+<p>A <a href="gallery.html">gallery of circuits</a> is here, in addition to the examples on this page.</p>
+<h3>Usage in iPython</h3>
+<p>Using an IPython Notebook in inline mode is recommended for the easy creation of these diagrams. 
+Images will look best when saved in a vector format, such as svg, eps, or pdf.
+Place this code at the very beginning of the notebook, <em>before</em> importing SchemDraw:</p>
+<div class="codehilite"><pre><span></span><span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+<span class="o">%</span><span class="n">config</span> <span class="n">InlineBackend</span><span class="o">.</span><span class="n">figure_format</span> <span class="o">=</span> <span class="s1">&#39;svg&#39;</span>
+</pre></div>
+
+
+<h3>Installation</h3>
+<p>SchemDraw can be run under Python 2 or Python 3, and requires the numpy and matplotlib packages.</p>
+<p>SchemDraw can be installed from pip using</p>
+<div class="codehilite"><pre><span></span>pip install SchemDraw
+</pre></div>
+
+
+<p>or directly by downloading the package and running</p>
+<div class="codehilite"><pre><span></span>python setup.py install
+</pre></div>
+
+
+<h4>Links</h4>
+<p>Source code git repository: <a href="https://bitbucket.org/cdelker/schemdraw">https://bitbucket.org/cdelker/schemdraw</a></p>
+<p>This documentation available online: <a href="http://cdelker.bitbucket.org/schemdraw">http://cdelker.bitbucket.org/schemdraw/</a></p>
+<p>If you find this package useful, or use it in any published work, I would love to hear about it! Email any comments, questions, or suggestions to developer@collindelker.com.</p>
+<h3>Basic Usage</h3>
+<p>SchemDraw works on the principle of creating a drawing object, and then adding elements to it. Common elements are defined in SchemDraw.elements, and additional elements can easily be created (see <a href="#DefiningElements">Defining New Elements</a>.</p>
+<p>Start by setting up a new drawing:</p>
+<div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">SchemDraw</span> <span class="kn">as</span> <span class="nn">schem</span>
+<span class="kn">import</span> <span class="nn">SchemDraw.elements</span> <span class="kn">as</span> <span class="nn">e</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">schem</span><span class="o">.</span><span class="n">Drawing</span><span class="p">()</span>
+</pre></div>
+
+
+<p>Then use the add() method to add elements:</p>
+<div class="codehilite"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">RES</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;100$\Omega$&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">CAP</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;0.1$\mu$F&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<p>And finish by calling draw(), and save() for a image file:</p>
+<div class="codehilite"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+<span class="n">d</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;testschematic.pdf&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<h4>Element properties</h4>
+<p>The add() method takes a number of arguments to define the element position. The first argument is the element definition dictionary.</p>
+<h5>Position and direction</h5>
+<p>The position of each element can be specified in a number of ways. If no position is given, it will start at the current drawing position, typically where the previous element ends, and in the current drawing direction.</p>
+<p>Otherwise, position can be specified using some combination of the keyword arguments:</p>
+<div class="codehilite"><pre><span></span>    xy     : [x,y] starting coordiante.
+             Element drawn in current direction and default length.
+    endpts : [[x1,y1], [x2,y2]] start and end coordinates
+    to     : [x,y] end coordinate
+    tox    : x-value of end coordinate (y-value same as start)
+    toy    : y-value of end coordinate (x-value same as start)
+    l      : total length of element
+    zoom   : zoom/magnification for element (default=1)
+    anchor : &#39;xy&#39; argument refers to this position within the element.
+             For example, an opamp can be anchored to &#39;in1&#39;, &#39;in2&#39;, or &#39;out&#39;
+</pre></div>
+
+
+<p>'to', 'tox', 'toy', 'l' can be used with 'xy' to define start and end points.</p>
+<p>If only a starting coordinate is given, the direction defaults to the last element's direction unless specified by either:</p>
+<div class="codehilite"><pre><span></span>    d       : direction [&#39;up&#39;,&#39;down&#39;,&#39;left&#39;,&#39;right&#39;]
+    theta   : angle (in degrees) to draw the element. Overrides &#39;d&#39;.
+</pre></div>
+
+
+<h5>Anchoring</h5>
+<p>Some elements define extra anchors. These are positions that can be used to position this element, or other elements connecting to it. For example, an opamp defines three anchor points: in1, in2, and out.</p>
+<p><img alt="" src="img/opamp.svg" /></p>
+<p>When placing the opamp, it can then be located with respect to the correct terminal. The following will place an opamp with in2 connected to the endpoint of the resistor:</p>
+<div class="codehilite"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">RES</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Rin&#39;</span><span class="p">)</span>
+<span class="n">op</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">OPAMP</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="s1">&#39;in2&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<p>Then, to place a resistor on the output</p>
+<div class="codehilite"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">RES</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">op</span><span class="o">.</span><span class="n">out</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Ro&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<p><img alt="" src="img/opamp_anchor.svg" /></p>
+<p>All elements have at least three anchors: 'start', 'end', and 'center'.</p>
+<h5>Element orientation</h5>
+<p>An element can be reversed (for example a diode), or flipped vertically using the arguments:</p>
+<div class="codehilite"><pre><span></span>    flip    : flip the element vertically (when theta=0)
+    reverse : reverse a directional element (e.g. diode)
+</pre></div>
+
+
+<h4>Labels</h4>
+<p>A label string can be added to the element using the 'label' argument (default position) or with 'toplabel', 'botlabel', 'lftlabel', or 'rgtlabel'. Labels can be added in multiple positions, for example labeling a component name with toplabel='R1' and value botlabel='100'. For math symbols, enclose the string in $$ to enable latex-style math mode, e.g.</p>
+<div class="codehilite"><pre><span></span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;$R_1 = 100 \Omega$&#39;</span><span class="o">.</span>
+</pre></div>
+
+
+<p>Label related arguments include:</p>
+<div class="codehilite"><pre><span></span>    label, toplabel, botlabel, lftlabel, rgtlabel:
+        Add a string label to the element.
+    lblofst : offset between text label and element
+</pre></div>
+
+
+<p>A label can also be defined as a list of strings. In this case, the strings will be evenly spaced along the length of the element. This is useful for labeling polarities, for example </p>
+<div class="codehilite"><pre><span></span><span class="n">label</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;+&#39;</span><span class="p">,</span><span class="s1">&#39;$v_o$&#39;</span><span class="p">,</span><span class="s1">&#39;-&#39;</span><span class="p">]</span><span class="o">.</span>
+</pre></div>
+
+
+<p>Labels can also be added to an element after it is added to the drawing using the element's add_label() method. This allows arbitrary positions and infinite number of labels.</p>
+<div class="codehilite"><pre><span></span><span class="n">D1</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">DIODE</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;D1&#39;</span><span class="p">)</span>
+<span class="n">D1</span><span class="o">.</span><span class="n">add_label</span><span class="p">(</span><span class="s1">&#39;1N4001&#39;</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;bot&#39;</span><span class="p">)</span>
+<span class="n">D1</span><span class="o">.</span><span class="n">add_label</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lft&#39;</span><span class="p">)</span>
+<span class="n">D1</span><span class="o">.</span><span class="n">add_label</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;rgt&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<p><img alt="" src="img/label_positions.svg" /></p>
+<p>The add_label() method takes the following arguments:</p>
+<div class="codehilite"><pre><span></span>    label: text label to add
+    loc: location for the label [&#39;top&#39;, &#39;bot&#39;, &#39;lft&#39;, &#39;rgt&#39;].
+    txtofst: unit offset between element bounding box and label.
+    align: alignment tuple for (horizontal, vertical):
+           ([&#39;center&#39;, &#39;left&#39;, &#39;right&#39;], [&#39;center&#39;, &#39;top&#39;, &#39;bottom&#39;])
+</pre></div>
+
+
+<h5>Other</h5>
+<p>Other element arguments include:</p>
+<div class="codehilite"><pre><span></span>    move_cur : move the cursor after drawing. Default=True.
+    color    : matplotlib color. e.g. &#39;red&#39;, &#39;#34a4e6&#39;, (.8,0,.8)
+    ls       : [&#39;:&#39;, &#39;--&#39;, &#39;-&#39;] linestyle (same as matplotlib).
+</pre></div>
+
+
+<h4>Drawing parameters</h4>
+<p>When setting up a new schematic drawing, a few parameters are available to set the overall drawing size. Arguments to Drawing() are:</p>
+<div class="codehilite"><pre><span></span>    unit : Full length of a resistor element in matplotlib plot units.
+           Inner portion of resistor is length 1. Default=3.
+    inches_per_unit : inches per unit to scale drawing. Default=.5
+    txtofst  : Default distance from element to text label. Default=0.1.
+    fontsize : Default font size. Default=16.
+    font     : matplotlib font-family. Default=&#39;sans-serif&#39;.
+</pre></div>
+
+
+<h4>Drawing state</h4>
+<p>The drawing state (current position and direction), can be saved and recalled using:</p>
+<div class="codehilite"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">push</span><span class="p">()</span>   <span class="c1"># Save the drawing state</span>
+<span class="o">...</span> <span class="n">Do</span> <span class="n">some</span> <span class="n">things</span> <span class="n">that</span> <span class="n">change</span> <span class="n">the</span> <span class="n">drawing</span> <span class="n">state</span>
+<span class="n">d</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>    <span class="c1"># Recall the drawing state</span>
+</pre></div>
+
+
+<h4>Saving an image</h4>
+<p>The final image can be saved to a file using d.save(). The filename extension determines the type of file to be saved. Any matplotlib-compatible file format can be used. Saving in a vector-based format, such as eps, pdf, or svg, is recommended for best quality.</p>
+<div class="codehilite"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;testimage.eps&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<hr />
+<h3>Elements</h3>
+<p>A number of common elements are predefined in the SchemDraw.elements module.</p>
+<h4>2-Terminal Elements</h4>
+<p><img alt="" src="img/2term.svg" /></p>
+<h4>Sources and meters</h4>
+<p><img alt="" src="img/sources.svg" /></p>
+<p><img alt="" src="img/meters.svg" /></p>
+<h4>Grounds</h4>
+<p>Grounds don't move the current drawing position.</p>
+<p><img alt="" src="img/grounds.svg" /></p>
+<h4>Switches</h4>
+<p><img alt="" src="img/switches.svg" /></p>
+<p><img alt="" src="img/buttons.svg" /></p>
+<h4>Potentiometer</h4>
+<p>Potentiometer is defined with one additional anchor for the 'tap'.</p>
+<p><img alt="" src="img/pot.svg" /></p>
+<h4>Speaker</h4>
+<p><img alt="" src="img/speaker.svg" /></p>
+<h4>Opamp</h4>
+<p>An opamp defines three anchors, in1, in2, and out.</p>
+<p><img alt="" src="img/opamp.svg" /></p>
+<h4>Transistors</h4>
+<p>Transistors also define three anchors as shown below.</p>
+<p><img alt="" src="img/bjt_anchors.svg" />
+<img alt="" src="img/fet_anchors.svg" /></p>
+<p>Types of transistors are shown below:</p>
+<p><img alt="" src="img/bjt.svg" /></p>
+<p><img alt="" src="img/fet.svg" /></p>
+<h4>Connecting elements</h4>
+<p>Elements are connected with lines and dot elements. Dots don't change the current drawing position.</p>
+<p><img alt="" src="img/connectors.svg" /></p>
+<h4>Label element</h4>
+<p>The LABEL element can be used to add a label anywhere. The GAP_LABEL is like an "invisible" element, which can be used for marking the voltage between output terminals.</p>
+<p><img alt="" src="img/label.svg" /></p>
+<h4>Transformers</h4>
+<p>Transformer elements can be generated using the transformer() function. Parameters are:</p>
+<div class="codehilite"><pre><span></span>    t1    : Number of turns on primary (left) side
+    t2    : Number of turns on secondary (right) side
+    core  : Draw the core (parallel lines) [default=False]
+    ltaps : Dictionary of name:position pairs, position is the turn number from the top to tap
+            Each tap defines an anchor point but does not draw anything.
+    rtaps : Same as ltaps, on right side
+    loop  : Use spiral/cycloid (loopy) style [default=False]
+</pre></div>
+
+
+<p><img alt="" src="img/transform.svg" /></p>
+<p>Two transformers with cycloid=False (left) cycloid=True (right). Anchor names are p1, p2 for the primary (left) side,
+and s1, s2 for the secondary (right) side.</p>
+<p>Example usage with taps:</p>
+<div class="codehilite"><pre><span></span><span class="n">xf</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">transformer</span><span class="p">(</span><span class="n">t1</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">t2</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">rtaps</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;B&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">},</span> <span class="n">loop</span><span class="o">=</span><span class="bp">False</span><span class="p">))</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">xf</span><span class="o">.</span><span class="n">s1</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">/</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">xf</span><span class="o">.</span><span class="n">s2</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">/</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">xf</span><span class="o">.</span><span class="n">p1</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">xf</span><span class="o">.</span><span class="n">p2</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">xf</span><span class="o">.</span><span class="n">B</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">,</span> <span class="n">rgtlabel</span><span class="o">=</span><span class="s1">&#39;B&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<p><img alt="" src="img/xform_tap.svg" /></p>
+<h4>Current Arrow</h4>
+<p>To label the current through an element, the ARROWI element is defined. Typically, it can be added alongside an existing element using the drawing's labelI() method, which takes the arguments:</p>
+<div class="codehilite"><pre><span></span>    elm       : element to add arrow to
+    label     : string or list of strings to space along arrow
+    arrowofst : distance from element to arrow
+    arrowlen  : length of arrow in drawing units
+    top       : [True,False] draw on top (or bottom) of element
+</pre></div>
+
+
+<p>For example:</p>
+<div class="codehilite"><pre><span></span><span class="n">R1</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">RES</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">labelI</span><span class="p">(</span><span class="n">R1</span><span class="p">,</span> <span class="s1">&#39;10mA&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<p><img alt="" src="img/labeli.svg" /></p>
+<h4>Loop currents</h4>
+<p>Loop currents can be added using the drawing's loopI() method:</p>
+<div class="codehilite"><pre><span></span>    elm_list : boundary elements in order of top, right, bot, left
+    label    : text label for center of loop
+    d        : arrow direction &#39;cw&#39; or &#39;ccw&#39;. Default=&#39;cw&#39;
+    theta1   : start angle of arrow arc (degrees). Default=35
+    theta2   : end angle of arrow arc (degrees). Default=-35
+</pre></div>
+
+
+<p>For example:</p>
+<div class="codehilite"><pre><span></span><span class="n">R1</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">RES</span><span class="p">)</span>
+<span class="n">C1</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">CAP</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;down&#39;</span><span class="p">)</span>
+<span class="n">D1</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">DIODE_F</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">)</span>
+<span class="n">L1</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">INDUCTOR</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;up&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">loopI</span><span class="p">([</span><span class="n">R1</span><span class="p">,</span> <span class="n">C1</span><span class="p">,</span> <span class="n">D1</span><span class="p">,</span> <span class="n">L1</span><span class="p">],</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;cw&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;$I_1$&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<p><img alt="" src="img/loopi.svg" /></p>
+<h4>Logic Gates</h4>
+<p>Logic gates can be drawn by including the logic module:</p>
+<div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">SchemDraw.logic</span> <span class="kn">as</span> <span class="nn">l</span>
+</pre></div>
+
+
+<p>Typical AND, OR, NAND, NOR, XOR, XNOR, and NOT gates with 2, 3, or 4 inputs are predefined. Anchors are defined as 'in1', 'in2', etc for each input, and 'out' for the output.</p>
+<p><img alt="" src="img/gates.svg" /></p>
+<p>Two functions are available to generate more complicated, multi-input gates. The andgate() method is defined:</p>
+<div class="codehilite"><pre><span></span>    inputs    : number of inputs to gate.
+    nand      : invert bubble on output
+    inputnots : list of input numbers (starting at 1) with invert bubble
+</pre></div>
+
+
+<p>and the orgate() method:</p>
+<div class="codehilite"><pre><span></span>    inputs    : number of inputs to gate.
+    nor       : invert bubble on output
+    xor       : exclusive-or
+    inputnots : list of input numbers (starting at 1) with invert bubble
+</pre></div>
+
+
+<p>As an example, the following line generates a 3-input NAND gate with one input pre-inverted.</p>
+<div class="codehilite"><pre><span></span><span class="n">l</span><span class="o">.</span><span class="n">andgate</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">nand</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">inputnots</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+</pre></div>
+
+
+<p><img alt="" src="img/and_inputnot.svg" /></p>
+<h4>Black-box elements</h4>
+<p>Elements drawn as boxes, such as integrated circuits, can be generated using the elements.blackbox() function. An arbitrary number of inputs/outputs can be drawn to each side of the box. The inputs can be evenly spaced (default) or arbitrarily placed anywhere along each edge. The function takes the arguments:</p>
+<div class="codehilite"><pre><span></span>    w, h : width and height of rectangle
+    mainlabel : main box label, drawn in center
+    leadlen   : length of lead extensions
+    linputs, rinputs, tinputs, binputs: dictionary input definition for each side
+    of the box. Default to no inputs. Dictionary keys:
+        cnt : number of inputs for that side
+        labels: list of string labels for each input. drawn inside the box. default is blank.
+        plabels: list of pin label strings. drawn outside the box. Default is blank.
+        loc: list of pin locations (0 to 1), along side. Defaults to evenly spaced pins.
+        leads: True/False, draw leads coming out of box. Default=True.
+        lblofst: float offset for labels. Default=.15
+        plblofst: float offset for pin labels. Default=.1
+        lblsize: font size for labels. Default=16
+        plblsize: font size for pin labels. Default=12
+</pre></div>
+
+
+<p>Anchors to each input will be automatically generated using the 'labels' keyword for each side of the box if provided. Duplicate input names will be appended with a number. If not provided, the anchors will be named 'inL1', 'inL2'... for the left side, for the right side 'inR1', inR2', etc.</p>
+<p>For example, a full-adder box can be made with inputs on all sides:</p>
+<div class="codehilite"><pre><span></span><span class="n">tinputs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;cnt&#39;</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;labels&#39;</span><span class="p">:[</span><span class="s1">&#39;b&#39;</span><span class="p">,</span><span class="s1">&#39;a&#39;</span><span class="p">]}</span>
+<span class="n">rinputs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;cnt&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;labels&#39;</span><span class="p">:[</span><span class="s1">&#39;$c_{in}$&#39;</span><span class="p">]}</span>
+<span class="n">linputs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;cnt&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;labels&#39;</span><span class="p">:[</span><span class="s1">&#39;$c_{out}$&#39;</span><span class="p">]}</span>
+<span class="n">binputs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;cnt&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;labels&#39;</span><span class="p">:[</span><span class="s1">&#39;$s$&#39;</span><span class="p">]}</span>
+<span class="n">B</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">blackbox</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="p">,</span> <span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="p">,</span> <span class="n">linputs</span><span class="o">=</span><span class="n">linputs</span><span class="p">,</span> <span class="n">binputs</span><span class="o">=</span><span class="n">binputs</span><span class="p">,</span> <span class="n">tinputs</span><span class="o">=</span><span class="n">tinputs</span><span class="p">,</span> <span class="n">rinputs</span><span class="o">=</span><span class="n">rinputs</span><span class="p">)</span>
+</pre></div>
+
+
+<p><img alt="" src="img/fulladd_blackbox.svg" /></p>
+<p>See the [555-timer circuit] example below for a more complete usage of blackbox().</p>
+<hr />
+<h3>Examples</h3>
+<p>Following are examples of more complicated circuit diagrams. Most are useless circuits made for torturing ECE201 students. Further examples can be found in the ipynb ipython notebooks the docs folder.</p>
+<h4>Example 1</h4>
+<p>This example demonstrates use of push() and pop() and using 'tox' and 'toy' keywords.</p>
+<div class="codehilite"><pre><span></span><span class="n">d</span> <span class="o">=</span> <span class="n">schem</span><span class="o">.</span><span class="n">Drawing</span><span class="p">(</span><span class="n">unit</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># unit=2 makes elements with shorter than normal leads</span>
+<span class="n">d</span><span class="o">.</span><span class="n">push</span><span class="p">()</span>
+<span class="n">R1</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">RES</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;down&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;20$\Omega$&#39;</span><span class="p">)</span>
+<span class="n">V1</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">SOURCE_V</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;down&#39;</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;120V&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">DOT</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">DOT</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">SOURCE_V</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;down&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;60V&#39;</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">RES</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;5$\Omega$&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">DOT</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">SOURCE_I</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;up&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;36A&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">RES</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;10$\Omega$&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">DOT</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">move_cur</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">DOT</span><span class="p">)</span>
+<span class="n">R6</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">RES</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;down&#39;</span><span class="p">,</span> <span class="n">toy</span><span class="o">=</span><span class="n">V1</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;6$\Omega$&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">DOT</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">move_cur</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">RES</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">R6</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;1.6$\Omega$&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">DOT</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;a&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">R6</span><span class="o">.</span><span class="n">end</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">DOT</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+</pre></div>
+
+
+<p><img alt="" src="img/ex01.svg" /></p>
+<h4>Capacitor discharging</h4>
+<p>Shows how to connect to a switch element anchors.</p>
+<div class="codehilite"><pre><span></span><span class="n">d</span> <span class="o">=</span> <span class="n">schem</span><span class="o">.</span><span class="n">Drawing</span><span class="p">()</span>
+<span class="n">V1</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">SOURCE_V</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;5V&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">*.</span><span class="mi">75</span><span class="p">)</span>
+<span class="n">S1</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">SWITCH_SPDT2_CLOSE</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;up&#39;</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">rgtlabel</span><span class="o">=</span><span class="s1">&#39;$t=0$&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">S1</span><span class="o">.</span><span class="n">c</span><span class="p">,</span>  <span class="n">l</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">*.</span><span class="mi">75</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">RES</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;down&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;$100\Omega$&#39;</span><span class="p">,</span> <span class="n">botlabel</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;+&#39;</span><span class="p">,</span><span class="s1">&#39;$v_o$&#39;</span><span class="p">,</span><span class="s1">&#39;-&#39;</span><span class="p">])</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">to</span><span class="o">=</span><span class="n">V1</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">CAP</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">S1</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;down&#39;</span><span class="p">,</span> <span class="n">toy</span><span class="o">=</span><span class="n">V1</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;1$\mu$F&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">DOT</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+</pre></div>
+
+
+<p><img alt="" src="img/cap-charge.svg" /></p>
+<h4>Inverting Opamp</h4>
+<p>Shows how to connect to an opamp</p>
+<div class="codehilite"><pre><span></span><span class="n">d</span> <span class="o">=</span> <span class="n">schem</span><span class="o">.</span><span class="n">Drawing</span><span class="p">(</span><span class="n">inches_per_unit</span><span class="o">=.</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">op</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">OPAMP</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">op</span><span class="o">.</span><span class="n">in2</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">/</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;down&#39;</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">/</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">GND</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">op</span><span class="o">.</span><span class="n">in1</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">/</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">DOT</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">push</span><span class="p">()</span>
+<span class="n">Rin</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">RES</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">op</span><span class="o">.</span><span class="n">in1</span><span class="o">-</span><span class="p">[</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">/</span><span class="mi">5</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">botlabel</span><span class="o">=</span><span class="s1">&#39;$R_{in}$&#39;</span><span class="p">,</span> <span class="n">lftlabel</span><span class="o">=</span><span class="s1">&#39;$v_{in}$&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;up&#39;</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">Rf</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">RES</span><span class="p">,</span>  <span class="n">d</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">*</span><span class="mi">1</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;$R_f$&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;down&#39;</span><span class="p">,</span> <span class="n">toy</span><span class="o">=</span><span class="n">op</span><span class="o">.</span><span class="n">out</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">DOT</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">tox</span><span class="o">=</span><span class="n">op</span><span class="o">.</span><span class="n">out</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="n">rgtlabel</span><span class="o">=</span><span class="s1">&#39;$v_{o}$&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+</pre></div>
+
+
+<p><img alt="" src="img/inv_opamp.svg" /></p>
+<h4>Capacitor network</h4>
+<p>Another good problem to torture ECE201 students. Shows how to place an element using 'endpts' to cross a diagonal.</p>
+<div class="codehilite"><pre><span></span><span class="n">d</span> <span class="o">=</span> <span class="n">schem</span><span class="o">.</span><span class="n">Drawing</span><span class="p">()</span>
+<span class="n">A</span>  <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">DOT</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;a&#39;</span><span class="p">)</span>
+<span class="n">C1</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">CAP</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;8nF&#39;</span><span class="p">)</span>
+<span class="n">C2</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">CAP</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;18nF&#39;</span><span class="p">)</span>
+<span class="n">C3</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">CAP</span><span class="p">,</span> <span class="n">botlabel</span><span class="o">=</span><span class="s1">&#39;8nF&#39;</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;down&#39;</span><span class="p">)</span>
+<span class="n">C4</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">CAP</span><span class="p">,</span> <span class="n">botlabel</span><span class="o">=</span><span class="s1">&#39;32nF&#39;</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">)</span>
+<span class="n">C5</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">CAP</span><span class="p">,</span> <span class="n">botlabel</span><span class="o">=</span><span class="s1">&#39;40nF&#39;</span><span class="p">)</span>
+<span class="n">B</span>  <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">DOT</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">)</span>
+<span class="n">C6</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">CAP</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;2.8nF&#39;</span><span class="p">,</span> <span class="n">endpts</span><span class="o">=</span><span class="p">[</span><span class="n">C1</span><span class="o">.</span><span class="n">end</span><span class="p">,</span><span class="n">C5</span><span class="o">.</span><span class="n">start</span><span class="p">])</span>
+<span class="n">C7</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">CAP</span><span class="p">,</span> <span class="n">endpts</span><span class="o">=</span><span class="p">[</span><span class="n">C2</span><span class="o">.</span><span class="n">end</span><span class="p">,</span><span class="n">C5</span><span class="o">.</span><span class="n">start</span><span class="p">])</span>
+<span class="n">C7</span><span class="o">.</span><span class="n">add_label</span><span class="p">(</span><span class="s1">&#39;5.6nF&#39;</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">ofst</span><span class="o">=</span><span class="p">[</span><span class="o">-.</span><span class="mi">3</span><span class="p">,</span><span class="o">-.</span><span class="mi">1</span><span class="p">],</span> <span class="n">align</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;right&#39;</span><span class="p">,</span><span class="s1">&#39;bottom&#39;</span><span class="p">))</span>
+<span class="n">d</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+</pre></div>
+
+
+<p><img alt="" src="img/cap-net.svg" /></p>
+<h4>S-R Latch</h4>
+<p>Demonstrates using transistors</p>
+<div class="codehilite"><pre><span></span><span class="n">d</span> <span class="o">=</span> <span class="n">schem</span><span class="o">.</span><span class="n">Drawing</span><span class="p">()</span>
+<span class="n">Q1</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">BJT_NPN_C</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">lftlabel</span><span class="o">=</span><span class="s1">&#39;Q1&#39;</span><span class="p">)</span>
+<span class="n">Q2</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">BJT_NPN_C</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="p">[</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Q2&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">Q1</span><span class="o">.</span><span class="n">collector</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;up&#39;</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">R1</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">RES</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;up&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;R1&#39;</span><span class="p">,</span> <span class="n">move_cur</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">DOT</span><span class="p">,</span> <span class="n">lftlabel</span><span class="o">=</span><span class="s1">&#39;V1&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">RES</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">,</span> <span class="n">botlabel</span><span class="o">=</span><span class="s1">&#39;R3&#39;</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">*.</span><span class="mi">75</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">DOT</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">push</span><span class="p">()</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;up&#39;</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">/</span><span class="mi">8</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">DOT_OPEN</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Set&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">to</span><span class="o">=</span><span class="n">Q2</span><span class="o">.</span><span class="n">base</span><span class="p">)</span>
+
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">Q2</span><span class="o">.</span><span class="n">collector</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;up&#39;</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">DOT</span><span class="p">,</span> <span class="n">rgtlabel</span><span class="o">=</span><span class="s1">&#39;V2&#39;</span><span class="p">)</span>
+<span class="n">R2</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">RES</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;up&#39;</span><span class="p">,</span> <span class="n">botlabel</span><span class="o">=</span><span class="s1">&#39;R2&#39;</span><span class="p">,</span> <span class="n">move_cur</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">RES</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">botlabel</span><span class="o">=</span><span class="s1">&#39;R4&#39;</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">*.</span><span class="mi">75</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">DOT</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">push</span><span class="p">()</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;up&#39;</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">/</span><span class="mi">8</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">DOT_OPEN</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Reset&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">to</span><span class="o">=</span><span class="n">Q1</span><span class="o">.</span><span class="n">base</span><span class="p">)</span>
+
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">Q1</span><span class="o">.</span><span class="n">emitter</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;down&#39;</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">/</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">BOT</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">,</span> <span class="n">tox</span><span class="o">=</span><span class="n">Q2</span><span class="o">.</span><span class="n">emitter</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">to</span><span class="o">=</span><span class="n">Q2</span><span class="o">.</span><span class="n">emitter</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">DOT</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">BOT</span><span class="o">.</span><span class="n">center</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">GND</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">BOT</span><span class="o">.</span><span class="n">center</span><span class="p">)</span>
+
+<span class="n">TOP</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">endpts</span><span class="o">=</span><span class="p">[</span><span class="n">R1</span><span class="o">.</span><span class="n">end</span><span class="p">,</span><span class="n">R2</span><span class="o">.</span><span class="n">end</span><span class="p">])</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">DOT</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">TOP</span><span class="o">.</span><span class="n">center</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">TOP</span><span class="o">.</span><span class="n">center</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;up&#39;</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">/</span><span class="mi">8</span><span class="p">,</span> <span class="n">rgtlabel</span><span class="o">=</span><span class="s1">&#39;Vcc&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+</pre></div>
+
+
+<p><img alt="" src="img/SR-Latch.svg" /></p>
+<h4>Half-adder</h4>
+<p>Demonstrate using logic gates</p>
+<div class="codehilite"><pre><span></span><span class="n">d</span> <span class="o">=</span> <span class="n">schem</span><span class="o">.</span><span class="n">Drawing</span><span class="p">(</span><span class="n">unit</span><span class="o">=.</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">S</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">XOR2</span><span class="p">,</span> <span class="n">rgtlabel</span><span class="o">=</span><span class="s1">&#39;$S$&#39;</span><span class="p">)</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">DOT</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">S</span><span class="o">.</span><span class="n">in1</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="n">lftlabel</span><span class="o">=</span><span class="s1">&#39;$A$&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">S</span><span class="o">.</span><span class="n">in2</span><span class="p">)</span>
+<span class="n">B</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">DOT</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">lftlabel</span><span class="o">=</span><span class="s1">&#39;$B$&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;down&#39;</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">A</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">*</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">C</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">AND2</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="s1">&#39;in1&#39;</span><span class="p">,</span> <span class="n">rgtlabel</span><span class="o">=</span><span class="s1">&#39;$C$&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;down&#39;</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">B</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">toy</span><span class="o">=</span><span class="n">C</span><span class="o">.</span><span class="n">in2</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">to</span><span class="o">=</span><span class="n">C</span><span class="o">.</span><span class="n">in2</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+</pre></div>
+
+
+<p><img alt="" src="img/half_add.svg" /></p>
+<h4>JK Flip-flop</h4>
+<p>A slightly more complicated logic gate example. Note the use of the LaTeX command <strong>\overline{Q}</strong> in the label to draw a bar over the output label.</p>
+<div class="codehilite"><pre><span></span><span class="n">d</span> <span class="o">=</span> <span class="n">schem</span><span class="o">.</span><span class="n">Drawing</span><span class="p">()</span>
+<span class="c1"># Two front gates (SR latch)</span>
+<span class="n">G1</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">NAND2</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="s1">&#39;in1&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">/</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">Q1</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">DOT</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">/</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">Q2</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">DOT</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="n">rgtlabel</span><span class="o">=</span><span class="s1">&#39;$Q$&#39;</span><span class="p">)</span>
+<span class="n">G2</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">NAND2</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="s1">&#39;in1&#39;</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="p">[</span><span class="n">G1</span><span class="o">.</span><span class="n">in1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">G1</span><span class="o">.</span><span class="n">in1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mf">2.5</span><span class="p">])</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">/</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">Qb</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">DOT</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">Qb2</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">DOT</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">/</span><span class="mi">6</span><span class="p">,</span> <span class="n">rgtlabel</span><span class="o">=</span><span class="s1">&#39;$\overline{Q}$&#39;</span><span class="p">)</span>
+<span class="n">S1</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">G2</span><span class="o">.</span><span class="n">in1</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;up&#39;</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">/</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;down&#39;</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">Q1</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">/</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">to</span><span class="o">=</span><span class="n">S1</span><span class="o">.</span><span class="n">end</span><span class="p">)</span>
+<span class="n">R1</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">G1</span><span class="o">.</span><span class="n">in2</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;down&#39;</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">/</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;up&#39;</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">Qb</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">/</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">to</span><span class="o">=</span><span class="n">R1</span><span class="o">.</span><span class="n">end</span><span class="p">)</span>
+
+<span class="c1"># Two back gates</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">G1</span><span class="o">.</span><span class="n">in1</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">/</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">J</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">NAND3</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="s1">&#39;out&#39;</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">J</span><span class="o">.</span><span class="n">in3</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;up&#39;</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">/</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">,</span> <span class="n">tox</span><span class="o">=</span><span class="n">Qb2</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;down&#39;</span><span class="p">,</span> <span class="n">toy</span><span class="o">=</span><span class="n">Qb2</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">J</span><span class="o">.</span><span class="n">in2</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="n">lftlabel</span><span class="o">=</span><span class="s1">&#39;$J$&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">G2</span><span class="o">.</span><span class="n">in2</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">/</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">K</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">NAND3</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="s1">&#39;out&#39;</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">K</span><span class="o">.</span><span class="n">in1</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;down&#39;</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">/</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">,</span> <span class="n">tox</span><span class="o">=</span><span class="n">Q2</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;up&#39;</span><span class="p">,</span> <span class="n">toy</span><span class="o">=</span><span class="n">Q2</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">K</span><span class="o">.</span><span class="n">in2</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="n">lftlabel</span><span class="o">=</span><span class="s1">&#39;$K$&#39;</span><span class="p">)</span>
+<span class="n">C</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;down&#39;</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">J</span><span class="o">.</span><span class="n">in1</span><span class="p">,</span> <span class="n">toy</span><span class="o">=</span><span class="n">K</span><span class="o">.</span><span class="n">in3</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">DOT</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">C</span><span class="o">.</span><span class="n">center</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">C</span><span class="o">.</span><span class="n">center</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="n">lftlabel</span><span class="o">=</span><span class="s1">&#39;$CLK$&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+</pre></div>
+
+
+<p><img alt="" src="img/JK.svg" /></p>
+<h4>555-timer circuit</h4>
+<p>This example shows use of the blackbox() function to draw a 555-timer integrated circuit.</p>
+<div class="codehilite"><pre><span></span><span class="n">d</span> <span class="o">=</span> <span class="n">schem</span><span class="o">.</span><span class="n">Drawing</span><span class="p">()</span>
+<span class="n">left</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;cnt&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span>
+        <span class="s1">&#39;labels&#39;</span><span class="p">:[</span><span class="s1">&#39;TRG&#39;</span><span class="p">,</span><span class="s1">&#39;THR&#39;</span><span class="p">,</span><span class="s1">&#39;DIS&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;plabels&#39;</span><span class="p">:[</span><span class="s1">&#39;2&#39;</span><span class="p">,</span><span class="s1">&#39;6&#39;</span><span class="p">,</span><span class="s1">&#39;7&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;loc&#39;</span><span class="p">:[</span><span class="o">.</span><span class="mi">2</span><span class="p">,</span><span class="o">.</span><span class="mi">35</span><span class="p">,</span><span class="o">.</span><span class="mi">75</span><span class="p">],</span>
+        <span class="s1">&#39;lblsize&#39;</span><span class="p">:</span><span class="mi">12</span><span class="p">,</span>
+        <span class="p">}</span>
+<span class="n">right</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;cnt&#39;</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span>
+         <span class="s1">&#39;labels&#39;</span><span class="p">:[</span><span class="s1">&#39;CTL&#39;</span><span class="p">,</span><span class="s1">&#39;OUT&#39;</span><span class="p">],</span>
+         <span class="s1">&#39;plabels&#39;</span><span class="p">:[</span><span class="s1">&#39;5&#39;</span><span class="p">,</span><span class="s1">&#39;3&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;lblsize&#39;</span><span class="p">:</span><span class="mi">12</span><span class="p">,</span>
+         <span class="p">}</span>
+<span class="n">top</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;cnt&#39;</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span>
+       <span class="s1">&#39;labels&#39;</span><span class="p">:[</span><span class="s1">&#39;RST&#39;</span><span class="p">,</span><span class="s1">&#39;Vcc&#39;</span><span class="p">],</span>
+       <span class="s1">&#39;plabels&#39;</span><span class="p">:[</span><span class="s1">&#39;4&#39;</span><span class="p">,</span><span class="s1">&#39;8&#39;</span><span class="p">],</span>
+       <span class="s1">&#39;lblsize&#39;</span><span class="p">:</span><span class="mi">12</span><span class="p">,</span>
+       <span class="p">}</span>
+<span class="n">bot</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;cnt&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span>
+       <span class="s1">&#39;labels&#39;</span><span class="p">:[</span><span class="s1">&#39;GND&#39;</span><span class="p">],</span>
+       <span class="s1">&#39;plabels&#39;</span><span class="p">:[</span><span class="s1">&#39;1&#39;</span><span class="p">],</span>
+       <span class="s1">&#39;lblsize&#39;</span><span class="p">:</span><span class="mi">12</span><span class="p">,</span>
+        <span class="p">}</span>
+
+<span class="n">IC555</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">blackbox</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">*</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">*</span><span class="mf">2.25</span><span class="p">,</span> 
+                   <span class="n">linputs</span><span class="o">=</span><span class="n">left</span><span class="p">,</span> <span class="n">rinputs</span><span class="o">=</span><span class="n">right</span><span class="p">,</span> <span class="n">tinputs</span><span class="o">=</span><span class="n">top</span><span class="p">,</span> <span class="n">binputs</span><span class="o">=</span><span class="n">bot</span><span class="p">,</span>
+                   <span class="n">leadlen</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">mainlabel</span><span class="o">=</span><span class="s1">&#39;555&#39;</span><span class="p">)</span>
+<span class="n">T</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">IC555</span><span class="p">)</span>
+<span class="n">BOT</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">GND</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">T</span><span class="o">.</span><span class="n">GND</span><span class="p">)</span>  <span class="c1"># Note: Anchors named same as pin labels</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">DOT</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">RES</span><span class="p">,</span> <span class="n">endpts</span><span class="o">=</span><span class="p">[</span><span class="n">T</span><span class="o">.</span><span class="n">DIS</span><span class="p">,</span> <span class="n">T</span><span class="o">.</span><span class="n">THR</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Rb&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">RES</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;up&#39;</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">T</span><span class="o">.</span><span class="n">DIS</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Ra&#39;</span><span class="p">,</span> <span class="n">rgtlabel</span><span class="o">=</span><span class="s1">&#39;+Vcc&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">endpts</span><span class="o">=</span><span class="p">[</span><span class="n">T</span><span class="o">.</span><span class="n">THR</span><span class="p">,</span> <span class="n">T</span><span class="o">.</span><span class="n">TRG</span><span class="p">])</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">CAP</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">T</span><span class="o">.</span><span class="n">TRG</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;down&#39;</span><span class="p">,</span> <span class="n">toy</span><span class="o">=</span><span class="n">BOT</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">,</span> <span class="n">tox</span><span class="o">=</span><span class="n">BOT</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">CAP</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;down&#39;</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">T</span><span class="o">.</span><span class="n">CTL</span><span class="p">,</span> <span class="n">toy</span><span class="o">=</span><span class="n">BOT</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">botlabel</span><span class="o">=</span><span class="s1">&#39;.01$\mu$F&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">DOT</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">DOT</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">T</span><span class="o">.</span><span class="n">DIS</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">DOT</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">T</span><span class="o">.</span><span class="n">THR</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">DOT</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">T</span><span class="o">.</span><span class="n">TRG</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">endpts</span><span class="o">=</span><span class="p">[</span><span class="n">T</span><span class="o">.</span><span class="n">RST</span><span class="p">,</span><span class="n">T</span><span class="o">.</span><span class="n">Vcc</span><span class="p">])</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">DOT</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;up&#39;</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">unit</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="n">rgtlabel</span><span class="o">=</span><span class="s1">&#39;+Vcc&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">RES</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="n">T</span><span class="o">.</span><span class="n">OUT</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;330&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LED</span><span class="p">,</span> <span class="n">flip</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;down&#39;</span><span class="p">,</span> <span class="n">toy</span><span class="o">=</span><span class="n">BOT</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">tox</span><span class="o">=</span><span class="n">BOT</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+</pre></div>
+
+
+<p><img alt="" src="img/555blinker.svg" /></p>
+<hr />
+<p><a name="DefiningElements"></a></p>
+<h3>Defining New Elements</h3>
+<p>New elements can be defined by creating a python dictionary describing how the element should be drawn. An element can be made up of paths and/or shapes. A path is simply a list of xy coordinates which will be plotted with matplotlib. A shape is a predefined matplotlib patch, such as a circle (defined by center and radius).</p>
+<p>Coordinates are all defined in element cooridnates, where the element begins
+at [0,0] and is drawn from left to right. The drawing engine will then rotate
+and translate the element to its final position. A standard resistor is
+1 drawing unit long, and with default lead extension will become 3 units long.</p>
+<p>Possible dictionary keys:</p>
+<div class="codehilite"><pre><span></span>    name:  A name string for the element. Currently only used for testing.
+    paths: A list of each path line in the element. For example, a capacitor
+           has two paths, one for each capacitor &quot;plate&quot;. On 2-terminal
+           elements, the leads will be automatically extended away from the
+           first and last points of the first path, and don&#39;t need to
+           be included in the path.
+    base:  Dictionary defining a base element. For example, the variable
+           resistor has a base of resistor, then adds an additional path.
+    shapes: A list of shape dictionaries.
+            &#39;shape&#39; key can be [ &#39;circle&#39;, &#39;poly&#39;, &#39;arc&#39;, &#39;arrow&#39; ]
+            Other keys depend on the shape as follows.
+            circle:
+                &#39;center&#39;: xy center coordinate
+                &#39;radius&#39;: radius of circle
+                &#39;fill&#39;  : [True, False] fill the circle
+                &#39;fillcolor&#39; : color for fill
+            poly:
+                &#39;xy&#39; : List of xy coordinates defining polygon
+                &#39;closed&#39;: [True, False] Close the polygon
+                &#39;fill&#39;  : [True, False] fill the polygon
+                &#39;fillcolor&#39; : color for fill
+            arc:
+                &#39;center&#39; : Center coordinate of arc
+                &#39;width&#39;, &#39;height&#39;: width and height of arc
+                &#39;theta1&#39; : Starting angle (degrees)
+                &#39;theta2&#39; : Ending angle (degrees)
+                &#39;angle&#39;  : Rotation angle of entire arc
+                &#39;arrow&#39;  : [&#39;cw&#39;, &#39;ccw&#39;] Add an arrowhead, clockwise or counterclockwise
+            arrow:
+                &#39;start&#39;  : start of arrow
+                &#39;end&#39;    : end of arrow
+                &#39;headwidth&#39;, &#39;headlength&#39;: width and length of arrowhead
+    theta: Default angle (in degrees) for the element. Overrides the current
+           drawing angle.
+    anchors: A dictionary defining named positions within the element. For
+             example, the NFET element has a &#39;source&#39;, &#39;gate&#39;, and &#39;drain&#39;
+             anchor. Each anchor will become an attribute of the element class
+             which can then be used for connecting other elements.
+    extend: [True, False] Extend the leads to fill the full element length.
+    move_cur: [True, False] Move the drawing cursor location after drawing.
+    color: A matplotlib-compatible color for the element. Examples include
+           &#39;red&#39;, &#39;blue&#39;, &#39;#34ac92&#39;
+    drop: Final location to leave drawing cursor.
+    lblloc: [&#39;top&#39;, &#39;bot&#39;, &#39;lft&#39;, &#39;rgt&#39;] default location for text label.
+            Defaults to &#39;top&#39;.
+    lblofst: Default distance between element and text label.
+    labels: List of (label, pos) tuples defining text labels to always draw
+            in the element.
+    ls    : [&#39;:&#39;, &#39;--&#39;, &#39;-&#39;] linestyle (same as matplotlib). Only applies to paths.
+</pre></div>
+
+
+<p>Using the 'base' key, a new element can be defined as an extension of some base element. As an example, let's define a sinusoidal voltage source (the SOURCE_SIN element). It can be based on a SOURCE element, with the addition of a path to draw a sine wave inside the circle. A path can be created using standard numpy processing, so first we'll make a sine wave path. Since the circle is centered at [.5,0], center the sine wave there too:</p>
+<div class="codehilite"><pre><span></span><span class="n">sin_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">.</span><span class="mi">25</span><span class="p">,</span><span class="o">.</span><span class="mi">75</span><span class="p">,</span><span class="n">num</span><span class="o">=</span><span class="mi">25</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.5</span>
+<span class="n">sin_x</span> <span class="o">=</span> <span class="o">.</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">((</span><span class="n">sin_y</span><span class="o">-.</span><span class="mi">25</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="mi">2</span><span class="o">/.</span><span class="mi">5</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.5</span>
+<span class="n">sin_path</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">sin_x</span><span class="p">,</span><span class="n">sin_y</span><span class="p">)))</span>
+</pre></div>
+
+
+<p>Then define the element dictionary. It's just a SOURCE element with an additional path:</p>
+<div class="codehilite"><pre><span></span><span class="n">SOURCE_SIN</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;name&#39;</span>  <span class="p">:</span> <span class="s1">&#39;SOURCE_SIN&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;base&#39;</span>  <span class="p">:</span> <span class="n">SOURCE</span><span class="p">,</span>
+    <span class="s1">&#39;paths&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="n">sin_path</span><span class="p">]</span>
+    <span class="p">}</span>
+</pre></div>
+
+
+<hr />
+<h3>XKCD Mode!</h3>
+<p>For something fun, you can turn on Matplotlib's XKCD mode to get "hand-drawn" schematics. (May not work in all image formats or cases...)</p>
+<div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xkcd</span><span class="p">()</span>    
+<span class="n">d</span> <span class="o">=</span> <span class="n">schem</span><span class="o">.</span><span class="n">Drawing</span><span class="p">()</span>
+<span class="o">...</span>
+<span class="n">d</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+</pre></div>
+
+
+<p><img alt="" src="img/ex_xkcd.png" /></p>

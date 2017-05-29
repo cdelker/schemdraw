@@ -275,6 +275,39 @@ LED2 = {
     }
 
 
+# Photodiode with squiggle light
+x = _np.linspace(-1,1)
+y = -x*(x-.7)*(x+.7)/2 + _rh*2.5
+x = _np.linspace(_rh*.75,_rh*1.25)
+theta = 20
+c = _np.cos( _np.radians(theta) )
+s = _np.sin( _np.radians(theta) )
+m = _np.array( [[c,s],[-s,c]] )
+p = _np.transpose(_np.vstack((x,y)))
+p = _np.dot( p, m )
+p2 = _np.transpose(_np.vstack((x-.2,y)))
+p2 = _np.dot( p2, m )
+
+PHOTODIODE = {
+    'name'   : 'PHOTODIODE',
+    'base'   : DIODE,
+    'paths'  : [p,p2],
+    'shapes' : [ {'shape':'arrow',
+                  'start' : p[-2],
+                  'end'   : p[-1],
+                  'headwidth' : .07,
+                  'headlength' : .08
+                 },
+                 {'shape':'arrow',
+                  'start' : p2[-2],
+                  'end'   : p2[-1],
+                  'headwidth' : .07,
+                  'headlength' : .08
+                 } ]
+    }
+
+
+
 _mr = 0.2
 MEMRISTOR = { 
     'name'  : 'MEMRISTOR',

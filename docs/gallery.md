@@ -1,89 +1,90 @@
+<link rel="stylesheet" href="css/codehilite.css">
 
-# SchemDraw Gallery
+## SchemDraw Gallery
 
 
-## Charging capacitor
+### Charging capacitor
 
-![](gallery/cap_charge.png)
+![](gallery/cap_charge.svg)
 
 [Source](gallery/cap_charge.py)
 
 
 -----------------------------------------------------------
-## Loop Currents
+### Loop Currents
 
-![](gallery/loop_current.png)
+![](gallery/loop_current.svg)
 
 [Source](gallery/loop_current.py)
 
 
 -----------------------------------------------------------
-## Operational Amplifier
+### Operational Amplifier
 
-![](gallery/opamp.png)
+![](gallery/opamp.svg)
 
 [Source](gallery/opamp.py)
 
 
 -----------------------------------------------------------
-## Source-Measure-Unit (SMU)
+### Source-Measure-Unit (SMU)
 
 This example demonstrates grouping elements into a unit. 
 Each SMU is grouped into a unit which is then placed where needed.
 
-![](gallery/smu.png)
+![](gallery/smu.svg)
 
 [Source](gallery/smu.py)
 
 
 -----------------------------------------------------------
-## SR Latch
+### SR Latch
 
-![](gallery/SR.png)
+![](gallery/SR.svg)
 
 [Source](gallery/SR.py)
 
 
 -----------------------------------------------------------
-## Resistor circle
+### Resistor circle
 
 Shows creation of elements within for loop, angled elements with automatic label positioning, and colors.
 
-![](gallery/Rcircle.png)
+![](gallery/Rcircle.svg)
 
 [Source](gallery/Rcircle.py)
 
 
 
 -----------------------------------------------------------
-## Power Supply
+### Power Supply
 
-![](gallery/powersupply.png)
+![](gallery/powersupply.svg)
 
 [Source](gallery/powersupply.py)
 
 
 
 -----------------------------------------------------------
-## 741 Op-Amp
+### 741 Op-Amp
 
 Internal schematic of a 741 IC.
 
-![](gallery/741.png)
+![](gallery/741.svg)
 
 [Source](gallery/741.py)
 
 
 -----------------------------------------------------------
-## XKCD Mode
+### XKCD Mode
 
 Turn on Matplotlib's XKCD mode for some hand-drawn looks!
 
-![](gallery/ex_xkcd.png)
+![](gallery/ex_xkcd.svg)
 
 [Source](gallery/ex_xkcd.py)
 
-![](gallery/SRxkcd.png)
+![](gallery/SRxkcd.svg)
 
 [Source](gallery/SRxkcd.py)
 

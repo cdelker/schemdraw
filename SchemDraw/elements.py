@@ -275,6 +275,39 @@ LED2 = {
     }
 
 
+# Photodiode with squiggle light
+x = _np.linspace(-1,1)
+y = -x*(x-.7)*(x+.7)/2 + _rh*2.5
+x = _np.linspace(_rh*.75,_rh*1.25)
+theta = 20
+c = _np.cos( _np.radians(theta) )
+s = _np.sin( _np.radians(theta) )
+m = _np.array( [[c,s],[-s,c]] )
+p = _np.transpose(_np.vstack((x,y)))
+p = _np.dot( p, m )
+p2 = _np.transpose(_np.vstack((x-.2,y)))
+p2 = _np.dot( p2, m )
+
+PHOTODIODE = {
+    'name'   : 'PHOTODIODE',
+    'base'   : DIODE,
+    'paths'  : [p,p2],
+    'shapes' : [ {'shape':'arrow',
+                  'start' : p[-2],
+                  'end'   : p[-1],
+                  'headwidth' : .07,
+                  'headlength' : .08
+                 },
+                 {'shape':'arrow',
+                  'start' : p2[-2],
+                  'end'   : p2[-1],
+                  'headwidth' : .07,
+                  'headlength' : .08
+                 } ]
+    }
+
+
+
 _mr = 0.2
 MEMRISTOR = { 
     'name'  : 'MEMRISTOR',
@@ -406,6 +439,30 @@ GND_CHASSIS = {
     'extend'  : False,
     'theta'   : 0
     }
+    
+_chgnd_dx = _rh*.75
+_chgnd_dy = _rh
+VSS = {
+    'name'  : 'VSS',
+    'paths'    : [ [[0,0],[0,-_gnd_lead]],
+                   [[0,-_gnd_lead],[-_chgnd_dx,-_gnd_lead]],
+                   [[0,-_gnd_lead],[_chgnd_dx,-_gnd_lead]]  ],
+    'move_cur': False,
+    'extend'  : False,
+    'theta'   : 0
+    }
+
+_chgnd_dx = _rh*.75
+_chgnd_dy = _rh
+VDD = {
+    'name'  : 'VDD',
+    'paths'    : [ [[0,0],[0,_gnd_lead]],
+                   [[0,_gnd_lead],[-_chgnd_dx,_gnd_lead]],
+                   [[0,_gnd_lead],[_chgnd_dx,_gnd_lead]]  ],
+    'move_cur': False,
+    'extend'  : False,
+    'theta'   : 0
+    }
 
 
 # Opamp
@@ -458,6 +515,27 @@ NFET = {
                   'gate'   : [_fetw+_fet_gap+_fetl+_fetr,-_fetl-_fetw/2] }
      }
 
+NFET4 = {
+    'name'  : 'NFET4',
+    'paths'  : [ [ [0,0],[0,-_fetl],[_fetw,-_fetl],[_fetw,-_fetl-_fetw],[0,-_fetl-_fetw],[0,-2*_fetl-_fetw] ],
+                 [ [_fetw+_fet_gap,-_fetl],[_fetw+_fet_gap,-_fetl-_fetw] ],
+                 #~ [ [0,-_fetl-_fetw/2], [_fetw,-_fetl-_fetw/2] ],
+                 [ [_fetw+_fet_gap,-_fetl-_fetw/2], [_fetw+_fet_gap+_fetl+_fetr,-_fetl-_fetw/2] ] ],
+    'shapes' : [
+               { 'shape' : 'arrow',
+                   'start' : [0,-_fetl-_fetw/2],
+                   'end'   : [_fetw,-_fetl-_fetw/2],
+                   'headwidth' : 0.2
+                    }  ],
+    'extend'  : False,
+    'drop'    : _np.array([0,-2*_fetl-_fetw]),
+    'lblloc' : 'lft',
+    'anchors' : { 'source' : [0, -2*_fetl-_fetw],
+                  'drain'  : [0, 0],
+                  'gate'   : [_fetw+_fet_gap+_fetl+_fetr,-_fetl-_fetw/2],
+                  'bulk'   : [0,-_fetl-_fetw/2]  }
+     }
+
 PFET = {
     'name'  : 'PFET',
     'paths'  : [ [ [0,0],[0,-_fetl],[_fetw,-_fetl],[_fetw,-_fetl-_fetw],[0,-_fetl-_fetw],[0,-2*_fetl-_fetw] ],
@@ -473,6 +551,26 @@ PFET = {
                   'drain'  : [0, -2*_fetl-_fetw],
                   'gate'   : [_fetw+_fet_gap+_fetl+_fetr,-_fetl-_fetw/2] }
      }
+
+PFET4 = {
+    'name'  : 'PFET4',
+    'paths'  : [ [ [0,0],[0,-_fetl],[_fetw,-_fetl],[_fetw,-_fetl-_fetw],[0,-_fetl-_fetw],[0,-2*_fetl-_fetw] ],
+                 [ [_fetw+_fet_gap,-_fetl],[_fetw+_fet_gap,-_fetl-_fetw] ],
+                 [ [_fetw+_fet_gap,-_fetl-_fetw/2], [_fetw+_fet_gap+_fetl+_fetr,-_fetl-_fetw/2] ] ],
+    'shapes' : [ { 'shape' : 'arrow',
+                   'start' : [_fetw,-_fetl-_fetw/2],
+                   'end'   : [0,-_fetl-_fetw/2],
+                   'headwidth' : 0.2
+                    }  ],
+    'extend'  : False,
+    'drop'    : _np.array([0,-2*_fetl-_fetw]),
+    'lblloc' : 'lft',
+    'anchors' : { 'source' : [0, 0],
+                  'drain'  : [0, -2*_fetl-_fetw],
+                  'gate'   : [_fetw+_fet_gap+_fetl+_fetr,-_fetl-_fetw/2],
+                  'bulk'   : [0,-_fetl-_fetw/2] }
+     }
+
 
 
 # BJT transistors

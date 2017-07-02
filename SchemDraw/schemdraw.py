@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib as mpl
 from matplotlib.patches import Arc
+import copy
 
 from . import elements
 
@@ -253,24 +254,32 @@ Other:
 
 
     # Functions to help define specific elements
-    def labelI( self, elm, label='', arrowofst=0.4, arrowlen=2, top=True ):
+    def labelI( self, elm, label='', arrowofst=0.4, arrowlen=2, reverse=False, top=True):
         ''' Add an arrow element along side another element
         elm       : element to add arrow to
         label     : string or list of strings to space along arrow
         arrowofst : distance from element to arrow
         arrowlen  : length of arrow in drawing units
+        reverse   : reverse the arrow direction
         top       : [True,False] draw on top (or bottom) of element
          '''
         if not top:
             arrowofst = -arrowofst
 
-        x = elm.center[0] - np.sin( np.deg2rad(elm.theta))*arrowofst
-        y = elm.center[1] + np.cos( np.deg2rad(elm.theta))*arrowofst
+        x = elm.center[0] - np.sin(np.deg2rad(elm.theta))*arrowofst
+        y = elm.center[1] + np.cos(np.deg2rad(elm.theta))*arrowofst
+
+        if reverse:
+            arrowlen = -arrowlen
+
+        arrow = copy.deepcopy(elements.ARROW_I)
+        arrow['shapes'][0]['start'] = [1-arrowlen/2, 0]
+        arrow['shapes'][0]['end'] = [1+arrowlen/2, 0]
 
         if top:
-            self.add(elements.ARROW_I, theta=elm.theta, label=label, anchor='center', xy=[x,y])
+            self.add(arrow, theta=elm.theta, label=label, anchor='center', xy=[x,y])
         else:
-            self.add(elements.ARROW_I, theta=elm.theta, botlabel=label, anchor='center', xy=[x,y])
+            self.add(arrow, theta=elm.theta, botlabel=label, anchor='center', xy=[x,y])
 
 
     def loopI( self, elm_list, label='', d='cw', theta1=35, theta2=-35, pad=.2 ):

@@ -323,6 +323,7 @@ To label the current through an element, the ARROWI element is defined. Typicall
         label     : string or list of strings to space along arrow
         arrowofst : distance from element to arrow
         arrowlen  : length of arrow in drawing units
+        reverse   : [True,False] reverse the arrow, opposite to elm.theta
         top       : [True,False] draw on top (or bottom) of element
 
 For example:
@@ -394,14 +395,20 @@ As an example, the following line generates a 3-input NAND gate with one input p
 Elements drawn as boxes, such as integrated circuits, can be generated using the elements.blackbox() function. An arbitrary number of inputs/outputs can be drawn to each side of the box. The inputs can be evenly spaced (default) or arbitrarily placed anywhere along each edge. The function takes the arguments:
 
         w, h : width and height of rectangle
-        mainlabel : main box label, drawn in center
+        mainlabel : main box label
         leadlen   : length of lead extensions
+        lblsize   : default font size of labels
+        lblofst   : default label offset
+        plblsize  : default pin label size
+        plblofst  : default pin label offset
+        hslant    : angle (degrees) to slant horizontal sides
+        vslant    : angle (degrees) to slant vertical sides
         linputs, rinputs, tinputs, binputs: dictionary input definition for each side
         of the box. Default to no inputs. Dictionary keys:
-            cnt : number of inputs for that side
             labels: list of string labels for each input. drawn inside the box. default is blank.
             plabels: list of pin label strings. drawn outside the box. Default is blank.
-            loc: list of pin locations (0 to 1), along side. Defaults to evenly spaced pins.
+            spacing: distance between pins. Defaults to evenly spaced pins along side.
+            loc: list of pin locations (0 to 1), along side. Defaults to evenly spaced pins. Overrides spacing argument.
             leads: True/False, draw leads coming out of box. Default=True.
             lblofst: float offset for labels. Default=.15
             plblofst: float offset for pin labels. Default=.1
@@ -423,8 +430,41 @@ For example, a full-adder box can be made with inputs on all sides:
 
 See the [555-timer circuit] example below for a more complete usage of blackbox().
 
+#### Multiplexers
 
------------------------------------------------------------
+Multiplexers and demultiplexers may be drawn using the elements.mux() method which creates a blackbox element. Arguments include:
+
+    inputs: list of strings
+        Name of each input
+    outputs: list of strings
+        Name of each output
+    ctrls: list of strings
+        Name of control signals (bottom)
+    topctrls: list of strings
+        Name of control signals on top side
+    demux: boolean
+        Draw as demultiplexer
+    h: float, optional
+        Height of multiplexer
+    w: float, optional
+        Width of multiplexer
+    pinspacing: float
+        distance between pins on input/output side
+    ctrlspacing: float
+        distance between pins on control side
+    slope: float
+        angle (degrees) to slope top and bottom
+    **kwargs:
+        keyword arguments to pass to blackbox method
+
+Example: 
+
+    :::python
+    m1 = e.mux(inputs=['A','B','C','D'], outputs=['X'], ctrls=['0','1'])
+    d.add(m1)
+
+![](img/mux.svg)
+
 
 ### Examples
 

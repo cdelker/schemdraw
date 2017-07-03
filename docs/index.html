@@ -247,6 +247,7 @@ and s1, s2 for the secondary (right) side.</p>
     label     : string or list of strings to space along arrow
     arrowofst : distance from element to arrow
     arrowlen  : length of arrow in drawing units
+    reverse   : [True,False] reverse the arrow, opposite to elm.theta
     top       : [True,False] draw on top (or bottom) of element
 </pre></div>
 
@@ -310,14 +311,20 @@ and s1, s2 for the secondary (right) side.</p>
 <h4>Black-box elements</h4>
 <p>Elements drawn as boxes, such as integrated circuits, can be generated using the elements.blackbox() function. An arbitrary number of inputs/outputs can be drawn to each side of the box. The inputs can be evenly spaced (default) or arbitrarily placed anywhere along each edge. The function takes the arguments:</p>
 <div class="codehilite"><pre><span></span>    w, h : width and height of rectangle
-    mainlabel : main box label, drawn in center
+    mainlabel : main box label
     leadlen   : length of lead extensions
+    lblsize   : default font size of labels
+    lblofst   : default label offset
+    plblsize  : default pin label size
+    plblofst  : default pin label offset
+    hslant    : angle (degrees) to slant horizontal sides
+    vslant    : angle (degrees) to slant vertical sides
     linputs, rinputs, tinputs, binputs: dictionary input definition for each side
     of the box. Default to no inputs. Dictionary keys:
-        cnt : number of inputs for that side
         labels: list of string labels for each input. drawn inside the box. default is blank.
         plabels: list of pin label strings. drawn outside the box. Default is blank.
-        loc: list of pin locations (0 to 1), along side. Defaults to evenly spaced pins.
+        spacing: distance between pins. Defaults to evenly spaced pins along side.
+        loc: list of pin locations (0 to 1), along side. Defaults to evenly spaced pins. Overrides spacing argument.
         leads: True/False, draw leads coming out of box. Default=True.
         lblofst: float offset for labels. Default=.15
         plblofst: float offset for pin labels. Default=.1
@@ -338,7 +345,40 @@ and s1, s2 for the secondary (right) side.</p>
 
 <p><img alt="" src="img/fulladd_blackbox.svg" /></p>
 <p>See the [555-timer circuit] example below for a more complete usage of blackbox().</p>
-<hr />
+<h4>Multiplexers</h4>
+<p>Multiplexers and demultiplexers may be drawn using the elements.mux() method which creates a blackbox element. Arguments include:</p>
+<div class="codehilite"><pre><span></span><span class="n">inputs</span><span class="o">:</span> <span class="n">list</span> <span class="n">of</span> <span class="n">strings</span>
+    <span class="n">Name</span> <span class="n">of</span> <span class="k">each</span> <span class="n">input</span>
+<span class="n">outputs</span><span class="o">:</span> <span class="n">list</span> <span class="n">of</span> <span class="n">strings</span>
+    <span class="n">Name</span> <span class="n">of</span> <span class="k">each</span> <span class="n">output</span>
+<span class="n">ctrls</span><span class="o">:</span> <span class="n">list</span> <span class="n">of</span> <span class="n">strings</span>
+    <span class="n">Name</span> <span class="n">of</span> <span class="n">control</span> <span class="n">signals</span> <span class="o">(</span><span class="n">bottom</span><span class="o">)</span>
+<span class="n">topctrls</span><span class="o">:</span> <span class="n">list</span> <span class="n">of</span> <span class="n">strings</span>
+    <span class="n">Name</span> <span class="n">of</span> <span class="n">control</span> <span class="n">signals</span> <span class="n">on</span> <span class="n">top</span> <span class="n">side</span>
+<span class="n">demux</span><span class="o">:</span> <span class="n">boolean</span>
+    <span class="n">Draw</span> <span class="k">as</span> <span class="n">demultiplexer</span>
+<span class="n">h</span><span class="o">:</span> <span class="n">float</span><span class="o">,</span> <span class="n">optional</span>
+    <span class="n">Height</span> <span class="n">of</span> <span class="n">multiplexer</span>
+<span class="n">w</span><span class="o">:</span> <span class="n">float</span><span class="o">,</span> <span class="n">optional</span>
+    <span class="n">Width</span> <span class="n">of</span> <span class="n">multiplexer</span>
+<span class="n">pinspacing</span><span class="o">:</span> <span class="n">float</span>
+    <span class="n">distance</span> <span class="n">between</span> <span class="n">pins</span> <span class="n">on</span> <span class="n">input</span><span class="o">/</span><span class="n">output</span> <span class="n">side</span>
+<span class="n">ctrlspacing</span><span class="o">:</span> <span class="n">float</span>
+    <span class="n">distance</span> <span class="n">between</span> <span class="n">pins</span> <span class="n">on</span> <span class="n">control</span> <span class="n">side</span>
+<span class="n">slope</span><span class="o">:</span> <span class="n">float</span>
+    <span class="n">angle</span> <span class="o">(</span><span class="n">degrees</span><span class="o">)</span> <span class="n">to</span> <span class="n">slope</span> <span class="n">top</span> <span class="n">and</span> <span class="n">bottom</span>
+<span class="o">**</span><span class="n">kwargs</span><span class="o">:</span>
+    <span class="n">keyword</span> <span class="k">arguments</span> <span class="n">to</span> <span class="n">pass</span> <span class="n">to</span> <span class="n">blackbox</span> <span class="n">method</span>
+</pre></div>
+
+
+<p>Example: </p>
+<div class="codehilite"><pre><span></span><span class="n">m1</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">mux</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;C&#39;</span><span class="p">,</span><span class="s1">&#39;D&#39;</span><span class="p">],</span> <span class="n">outputs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">],</span> <span class="n">ctrls</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;0&#39;</span><span class="p">,</span><span class="s1">&#39;1&#39;</span><span class="p">])</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">m1</span><span class="p">)</span>
+</pre></div>
+
+
+<p><img alt="" src="img/mux.svg" /></p>
 <h3>Examples</h3>
 <p>Following are examples of more complicated circuit diagrams. Most are useless circuits made for torturing ECE201 students. Further examples can be found in the ipynb ipython notebooks the docs folder.</p>
 <h4>Example 1</h4>

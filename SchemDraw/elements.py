@@ -3,7 +3,7 @@ Electrical element symbols for schematic drawing.
 
 Each element is a dictionary with key/values defining how it should be drawn.
 
-Coordinates are all defined in element cooridnates, where the element begins
+Coordinates are all defined in element coordinates, where the element begins
 at [0,0] and is drawn from left to right. The drawing engine will then rotate
 and translate the element to its final position. A standard resistor is
 1 drawing unit long, and with default lead extension will become 3 units long.
@@ -69,6 +69,7 @@ Possible dictionary keys:
 '''
 
 import numpy as _np
+import re
 
 _gap = [_np.nan, _np.nan]   # To leave a break in the plot
 
@@ -309,12 +310,12 @@ PHOTODIODE = {
 
 
 _mr = 0.2
-MEMRISTOR = { 
+MEMRISTOR = {
     'name'  : 'MEMRISTOR',
     'paths' : [ [[0,_mr*1.25],[_mr*5,_mr*1.25],[_mr*5,_mr*-1.25],[0,_mr*-1.25],[0,_mr*1.25]],
                 [[0,0],[_mr,0],[_mr,-_mr*.75],[_mr*2,-_mr*.75],[_mr*2,_mr*.75],[_mr*3,_mr*.75],[_mr*3,-_mr*.75],[_mr*4,-_mr*.75],[_mr*4,0],[_mr*5,0]],
               ],
-    'shapes' : [ {'shape':'poly', 
+    'shapes' : [ {'shape':'poly',
                   'xy' : [[0,_mr*1.25],[0,-_mr*1.25],[_mr/2,-_mr*1.25],[_mr/2,_mr*1.25] ],
                   'fill' : True
                  }
@@ -322,7 +323,7 @@ MEMRISTOR = {
     }
 
 _mrv = .25
-MEMRISTOR2 = { 
+MEMRISTOR2 = {
     'name'  : 'MEMRISTOR2',
     'paths' : [ [[0,0],[0,_mrv],[_mr,_mrv],[_mr,-_mrv],[_mr*2,-_mrv],[_mr*2,_mrv],
                  [_mr*3,_mrv],[_mr*3,-_mrv],[_mr*4,-_mrv],[_mr*4,_mrv],
@@ -976,7 +977,7 @@ def transformer(t1=4, t2=4, core=True, ltaps=None, rtaps=None, loop=False):
     ind_w = .4
     lbot = 0
     ltop = t1*ind_w
-    right_ofst = t1*ind_w/2    
+    right_ofst = t1*ind_w/2
     rtop = (ltop+lbot)/2 + t2*ind_w/2
     rbot = (ltop+lbot)/2 - t2*ind_w/2
 
@@ -985,19 +986,19 @@ def transformer(t1=4, t2=4, core=True, ltaps=None, rtaps=None, loop=False):
                'paths' : [] }
 
     # Adjust for loops or core
-    ind_gap = .75    
+    ind_gap = .75
     if loop:
         ind_gap = ind_gap + .4
     if core:
         ind_gap = ind_gap + .25
 
     ltapx = 0
-    rtapx = ind_gap        
+    rtapx = ind_gap
 
     # Draw coils
     if loop:
         c1 = _cycloid(loops=t1, ofst=(0,0), norm=False, vertical=True)
-        c2 = _cycloid(loops=t2, ofst=(ind_gap,-rtop+ltop), norm=False, flip=True, vertical=True) 
+        c2 = _cycloid(loops=t2, ofst=(ind_gap,-rtop+ltop), norm=False, flip=True, vertical=True)
         ltapx = min([i[0] for i in c1])
         rtapx = max([i[0] for i in c2])
         ltop = c1[-1][1]
@@ -1011,7 +1012,7 @@ def transformer(t1=4, t2=4, core=True, ltaps=None, rtaps=None, loop=False):
                             'theta1' : 270,
                             'theta2' : 90,
                             'width'  : ind_w,
-                            'height' : ind_w } )    
+                            'height' : ind_w } )
         for i in range(t2):
             shapes.append( {'shape':'arc',
                             'center':[ind_gap, rtop-(i*ind_w+ind_w/2)],
@@ -1030,7 +1031,7 @@ def transformer(t1=4, t2=4, core=True, ltaps=None, rtaps=None, loop=False):
         element['paths'].extend( [[[center-core_w, top],[center-core_w, bot]],
                                   [[center+core_w, top],[center+core_w, bot]]] )
         
-    anchors = {'p1' : [0,ltop], 
+    anchors = {'p1' : [0,ltop],
                'p2' : [0,lbot],
                's1' : [ind_gap, rtop],
                's2' : [ind_gap, rbot]}
@@ -1044,145 +1045,249 @@ def transformer(t1=4, t2=4, core=True, ltaps=None, rtaps=None, loop=False):
 
     element['anchors'] = anchors
     return element
-    
 
-def blackbox( w, h, linputs=None, rinputs=None, tinputs=None, binputs=None, mainlabel='', leadlen=0.5 ):
+
+def blackbox(w, h, linputs=None, rinputs=None, tinputs=None, binputs=None,
+             mainlabel='', leadlen=0.5, lblsize=16, lblofst=.15, plblofst=.1, plblsize=12,
+             hslant=None, vslant=None):
     ''' Generate a black-box element consisting of rectangle with inputs on each side.
-    
+
         w, h : width and height of rectangle
-        mainlabel : main box label
-        leadlen   : length of lead extensions
+
         linputs, rinputs, tinputs, binputs: dictionary input definition for each side
         of the box. Default to no inputs. Dictionary keys:
-            cnt : number of inputs for that side
             labels: list of string labels for each input. drawn inside the box. default is blank.
             plabels: list of pin label strings. drawn outside the box. Default is blank.
             loc: list of pin locations (0 to 1), along side. Defaults to evenly spaced pins.
             leads: True/False, draw leads coming out of box. Default=True.
-            lblofst: float offset for labels. Default=.15
-            plblofst: float offset for pin labels. Default=.1
-            lblsize: font size for labels. Default=16
-            plblsize: font size for pin labels. Default=12
+            lblofst: label offset override for this side.
+            plblofst: pin label offset override for this side.
+            lblsize: font size override for labels on this side
+            plblsize: font size override for pin labels on this side
 
-        Anchors will be generated on each pin matching label names if provided. If no 
+        mainlabel : main box label
+        leadlen   : length of lead extensions
+        lblsize   : default font size of labels
+        lblofst   : default label offset
+        plblsize  : default pin label size
+        plblofst  : default pin label offset
+        hslant    : angle (degrees) to slant horizontal sides
+        vslant    : angle (degrees) to slant vertical sides
+
+        Anchors will be generated on each pin matching label names if provided. If no
         labels, anchors are named 'inL1', 'inL2', ... 'inR1', 'inR2', 'inT1', 'inB1', etc.
-
     '''
-    box = {
-           'paths' : [ [[0,0],[w,0],[w,h],[0,h],[0,0]] ],
+    if hslant is not None and vslant is not None:
+        print('Warning - hslant and vslant both deifined. Weird pins may result.')
+
+    if hslant is None:
+        hslant = 0
+    if vslant is None:
+        vslant = 0
+
+    y1 = 0 - w * _np.tan(_np.deg2rad(hslant))
+    y2 = h + w * _np.tan(_np.deg2rad(hslant))
+    x1 = 0 - h * _np.tan(_np.deg2rad(vslant))
+    x2 = w + h * _np.tan(_np.deg2rad(vslant))
+    hleft = h
+    hrght = y2-y1
+    wbot = w
+    wtop = x2-x1
+
+    box = {'paths' : [ [[0,0],[w,y1],[x2,y2],[x1,h],[0,0]] ],
            'anchors':{},
            'labels':[],
-           'extend':False, }
+           'extend':False}
 
     if mainlabel is not None:
         box['labels'].append( {'label':mainlabel, 'pos':[w/2,h*2/3] })
-    
+
     for side, sidelabel in [('left',linputs),('right',rinputs),('top',tinputs),('bottom',binputs)]:
         if sidelabel==None: continue
-        cnt        = sidelabel.get('cnt',0)
+        cnt        = len(sidelabel.get('labels',[]))
         sidelabels = sidelabel.get('labels',[])
         plabels    = sidelabel.get('plabels',[])
         loc        = sidelabel.get('loc',None)
         leads      = sidelabel.get('leads',True)
-        lblofst    = sidelabel.get('lblofst',.15)
-        plblofst   = sidelabel.get('plblofst',.1)
-        lblsize    = sidelabel.get('lblsize',16)
-        plblsize   = sidelabel.get('plblsize',12)
-        
+        _lblofst    = sidelabel.get('lblofst', lblofst)
+        _plblofst   = sidelabel.get('plblofst', plblofst)
+        _lblsize    = sidelabel.get('lblsize', lblsize)
+        _plblsize   = sidelabel.get('plblsize', plblsize)
+
         # Determine pin spacings
         if side=='left':
             x0 = 0
-            dx = 0
             if cnt > 1:
-                y0 = h/(cnt+2)
-                dy = (h-2*y0)/(cnt-1)
+                y0 = hleft/(cnt+2)
             else:
-                y0 = h/2
-                dy = 0
-            lblpos = _np.array([lblofst,0])
+                y0 = hleft/2
+            lblpos = _np.array([_lblofst,0])
             lblalign = ('left','center')
-            plblpos = _np.array([-plblofst,0])
+            plblpos = _np.array([-_plblofst,0])
             plblalign = ('right','bottom')
             leadext = _np.array([-leadlen,0])
         elif side=='right':
             x0 = w
-            dx = 0
             if cnt > 1:
-                y0 = h/(cnt+2)
-                dy = (h-2*y0)/(cnt-1)
+                y0 = hrght/(cnt+2)
+                y0 = y0 - (hrght-hleft)
             else:
-                y0 = h/2
-                dy = 0
-            lblpos = _np.array([-lblofst,0])
+                y0 = hrght/2
+            lblpos = _np.array([-_lblofst,0])
             lblalign = ('right','center')
-            plblpos = _np.array([plblofst,0])
+            plblpos = _np.array([_plblofst,0])
             plblalign = ('left','bottom')
             leadext = _np.array([leadlen,0])
         elif side=='top':
             y0 = h
-            dy = 0
             if cnt > 1:
-                x0 = w/(cnt+2)
-                dx = (w-2*x0)/(cnt-1)
+                x0 = wtop/(cnt+2)
             else:
-                x0 = w/2
-                dx = 0
-            lblpos = _np.array([0,-lblofst])
+                x0 = wtop/2
+            lblpos = _np.array([0,-_lblofst])
             lblalign = ('center','top')
-            plblpos = _np.array([plblofst,0])
+            plblpos = _np.array([_plblofst,0])
             plblalign = ('left','bottom')
             leadext = _np.array([0,leadlen])
         elif side=='bottom':
             y0 = 0
-            dy = 0
             if cnt > 1:
-                x0 = w/(cnt+2)
-                dx = (w-2*x0)/(cnt-1)
+                x0 = wbot/(cnt+2)
             else:
-                x0 = w/2
-                dx = 0
-            lblpos = _np.array([0,lblofst])
+                x0 = wbot/2
+            lblpos = _np.array([0,_lblofst])
             lblalign = ('center','bottom')
-            plblpos = _np.array([plblofst,-plblofst])
+            plblpos = _np.array([_plblofst,-_plblofst])
             plblalign = ('left','top')
             leadext = _np.array([0,-leadlen])
-        
+
+        if 'loc' not in sidelabel:
+            if cnt == 1:
+                sidelabel['loc'] = [0.5]
+            else:
+                dim = {'left':hleft, 'right':hrght, 'top':wtop, 'bottom':wbot}[side]
+                sidelabel['loc'] = _np.linspace(1/(cnt+2), 1-1/(cnt+2), num=cnt)
+                if 'spacing' in sidelabel:
+                    sidelabel['loc'] = (sidelabel['loc'] - 0.5) *  (sidelabel['spacing']/dim)/(sidelabel['loc'][1]-sidelabel['loc'][0]) + 0.5
+
         # Add each input
         for i in range(cnt):
             if 'loc' in sidelabel:
                 # Custom-spaced labels
-                if dx>0:
-                    x = sidelabel['loc'][i] * w
+                if side == 'top':
+                    x = sidelabel['loc'][i] * wtop - (wtop-wbot)
                     y = y0
-                elif dy>0:
-                    y = sidelabel['loc'][i] * h
+                elif side == 'bottom':
+                    x = sidelabel['loc'][i] * wbot
+                    y = y0
+                elif side == 'left':
+                    y = sidelabel['loc'][i] * hleft
+                    x = x0
+                elif side == 'right':
+                    y = sidelabel['loc'][i] * hrght - (hrght-hleft)
                     x = x0
             else:
                 # Evenly-spaced labels
                 x = x0 + dx*i
                 y = y0 + dy*i
-            
+
+            if x0 == 0:
+                x = x - y * _np.tan(_np.deg2rad(vslant))
+            else:
+                x = x - y * _np.tan(-_np.deg2rad(vslant))
+
+            if y0 == 0:
+                y = y - x * _np.tan(_np.deg2rad(hslant))
+            else:
+                y = y - x * _np.tan(-_np.deg2rad(hslant))
+
             # Anchor name use label for pin, otherwise use 'inL1', etc.
             if len(sidelabels)==cnt:
-                import re
                 aname = re.sub(r'\W+', '', sidelabels[i])
             else:
                 aname = 'in' + side[0].upper() + str(i+1)
-            
+
             if aname in box['anchors']: aname = aname + '_%d'%i
-            
+
             # Add lead lines
             if leads:
                 box['paths'].append( [[x,y],_np.array([x,y])+leadext] )
-                box['anchors'][aname] = _np.array([x,y])+leadext   
+                box['anchors'][aname] = _np.array([x,y])+leadext
             else:
-                box['anchors'][aname] = [x,y]            
-    
+                box['anchors'][aname] = [x,y]
+
             # Add labels
             if len(sidelabels)==cnt:
                 box['labels'].append( {'label':sidelabels[i], 'pos':_np.array([x,y])+lblpos, 'align':lblalign, 'size':lblsize } )
-            
+
             if len(plabels)==cnt:
                 box['labels'].append( {'label':plabels[i], 'pos':_np.array([x,y])+plblpos, 'align':plblalign, 'size':plblsize }  )
 
     return box
+
+
+def mux(inputs=None, outputs=None, ctrls=None, topctrls=None, demux=False, h=None, w=None,
+        pinspacing=1, ctrlspacing=.6, slope=25, **kwargs):
+    ''' Generate a multiplexer/demultiplexer element.
+
+        Parameters
+        ----------
+        inputs: list of strings
+            Name of each input, labeled from bottom up
+        outputs: list of strings
+            Name of each output, labeled from bottom up
+        ctrls: list of strings
+            Name of control signals (bottom)
+        topctrls: list of strings
+            Name of control signals on top side
+        demux: boolean
+            Draw as demultiplexer
+        h: float, optional
+            Height of multiplexer
+        w: float, optional
+            Width of multiplexer
+        pinspacing: float
+            distance between pins on input/output side
+        ctrlspacing: float
+            distance between pins on control side
+        slope: float
+            angle (degrees) to slope top and bottom
+        **kwargs:
+            keyword arguments to pass to blackbox method
+
+        Returns
+        -------
+        element dictionary
+    '''
+    linputs = None
+    rinputs = None
+    binputs = None
+    tinputs = None
+    wbot = 0
+    wtop = 0
+    hleft = 0
+    hrght = 0
+    if not demux:
+        slope = -slope
+
+    if inputs is not None:
+        hleft = (len(inputs)+1) * max(.4, pinspacing)
+        linputs = {'labels':inputs, 'spacing':pinspacing}
+
+    if outputs is not None:
+        hrght = (len(outputs)) * max(.4, pinspacing)
+        rinputs = {'labels':outputs, 'spacing':pinspacing}
+
+    if ctrls is not None:
+        wbot = (len(ctrls)+1) * max(.8, ctrlspacing)
+        binputs = {'labels':ctrls, 'spacing':ctrlspacing}
+
+    if topctrls is not None:
+        wtop = (len(topctrls)+1) * max(.8, ctrlspacing)
+        tinputs = {'labels':topctrls, 'spacing':ctrlspacing}
+
+    h = max(hleft, hrght) if h is None else h
+    w = max(wbot, wtop) if w is None else w
+
+    return blackbox(w, h, linputs=linputs, rinputs=rinputs, binputs=binputs, tinputs=tinputs,
+                    hslant=slope, **kwargs)

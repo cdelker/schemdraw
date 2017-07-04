@@ -6,11 +6,11 @@ except ImportError:
 setup(
     name = 'SchemDraw',
     packages = ['SchemDraw'],
-    version = '0.3.1',
+    version = '0.3.1a',
     description = 'Electrical circuit schematic drawing',
     author = 'Collin J. Delker',
     author_email = 'developer@collindelker.com',
-    url = 'http://cdelker.bitbucket.io/SchemDraw.html',
+    url = 'http://cdelker.bitbucket.io/SchemDraw',
     keywords = ['circuit', 'schematic', 'electrical'],
     install_requires=['numpy', 'matplotlib'],
     classifiers = [

@@ -1,6 +1,12 @@
-v0.2.2 03/06/2015
+v0.3.0 07/03/2017
+    - Added function for drawing multiplexers/demultiplexers
+    - Updates to labelI() method to allow reversing arrow and changing length
+    - New elements: PHOTODIODE, NFET4, PFET4, VSS, VDD
+    - Add CSS to documentation
+
+v0.2.2 03/06/2016
     - Added function for drawing transformers
-    - Added Josephson Junction element
+    - Added JJ Josephson Junction element
     - Documentation updates
     
 v0.2.1 05/03/2015

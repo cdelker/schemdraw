@@ -6,7 +6,7 @@ except ImportError:
 setup(
     name = 'SchemDraw',
     packages = ['SchemDraw'],
-    version = '0.2.3-dev123',
+    version = '0.3.0',
     description = 'Electrical circuit schematic drawing',
     author = 'Collin J. Delker',
     author_email = 'developer@collindelker.com',

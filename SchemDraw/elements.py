@@ -1202,7 +1202,7 @@ def blackbox(w, h, linputs=None, rinputs=None, tinputs=None, binputs=None,
                 y = y - x * _np.tan(-_np.deg2rad(hslant))
 
             # Anchor name use label for pin, otherwise use 'inL1', etc.
-            if len(sidelabels) == cnt:
+            if len(sidelabels) == cnt and sidelabels[i]:
                 aname = re.sub(r'\W+', '', sidelabels[i])
             else:
                 aname = 'in' + side[0].upper() + str(i+1)
@@ -1217,10 +1217,10 @@ def blackbox(w, h, linputs=None, rinputs=None, tinputs=None, binputs=None,
                 box['anchors'][aname] = [x, y]
 
             # Add labels
-            if len(sidelabels) == cnt:
+            if len(sidelabels) == cnt and sidelabels[i]:
                 box['labels'].append({'label': sidelabels[i], 'pos': _np.array([x, y])+lblpos, 'align': lblalign, 'size': _lblsize})
 
-            if len(plabels) == cnt:
+            if len(plabels) == cnt and plabels[i]:
                 box['labels'].append({'label': plabels[i], 'pos': _np.array([x, y])+plblpos, 'align': plblalign, 'size': _plblsize})
 
     return box

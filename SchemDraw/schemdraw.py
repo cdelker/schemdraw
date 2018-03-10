@@ -94,7 +94,7 @@ def group_elements(drawing, anchors=None):
                 s['center'] = elm.translate(s['center'] - elm.ofst)
             elif s['shape'] == 'arrow':
                 s['start'] = elm.translate(s['start'] - elm.ofst)
-                s['end'] = elm.translate(s['start'] - elm.ofst)
+                s['end'] = elm.translate(s['end'] - elm.ofst)
             new_elm['shapes'].append(s)
 
         if anchors is not None:

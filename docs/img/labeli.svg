@@ -2,7 +2,7 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
   "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Created with matplotlib (http://matplotlib.org/) -->
-<svg height="61pt" version="1.1" viewBox="0 0 134 61" width="134pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg height="57.67pt" version="1.1" viewBox="0 0 134.8 57.67" width="134.8pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
  <defs>
   <style type="text/css">
 *{stroke-linecap:butt;stroke-linejoin:round;}
@@ -10,8 +10,8 @@
  </defs>
  <g id="figure_1">
   <g id="patch_1">
-   <path d="M 0 61.18 
-L 134.8 61.18 
+   <path d="M 0 57.67 
+L 134.8 57.67 
 L 134.8 0 
 L 0 0 
 z
@@ -19,34 +19,34 @@ z
   </g>
   <g id="axes_1">
    <g id="patch_2">
-    <path clip-path="url(#p48e32e1163)" d="M 99.8 26 
-L 90.08 29.06 
-L 90.08 26.0153 
-L 35 26.0153 
-L 35 25.9847 
-L 90.08 25.9847 
-L 90.08 22.94 
+    <path clip-path="url(#pb91c7f0374)" d="M 99.8 24.65 
+L 90.08 27.44 
+L 90.08 24.66395 
+L 35 24.66395 
+L 35 24.63605 
+L 90.08 24.63605 
+L 90.08 21.86 
 z
 " style="stroke:#000000;stroke-linejoin:miter;stroke-width:1.5;"/>
    </g>
    <g id="line2d_1">
-    <path clip-path="url(#p48e32e1163)" d="M 18.8 38.24 
-L 51.2 38.24 
-L 53.9 30.59 
-L 59.3 45.89 
-L 64.7 30.59 
-L 70.1 45.89 
-L 75.5 30.59 
-L 80.9 45.89 
-L 83.6 38.24 
-L 116 38.24 
+    <path clip-path="url(#pb91c7f0374)" d="M 18.8 35.81 
+L 51.2 35.81 
+L 53.9 28.835 
+L 59.3 42.785 
+L 64.7 28.835 
+L 70.1 42.785 
+L 75.5 28.835 
+L 80.9 42.785 
+L 83.6 35.81 
+L 116 35.81 
 " style="fill:none;stroke:#000000;stroke-linecap:round;stroke-width:1.5;"/>
    </g>
    <g id="line2d_2">
-    <path clip-path="url(#p48e32e1163)" d="M 116 38.24 
-L 116 45.89 
-M 116 15.29 
-L 116 22.94 
+    <path clip-path="url(#pb91c7f0374)" d="M 116 35.81 
+L 116 42.785 
+M 116 14.885 
+L 116 21.86 
 " style="fill:none;stroke:#ffffff;stroke-linecap:round;stroke-width:1.5;"/>
    </g>
    <g id="text_1">
@@ -131,7 +131,7 @@ L 0.78125 0
 z
 " id="DejaVuSans-41"/>
     </defs>
-    <g transform="translate(49.81625 17.384375)scale(0.12 -0.12)">
+    <g transform="translate(49.81625 16.574375)scale(0.12 -0.12)">
      <use xlink:href="#DejaVuSans-31"/>
      <use x="63.623047" xlink:href="#DejaVuSans-30"/>
      <use x="127.246094" xlink:href="#DejaVuSans-6d"/>
@@ -141,8 +141,8 @@ z
   </g>
  </g>
  <defs>
-  <clipPath id="p48e32e1163">
-   <rect height="39.78" width="113.4" x="10.7" y="10.7"/>
+  <clipPath id="pb91c7f0374">
+   <rect height="36.27" width="113.4" x="10.7" y="10.7"/>
   </clipPath>
  </defs>
 </svg>

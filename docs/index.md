@@ -22,9 +22,9 @@ SchemDraw is a python package for producing high-quality electrical circuit sche
 
 A [gallery of circuits](gallery.html) is here, in addition to the examples on this page.
 
-### Usage in iPython
+### Usage in Jupyter Notebook
 
-Using an IPython Notebook in inline mode is recommended for the easy creation of these diagrams. 
+Using a Jupyter Notebook in inline mode is recommended for the easy creation of these diagrams. 
 Images will look best when saved in a vector format, such as svg, eps, or pdf.
 Place this code at the very beginning of the notebook, *before* importing SchemDraw:
 
@@ -68,13 +68,13 @@ Start by setting up a new drawing:
     import SchemDraw.elements as e
     d = schem.Drawing()
 
-Then use the add() method to add elements:
+Then use the `add()` method to add elements:
 
     :::python
     d.add(e.RES, label='100$\Omega$')
     d.add(e.CAP, label='0.1$\mu$F')
 
-And finish by calling draw(), and save() for a image file:
+And finish by calling `draw()`, and `save()` for a image file:
 
     :::python
     d.draw()
@@ -83,7 +83,7 @@ And finish by calling draw(), and save() for a image file:
 
 #### Element properties
 
-The add() method takes a number of arguments to define the element position. The first argument is the element definition dictionary.
+The `add()` method takes a number of arguments to define the element position. The first argument is the element definition dictionary.
 
 ##### Position and direction
 
@@ -168,7 +168,7 @@ Labels can also be added to an element after it is added to the drawing using th
 
 ![](img/label_positions.svg)
 
-The add_label() method takes the following arguments:
+The `add_label()` method takes the following arguments:
 
         label: text label to add
         loc: location for the label ['top', 'bot', 'lft', 'rgt'].
@@ -185,10 +185,28 @@ Other element arguments include:
         color    : matplotlib color. e.g. 'red', '#34a4e6', (.8,0,.8)
         ls       : [':', '--', '-'] linestyle (same as matplotlib).
 
+#### Grouping Elements
+
+If a set of circuit elements are to be reused multiple times, they can be grouped into a sub-drawing. Create and populate a drawing, but don't draw it. Instead, use `group_elements()`, then add the result as an element to another drawing:
+
+    :::python
+    d1 = schem.Drawing()
+    d1.add(e.RES)
+    d1.push()
+    d1.add(e.CAP, d='down')
+    d1.add(e.LINE, d='left')
+    d1.pop()
+    RC = schem.group_elements(d1)   # Create the group to reuse
+
+    d2 = schem.Drawing()   # Add the group to another drawing several times
+    for i in range(3):
+        d2.add(RC)
+    d2.draw()
+
 
 #### Drawing parameters
 
-When setting up a new schematic drawing, a few parameters are available to set the overall drawing size. Arguments to Drawing() are:
+When setting up a new schematic drawing, a few parameters are available to set the overall drawing size. Arguments to `Drawing()` are:
 
         unit : Full length of a resistor element in matplotlib plot units.
                Inner portion of resistor is length 1. Default=3.
@@ -210,7 +228,7 @@ The drawing state (current position and direction), can be saved and recalled us
 
 #### Saving an image
 
-The final image can be saved to a file using d.save(). The filename extension determines the type of file to be saved. Any matplotlib-compatible file format can be used. Saving in a vector-based format, such as eps, pdf, or svg, is recommended for best quality.
+The final image can be saved to a file using `d.save()`. The filename extension determines the type of file to be saved. Any matplotlib-compatible file format can be used. Saving in a vector-based format, such as eps, pdf, or svg, is recommended for best quality.
 
     :::python
     d.save('testimage.eps')
@@ -220,7 +238,7 @@ The final image can be saved to a file using d.save(). The filename extension de
 
 ### Elements
 
-A number of common elements are predefined in the SchemDraw.elements module.
+A number of common elements are predefined in the `SchemDraw.elements` module.
 
 #### 2-Terminal Elements
 
@@ -287,7 +305,7 @@ The LABEL element can be used to add a label anywhere. The GAP_LABEL is like an 
 
 #### Transformers
 
-Transformer elements can be generated using the transformer() function. Parameters are:
+Transformer elements can be generated using the `transformer()` function. Parameters are:
 
         t1    : Number of turns on primary (left) side
         t2    : Number of turns on secondary (right) side
@@ -317,7 +335,7 @@ Example usage with taps:
 
 #### Current Arrow
 
-To label the current through an element, the ARROWI element is defined. Typically, it can be added alongside an existing element using the drawing's labelI() method, which takes the arguments:
+To label the current through an element, the ARROWI element is defined. Typically, it can be added alongside an existing element using the drawing's `labelI()` method, which takes the arguments:
 
         elm       : element to add arrow to
         label     : string or list of strings to space along arrow
@@ -337,7 +355,7 @@ For example:
 
 #### Loop currents
 
-Loop currents can be added using the drawing's loopI() method:
+Loop currents can be added using the drawing's `loopI()` method:
 
         elm_list : boundary elements in order of top, right, bot, left
         label    : text label for center of loop
@@ -369,13 +387,13 @@ Typical AND, OR, NAND, NOR, XOR, XNOR, and NOT gates with 2, 3, or 4 inputs are 
 
 ![](img/gates.svg)
 
-Two functions are available to generate more complicated, multi-input gates. The andgate() method is defined:
+Two functions are available to generate more complicated, multi-input gates. The `andgate()` method is defined:
 
         inputs    : number of inputs to gate.
         nand      : invert bubble on output
         inputnots : list of input numbers (starting at 1) with invert bubble
 
-and the orgate() method:
+and the `orgate()` method:
 
         inputs    : number of inputs to gate.
         nor       : invert bubble on output
@@ -392,7 +410,7 @@ As an example, the following line generates a 3-input NAND gate with one input p
 
 #### Black-box elements
 
-Elements drawn as boxes, such as integrated circuits, can be generated using the elements.blackbox() function. An arbitrary number of inputs/outputs can be drawn to each side of the box. The inputs can be evenly spaced (default) or arbitrarily placed anywhere along each edge. The function takes the arguments:
+Elements drawn as boxes, such as integrated circuits, can be generated using the `elements.blackbox()` function. An arbitrary number of inputs/outputs can be drawn to each side of the box. The inputs can be evenly spaced (default) or arbitrarily placed anywhere along each edge. The function takes the arguments:
 
         w, h : width and height of rectangle
         mainlabel : main box label
@@ -405,7 +423,7 @@ Elements drawn as boxes, such as integrated circuits, can be generated using the
         vslant    : angle (degrees) to slant vertical sides
         linputs, rinputs, tinputs, binputs: dictionary input definition for each side
         of the box. Default to no inputs. Dictionary keys:
-            labels: list of string labels for each input. drawn inside the box. default is blank.
+            labels: list of string labels for each input. drawn inside the box. default is blank. label of '>' will be converted to a clock input.
             plabels: list of pin label strings. drawn outside the box. Default is blank.
             spacing: distance between pins. Defaults to evenly spaced pins along side.
             loc: list of pin locations (0 to 1), along side. Defaults to evenly spaced pins. Overrides spacing argument.
@@ -428,11 +446,11 @@ For example, a full-adder box can be made with inputs on all sides:
 
 ![](img/fulladd_blackbox.svg)
 
-See the [555-timer circuit] example below for a more complete usage of blackbox().
+See the [555-timer circuit] example below for a more complete usage of `blackbox()`.
 
 #### Multiplexers
 
-Multiplexers and demultiplexers may be drawn using the elements.mux() method which creates a blackbox element. Arguments include:
+Multiplexers and demultiplexers may be drawn using the `elements.mux()` method which creates a blackbox element. Arguments include:
 
     inputs: list of strings
         Name of each input
@@ -468,11 +486,11 @@ Example:
 
 ### Examples
 
-Following are examples of more complicated circuit diagrams. Most are useless circuits made for torturing ECE201 students. Further examples can be found in the ipynb ipython notebooks the docs folder.
+Following are examples of more complicated circuit diagrams. Most are useless circuits made for torturing ECE201 students. Further examples can be found in the ipynb Jupyter notebooks the docs folder.
 
 #### Example 1
 
-This example demonstrates use of push() and pop() and using 'tox' and 'toy' keywords.
+This example demonstrates use of `push()` and `pop()` and using 'tox' and 'toy' keywords.
 
     :::python
     d = schem.Drawing(unit=2)  # unit=2 makes elements with shorter than normal leads
@@ -685,7 +703,7 @@ A slightly more complicated logic gate example. Note the use of the LaTeX comman
 
 #### 555-timer circuit
 
-This example shows use of the blackbox() function to draw a 555-timer integrated circuit.
+This example shows use of the `blackbox()` function to draw a 555-timer integrated circuit.
 
     :::python
     d = schem.Drawing()

@@ -17,8 +17,8 @@
 <p><img alt="" src="img/testschematic.svg" /></p>
 <h3>Gallery</h3>
 <p>A <a href="gallery.html">gallery of circuits</a> is here, in addition to the examples on this page.</p>
-<h3>Usage in iPython</h3>
-<p>Using an IPython Notebook in inline mode is recommended for the easy creation of these diagrams. 
+<h3>Usage in Jupyter Notebook</h3>
+<p>Using a Jupyter Notebook in inline mode is recommended for the easy creation of these diagrams. 
 Images will look best when saved in a vector format, such as svg, eps, or pdf.
 Place this code at the very beginning of the notebook, <em>before</em> importing SchemDraw:</p>
 <div class="codehilite"><pre><span></span><span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
@@ -51,20 +51,20 @@ Place this code at the very beginning of the notebook, <em>before</em> importing
 </pre></div>
 
 
-<p>Then use the add() method to add elements:</p>
+<p>Then use the <code>add()</code> method to add elements:</p>
 <div class="codehilite"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">RES</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;100$\Omega$&#39;</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">CAP</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;0.1$\mu$F&#39;</span><span class="p">)</span>
 </pre></div>
 
 
-<p>And finish by calling draw(), and save() for a image file:</p>
+<p>And finish by calling <code>draw()</code>, and <code>save()</code> for a image file:</p>
 <div class="codehilite"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
 <span class="n">d</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;testschematic.pdf&#39;</span><span class="p">)</span>
 </pre></div>
 
 
 <h4>Element properties</h4>
-<p>The add() method takes a number of arguments to define the element position. The first argument is the element definition dictionary.</p>
+<p>The <code>add()</code> method takes a number of arguments to define the element position. The first argument is the element definition dictionary.</p>
 <h5>Position and direction</h5>
 <p>The position of each element can be specified in a number of ways. If no position is given, it will start at the current drawing position, typically where the previous element ends, and in the current drawing direction.</p>
 <p>Otherwise, position can be specified using some combination of the keyword arguments:</p>
@@ -138,7 +138,7 @@ Place this code at the very beginning of the notebook, <em>before</em> importing
 
 
 <p><img alt="" src="img/label_positions.svg" /></p>
-<p>The add_label() method takes the following arguments:</p>
+<p>The <code>add_label()</code> method takes the following arguments:</p>
 <div class="codehilite"><pre><span></span>    label: text label to add
     loc: location for the label [&#39;top&#39;, &#39;bot&#39;, &#39;lft&#39;, &#39;rgt&#39;].
     txtofst: unit offset between element bounding box and label.
@@ -155,8 +155,25 @@ Place this code at the very beginning of the notebook, <em>before</em> importing
 </pre></div>
 
 
+<h4>Grouping Elements</h4>
+<p>If a set of circuit elements are to be reused multiple times, they can be grouped into a sub-drawing. Create and populate a drawing, but don't draw it. Instead, use <code>group_elements()</code>, then add the result as an element to another drawing:</p>
+<div class="codehilite"><pre><span></span><span class="n">d1</span> <span class="o">=</span> <span class="n">schem</span><span class="o">.</span><span class="n">Drawing</span><span class="p">()</span>
+<span class="n">d1</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">RES</span><span class="p">)</span>
+<span class="n">d1</span><span class="o">.</span><span class="n">push</span><span class="p">()</span>
+<span class="n">d1</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">CAP</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;down&#39;</span><span class="p">)</span>
+<span class="n">d1</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">)</span>
+<span class="n">d1</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+<span class="n">RC</span> <span class="o">=</span> <span class="n">schem</span><span class="o">.</span><span class="n">group_elements</span><span class="p">(</span><span class="n">d1</span><span class="p">)</span>   <span class="c1"># Create the group to reuse</span>
+
+<span class="n">d2</span> <span class="o">=</span> <span class="n">schem</span><span class="o">.</span><span class="n">Drawing</span><span class="p">()</span>   <span class="c1"># Add the group to another drawing several times</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+    <span class="n">d2</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">RC</span><span class="p">)</span>
+<span class="n">d2</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+</pre></div>
+
+
 <h4>Drawing parameters</h4>
-<p>When setting up a new schematic drawing, a few parameters are available to set the overall drawing size. Arguments to Drawing() are:</p>
+<p>When setting up a new schematic drawing, a few parameters are available to set the overall drawing size. Arguments to <code>Drawing()</code> are:</p>
 <div class="codehilite"><pre><span></span>    unit : Full length of a resistor element in matplotlib plot units.
            Inner portion of resistor is length 1. Default=3.
     inches_per_unit : inches per unit to scale drawing. Default=.5
@@ -175,14 +192,14 @@ Place this code at the very beginning of the notebook, <em>before</em> importing
 
 
 <h4>Saving an image</h4>
-<p>The final image can be saved to a file using d.save(). The filename extension determines the type of file to be saved. Any matplotlib-compatible file format can be used. Saving in a vector-based format, such as eps, pdf, or svg, is recommended for best quality.</p>
+<p>The final image can be saved to a file using <code>d.save()</code>. The filename extension determines the type of file to be saved. Any matplotlib-compatible file format can be used. Saving in a vector-based format, such as eps, pdf, or svg, is recommended for best quality.</p>
 <div class="codehilite"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;testimage.eps&#39;</span><span class="p">)</span>
 </pre></div>
 
 
 <hr />
 <h3>Elements</h3>
-<p>A number of common elements are predefined in the SchemDraw.elements module.</p>
+<p>A number of common elements are predefined in the <code>SchemDraw.elements</code> module.</p>
 <h4>2-Terminal Elements</h4>
 <p><img alt="" src="img/2term.svg" /></p>
 <h4>Sources and meters</h4>
@@ -216,7 +233,7 @@ Place this code at the very beginning of the notebook, <em>before</em> importing
 <p>The LABEL element can be used to add a label anywhere. The GAP_LABEL is like an "invisible" element, which can be used for marking the voltage between output terminals.</p>
 <p><img alt="" src="img/label.svg" /></p>
 <h4>Transformers</h4>
-<p>Transformer elements can be generated using the transformer() function. Parameters are:</p>
+<p>Transformer elements can be generated using the <code>transformer()</code> function. Parameters are:</p>
 <div class="codehilite"><pre><span></span>    t1    : Number of turns on primary (left) side
     t2    : Number of turns on secondary (right) side
     core  : Draw the core (parallel lines) [default=False]
@@ -242,7 +259,7 @@ and s1, s2 for the secondary (right) side.</p>
 
 <p><img alt="" src="img/xform_tap.svg" /></p>
 <h4>Current Arrow</h4>
-<p>To label the current through an element, the ARROWI element is defined. Typically, it can be added alongside an existing element using the drawing's labelI() method, which takes the arguments:</p>
+<p>To label the current through an element, the ARROWI element is defined. Typically, it can be added alongside an existing element using the drawing's <code>labelI()</code> method, which takes the arguments:</p>
 <div class="codehilite"><pre><span></span>    elm       : element to add arrow to
     label     : string or list of strings to space along arrow
     arrowofst : distance from element to arrow
@@ -260,7 +277,7 @@ and s1, s2 for the secondary (right) side.</p>
 
 <p><img alt="" src="img/labeli.svg" /></p>
 <h4>Loop currents</h4>
-<p>Loop currents can be added using the drawing's loopI() method:</p>
+<p>Loop currents can be added using the drawing's <code>loopI()</code> method:</p>
 <div class="codehilite"><pre><span></span>    elm_list : boundary elements in order of top, right, bot, left
     label    : text label for center of loop
     d        : arrow direction &#39;cw&#39; or &#39;ccw&#39;. Default=&#39;cw&#39;
@@ -287,14 +304,14 @@ and s1, s2 for the secondary (right) side.</p>
 
 <p>Typical AND, OR, NAND, NOR, XOR, XNOR, and NOT gates with 2, 3, or 4 inputs are predefined. Anchors are defined as 'in1', 'in2', etc for each input, and 'out' for the output.</p>
 <p><img alt="" src="img/gates.svg" /></p>
-<p>Two functions are available to generate more complicated, multi-input gates. The andgate() method is defined:</p>
+<p>Two functions are available to generate more complicated, multi-input gates. The <code>andgate()</code> method is defined:</p>
 <div class="codehilite"><pre><span></span>    inputs    : number of inputs to gate.
     nand      : invert bubble on output
     inputnots : list of input numbers (starting at 1) with invert bubble
 </pre></div>
 
 
-<p>and the orgate() method:</p>
+<p>and the <code>orgate()</code> method:</p>
 <div class="codehilite"><pre><span></span>    inputs    : number of inputs to gate.
     nor       : invert bubble on output
     xor       : exclusive-or
@@ -309,7 +326,7 @@ and s1, s2 for the secondary (right) side.</p>
 
 <p><img alt="" src="img/and_inputnot.svg" /></p>
 <h4>Black-box elements</h4>
-<p>Elements drawn as boxes, such as integrated circuits, can be generated using the elements.blackbox() function. An arbitrary number of inputs/outputs can be drawn to each side of the box. The inputs can be evenly spaced (default) or arbitrarily placed anywhere along each edge. The function takes the arguments:</p>
+<p>Elements drawn as boxes, such as integrated circuits, can be generated using the <code>elements.blackbox()</code> function. An arbitrary number of inputs/outputs can be drawn to each side of the box. The inputs can be evenly spaced (default) or arbitrarily placed anywhere along each edge. The function takes the arguments:</p>
 <div class="codehilite"><pre><span></span>    w, h : width and height of rectangle
     mainlabel : main box label
     leadlen   : length of lead extensions
@@ -321,7 +338,7 @@ and s1, s2 for the secondary (right) side.</p>
     vslant    : angle (degrees) to slant vertical sides
     linputs, rinputs, tinputs, binputs: dictionary input definition for each side
     of the box. Default to no inputs. Dictionary keys:
-        labels: list of string labels for each input. drawn inside the box. default is blank.
+        labels: list of string labels for each input. drawn inside the box. default is blank. label of &#39;&gt;&#39; will be converted to a clock input.
         plabels: list of pin label strings. drawn outside the box. Default is blank.
         spacing: distance between pins. Defaults to evenly spaced pins along side.
         loc: list of pin locations (0 to 1), along side. Defaults to evenly spaced pins. Overrides spacing argument.
@@ -344,9 +361,9 @@ and s1, s2 for the secondary (right) side.</p>
 
 
 <p><img alt="" src="img/fulladd_blackbox.svg" /></p>
-<p>See the [555-timer circuit] example below for a more complete usage of blackbox().</p>
+<p>See the [555-timer circuit] example below for a more complete usage of <code>blackbox()</code>.</p>
 <h4>Multiplexers</h4>
-<p>Multiplexers and demultiplexers may be drawn using the elements.mux() method which creates a blackbox element. Arguments include:</p>
+<p>Multiplexers and demultiplexers may be drawn using the <code>elements.mux()</code> method which creates a blackbox element. Arguments include:</p>
 <div class="codehilite"><pre><span></span><span class="n">inputs</span><span class="o">:</span> <span class="n">list</span> <span class="n">of</span> <span class="n">strings</span>
     <span class="n">Name</span> <span class="n">of</span> <span class="k">each</span> <span class="n">input</span>
 <span class="n">outputs</span><span class="o">:</span> <span class="n">list</span> <span class="n">of</span> <span class="n">strings</span>
@@ -380,9 +397,9 @@ and s1, s2 for the secondary (right) side.</p>
 
 <p><img alt="" src="img/mux.svg" /></p>
 <h3>Examples</h3>
-<p>Following are examples of more complicated circuit diagrams. Most are useless circuits made for torturing ECE201 students. Further examples can be found in the ipynb ipython notebooks the docs folder.</p>
+<p>Following are examples of more complicated circuit diagrams. Most are useless circuits made for torturing ECE201 students. Further examples can be found in the ipynb Jupyter notebooks the docs folder.</p>
 <h4>Example 1</h4>
-<p>This example demonstrates use of push() and pop() and using 'tox' and 'toy' keywords.</p>
+<p>This example demonstrates use of <code>push()</code> and <code>pop()</code> and using 'tox' and 'toy' keywords.</p>
 <div class="codehilite"><pre><span></span><span class="n">d</span> <span class="o">=</span> <span class="n">schem</span><span class="o">.</span><span class="n">Drawing</span><span class="p">(</span><span class="n">unit</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># unit=2 makes elements with shorter than normal leads</span>
 <span class="n">d</span><span class="o">.</span><span class="n">push</span><span class="p">()</span>
 <span class="n">R1</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">RES</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;down&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;20$\Omega$&#39;</span><span class="p">)</span>
@@ -576,7 +593,7 @@ and s1, s2 for the secondary (right) side.</p>
 
 <p><img alt="" src="img/JK.svg" /></p>
 <h4>555-timer circuit</h4>
-<p>This example shows use of the blackbox() function to draw a 555-timer integrated circuit.</p>
+<p>This example shows use of the <code>blackbox()</code> function to draw a 555-timer integrated circuit.</p>
 <div class="codehilite"><pre><span></span><span class="n">d</span> <span class="o">=</span> <span class="n">schem</span><span class="o">.</span><span class="n">Drawing</span><span class="p">()</span>
 <span class="n">left</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;cnt&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span>
         <span class="s1">&#39;labels&#39;</span><span class="p">:[</span><span class="s1">&#39;TRG&#39;</span><span class="p">,</span><span class="s1">&#39;THR&#39;</span><span class="p">,</span><span class="s1">&#39;DIS&#39;</span><span class="p">],</span>

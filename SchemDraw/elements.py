@@ -1061,6 +1061,7 @@ def blackbox(w, h, linputs=None, rinputs=None, tinputs=None, binputs=None,
         linputs, rinputs, tinputs, binputs: dictionary input definition for each side
         of the box. Default to no inputs. Dictionary keys:
             labels: list of string labels for each input. drawn inside the box. default is blank.
+                    If label is '>', a proper clock input will be drawn.
             plabels: list of pin label strings. drawn outside the box. Default is blank.
             loc: list of pin locations (0 to 1), along side. Defaults to evenly spaced pins.
             leads: True/False, draw leads coming out of box. Default=True.
@@ -1218,7 +1219,23 @@ def blackbox(w, h, linputs=None, rinputs=None, tinputs=None, binputs=None,
 
             # Add labels
             if len(sidelabels) == cnt and sidelabels[i]:
-                box['labels'].append({'label': sidelabels[i], 'pos': _np.array([x, y])+lblpos, 'align': lblalign, 'size': _lblsize})
+                if sidelabels[i] == '>':
+                    clkxy = _np.array([x, y])
+                    clkw, clkh = 0.4 * _lblsize/16, 0.2 * _lblsize/16
+                    if side in ['top', 'bottom']:
+                        clkw, clkh = clkh, clkw
+                        clkh = clkh * _np.sign(leadext[1]) if leadext[1] != 0 else clkh
+                        clkpath = [[clkxy[0]-clkw, clkxy[1]],
+                                   [clkxy[0], clkxy[1]-clkh],
+                                   [clkxy[0]+clkw, clkxy[1]]]
+                    else:
+                        clkw = clkw * -_np.sign(leadext[0]) if leadext[0] != 0 else clkw
+                        clkpath = [[clkxy[0], clkxy[1]+clkh],
+                                   [clkxy[0]+clkw, clkxy[1]],
+                                   [clkxy[0], clkxy[1]-clkh]]
+                    box['paths'].append(clkpath)
+                else:
+                    box['labels'].append({'label': sidelabels[i], 'pos': _np.array([x, y])+lblpos, 'align': lblalign, 'size': _lblsize})
 
             if len(plabels) == cnt and plabels[i]:
                 box['labels'].append({'label': plabels[i], 'pos': _np.array([x, y])+plblpos, 'align': plblalign, 'size': _plblsize})

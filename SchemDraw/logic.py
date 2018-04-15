@@ -201,33 +201,38 @@ XNOR4 = orgate(4, xor=True, nor=True, name='XNOR4')
 # Inverters/Buffers
 BUF = {
     'name': 'BUF',
-    'paths': [[[0, 0], [_leadlen, 0], [_leadlen, -_gateh/2], [_gatel+_leadlen, 0], [_leadlen, _gateh/2], [_leadlen, 0]],
-              [[_gatel+_leadlen, 0], [_gatel+_leadlen*2, 0]]],
-    'extend': False,
+    'paths': [[[_leadlen, 0], [_leadlen, -_gateh/2], [_gatel+_leadlen, 0], [_leadlen, _gateh/2], [_leadlen, 0]],
+              [[_gatel+_leadlen, 0], [_gatel+_leadlen*2, 0]],
+              [[0, 0], [_leadlen, 0], _gap, [_gatel+_leadlen, 0]]],
+    'extend': True,
     'anchors': {'out': [_gatel+_gateh/2+_leadlen*2, 0]}
      }
 
 NOT = {
     'name': 'NOT',
-    'paths': [[[0, 0], [_leadlen, 0], [_leadlen, -_gateh/2], [_gatel+_leadlen, 0], [_leadlen, _gateh/2], [_leadlen, 0]],
-              [[_gatel+_leadlen+_notbubble*2, 0], [_gatel+_leadlen*2, 0]]],
+    'paths': [[[_leadlen, 0], [_leadlen, -_gateh/2], [_gatel+_leadlen, 0], [_leadlen, _gateh/2], [_leadlen, 0]],
+              [[_gatel+_leadlen+_notbubble*2, 0], [_gatel+_leadlen*2, 0]],
+              [[0, 0], [_leadlen, 0], _gap, [_gatel+_leadlen+_notbubble*2, 0]]],
     'shapes': [{'shape': 'circle',
                 'center': [_gatel+_leadlen+_notbubble, 0],
                 'radius': _notbubble}],
-    'extend': False,
+    'extend': True,
     'anchors': {'out': [_gatel+_gateh/2+_leadlen*2, 0]}
      }
 
+
+
 NOTNOT = {
     'name': 'NOTNOT',
-    'paths': [[[0, 0], [_leadlen-_notbubble*2, 0], _gap, [_leadlen, 0], [_leadlen, -_gateh/2], [_gatel+_leadlen, 0], [_leadlen, _gateh/2], [_leadlen, 0]],
-              [[_gatel+_leadlen+_notbubble*2, 0], [_gatel+_leadlen*2, 0]]],
+    'paths': [[[_leadlen, 0], [_leadlen, -_gateh/2], [_gatel+_leadlen, 0], [_leadlen, _gateh/2], [_leadlen, 0]],
+              [[_gatel+_leadlen+_notbubble*2, 0], [_gatel+_leadlen*2, 0]],
+              [[0, 0], [_leadlen-_notbubble*2, 0], _gap, [_gatel+_leadlen+_notbubble*2, 0]]],
     'shapes': [{'shape': 'circle',
                 'center': [_gatel+_leadlen+_notbubble, 0],
                 'radius': _notbubble},
                {'shape': 'circle',
                 'center': [_leadlen-_notbubble, 0],
                 'radius': _notbubble}],
-    'extend': False,
+    'extend': True,
     'anchors': {'out': [_gatel+_gateh/2+_leadlen*2, 0]}
      }

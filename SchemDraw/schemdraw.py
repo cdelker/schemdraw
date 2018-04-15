@@ -580,7 +580,7 @@ Other:
         """ Add a label at the appropriate position
             label: text label to add
             loc: location for the label ['top', 'bot', 'lft', 'rgt'].
-            txtofst: unit offset between element bounding box and label.
+            ofst: unit offset between element bounding box and label.
             align: alignment tuple for (horizontal, vertical):
                    (['center', 'left', 'right'], ['center', 'top', 'bottom'])
             size: font size

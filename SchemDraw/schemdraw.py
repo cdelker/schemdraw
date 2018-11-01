@@ -743,7 +743,7 @@ Other:
                 h = s.get('height', 1) * self.z
                 th1 = s.get('theta1', 35)
                 th2 = s.get('theta2', -35)
-                if self.reverse: th1, th2 = th2, th1
+                if self.reverse: th1, th2 = th1+180, th2+180
 
                 angle = s.get('angle', self.theta)
                 arc = Arc(xy, width=w, height=h, theta1=th1,

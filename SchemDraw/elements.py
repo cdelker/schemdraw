@@ -167,9 +167,9 @@ CAP2 = {  # Curved capacitor
     'paths': [[[0, 0], _gap, [0, _rh], [0, -_rh], _gap, [_cap_gap, 0]]],
     'shapes': [{'shape': 'arc',
                 'center': [(_cap_gap*1.5), 0],
-                'theta1': 120,
-                'theta2': -120,
-                'width': _cap_gap,
+                'theta1': 105,
+                'theta2': -105,
+                'width': _cap_gap*1.5,
                 'height': _rh*2.5}],
     'anchors': {'center': [_rh, 0]}
     }

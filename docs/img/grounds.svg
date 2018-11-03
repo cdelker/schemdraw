@@ -2,7 +2,7 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
   "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Created with matplotlib (http://matplotlib.org/) -->
-<svg height="70.24775pt" version="1.1" viewBox="0 0 613.7125 70.24775" width="613.7125pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg height="74pt" version="1.1" viewBox="0 0 613 74" width="613pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
  <defs>
   <style type="text/css">
 *{stroke-linecap:butt;stroke-linejoin:round;}
@@ -10,8 +10,8 @@
  </defs>
  <g id="figure_1">
   <g id="patch_1">
-   <path d="M 0 70.24775 
-L 613.7125 70.24775 
+   <path d="M 0 74.18975 
+L 613.7125 74.18975 
 L 613.7125 0 
 L 0 0 
 z
@@ -19,71 +19,71 @@ z
   </g>
   <g id="axes_1">
    <g id="line2d_1">
-    <path clip-path="url(#p45fbbf1743)" d="M 48.66875 32.76375 
-L 48.66875 43.92375 
-L 40.56875 43.92375 
-L 56.76875 43.92375 
-M 42.99875 47.27175 
-L 54.33875 47.27175 
-M 47.04875 50.61975 
-L 50.28875 50.61975 
+    <path clip-path="url(#pa93cb2396a)" d="M 48.66875 34.11375 
+L 48.66875 46.35375 
+L 40.56875 46.35375 
+L 56.76875 46.35375 
+M 42.99875 50.02575 
+L 54.33875 50.02575 
+M 47.04875 53.69775 
+L 50.28875 53.69775 
 " style="fill:none;stroke:#000000;stroke-linecap:round;stroke-width:1.5;"/>
    </g>
    <g id="line2d_2">
-    <path clip-path="url(#p45fbbf1743)" d="M 178.26875 32.76375 
-L 178.26875 43.92375 
-L 170.16875 43.92375 
-L 178.26875 55.08375 
-L 186.36875 43.92375 
-L 178.26875 43.92375 
+    <path clip-path="url(#pa93cb2396a)" d="M 178.26875 34.11375 
+L 178.26875 46.35375 
+L 170.16875 46.35375 
+L 178.26875 58.59375 
+L 186.36875 46.35375 
+L 178.26875 46.35375 
 " style="fill:none;stroke:#000000;stroke-linecap:round;stroke-width:1.5;"/>
    </g>
    <g id="line2d_3">
-    <path clip-path="url(#p45fbbf1743)" d="M 307.86875 43.92375 
-L 313.94375 43.92375 
-L 307.86875 50.89875 
+    <path clip-path="url(#pa93cb2396a)" d="M 307.86875 46.35375 
+L 313.94375 46.35375 
+L 307.86875 54.00375 
 " style="fill:none;stroke:#000000;stroke-linecap:round;stroke-width:1.5;"/>
    </g>
    <g id="line2d_4">
-    <path clip-path="url(#p45fbbf1743)" d="M 307.86875 32.76375 
-L 307.86875 43.92375 
-L 301.79375 50.89875 
+    <path clip-path="url(#pa93cb2396a)" d="M 307.86875 34.11375 
+L 307.86875 46.35375 
+L 301.79375 54.00375 
 " style="fill:none;stroke:#000000;stroke-linecap:round;stroke-width:1.5;"/>
    </g>
    <g id="line2d_5">
-    <path clip-path="url(#p45fbbf1743)" d="M 307.86875 43.92375 
-L 301.79375 43.92375 
-L 295.71875 50.89875 
+    <path clip-path="url(#pa93cb2396a)" d="M 307.86875 46.35375 
+L 301.79375 46.35375 
+L 295.71875 54.00375 
 " style="fill:none;stroke:#000000;stroke-linecap:round;stroke-width:1.5;"/>
    </g>
    <g id="line2d_6">
-    <path clip-path="url(#p45fbbf1743)" d="M 437.46875 43.92375 
-L 443.54375 43.92375 
+    <path clip-path="url(#pa93cb2396a)" d="M 437.46875 46.35375 
+L 443.54375 46.35375 
 " style="fill:none;stroke:#000000;stroke-linecap:round;stroke-width:1.5;"/>
    </g>
    <g id="line2d_7">
-    <path clip-path="url(#p45fbbf1743)" d="M 437.46875 32.76375 
-L 437.46875 43.92375 
+    <path clip-path="url(#pa93cb2396a)" d="M 437.46875 34.11375 
+L 437.46875 46.35375 
 " style="fill:none;stroke:#000000;stroke-linecap:round;stroke-width:1.5;"/>
    </g>
    <g id="line2d_8">
-    <path clip-path="url(#p45fbbf1743)" d="M 437.46875 43.92375 
-L 431.39375 43.92375 
+    <path clip-path="url(#pa93cb2396a)" d="M 437.46875 46.35375 
+L 431.39375 46.35375 
 " style="fill:none;stroke:#000000;stroke-linecap:round;stroke-width:1.5;"/>
    </g>
    <g id="line2d_9">
-    <path clip-path="url(#p45fbbf1743)" d="M 567.06875 21.60375 
-L 573.14375 21.60375 
+    <path clip-path="url(#pa93cb2396a)" d="M 567.06875 21.87375 
+L 573.14375 21.87375 
 " style="fill:none;stroke:#000000;stroke-linecap:round;stroke-width:1.5;"/>
    </g>
    <g id="line2d_10">
-    <path clip-path="url(#p45fbbf1743)" d="M 567.06875 32.76375 
-L 567.06875 21.60375 
+    <path clip-path="url(#pa93cb2396a)" d="M 567.06875 34.11375 
+L 567.06875 21.87375 
 " style="fill:none;stroke:#000000;stroke-linecap:round;stroke-width:1.5;"/>
    </g>
    <g id="line2d_11">
-    <path clip-path="url(#p45fbbf1743)" d="M 567.06875 21.60375 
-L 560.99375 21.60375 
+    <path clip-path="url(#pa93cb2396a)" d="M 567.06875 21.87375 
+L 560.99375 21.87375 
 " style="fill:none;stroke:#000000;stroke-linecap:round;stroke-width:1.5;"/>
    </g>
    <g id="text_1">
@@ -144,7 +144,7 @@ L 9.8125 0
 z
 " id="DejaVuSans-44"/>
     </defs>
-    <g transform="translate(34.910938 27.478125)scale(0.12 -0.12)">
+    <g transform="translate(34.910938 28.558125)scale(0.12 -0.12)">
      <use xlink:href="#DejaVuSans-47"/>
      <use x="77.490234" xlink:href="#DejaVuSans-4e"/>
      <use x="152.294922" xlink:href="#DejaVuSans-44"/>
@@ -197,7 +197,7 @@ L 9.8125 0
 z
 " id="DejaVuSans-49"/>
     </defs>
-    <g transform="translate(151.282813 27.144375)scale(0.12 -0.12)">
+    <g transform="translate(151.282813 28.224375)scale(0.12 -0.12)">
      <use xlink:href="#DejaVuSans-47"/>
      <use x="77.490234" xlink:href="#DejaVuSans-4e"/>
      <use x="152.294922" xlink:href="#DejaVuSans-44"/>
@@ -260,7 +260,7 @@ L 0.78125 0
 z
 " id="DejaVuSans-41"/>
     </defs>
-    <g transform="translate(262.07 27.144375)scale(0.12 -0.12)">
+    <g transform="translate(262.07 28.224375)scale(0.12 -0.12)">
      <use xlink:href="#DejaVuSans-47"/>
      <use x="77.490234" xlink:href="#DejaVuSans-4e"/>
      <use x="152.294922" xlink:href="#DejaVuSans-44"/>
@@ -287,7 +287,7 @@ L 39.796875 0
 z
 " id="DejaVuSans-56"/>
     </defs>
-    <g transform="translate(425.74625 27.478125)scale(0.12 -0.12)">
+    <g transform="translate(425.74625 28.558125)scale(0.12 -0.12)">
      <use xlink:href="#DejaVuSans-56"/>
      <use x="68.408203" xlink:href="#DejaVuSans-53"/>
      <use x="131.884766" xlink:href="#DejaVuSans-53"/>
@@ -304,8 +304,8 @@ z
   </g>
  </g>
  <defs>
-  <clipPath id="p45fbbf1743">
-   <rect height="42.408" width="592.3125" x="10.7" y="17.13975"/>
+  <clipPath id="pa93cb2396a">
+   <rect height="46.512" width="592.3125" x="10.7" y="16.97775"/>
   </clipPath>
  </defs>
 </svg>

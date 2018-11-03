@@ -1,16 +1,18 @@
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
+import setuptools
 
-setup(
+with open('README.txt', 'r') as f:
+	long_description = f.read()
+
+setuptools.setup(
     name = 'SchemDraw',
-    packages = ['SchemDraw'],
-    version = '0.3.1a',
+    version = '0.4.0',
     description = 'Electrical circuit schematic drawing',
     author = 'Collin J. Delker',
     author_email = 'developer@collindelker.com',
     url = 'http://cdelker.bitbucket.io/SchemDraw',
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    packages = setuptools.find_packages(),
     keywords = ['circuit', 'schematic', 'electrical'],
     install_requires=['numpy', 'matplotlib'],
     classifiers = [

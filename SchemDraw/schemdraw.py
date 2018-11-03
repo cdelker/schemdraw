@@ -753,7 +753,14 @@ Other:
                 # Add an arrowhead to the arc
                 arrow = s.get('arrow', None)  # 'cw' or 'ccw' or None
                 if arrow is not None:
+                    # Apply stretch to theta to match MPL's arc
+                    # (See change https://github.com/matplotlib/matplotlib/pull/8047/files)
+                    x, y = np.cos(np.deg2rad(th2)), np.sin(np.deg2rad(th2))
+                    th2 = np.rad2deg(np.arctan2((w/h)*y, x))
+                    x, y = np.cos(np.deg2rad(th1)), np.sin(np.deg2rad(th1))
+                    th1 = np.rad2deg(np.arctan2((w/h)*y, x))
                     if arrow == 'ccw':
+                        
                         dx = np.cos(np.deg2rad(th2+90)) / 100
                         dy = np.sin(np.deg2rad(th2+90)) / 100
                         s = [xy[0] + w/2*np.cos(np.deg2rad(th2)),

@@ -1,21 +1,27 @@
-v0.3.0 07/03/2017
+v0.4.0, 03-Nov-2018
+    - Fixed drawing of NOT and related gates to property extend the path
+    - Fixed arrow translation when grouping elements
+    - Fixed sidelabels and plabels of blackbox when empty
+    - Fixed arc drawing due to change in Matplotlib 2.2 on asymmetric partial arcs
+
+v0.3.0, 03-Jul-2017
     - Added function for drawing multiplexers/demultiplexers
     - Updates to labelI() method to allow reversing arrow and changing length
     - New elements: PHOTODIODE, NFET4, PFET4, VSS, VDD
     - Add CSS to documentation
 
-v0.2.2 03/06/2016
+v0.2.2, 06-Mar-2016
     - Added function for drawing transformers
     - Added JJ Josephson Junction element
     - Documentation updates
     
-v0.2.1 05/03/2015
+v0.2.1, 03-May-2015
     - Fixed anchor names when element overwrites base anchor, such as BJT_PNP.
     - Added showplot keyword to draw() for non-interactive mode.
     - Added 2-collector BJT.
     - Documentation: added gallery of schematics.
     
-v0.2.0 04/29/2015
+v0.2.0, 29-Apr-2015
     - Added elements: 
       BATTERY, BAT_CELL, SPEAKER, BUTTON, BUTTON_NC, XTAL, MEMRISTOR,
       SCHOTTKY, ZENER, LED2
@@ -23,18 +29,18 @@ v0.2.0 04/29/2015
     - Converted documentation to use all vector-based images
     - Added XKCD-mode example
 
-v0.1.4, 09/30/2014
+v0.1.4, 30-Sep-2014
     - Added elements: LED, OPAMP_NOSIGN, GAP_LABEL, ELLIPSIS
     - Add function to group several elements into one
     - Add blackbox() function to generate box elements with arbitrary inputs
     - Allow element definition to specify label alignment
     - Added linestyle to element kwargs and definition
 
-v0.1.3, 09/21/2014
+v0.1.3, 21-Sep-2014
     - Added logic gate elements
     - Added transparent and dpi options to save() function
     - Fixed issues with zooming and rotating elements with arcs
     - LaTeX typesetting uses sans-serif, regular fonts for consistency
     
-v0.1.0, 08/25/2014
+v0.1.0, 25-Aug-2014
     - Initial Release

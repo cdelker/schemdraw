@@ -45,6 +45,17 @@ Each SMU is grouped into a unit which is then placed where needed.
 [Source](gallery/SR.py)
 
 
+
+-----------------------------------------------------------
+### Superheterodyne Receiver
+
+Demonstrates use of signal processing elements.
+
+![](gallery/receiver.svg)
+
+[Source](gallery/receiver.py)
+
+
 -----------------------------------------------------------
 ### Resistor circle
 
@@ -76,15 +87,11 @@ Internal schematic of a 741 IC.
 
 
 -----------------------------------------------------------
-### XKCD Mode
+### Flowchart
 
-Turn on Matplotlib's XKCD mode for some hand-drawn looks!
+Recreate [XKCD 518](https://xkcd.com/518/) using SchemDraw.
 
-![](gallery/ex_xkcd.svg)
+![](gallery/flowchart.svg)
 
-[Source](gallery/ex_xkcd.py)
-
-![](gallery/SRxkcd.svg)
-
-[Source](gallery/SRxkcd.py)
+[Source](gallery/flowchart.py)
 

@@ -253,22 +253,58 @@ and translate the element to its final position. A standard resistor is
 </pre></div>
 
 
-<p>Using the 'base' key, a new element can be defined as an extension of some base element. As an example, let's define a sinusoidal voltage source (the SOURCE_SIN element). It can be based on a SOURCE element, with the addition of a path to draw a sine wave inside the circle. A path can be created using standard numpy processing, so first we'll make a sine wave path. Since the circle is centered at [.5,0], center the sine wave there too:</p>
-<div class="codehilite"><pre><span></span><span class="n">sin_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">.</span><span class="mi">25</span><span class="p">,</span><span class="o">.</span><span class="mi">75</span><span class="p">,</span><span class="n">num</span><span class="o">=</span><span class="mi">25</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.5</span>
-<span class="n">sin_x</span> <span class="o">=</span> <span class="o">.</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">((</span><span class="n">sin_y</span><span class="o">-.</span><span class="mi">25</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="mi">2</span><span class="o">/.</span><span class="mi">5</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.5</span>
-<span class="n">sin_path</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">sin_x</span><span class="p">,</span><span class="n">sin_y</span><span class="p">)))</span>
+<p>For an example, let's make a flux capacitor circuit element. Here, we'll start by defining the <code>fclen</code> variable as the length of one leg so we can change it easily. Remember a resistor is 1 unit long.</p>
+<div class="codehilite"><pre><span></span><span class="n">fclen</span> <span class="o">=</span> <span class="mf">0.5</span>
 </pre></div>
 
 
-<p>Then define the element dictionary. It's just a SOURCE element with an additional path:</p>
-<div class="codehilite"><pre><span></span><span class="n">SOURCE_SIN</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;name&#39;</span>  <span class="p">:</span> <span class="s1">&#39;SOURCE_SIN&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;base&#39;</span>  <span class="p">:</span> <span class="n">SOURCE</span><span class="p">,</span>
-    <span class="s1">&#39;paths&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="n">sin_path</span><span class="p">]</span>
-    <span class="p">}</span>
+<p>The custom element is a dictionary of parameters. We want a dot in the center of our flux capacitor, so use the <code>base</code> key to start with the already defined <code>DOT</code> element.</p>
+<div class="codehilite"><pre><span></span><span class="n">FLUX_CAP</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;base&#39;</span><span class="p">:</span> <span class="n">e</span><span class="o">.</span><span class="n">DOT</span><span class="p">,</span>
 </pre></div>
 
 
+<p>Next, add the paths, which are drawn as lines. The flux capacitor will have three paths, all extending from the center dot:</p>
+<div class="codehilite"><pre><span></span><span class="s1">&#39;paths&#39;</span><span class="p">:</span> <span class="p">[[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">fclen</span><span class="o">*</span><span class="mf">1.41</span><span class="p">]],</span>  <span class="c1"># Leg going down</span>
+          <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="n">fclen</span><span class="p">,</span> <span class="n">fclen</span><span class="p">]],</span>    <span class="c1"># Leg going up/right</span>
+          <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="n">fclen</span><span class="p">,</span> <span class="n">fclen</span><span class="p">]]],</span>  <span class="c1"># Leg going up/left</span>
+</pre></div>
+
+
+<p>And at the end of each path is an open circle. These are added to the dictionary using the <code>shapes</code> key as a list of shape dictionaries.</p>
+<div class="codehilite"><pre><span></span><span class="s1">&#39;shapes&#39;</span><span class="p">:</span> <span class="p">[{</span><span class="s1">&#39;shape&#39;</span><span class="p">:</span> <span class="s1">&#39;circle&#39;</span><span class="p">,</span> <span class="s1">&#39;center&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">fclen</span><span class="o">*</span><span class="mf">1.41</span><span class="p">],</span> <span class="s1">&#39;radius&#39;</span><span class="p">:</span> <span class="o">.</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;fill&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">},</span>
+           <span class="p">{</span><span class="s1">&#39;shape&#39;</span><span class="p">:</span> <span class="s1">&#39;circle&#39;</span><span class="p">,</span> <span class="s1">&#39;center&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">fclen</span><span class="p">,</span> <span class="n">fclen</span><span class="p">],</span> <span class="s1">&#39;radius&#39;</span><span class="p">:</span> <span class="o">.</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;fill&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">},</span>
+           <span class="p">{</span><span class="s1">&#39;shape&#39;</span><span class="p">:</span> <span class="s1">&#39;circle&#39;</span><span class="p">,</span> <span class="s1">&#39;center&#39;</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="n">fclen</span><span class="p">,</span> <span class="n">fclen</span><span class="p">],</span> <span class="s1">&#39;radius&#39;</span><span class="p">:</span> <span class="o">.</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;fill&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">}],</span>
+</pre></div>
+
+
+<p>Finally, we need to define anchor points so that other elements can be connected to the right places. Here, they're called <code>p1</code>, <code>p2</code>, and <code>p3</code> for lack of better names.</p>
+<div class="codehilite"><pre><span></span><span class="s1">&#39;anchors&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;p1&#39;</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="n">fclen</span><span class="p">,</span> <span class="n">fclen</span><span class="p">],</span> <span class="s1">&#39;p2&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">fclen</span><span class="p">,</span> <span class="n">fclen</span><span class="p">],</span> <span class="s1">&#39;p3&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">fclen</span><span class="p">]}</span>
+</pre></div>
+
+
+<p>Here's the element dictionary all in one:</p>
+<div class="codehilite"><pre><span></span><span class="n">fclen</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="n">FLUX_CAP</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;base&#39;</span><span class="p">:</span> <span class="n">e</span><span class="o">.</span><span class="n">DOT</span><span class="p">,</span>
+    <span class="s1">&#39;paths&#39;</span><span class="p">:</span> <span class="p">[[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">fclen</span><span class="o">*</span><span class="mf">1.41</span><span class="p">]],</span>  <span class="c1"># Leg going down</span>
+              <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="n">fclen</span><span class="p">,</span> <span class="n">fclen</span><span class="p">]],</span>    <span class="c1"># Leg going up/right</span>
+              <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="n">fclen</span><span class="p">,</span> <span class="n">fclen</span><span class="p">]]],</span>  <span class="c1"># Leg going up/left</span>
+    <span class="s1">&#39;shapes&#39;</span><span class="p">:</span> <span class="p">[{</span><span class="s1">&#39;shape&#39;</span><span class="p">:</span> <span class="s1">&#39;circle&#39;</span><span class="p">,</span> <span class="s1">&#39;center&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">fclen</span><span class="o">*</span><span class="mf">1.41</span><span class="p">],</span> <span class="s1">&#39;radius&#39;</span><span class="p">:</span> <span class="o">.</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;fill&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">},</span>
+               <span class="p">{</span><span class="s1">&#39;shape&#39;</span><span class="p">:</span> <span class="s1">&#39;circle&#39;</span><span class="p">,</span> <span class="s1">&#39;center&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">fclen</span><span class="p">,</span> <span class="n">fclen</span><span class="p">],</span> <span class="s1">&#39;radius&#39;</span><span class="p">:</span> <span class="o">.</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;fill&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">},</span>
+               <span class="p">{</span><span class="s1">&#39;shape&#39;</span><span class="p">:</span> <span class="s1">&#39;circle&#39;</span><span class="p">,</span> <span class="s1">&#39;center&#39;</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="n">fclen</span><span class="p">,</span> <span class="n">fclen</span><span class="p">],</span> <span class="s1">&#39;radius&#39;</span><span class="p">:</span> <span class="o">.</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;fill&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">}],</span>
+    <span class="s1">&#39;anchors&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;p1&#39;</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="n">fclen</span><span class="p">,</span> <span class="n">fclen</span><span class="p">],</span> <span class="s1">&#39;p2&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">fclen</span><span class="p">,</span> <span class="n">fclen</span><span class="p">],</span> <span class="s1">&#39;p3&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">fclen</span><span class="p">]}}</span>
+</pre></div>
+
+
+<p>Test it out by adding the new custom element to a drawing:</p>
+<div class="codehilite"><pre><span></span><span class="n">d</span> <span class="o">=</span> <span class="n">schem</span><span class="o">.</span><span class="n">Drawing</span><span class="p">()</span>
+<span class="n">fc</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">FLUX_CAP</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+</pre></div>
+
+
+<p><img alt="" src="img/fluxcap.svg" /></p>
 <hr />
 <h3>XKCD Mode!</h3>
 <p>For something fun, you can turn on Matplotlib's XKCD mode to get "hand-drawn" schematics.</p>

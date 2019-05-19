@@ -6,3 +6,6 @@ build
 .idea/schemdraw.iml
 .idea/vcs.xml
 .idea/workspace.xml
+*.ipynb_checkpoints
+*.egg-info
+*__pycache__

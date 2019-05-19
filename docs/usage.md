@@ -285,22 +285,59 @@ Possible dictionary keys:
         ls    : [':', '--', '-'] linestyle (same as matplotlib). Only applies to paths.
 
 
-Using the 'base' key, a new element can be defined as an extension of some base element. As an example, let's define a sinusoidal voltage source (the SOURCE_SIN element). It can be based on a SOURCE element, with the addition of a path to draw a sine wave inside the circle. A path can be created using standard numpy processing, so first we'll make a sine wave path. Since the circle is centered at [.5,0], center the sine wave there too:
+For an example, let's make a flux capacitor circuit element. Here, we'll start by defining the `fclen` variable as the length of one leg so we can change it easily. Remember a resistor is 1 unit long.
 
     :::python
-    sin_y = np.linspace(.25,.75,num=25) - 0.5
-    sin_x = .2 * np.sin((sin_y-.25)*np.pi*2/.5) + 0.5
-    sin_path = np.transpose(np.vstack((sin_x,sin_y)))
-
-Then define the element dictionary. It's just a SOURCE element with an additional path:
+    fclen = 0.5
+    
+The custom element is a dictionary of parameters. We want a dot in the center of our flux capacitor, so use the `base` key to start with the already defined `DOT` element.
 
     :::python
-    SOURCE_SIN = {
-        'name'  : 'SOURCE_SIN',
-        'base'  : SOURCE,
-        'paths' : [sin_path]
-        }
+    FLUX_CAP = {
+        'base': e.DOT,
 
+Next, add the paths, which are drawn as lines. The flux capacitor will have three paths, all extending from the center dot:
+
+    :::python
+    'paths': [[[0, 0], [0, -fclen*1.41]],  # Leg going down
+              [[0, 0], [fclen, fclen]],    # Leg going up/right
+              [[0, 0], [-fclen, fclen]]],  # Leg going up/left
+
+And at the end of each path is an open circle. These are added to the dictionary using the `shapes` key as a list of shape dictionaries.
+
+    :::python
+    'shapes': [{'shape': 'circle', 'center': [0, -fclen*1.41], 'radius': .2, 'fill': False},
+               {'shape': 'circle', 'center': [fclen, fclen], 'radius': .2, 'fill': False},
+               {'shape': 'circle', 'center': [-fclen, fclen], 'radius': .2, 'fill': False}],
+    
+Finally, we need to define anchor points so that other elements can be connected to the right places. Here, they're called `p1`, `p2`, and `p3` for lack of better names.
+
+    :::python
+    'anchors': {'p1': [-fclen, fclen], 'p2': [fclen, fclen], 'p3': [0, -fclen]}
+    
+Here's the element dictionary all in one:
+
+    :::python
+    fclen = 0.5
+    FLUX_CAP = {
+        'base': e.DOT,
+        'paths': [[[0, 0], [0, -fclen*1.41]],  # Leg going down
+                  [[0, 0], [fclen, fclen]],    # Leg going up/right
+                  [[0, 0], [-fclen, fclen]]],  # Leg going up/left
+        'shapes': [{'shape': 'circle', 'center': [0, -fclen*1.41], 'radius': .2, 'fill': False},
+                   {'shape': 'circle', 'center': [fclen, fclen], 'radius': .2, 'fill': False},
+                   {'shape': 'circle', 'center': [-fclen, fclen], 'radius': .2, 'fill': False}],
+        'anchors': {'p1': [-fclen, fclen], 'p2': [fclen, fclen], 'p3': [0, -fclen]}}
+
+
+Test it out by adding the new custom element to a drawing:
+
+    :::python
+    d = schem.Drawing()
+    fc = d.add(FLUX_CAP)
+    d.draw()
+
+![](img/fluxcap.svg)
 
 ------------------------------------------------
 

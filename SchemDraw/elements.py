@@ -368,6 +368,15 @@ DOT = {
     'extend': False,
     }
 
+ARROWHEAD = {
+    'name': 'ARROWHEAD',
+    'shapes': [{'shape': 'arrow', 'start': [-.3, 0], 'end': [0, 0],
+                'headwidth': .3, 'headlength': .3}],
+    'lblofst': .25,
+    'move_cur': False,
+    'extend': False
+    }
+
 ELLIPSIS = {
     'name': 'ELLIPSIS',
     'shapes': [{'shape': 'circle',
@@ -388,7 +397,6 @@ ELLIPSIS = {
     'extend': False,
     'drop': [2, 0]
     }
-
 
 LINE = {'name': 'LINE', 'paths': [_np.array([[0, 0]])]}
 
@@ -448,7 +456,19 @@ GND_CHASSIS = {
     'extend': False,
     'theta': 0
     }
-    
+
+# antenna
+_ant_lead = 0.6
+_ant_h = 0.6
+_ant_w = 0.38
+ANT = {
+    'name': 'ANT',
+    'paths': [[[0, 0], [0, _ant_lead], [-_ant_w, _ant_lead+_ant_h], [_ant_w, _ant_lead+_ant_h], [0, _ant_lead]]],
+    'extend': False,
+    'move_cur': False,
+    'theta': 0
+    }
+
 _chgnd_dx = _rh*.75
 _chgnd_dy = _rh
 VSS = {
@@ -952,6 +972,7 @@ SPEAKER = {
                 'closed': False}]
     }
 
+
 _a = .25
 _b = .7
 _t = _np.linspace(1.4, 3.6*_np.pi, 100)
@@ -1083,7 +1104,7 @@ def blackbox(w, h, linputs=None, rinputs=None, tinputs=None, binputs=None,
         labels, anchors are named 'inL1', 'inL2', ... 'inR1', 'inR2', 'inT1', 'inB1', etc.
     '''
     if hslant is not None and vslant is not None:
-        print('Warning - hslant and vslant both deifined. Weird pins may result.')
+        print('Warning - hslant and vslant both defined. Weird pins may result.')
 
     if hslant is None:
         hslant = 0

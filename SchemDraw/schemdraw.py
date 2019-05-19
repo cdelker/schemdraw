@@ -486,12 +486,15 @@ Other:
             botlabel = kwargs.get('botlabel', None)
             rgtlabel = kwargs.get('rgtlabel', None)
             lftlabel = kwargs.get('lftlabel', None)
+            size = kwargs.get('lblsize', drawing.fontsize)
+            clabel = kwargs.get('clabel', None)
             self.lbl_ofst = kwargs.get('lblofst', self.defn.get('lblofst', drawing.txtofst))
-            if label is not None:    self.add_label(label, dfltlbl,  ofst=self.lbl_ofst, size=drawing.fontsize)
-            if toplabel is not None: self.add_label(toplabel, 'top', ofst=self.lbl_ofst, size=drawing.fontsize)
-            if botlabel is not None: self.add_label(botlabel, 'bot', ofst=self.lbl_ofst, size=drawing.fontsize)
-            if rgtlabel is not None: self.add_label(rgtlabel, 'rgt', ofst=self.lbl_ofst, size=drawing.fontsize)
-            if lftlabel is not None: self.add_label(lftlabel, 'lft', ofst=self.lbl_ofst, size=drawing.fontsize)
+            if label is not None:    self.add_label(label, dfltlbl,  ofst=self.lbl_ofst, size=size)
+            if toplabel is not None: self.add_label(toplabel, 'top', ofst=self.lbl_ofst, size=size)
+            if botlabel is not None: self.add_label(botlabel, 'bot', ofst=self.lbl_ofst, size=size)
+            if rgtlabel is not None: self.add_label(rgtlabel, 'rgt', ofst=self.lbl_ofst, size=size)
+            if lftlabel is not None: self.add_label(lftlabel, 'lft', ofst=self.lbl_ofst, size=size)
+            if clabel is not None: self.add_label(clabel, 'center', ofst=[0,0], size=size)
 
         txtlist = self.defn.get('labels', [])
         for txtlbl in txtlist:
@@ -605,7 +608,6 @@ Other:
         if align is None:   # Determine best alignment for label based on angle
             th = self.theta
             # Below alignment divisions work for label on top. Rotate angle for other sides.
-
             if loc == 'lft':
                 th = th + 90
             elif loc == 'bot':
@@ -614,7 +616,9 @@ Other:
                 th = th + 270
             th = th % 360  # Normalize angle so it's positive, clockwise
 
-            if th < 22.5:         # 0 to +22 deg
+            if loc == 'center':
+                align = ('center', 'center')
+            elif th < 22.5:         # 0 to +22 deg
                 align = ('center', 'bottom')
             elif th < 22.5+45:    #22 to 67
                 align = ('right', 'bottom')

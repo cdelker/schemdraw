@@ -314,6 +314,57 @@ PHOTODIODE = {
                  }]
     }
 
+DIAC = {
+    'name': 'DIAC',
+    'paths': [[[0, 0], _gap, [_rh*1.4, _rh*1.8], [_rh*1.4, -_rh*1.8], _gap,
+               [0, _rh*1.8], [0, -_rh*1.8], _gap, [_rh*1.4, 0]]],
+    'shapes': [{'shape': 'poly',
+                'xy': _np.array([[0, -_rh-.25], [_rh*1.4, -.25], [0, -_rh+.25]]),
+                'fill': False},
+              {'shape': 'poly',
+                'xy': _np.array([[_rh*1.4, _rh+.25], [0, .25], [_rh*1.4, _rh-.25]]),
+                'fill': False}]
+    }
+
+DIAC_F = {
+    'name': 'DIAC_F',
+    'paths': [[[0, 0], _gap, [_rh*1.4, _rh*1.8], [_rh*1.4, -_rh*1.8], _gap,
+               [0, _rh*1.8], [0, -_rh*1.8], _gap, [_rh*1.4, 0]]],
+    'shapes': [{'shape': 'poly',
+                'xy': _np.array([[0, -_rh-.25], [_rh*1.4, -.25], [0, -_rh+.25]]),
+                'fill': True},
+              {'shape': 'poly',
+                'xy': _np.array([[_rh*1.4, _rh+.25], [0, .25], [_rh*1.4, _rh-.25]]),
+                'fill': True}]
+    }
+
+TRIAC = {
+    'name': 'TRIAC',
+    'base': DIAC,
+    'paths': [[[_rh*1.4, .25], [_rh*1.4+.5, .5]]],
+    'anchors': {'gate': [_rh*1.4+.5, .5]}
+    }
+
+TRIAC_F = {
+    'name': 'TRIAC_F',
+    'base': DIAC_F,
+    'paths': [[[_rh*1.4, .25], [_rh*1.4+.5, .5]]],
+    'anchors': {'gate': [_rh*1.4+.5, .5]}
+    }
+
+SCR = {
+    'name': 'SCR',
+    'base': DIODE,
+    'paths': [[[_rh*1.4, 0], [_rh*1.4+.3, -.3], [_rh*1.4+.3, -.5]]],
+    'anchors': {'gate': [_rh*1.4+.3, -.5]}
+    }
+
+SCR_F = {
+    'name': 'SCR_F',
+    'base': DIODE_F,
+    'paths': [[[_rh*1.4, 0], [_rh*1.4+.3, -.3], [_rh*1.4+.3, -.5]]],
+    'anchors': {'gate': [_rh*1.4+.3, -.5]}
+    }
 
 _mr = 0.2
 MEMRISTOR = {

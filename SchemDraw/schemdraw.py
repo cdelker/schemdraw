@@ -363,9 +363,10 @@ Labels [Default = no label]:
 
 Other:
     move_cur : move the cursor after drawing. Default=True.
-    color    : matplotlib color for element. e.g. 'red', '#34a4e6', (.8,0,.8)
+    color    : matplotlib color for element lines. e.g. 'red', '#34a4e6', (.8,0,.8)
     ls       : line style. same as matplotlib: ['-', ':', '--']
     lw       : line width. same as matplotlib. Default=1
+    fill     : matplotlib color for fill
     """
         # Flatten element def with base elements
         self.defn = elm_def.copy()
@@ -378,6 +379,7 @@ Other:
         self.color = kwargs.get('color', self.defn.get('color', drawing.color))
         self.ls = kwargs.get('ls', self.defn.get('ls', '-'))
         self.lw = kwargs.get('lw', self.defn.get('lw', drawing.lw))
+        self.fill = kwargs.get('fill', None)
         totlen = kwargs.get('l', drawing.unit)
 
         # Determine theta angle of element
@@ -716,28 +718,37 @@ Other:
             ax        : matplotlib axis
             showframe : Draw the axis frame. Useful for debugging.
         """
+        if self.fill:
+            for i in range(len(self.paths)):
+                tlist = [(x,y) for x, y in self.paths[i]]  # Need tuples for set hashing
+                if len(tlist) != len(set(tlist)):  # duplicate points, assume closed shape
+                    ax.fill(*list(zip(*self.paths[i])), color=self.fill, zorder=0)
+        
         for path in self.paths:
             ax.plot(path[:, 0], path[:, 1], color=self.color, lw=self.lw,
                     solid_capstyle='round', ls=self.ls)
 
         for s in self.shapes:
+            if s.get('fill', False):
+                fill = True
+                fillcolor = s.get('fillcolor', self.color)
+            else:
+                fill = self.fill is not None
+                fillcolor = self.fill
+            
             if s.get('shape') == 'circle':
                 xy = np.array(s.get('center', [0, 0]))
                 xy = self.translate(xy - self.ofst)
                 rad = s.get('radius', 1) * self.z
-                fill = s.get('fill', False)
-                fillcolor = s.get('fillcolor', self.color)
                 circ = plt.Circle(xy=xy, radius=rad, ec=self.color,
-                                  fc=fillcolor, fill=fill, zorder=3, lw=self.lw)
+                                  fc=fillcolor, fill=fill, zorder=0, lw=self.lw)
                 ax.add_patch(circ)
             elif s.get('shape') == 'poly':
                 xy = np.array(s.get('xy', [[0, 0]]))
                 xy = self.translate(xy - self.ofst)
                 closed = s.get('closed', True)
-                fill = s.get('fill', False)
-                fillcolor = s.get('fillcolor', self.color)
                 poly = plt.Polygon(xy=xy, closed=closed, ec=self.color,
-                                   fc=fillcolor, fill=fill, zorder=3, lw=self.lw)
+                                   fc=fillcolor, fill=fill, zorder=0, lw=self.lw)
                 ax.add_patch(poly)
             elif s.get('shape') == 'arc':
                 xy = np.array(s.get('center', [0, 0]))

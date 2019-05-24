@@ -20,26 +20,26 @@ def andgate(inputs=2, nand=False, inputnots=[], name='AND'):
         inputnots : input numbers (starting at 1) with invert bubble
         name   : Define a name for gate. Only used in documentation currently.
     '''
+    rad = _gateh/2
+    theta = _np.linspace(_np.radians(-90), _np.radians(90), num=50)
+    arcpoints = _np.vstack((rad*_np.cos(theta) + _gatel+_leadlen, 
+                            rad*_np.sin(theta)))
 
+    paths = _np.transpose(arcpoints).tolist()
+    paths.extend([[_leadlen, rad], [_leadlen, 0],
+                   [_leadlen, -rad], [_gatel+_leadlen, -rad]])
+    
     AND = {
         'name': name,
-        'paths': [[[_leadlen, 0], [_leadlen, -_gateh/2], [_gatel+_leadlen, -_gateh/2]],
-                  [[_leadlen, 0], [_leadlen, _gateh/2], [_gatel+_leadlen, _gateh/2]]
-                 ],
-        'shapes': [{'shape': 'arc',
-                    'center': [_gatel+_leadlen, 0],
-                    'theta1': -90,
-                    'theta2': 90,
-                    'width': _gateh,
-                    'height': _gateh}
-                  ],
+        'paths': [paths],
         'extend': False,
-        'anchors': {'out': [_gatel+_gateh/2+_leadlen*2, 0]}
+        'anchors': {'out': [_gatel+_gateh/2+_leadlen*2, 0]},
+        'shapes': []
         }
 
     if nand:
-        AND['shapes'].append(
-            {'shape': 'circle',
+        AND['shapes'].append({
+             'shape': 'circle',
              'center': [_leadlen+_gatel+_gateh/2+_notbubble, 0],
              'radius': _notbubble})
 
@@ -114,18 +114,23 @@ def orgate(inputs=2, nor=False, xor=False, inputnots=[], name='OR'):
     tip = max(x)
     orheight = abs(min(y))
 
+    path = _np.transpose(_np.vstack((x, y))).tolist()
+    path.extend(_np.transpose(_np.vstack((x[::-1], -y[::-1]))).tolist())
+    if xor:
+        path.extend(_np.transpose(_np.vstack((x2[::-1]+xorgap, y2[::-1]))).tolist())
+    else:
+        path.extend(_np.transpose(_np.vstack((x2[::-1], y2[::-1]))).tolist())
+                        
     OR = {
         'name': name,
-        'paths': [_np.transpose(_np.vstack((x, y))),
-                  _np.transpose(_np.vstack((x, -y))),
-                  _np.transpose(_np.vstack((x2, y2)))],
+        'paths': [path],
         'shapes': [],
         'extend': False,
         'anchors': {'out': [tip+_leadlen, 0]}
          }
 
     if xor:
-        OR['paths'].append(_np.transpose(_np.vstack((x2+xorgap, y2))))
+        OR['paths'].append(_np.transpose(_np.vstack((x2, y2))).tolist())
 
     if nor:
         OR['shapes'].append(
@@ -219,8 +224,6 @@ NOT = {
     'extend': True,
     'anchors': {'out': [_gatel+_gateh/2+_leadlen*2, 0]}
      }
-
-
 
 NOTNOT = {
     'name': 'NOTNOT',

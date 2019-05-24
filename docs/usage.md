@@ -125,7 +125,8 @@ The `add_label()` method takes the following arguments:
 Other element arguments include:
 
         move_cur : move the cursor after drawing. Default=True.
-        color    : matplotlib color. e.g. 'red', '#34a4e6', (.8,0,.8)
+        color    : matplotlib color for border. e.g. 'red', '#34a4e6', (.8,0,.8)
+        fill     : matplotlib color for filling shapes and closed paths
         ls       : [':', '--', '-'] linestyle (same as matplotlib).
 
 

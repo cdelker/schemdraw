@@ -1,6 +1,7 @@
 v0.5.0.DEV
     - Added flowcharting symbol methods to SchemDraw.flow module
     - Added signal processing symbols to SchemDraw.dsp module
+    - Implemented fill parameter on Drawing.add to fill shapes and closed paths with a solid color
 
 v0.4.0, 03-Nov-2018
     - Fixed drawing of NOT and related gates to property extend the path

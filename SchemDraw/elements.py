@@ -201,7 +201,8 @@ DIODE = {
 
 DIODE_F = {
     'name': 'DIODE_F',
-    'base': DIODE,
+    'paths': [[[0, 0], _gap, [_rh*1.4, _rh], [_rh*1.4, -_rh], _gap, [_rh*1.4, 0]]],
+    'anchors': {'center': [_rh, 0]},
     'shapes': [{'shape': 'poly',
                 'xy': _np.array([[0, _rh], [_rh*1.4, 0], [0, -_rh]]),
                 'fill': True}]
@@ -783,8 +784,7 @@ SOURCE_SIN = {
 #Controlled sources
 SOURCE_CONT = {
     'name': 'SOURCE_CONT',
-    'paths': [[[0, 0], [.5, .5], [1, 0]],
-              [[0, 0], [.5, -.5], [1, 0]]],
+    'paths': [[[0, 0], [.5, .5], [1, 0], [.5, -.5], [0, 0], _gap, [1, 0]]],
     'theta': 90.,
      }
 

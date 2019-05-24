@@ -18,21 +18,21 @@ z
 " style="fill:none;"/>
   </g>
   <g id="axes_1">
+   <g id="patch_2">
+    <path clip-path="url(#p8234e80ff3)" d="M 60.72375 21.60375 
+L 72.06375 28.57875 
+L 60.72375 35.55375 
+z
+" style="fill:none;stroke:#000000;stroke-linejoin:miter;stroke-width:1.5;"/>
+   </g>
    <g id="line2d_1">
-    <path clip-path="url(#pca1dbc13f0)" d="M 17.79375 28.57875 
+    <path clip-path="url(#p8234e80ff3)" d="M 17.79375 28.57875 
 L 60.72375 28.57875 
 M 72.06375 21.60375 
 L 72.06375 35.55375 
 M 72.06375 28.57875 
 L 114.99375 28.57875 
 " style="fill:none;stroke:#000000;stroke-linecap:round;stroke-width:1.5;"/>
-   </g>
-   <g id="patch_2">
-    <path clip-path="url(#pca1dbc13f0)" d="M 60.72375 21.60375 
-L 72.06375 28.57875 
-L 60.72375 35.55375 
-z
-" style="fill:none;stroke:#000000;stroke-linejoin:miter;stroke-width:1.5;"/>
    </g>
    <g id="text_1">
     <!-- D1 -->
@@ -212,7 +212,7 @@ z
   </g>
  </g>
  <defs>
-  <clipPath id="pca1dbc13f0">
+  <clipPath id="p8234e80ff3">
    <rect height="20.925" width="113.4" x="9.69375" y="18.11625"/>
   </clipPath>
  </defs>

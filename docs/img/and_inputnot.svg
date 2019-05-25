@@ -19,7 +19,7 @@ z
   </g>
   <g id="axes_1">
    <g id="patch_2">
-    <path clip-path="url(#pfa83c175f5)" d="M 65.925 28.683 
+    <path clip-path="url(#pd3bf568171)" d="M 65.925 28.683 
 C 66.95611 28.683 67.945127 28.330234 68.674231 27.702394 
 C 69.403336 27.074553 69.813 26.2229 69.813 25.335 
 C 69.813 24.4471 69.403336 23.595447 68.674231 22.967606 
@@ -32,7 +32,7 @@ z
 " style="fill:none;stroke:#000000;stroke-linejoin:miter;stroke-width:1.5;"/>
    </g>
    <g id="patch_3">
-    <path clip-path="url(#pfa83c175f5)" d="M 20.889 19.476 
+    <path clip-path="url(#pd3bf568171)" d="M 20.889 19.476 
 C 21.92011 19.476 22.909127 19.123234 23.638231 18.495394 
 C 24.367336 17.867553 24.777 17.0159 24.777 16.128 
 C 24.777 15.2401 24.367336 14.388447 23.638231 13.760606 
@@ -45,13 +45,13 @@ z
 " style="fill:none;stroke:#000000;stroke-linejoin:miter;stroke-width:1.5;"/>
    </g>
    <g id="line2d_1">
-    <path clip-path="url(#pfa83c175f5)" d="M 13.437 25.335 
+    <path clip-path="url(#pd3bf568171)" d="M 13.437 25.335 
 M 69.813 25.335 
 L 73.377 25.335 
 " style="fill:none;stroke:#000000;stroke-linecap:round;stroke-width:1.5;"/>
    </g>
    <g id="line2d_2">
-    <path clip-path="url(#pfa83c175f5)" d="M 45.837 39.285 
+    <path clip-path="url(#pd3bf568171)" d="M 45.837 39.285 
 L 46.874938 39.256338 
 L 47.90861 39.170471 
 L 48.93377 39.02775 
@@ -108,24 +108,24 @@ L 45.837 39.285
 " style="fill:none;stroke:#000000;stroke-linecap:round;stroke-width:1.5;"/>
    </g>
    <g id="line2d_3">
-    <path clip-path="url(#pfa83c175f5)" d="M 13.437 34.542 
+    <path clip-path="url(#pd3bf568171)" d="M 13.437 34.542 
 L 24.777 34.542 
 " style="fill:none;stroke:#000000;stroke-linecap:round;stroke-width:1.5;"/>
    </g>
    <g id="line2d_4">
-    <path clip-path="url(#pfa83c175f5)" d="M 13.437 25.335 
+    <path clip-path="url(#pd3bf568171)" d="M 13.437 25.335 
 L 24.777 25.335 
 " style="fill:none;stroke:#000000;stroke-linecap:round;stroke-width:1.5;"/>
    </g>
    <g id="line2d_5">
-    <path clip-path="url(#pfa83c175f5)" d="M 13.437 16.128 
+    <path clip-path="url(#pd3bf568171)" d="M 13.437 16.128 
 L 17.001 16.128 
 " style="fill:none;stroke:#000000;stroke-linecap:round;stroke-width:1.5;"/>
    </g>
   </g>
  </g>
  <defs>
-  <clipPath id="pfa83c175f5">
+  <clipPath id="pd3bf568171">
    <rect height="36.27" width="72.414" x="7.2" y="7.2"/>
   </clipPath>
  </defs>

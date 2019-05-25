@@ -180,6 +180,16 @@ CAP2_P = {   # Polarized
     'labels': [{'label': '+', 'pos': [-_cap_gap*1.2, _cap_gap]}]
     }
 
+CAP_VAR = {  # Variable cap
+    'name': 'CAP_VAR',
+    'base': CAP,
+    'shapes': [{'shape': 'arrow',
+                'start': [-2*_rw, -_rh],
+                'end': [3*_rw, _rw*2],
+                'headwidth': .12,
+                'headlength': .2}],                
+    }
+
 _cap_gap = 0.2
 XTAL = {   # Crystal
     'name': 'XTAL',
@@ -222,6 +232,21 @@ SCHOTTKY_F = {
     'paths': [[[_rh*1.4, _rh], [_rh*1.4-_sd, _rh],  [_rh*1.4-_sd, _rh-_sd]],
               [[_rh*1.4, -_rh], [_rh*1.4+_sd, -_rh], [_rh*1.4+_sd, -_rh+_sd]]]
     }
+
+DIODE_TUNNEL = {
+    'name': 'DIODE_TUNNEL',
+    'base': DIODE,
+    'paths': [[[_rh*1.4, _rh], [_rh*1.4-_sd, _rh]],
+              [[_rh*1.4, -_rh], [_rh*1.4-_sd, -_rh]]]
+    }
+
+DIODE_TUNNEL_F = {
+    'name': 'DIODE_TUNNEL_F',
+    'base': DIODE_F,
+    'paths': [[[_rh*1.4, _rh], [_rh*1.4-_sd, _rh]],
+              [[_rh*1.4, -_rh], [_rh*1.4-_sd, -_rh]]]
+    }
+
 
 ZENER = {  # Zener diode
     'name': 'ZENER',
@@ -392,6 +417,26 @@ MEMRISTOR2 = {
 JJ = {   # Josphson Junction
     'name': 'JJ',
     'paths': [[[0, 0], _gap, [-_rh, _rh], [_rh, -_rh], _gap, [_rh, _rh], [-_rh, -_rh], _gap, [0, 0]]],
+    }
+
+_fuser = .15
+_fusex = _np.linspace(_fuser*2, 1+_fuser)
+_fusey = _np.sin(_np.linspace(0, 1)*2*_np.pi) * _rh
+FUSE = {
+    'name': 'FUSE',
+    'paths': [_np.transpose(_np.vstack((_fusex, _fusey))),
+              [[0, 0], _gap, [1+_fuser*3, 0]]
+             ],
+    'shapes': [{'shape': 'circle',
+                'center': [_fuser, 0],
+                'radius': _fuser,
+                'fill': True,
+                'fillcolor': 'white'},
+              {'shape': 'circle',
+                'center': [_fuser*2+1, 0],
+                'radius': _fuser,
+                'fill': True,
+                'fillcolor': 'white'}],
     }
 
 # Connection dots, lines
@@ -650,6 +695,59 @@ PFET4 = {
                 'gate': [_fetw+_fet_gap+_fetl+_fetr, -_fetl-_fetw/2],
                 'bulk': [0, -_fetl-_fetw/2]}
      }
+
+# Junction FETs
+_fete = _fetw*.2  # JFET extension
+_jfetw = _rw*3
+
+_JFET_BASE = {
+    'paths': [[[0, 0], [0, -_fetl], [_jfetw, -_fetl], [_jfetw, -_fetl+_fete], [_jfetw, -_fetl-_jfetw-_fete],
+               [_jfetw, -_fetl-_jfetw], [0, -_fetl-_jfetw], [0, -2*_fetl-_jfetw]],
+              [[_jfetw, -_fetl-_jfetw], [_jfetw+_fetl, -_fetl-_jfetw]]
+             ],
+    'extend': False,
+    'drop': _np.array([_jfetw+_fetl, -_fetl-_jfetw]),
+    'lblloc': 'lft',
+    'anchors': {'source': [0, -2*_fetl-_jfetw],
+                'drain': [0, 0],
+                'gate': [_jfetw+_fetl, -_fetl-_jfetw]}
+    }
+
+JFET_N = {
+    'name': 'JFET_N',
+    'base': _JFET_BASE,
+    'shapes': [{'shape': 'arrow',
+                'start': [_jfetw+.1, -_fetl-_jfetw],
+                'end': [_jfetw+.3, -_fetl-_jfetw],
+                'headwidth': .3,
+                'headlength': .2}],  
+    }
+
+JFET_N_C = {
+    'name': 'JFET_N_C',
+    'base': JFET_N,
+    'shapes': [{'shape': 'circle',
+                'center': [_jfetw/2, -_fetw],
+                'radius': _fetw*1.1}]
+    }
+
+JFET_P = {
+    'name': 'JFET_P',
+    'base': _JFET_BASE,
+    'shapes': [{'shape': 'arrow',
+                'start': [_jfetw+.25, -_fetl-_jfetw],
+                'end': [_jfetw, -_fetl-_jfetw],
+                'headwidth': .3,
+                'headlength': .25}],  
+    }
+
+JFET_P_C = {
+    'name': 'JFET_P_C',
+    'base': JFET_P,
+    'shapes': [{'shape': 'circle',
+                'center': [_jfetw/2, -_fetw],
+                'radius': _fetw*1.1}]
+    }
 
 
 # BJT transistors

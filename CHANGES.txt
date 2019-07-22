@@ -1,7 +1,8 @@
-v0.5.0.DEV
+v0.5.0, 21-Jul-2019
     - Added flowcharting symbol methods to SchemDraw.flow module
     - Added signal processing symbols to SchemDraw.dsp module
     - Implemented fill parameter on Drawing.add to fill shapes and closed paths with a solid color
+    - New elements: fuse, variable capacitor, tunnel diode, JFET, DIAC, TRIAC, SCR
 
 v0.4.0, 03-Nov-2018
     - Fixed drawing of NOT and related gates to property extend the path

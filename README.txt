@@ -14,6 +14,6 @@ SchemDraw is a python package for producing high-quality electrical circuit sche
 
 Included are symbols for basic electrical components (resistors, capacitors, diodes, transistors, etc.), opamps, logic gates, signal processing elements, and flowchart blocks.
 
-Documentation is available in the docs folder or [online](http://cdelker.bitbucket.io/SchemDraw/SchemDraw.html).
+Documentation is available in the docs folder or [online](http://cdelker.bitbucket.io/SchemDraw/).
 
 The most current version can be found in the [source code git repository](https://bitbucket.org/cdelker/schemdraw).

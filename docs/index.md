@@ -43,6 +43,11 @@ SchemDraw can be installed from pip using
 
     :::bash
     pip install SchemDraw
+    
+SchemDraw can also be installed from conda using
+
+    :::bash
+    conda install -c jangenoe SchemDraw
 
 or directly by downloading the package and running
 

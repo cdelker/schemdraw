@@ -67,6 +67,12 @@ Elements are connected with lines and dot elements. Dots don't change the curren
 
 ![](img/connectors.svg)
 
+Coax and triax cables can also be used as connecting element. Anchors are `StartInner`, `EndInner`, `StartOuter`, `EndOuter`, and for the triax  `StartShield` and `EndShield`.
+
+![](img/COAX2.svg)
+![](img/COAX1.svg)
+![](img/TRIAX1.svg)
+![](img/TRIAX2.svg)
 
 #### Label element
 

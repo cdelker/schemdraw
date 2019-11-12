@@ -1,3 +1,7 @@
+v0.5.1, 12-Nov-2019
+    - Made available on conda
+    - New elements: COAX
+
 v0.5.0, 21-Jul-2019
     - Added flowcharting symbol methods to SchemDraw.flow module
     - Added signal processing symbols to SchemDraw.dsp module

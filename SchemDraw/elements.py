@@ -565,6 +565,31 @@ ANT = {
     'move_cur': False,
     'theta': 0
     }
+    
+ COAX = {'name': 'COAX',
+        'paths': [[[0, 0], [0.6, 0]], [[0.6,0.3], [2.6, 0.3]], [[0.6,-0.3], [2.6, -0.3]],[[2.75,0],[3.2,0]]],
+        'shapes': [{'shape': 'arc','center': [0.6 , 0],'width': 0.3,'height': 0.6,'theta1':0,'theta2':360},
+                   {'shape': 'arc','center': [2.6 , 0],'width': 0.3,'height': 0.6,'theta1':270,'theta2':90}],
+        'anchors': {'StartInner': [0, 0],
+                    'EndInner':  [3.2, 0],
+                    'StartOuter': [0.6, -0.3],
+                    'EndOuter': [2.6, -0.3]},
+        'extend': False}
+        
+TRIAX = {'name': 'TRIAX',
+         'paths': [[[0, 0], [0.6, 0]], [[0.6,0.3], [1.16, 0.3]],[[2.36,0.3], [2.6, 0.3]], [[0.6,-0.3], [1.16, -0.3]],
+                   [[2.36,-0.3], [2.6, -0.3]],[[0.9,0.6], [2.1, 0.6]], [ [0.9,-0.6],[2.1, -0.6]],[[2.75,0],[3.2,0]]],
+        'shapes': [{'shape': 'arc','center': [0.6 , 0],'width': 0.3,'height': 0.6,'theta1':0,'theta2':360},
+                   {'shape': 'arc','center': [2.6 , 0],'width': 0.3,'height': 0.6,'theta1':270,'theta2':90},
+                   {'shape': 'arc','center': [0.9 , 0],'width': 0.6,'height': 1.2,'theta1':-130,'theta2':130},
+                   {'shape': 'arc','center': [2.1 , 0],'width': 0.6,'height': 1.2,'theta1':270,'theta2':90}],
+        'anchors': {'StartInner': [0, 0],
+                    'EndInner':  [3.2, 0],
+                    'StartOuter': [0.6, -0.3],
+                    'EndOuter': [2.6, -0.3],
+                    'StartShield': [0.9, -0.6],
+                    'EndShield': [2.1, -0.6]},
+        'extend': False}        
 
 _chgnd_dx = _rh*.75
 _chgnd_dy = _rh

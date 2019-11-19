@@ -354,7 +354,7 @@ Direction [Default = direction of last element]:
     reverse : reverse a directional element (e.g. diode)
 
 Labels [Default = no label]:
-    label, toplabel, botlabel, lftlabel, rgtlabel:
+    label, clabel, toplabel, botlabel, lftlabel, rgtlabel:
         Add a string label to the element. Can be a string, or list
         of strings to be evenly spaced along element, e.g. ['-','R1','+']
         Use $ for latex-style symbols, e.g. '$R_1 = 100 \Omega$'

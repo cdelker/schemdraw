@@ -496,7 +496,7 @@ Other:
             if botlabel is not None: self.add_label(botlabel, 'bot', ofst=self.lbl_ofst, size=size)
             if rgtlabel is not None: self.add_label(rgtlabel, 'rgt', ofst=self.lbl_ofst, size=size)
             if lftlabel is not None: self.add_label(lftlabel, 'lft', ofst=self.lbl_ofst, size=size)
-            if clabel is not None: self.add_label(clabel, 'center', ofst=[0,0], size=size)
+            if clabel is not None: self.add_label(clabel, 'center', ofst=self.lbl_ofst, size=size)
 
         txtlist = self.defn.get('labels', [])
         for txtlbl in txtlist:

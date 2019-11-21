@@ -354,7 +354,7 @@ Direction [Default = direction of last element]:
     reverse : reverse a directional element (e.g. diode)
 
 Labels [Default = no label]:
-    label, toplabel, botlabel, lftlabel, rgtlabel:
+    label, clabel, toplabel, botlabel, lftlabel, rgtlabel:
         Add a string label to the element. Can be a string, or list
         of strings to be evenly spaced along element, e.g. ['-','R1','+']
         Use $ for latex-style symbols, e.g. '$R_1 = 100 \Omega$'
@@ -496,7 +496,7 @@ Other:
             if botlabel is not None: self.add_label(botlabel, 'bot', ofst=self.lbl_ofst, size=size)
             if rgtlabel is not None: self.add_label(rgtlabel, 'rgt', ofst=self.lbl_ofst, size=size)
             if lftlabel is not None: self.add_label(lftlabel, 'lft', ofst=self.lbl_ofst, size=size)
-            if clabel is not None: self.add_label(clabel, 'center', ofst=[0,0], size=size)
+            if clabel is not None: self.add_label(clabel, 'center', ofst=self.lbl_ofst, size=size)
 
         txtlist = self.defn.get('labels', [])
         for txtlbl in txtlist:

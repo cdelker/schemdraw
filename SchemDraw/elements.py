@@ -864,8 +864,8 @@ SOURCE_I = {
     'name': 'SOURCE_I',
     'base': SOURCE,
     'shapes': [{'shape': 'arrow',
-                'start': [.75, 0],
-                'end': [.25, 0]}]
+                'end': [.75, 0],
+                'start': [.25, 0]}]
     }
 
 
@@ -899,8 +899,8 @@ SOURCE_CONT_I = {
     'name': 'SOURCE_CONT_I',
     'base': SOURCE_CONT,
     'shapes': [{'shape': 'arrow',
-                'start': [.75, 0],
-                'end': [.25, 0]}]
+                'end': [.75, 0],
+                'start': [.25, 0]}]
     }
 
 # Batteries

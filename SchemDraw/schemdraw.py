@@ -277,6 +277,43 @@ Other:
         else:
             self.add(arrow, theta=elm.theta, botlabel=label, anchor='center', xy=[x, y])
 
+    def labelI_inline(self, elm, label='', botlabel='', d='in', start=True, ofst=0):
+        ''' Add an arrowhead for labeling current inline with leads.
+            Works on 2-terminal elements.
+
+        elm       : element to add arrow to
+        label     : string label above the arrowhead
+        botlabel  : string label below the arrowhead
+        d         : arrowhead direction, either 'in' or 'out'
+        start     : place arrowhead near start or end of element
+        ofst      : additional offset along elemnet leads
+        '''
+        arrowofst = 1.1 + ofst
+        if d=='in':
+            arrowofst -= 0.3  # Account for length of arrowhead
+        if start:
+            x = elm.center[0] - np.cos(np.deg2rad(elm.theta))*arrowofst
+            y = elm.center[1] - np.sin(np.deg2rad(elm.theta))*arrowofst
+        else:
+            x = elm.center[0] + np.cos(np.deg2rad(elm.theta))*arrowofst
+            y = elm.center[1] + np.sin(np.deg2rad(elm.theta))*arrowofst
+                    
+        if start:
+            if d == 'in':
+                reverse = False
+                pos = elm.start + [.6+ofst, 0]
+            else:
+                reverse = True
+                pos = elm.start + [.3+ofst, 0]
+        else:
+            if d == 'in':
+                reverse = True
+                pos = elm.end - [.6+ofst, 0]
+            else:
+                reverse = False
+                pos = elm.end - [.3+ofst, 0]
+        self.add(elements.ARROWHEAD, theta=elm.theta, reverse=reverse, xy=[x,y], label=label, botlabel=botlabel)
+
     def loopI(self, elm_list, label='', d='cw', theta1=35, theta2=-35, pad=.2):
         ''' Label the loop current bordered by elements in list,
             elm_list : boundary elements in order of top, right, bot, left

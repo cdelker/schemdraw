@@ -198,6 +198,24 @@ For example:
 
 ![](img/labeli.svg)
 
+Alternatively, current labels can be drawn inline as arrowheads on the leads of 2-terminal elements using `labelI_inline()`:
+
+        elm       : element to add arrow to
+        label     : string label above the arrowhead
+        botlabel  : string label below the arrowhead
+        d         : arrowhead direction, either 'in' or 'out'
+        start     : place arrowhead near start or end of element
+        ofst      : additional offset along elemnet leads
+
+For example:
+
+    :::python
+    R1 = d.add(e.RES)
+    d.labelI_inline(R1, '$i_1$', d='in')
+    
+![](img/labeli_inline.svg)
+
+
 
 ### Loop currents
 

@@ -1,7 +1,7 @@
 '''
 Electrical element symbols for schematic drawing.
 
-Each element is a dictionary with key/values defining how it should be drawn.
+Each element is defined by a dictionary with key/values defining how it should be drawn.
 
 Coordinates are all defined in element coordinates, where the element begins
 at [0,0] and is drawn from left to right. The drawing engine will then rotate
@@ -18,7 +18,7 @@ Possible dictionary keys:
     base:  Dictionary defining a base element. For example, the variable
            resistor has a base of resistor, then adds an additional path.
     shapes: A list of shape dictionaries.
-            'shape' key can be [ 'circle', 'poly', 'arc', 'arrow' ]
+            'shape' key can be ['circle', 'poly', 'arc', 'arrow']
             Other keys depend on the shape as follows.
             circle:
                 'center': xy center coordinate
@@ -81,10 +81,22 @@ _rw = 1.0 / 6   # Full (inner) length of resistor is 1.0 data unit
 def _cycloid(loops=4, ofst=(0, 0), a=.06, b=.19, norm=True, vertical=False, flip=False):
     ''' Generate a prolate cycloid (inductor spiral) that
         will always start and end at y=0.
-        loops = Number of loops
-        a, b = parameters. b>a for prolate (loopy) cycloid
-        norm = Normalize the length to 1 [True/False]
-        vertical, flip = Control the orientation of cycloid
+
+        Parameters
+        ----------
+        loops : int
+            Number of loops
+        a, b : float
+            Parameters. b>a for prolate (loopy) cycloid
+        norm : bool
+            Normalize the length to 1
+        vertical, flip : bool
+            Control the orientation of cycloid
+
+        Returns
+        -------
+        path : array
+            List of [x, y] coordinates defining the cycloid
     '''
     yint = _np.arccos(a/b)  # y-intercept
     t = _np.linspace(yint, 2*(loops+1)*_np.pi-yint, num=loops*50)
@@ -246,7 +258,6 @@ DIODE_TUNNEL_F = {
     'paths': [[[_rh*1.4, _rh], [_rh*1.4-_sd, _rh]],
               [[_rh*1.4, -_rh], [_rh*1.4-_sd, -_rh]]]
     }
-
 
 ZENER = {  # Zener diode
     'name': 'ZENER',
@@ -448,7 +459,8 @@ DOT_OPEN = {
                 'center': [0, 0],
                 'radius': _dotr,
                 'fill': True,
-                'fillcolor': 'white'}],
+                'fillcolor': 'white',
+                'zorder': 4}],
     'theta': 0,
     'extend': False,
     }
@@ -503,7 +515,8 @@ GAP_LABEL = {
     'paths': [[[0, 0], _gap, [1, 0]]],
     'lblloc': 'center',
     'lblofst': 0,
-    'color': 'white'
+    'zorder': 0,
+    'pathparams': [{'color': 'white'}]
     }
 
 GAP = {
@@ -720,7 +733,7 @@ JFET_N = {
                 'start': [_jfetw+.1, -_fetl-_jfetw],
                 'end': [_jfetw+.3, -_fetl-_jfetw],
                 'headwidth': .3,
-                'headlength': .2}],  
+                'headlength': .2}],
     }
 
 JFET_N_C = {
@@ -738,7 +751,7 @@ JFET_P = {
                 'start': [_jfetw+.25, -_fetl-_jfetw],
                 'end': [_jfetw, -_fetl-_jfetw],
                 'headwidth': .3,
-                'headlength': .25}],  
+                'headlength': .25}]
     }
 
 JFET_P_C = {
@@ -917,7 +930,7 @@ BAT_CELL = {
 
 BATTERY = {
     'name': 'BATTERY',
-    'paths': [[[0, _bat1], [0,-_bat1]],
+    'paths': [[[0, _bat1], [0, -_bat1]],
               [[_batw, _bat2], [_batw, -_bat2]],
               [[_batw*2, _bat1], [_batw*2, -_bat1]],
               [[_batw*3, _bat2], [_batw*3, -_bat2]],
@@ -1139,14 +1152,27 @@ LAMP = {
 
 
 def transformer(t1=4, t2=4, core=True, ltaps=None, rtaps=None, loop=False):
-    ''' Transformer element
-        t1 = Turns on primary (left) side
-        t2 = Turns on secondary (right) side
-        core = Draw the core (parallel lines) [default=True]
-        ltaps = Dictionary of name:position pairs, position is the turn number from the top to tap
-                Each tap defines an anchor point but does not draw anything.
-        rtaps = Same as ltaps, on right side
-        loop = Use spiral/cycloid (loopy) style [default=False]
+    ''' Generate a transformer element
+
+        Parameters
+        ----------
+        t1, t2 : int
+            Turns on primary (left) and scondary (right) sides
+        core : bool
+            Draw the core (parallel lines)
+        ltaps : dict
+            Dictionary of name:position pairs, position is the turn number
+            from the top to tap. Each tap defines an anchor point but does
+            not draw anything.
+        rtaps : dict
+            Same as ltaps, on right side
+        loop : bool
+            Use spiral/cycloid (loopy) style
+
+        Returns
+        -------
+        elm : dict
+            The transformer element definition dictionary
     '''
     # Set initial parameters
     ind_w = .4
@@ -1222,33 +1248,45 @@ def transformer(t1=4, t2=4, core=True, ltaps=None, rtaps=None, loop=False):
 
 
 def blackbox(w, h, linputs=None, rinputs=None, tinputs=None, binputs=None,
-             mainlabel='', leadlen=0.5, lblsize=16, lblofst=.15, plblofst=.1, plblsize=12,
-             hslant=None, vslant=None):
-    ''' Generate a black-box element consisting of rectangle with inputs on each side.
+             mainlabel='', leadlen=0.5, lblsize=16, lblofst=.15,
+             plblofst=.1, plblsize=12, hslant=None, vslant=None):
+    ''' Generate a black-box element, such as an integrated circuit, consisting 
+        of a rectangle with inputs on each side.
 
-        w, h : width and height of rectangle
+        Parameters
+        ----------
+        w, h : float
+            Width and height of rectangle
+        linputs, rinputs, tinputs, binputs: dict
+            Dictionary input definition for each side of the box. Keys:
+                labels: list of string labels for each input on the side, drawn inside the
+                    box. If label is '>', a proper clock input will be drawn.
+                plabels: list of pin label strings. drawn outside the box
+                loc: list of pin locations as fraction (0 to 1) along the side.
+                    Defaults to evenly spaced pins.
+                leads: bool, draw leads coming out of box. Default True.
+                lblofst: label offset override for this side.
+                plblofst: pin label offset override for this side.
+                lblsize: font size override for labels on this side
+                plblsize: font size override for pin labels on this side
 
-        linputs, rinputs, tinputs, binputs: dictionary input definition for each side
-        of the box. Default to no inputs. Dictionary keys:
-            labels: list of string labels for each input. drawn inside the box. default is blank.
-                    If label is '>', a proper clock input will be drawn.
-            plabels: list of pin label strings. drawn outside the box. Default is blank.
-            loc: list of pin locations (0 to 1), along side. Defaults to evenly spaced pins.
-            leads: True/False, draw leads coming out of box. Default=True.
-            lblofst: label offset override for this side.
-            plblofst: pin label offset override for this side.
-            lblsize: font size override for labels on this side
-            plblsize: font size override for pin labels on this side
+        mainlabel : string
+            Main box label, drawn in upper center
+        leadlen : float
+            Length of lead extensions
+        lblsize : int
+            Default font size of labels
+        lblofst : float
+            Default label offset
+        plblsize : int
+            Default pin label size
+        plblofst : float
+            Default pin label offset
+        hslant, vslant : float
+            Angle (degrees) to slant horizontal or vertical sides (e.g. for multiplexer)
 
-        mainlabel : main box label
-        leadlen   : length of lead extensions
-        lblsize   : default font size of labels
-        lblofst   : default label offset
-        plblsize  : default pin label size
-        plblofst  : default pin label offset
-        hslant    : angle (degrees) to slant horizontal sides
-        vslant    : angle (degrees) to slant vertical sides
-
+        Notes
+        -----
         Anchors will be generated on each pin matching label names if provided. If no
         labels, anchors are named 'inL1', 'inL2', ... 'inR1', 'inR2', 'inT1', 'inB1', etc.
     '''

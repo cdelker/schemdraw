@@ -1,3 +1,9 @@
+v0.6.0, IN PROGRESS
+    - Refactored internals to allow more control over individual components of drawing
+    - Updated add_label so that "top" labels should always appear on top, regardless of flip/reverse
+    - Added "zorder" parameter in the element definition dictionary and `add` method
+    
+
 v0.5.0, 21-Jul-2019
     - Added flowcharting symbol methods to SchemDraw.flow module
     - Added signal processing symbols to SchemDraw.dsp module

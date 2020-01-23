@@ -15,10 +15,21 @@ _notbubble = .12
 def andgate(inputs=2, nand=False, inputnots=[], name='AND'):
     ''' Build n-input AND gate element definitions.
 
-        inputs : number of inputs to gate.
-        nand   : invert bubble on output
-        inputnots : input numbers (starting at 1) with invert bubble
-        name   : Define a name for gate. Only used in documentation currently.
+        Parameters
+        ----------
+        inputs : int
+            Number of inputs to gate.
+        nand : bool
+            Draw invert bubble on output
+        inputnots : list
+            Input numbers (starting at 1) of inputs that have invert bubble
+        name : string
+            Define a name for gate. Only used in documentation.
+            
+        Returns
+        -------
+        elmdef : dict
+            Element definition dictionary
     '''
     rad = _gateh/2
     theta = _np.linspace(_np.radians(-90), _np.radians(90), num=50)
@@ -83,11 +94,18 @@ def andgate(inputs=2, nand=False, inputnots=[], name='AND'):
 def orgate(inputs=2, nor=False, xor=False, inputnots=[], name='OR'):
     ''' Build n-input OR gate element.
 
-        inputs : number of inputs to gate.
-        nor    : invert bubble on output
-        xor    : exclusive-or
-        inputnots : input numbers (starting at 1) with invert bubble
-        name   : Define a name for gate. Only used in documentation currently.
+        Parameters
+        ----------
+        inputs : int
+            Number of inputs to gate.
+        nor : bool
+            Draw invert bubble on output
+        xor : bool
+            Draw as exclusive-or gate
+        inputnots : list
+            Input numbers (starting at 1) of inputs that have invert bubble
+        name : string
+            Define a name for gate. Only used in documentation.
     '''
     # Define OR path as a numpy array
     orflat = .5

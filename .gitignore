@@ -1,5 +1,6 @@
 dist
 build
+docs/_build
 .idea/.name
 .idea/misc.xml
 .idea/modules.xml

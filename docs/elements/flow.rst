@@ -96,7 +96,7 @@ Flowchart blocks:
 
 
 All flowchart symbols have four anchors named 'N', 'S', 'E', and 'W' for the
-four directions. The :py:func:`SchemDraw.elements.blackbox` function can be used with the flowchart elements
+four directions. The :py:func:`SchemDraw.elements.ic` function can be used with the flowchart elements
 to create blocks with multiple inputs/outputs per side if needed.
 
 Flowchart elements do not have "leads" like electrical elements, so they 

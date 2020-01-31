@@ -2,7 +2,8 @@ v0.6.0, IN PROGRESS
     - Refactored internals to allow more control over individual components of drawing
     - Updated add_label so that "top" labels should always appear on top, regardless of flip/reverse
     - Added "zorder" parameter in the element definition dictionary and `add` method
-    
+    - Added `elements.ic` and `elements.multiplexer` functions as replacements to `blackbox` and `mux`. These include more functionality such as adjusting indiviudal pin rotation, color, and inverter bubbles.
+    - Upgraded documentation to Sphinx and moved to readthedocs.org at https://schemdraw.readthedocs.io/en/latest/.
 
 v0.5.0, 21-Jul-2019
     - Added flowcharting symbol methods to SchemDraw.flow module

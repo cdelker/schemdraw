@@ -56,9 +56,6 @@ Possible dictionary keys:
     lblloc: ['top', 'bot', 'lft', 'rgt'] default location for text label.
             Defaults to 'top'.
     lblofst: Default distance between element and text label.
-    labels: List of (label, pos, align) tuples defining text labels to always draw
-            in the element. Align is (horiz, vert) tuple of
-            (['center', 'left', right'], ['center', 'bottom', 'top'])
     labels: list of label dictionaries. Each label has keys:
             'label' : string label
             'pos'   : xy position
@@ -68,6 +65,7 @@ Possible dictionary keys:
 
 import numpy as _np
 import re
+import warnings
 
 _gap = [_np.nan, _np.nan]   # To leave a break in the plot
 
@@ -1247,6 +1245,279 @@ def transformer(t1=4, t2=4, core=True, ltaps=None, rtaps=None, loop=False):
     return element
 
 
+def ic(*pins, **kwargs):
+    ''' Define an integrated circuit element
+    
+        Parameters
+        ----------
+        *pins: dict
+            A dictionary defining each input/output pin.
+            Each dictionary may contain the following 
+            optional keys:
+
+            name: string
+                Signal name, labeled inside the IC box.
+                If name is '>', a proper clock input triangle
+                will be drawn instead of a text label.
+            pin: string
+                Pin name, labeled outside the IC box
+            side: string ['left', 'right', 'top', 'bottom']
+                Which side the pin belongs on
+            pos: float
+                Absolute position as fraction from 0-1 along the
+                side. If not provided, pins are evenly spaced along 
+                the side.
+            slot: string
+                Position designation for the pin in "X/Y" format
+                where X is the pin number and Y the total number
+                of pins along the side. Use when missing pins
+                are desired with even spacing.
+            invert: bool
+                Draw an invert bubble outside the pin
+            invertradius: float
+                Radius of invert bubble
+            color: string
+                Matplotlib color for label
+            rotation: float
+                Rotation angle for label (degrees)
+            anchorname: string
+                Name of anchor at end of pin lead. By default pins
+                will have anchors of both the `name` parameter 
+                and `inXY` where X the side designation
+                ['L', 'R', 'T', 'B'] and Y the pin number along 
+                that side.
+            
+        Keyword Arguments
+        -----------------
+        size: (w, h) tuple
+            Size of the IC. If not provided, size is
+            automatically determined based on number of
+            pins and the pinspacing parameter.
+        pinspacing: float
+            Smallest distance between pins [1.25]
+        edgepadH: float
+            Additional distance from edge to first pin on
+            vertical sides [.25]
+        edgepadW: float
+            Additional distance from edge to first pin on
+            horizontal sides [.25]
+        lblofst: float
+            Default offset for (internal) labels [.15]
+        plblofst: float
+            Default offset for external pin labels [.1]
+        leadlen: float
+            Length of leads extending from box [.5]
+        lblsize: int
+            Font size for (internal) labels [14]
+        plblsize: int
+            Font size for external pin labels [11]
+        slant: float
+            Degrees to slant top and bottom sides,
+            (e.g. for multiplexers) [0]
+    '''
+    pinspacing = kwargs.get('pinspacing', 1.25)
+    edgepadH = kwargs.get('edgepadH', .25)
+    edgepadW = kwargs.get('edgepadW', .25)
+    lblofst = kwargs.get('lblofst', .15)
+    lblsize = kwargs.get('lblsize', 14)
+    leadlen = kwargs.get('leadlen', 0.5)
+    plblofst = kwargs.get('plblofst', .1)
+    plblsize = kwargs.get('plblsize', 11)
+    slant = kwargs.get('slant', 0)
+
+    # Sort pins by side
+    pins = [p.copy() for p in pins]  # Make copy so user's dicts don't change
+    for pin in pins:
+        pin['side'] = pin.get('side', 'L')[:1].upper()  # Convert pin designations to uppercase, single letter
+    sidepins = {}
+    pincount = {}
+
+    for side in ['L', 'R', 'T', 'B']:
+        sidepins[side] = [p for p in pins if p['side'] == side]
+        slots = [p.get('slot', None) for p in sidepins[side]]
+        slots = [int(p.split('/')[1]) for p in slots if p is not None] + [0]  # Add a 0 - can't max an empty list
+        pincount[side] = max(len(sidepins[side]), max(slots))        
+
+    if 'size' not in kwargs:
+        hcnt = max(pincount.get('L', 1), pincount.get('R', 1))
+        wcnt = max(pincount.get('T', 1), pincount.get('B', 1)) 
+        try:
+            h = (hcnt-1)*pinspacing/(1-2/(hcnt+2)) + edgepadH*2
+        except ZeroDivisionError:
+            h = 2 + edgepadH
+        try:
+            w = (wcnt-1)*pinspacing/(1-2/(wcnt+2)) + edgepadW*2
+        except ZeroDivisionError:
+            w = 2 + edgepadW
+
+        w = max(w, 2)  # Keep a minimum width for cases with 0-1 pins
+        h = max(h, 2)
+    else:
+        w, h = kwargs.get('size')
+
+    # Main box, adjusted for slant
+    shapes = []
+    labels = []
+    anchors = {}
+    if slant > 0:
+        y1 = 0 - w * _np.tan(_np.deg2rad(slant))
+        y2 = h + w * _np.tan(_np.deg2rad(slant))
+        paths = [[[0, 0], [w, y1], [w, y2], [0, h], [0, 0]]]
+    elif slant < 0:
+        y1 = 0 + w * _np.tan(_np.deg2rad(slant))
+        y2 = h - w * _np.tan(_np.deg2rad(slant))
+        paths = [[[0, y1], [w, 0], [w, h], [0, y2], [0, y1]]]        
+    else:
+        y1 = 0
+        y2 = h
+        paths = [[[0, 0], [w, 0], [w, h], [0, h], [0, 0]]]
+
+    # Add each pin
+    for side in sidepins.keys():
+        if side in ['L', 'R']:
+            sidelen = h-edgepadH*2
+        else:
+            sidelen = w-edgepadW*2
+
+        leadext = {'L': _np.array([-leadlen, 0]),
+                   'R': _np.array([leadlen, 0]),
+                   'T': _np.array([0, leadlen]),
+                   'B': _np.array([0, -leadlen])}.get(side)
+            
+        for i, pin in enumerate(sidepins[side]):
+            # Determine pin position
+            if 'pos' in pin:
+                z = pin['pos'] * sidelen
+            elif 'slot' not in pin:
+                pin['slot'] = '{}/{}'.format(i+1, len(sidepins[side]))
+    
+            if 'slot' in pin:
+                num, tot = pin['slot'].split('/')
+                num = int(num)
+                tot = int(tot)
+                if tot == 1:
+                    z = sidelen/2  # Single pin, center it
+                else:
+                    # Evenly spaced along side
+                    z = _np.linspace(1/(tot+2), 1-1/(tot+2), num=tot)[num-1] * sidelen
+                    
+            pin['pos'] = _np.asarray({
+                            'L': [0, z+edgepadH],
+                            'R': [w, z+edgepadH],
+                            'T': [z+edgepadW, h],
+                            'B': [z+edgepadW, 0]}.get(side))
+
+            # Adjust pin position for slant
+            if side == 'T' and slant > 0:
+                pin['pos'] = [pin['pos'][0], pin['pos'][1] - pin['pos'][0] * _np.tan(-_np.deg2rad(slant))]
+            elif side == 'T' and slant < 0:
+                pin['pos'] = [pin['pos'][0], pin['pos'][1] + (y2-h) - pin['pos'][0] * _np.tan(-_np.deg2rad(slant))]
+            elif side == 'B' and slant < 0:
+                pin['pos'] = [pin['pos'][0], pin['pos'][1] - (y2-h) - pin['pos'][0] * _np.tan(_np.deg2rad(slant))]
+            elif side == 'B' and slant > 0:
+                pin['pos'] = [pin['pos'][0], pin['pos'][1] - pin['pos'][0] * _np.tan(_np.deg2rad(slant))]
+
+            if pin.get('name', '') == '>':
+                # Draw clock pin
+                clkxy = _np.array(pin['pos'])
+                clkw, clkh = 0.4 * lblsize/16, 0.2 * lblsize/16
+                if side in ['T', 'B']:
+                    clkh = clkh * _np.sign(leadext[1]) if leadext[1] != 0 else clkh
+                    clkpath = [[clkxy[0]-clkw, clkxy[1]],
+                               [clkxy[0], clkxy[1]-clkh],
+                               [clkxy[0]+clkw, clkxy[1]]]
+                else:
+                    clkw = clkw * -_np.sign(leadext[0]) if leadext[0] != 0 else clkw
+                    clkpath = [[clkxy[0], clkxy[1]+clkh],
+                                   [clkxy[0]+clkw, clkxy[1]],
+                                   [clkxy[0], clkxy[1]-clkh]]
+                paths.append(clkpath)
+
+            elif pin.get('name', '') != '':
+                # Add pin label
+                pofst = _np.asarray({'L': [lblofst, 0],
+                                    'R': [-lblofst, 0],
+                                    'T': [0, -lblofst],
+                                    'B': [0, lblofst]}.get(side))
+
+                align = {'L': ('left', 'center'),
+                         'R': ('right', 'center'),
+                         'T': ('center', 'top'),
+                         'B': ('center', 'bottom')}.get(side)
+            
+                label = {'label': pin['name'],
+                         'pos': pin['pos'] + pofst,
+                         'align': align,
+                         'size': pin.get('size', lblsize)}
+                if 'color' in pin:
+                    label['color'] = pin['color']
+
+                if 'rotation' in pin:
+                    label['rotation'] = pin['rotation']
+                    label['rotation_mode'] = 'default'
+                    
+                labels.append(label)
+
+            # Add pin number outside the IC
+            if pin.get('pin', '') != '':
+                # Account for any invert-bubbles
+                invertradius = pin.get('invertradius', .15) * pin.get('invert', 0)
+                pofst = _np.asarray({'L': [-plblofst-invertradius*2, plblofst],
+                                    'R': [plblofst+invertradius*2, plblofst],
+                                    'T': [plblofst, plblofst+invertradius*2],
+                                    'B': [plblofst, -plblofst-invertradius*2]}.get(side))
+
+                align = {'L': ('right', 'bottom'),
+                         'R': ('left', 'bottom'),
+                         'T': ('left', 'bottom'),
+                         'B': ('left', 'top')}.get(side)
+            
+                label = {'label': pin['pin'],
+                         'pos': pin['pos'] + pofst,
+                         'align': align,
+                         'size': pin.get('psize', plblsize)}
+
+                labels.append(label)                
+
+            # Draw leads                
+            if leadlen > 0:
+                if pin.get('invert', False):
+                    # Add invert-bubble                    
+                    invertradius = pin.get('invertradius', .15)
+                    invertofst = {'L': _np.array([-invertradius, 0]),
+                                  'R': _np.array([invertradius, 0]),
+                                  'T': _np.array([0, invertradius]),
+                                  'B': _np.array([0, -invertradius])}.get(side)
+                    
+                    shapes.append({'shape': 'circle',
+                                   'center': pin['pos']+invertofst,
+                                   'radius': invertradius,})
+                    paths.append([pin['pos']+invertofst*2, pin['pos']+leadext])
+                else:
+                    paths.append([pin['pos'], pin['pos']+leadext])
+
+            # Define anchors
+            anchorpos = pin['pos']+leadext
+            anchors['in{}{}'.format(side[0].upper(), i+1)] = anchorpos
+            if pin.get('anchorname'):
+                anchors[pin.get('anchorname')] = anchorpos
+            elif pin.get('name'):
+                if pin.get('name') == '>':
+                    anchors['CLK'] = anchorpos
+                anchors[pin.get('name')] = anchorpos
+            if pin.get('pin'):
+                anchors['pin{}'.format(pin.get('pin'))] = anchorpos
+    
+    box = {'paths': paths,
+           'shapes': shapes,
+           'anchors': anchors,
+           'labels': labels,
+           'lblloc': 'center',
+           'extend': False}
+
+    return box
+
+
 def blackbox(w, h, linputs=None, rinputs=None, tinputs=None, binputs=None,
              mainlabel='', leadlen=0.5, lblsize=16, lblofst=.15,
              plblofst=.1, plblsize=12, hslant=None, vslant=None):
@@ -1261,7 +1532,7 @@ def blackbox(w, h, linputs=None, rinputs=None, tinputs=None, binputs=None,
             Dictionary input definition for each side of the box. Keys:
                 labels: list of string labels for each input on the side, drawn inside the
                     box. If label is '>', a proper clock input will be drawn.
-                plabels: list of pin label strings. drawn outside the box
+                plabels: list of pin label strings. drawn outside the box.
                 loc: list of pin locations as fraction (0 to 1) along the side.
                     Defaults to evenly spaced pins.
                 leads: bool, draw leads coming out of box. Default True.
@@ -1269,6 +1540,8 @@ def blackbox(w, h, linputs=None, rinputs=None, tinputs=None, binputs=None,
                 plblofst: pin label offset override for this side.
                 lblsize: font size override for labels on this side
                 plblsize: font size override for pin labels on this side
+                rotation: rotation angle in degrees for the labels
+                protation: rotation angle in degrees for pin labels
 
         mainlabel : string
             Main box label, drawn in upper center
@@ -1290,6 +1563,8 @@ def blackbox(w, h, linputs=None, rinputs=None, tinputs=None, binputs=None,
         Anchors will be generated on each pin matching label names if provided. If no
         labels, anchors are named 'inL1', 'inL2', ... 'inR1', 'inR2', 'inT1', 'inB1', etc.
     '''
+    warnings.warn('blackbox function is deprecated and may be removed in the future. Use ic() instead.', DeprecationWarning, 2)
+    
     if hslant is not None and vslant is not None:
         print('Warning - hslant and vslant both defined. Weird pins may result.')
 
@@ -1321,6 +1596,8 @@ def blackbox(w, h, linputs=None, rinputs=None, tinputs=None, binputs=None,
         sidelabels = sidelabel.get('labels', [])
         plabels = sidelabel.get('plabels', [])
         leads = sidelabel.get('leads', True)
+        rotation = sidelabel.get('rotation', 0)
+        protation = sidelabel.get('protation', 0)
         _lblofst = sidelabel.get('lblofst', lblofst)
         _plblofst = sidelabel.get('plblofst', plblofst)
         _lblsize = sidelabel.get('lblsize', lblsize)
@@ -1410,20 +1687,36 @@ def blackbox(w, h, linputs=None, rinputs=None, tinputs=None, binputs=None,
             else:
                 y = y - x * _np.tan(-_np.deg2rad(hslant))
 
-            # Anchor name use label for pin, otherwise use 'inL1', etc.
-            if len(sidelabels) == cnt and sidelabels[i]:
-                aname = re.sub(r'\W+', '', sidelabels[i])
-            else:
-                aname = 'in' + side[0].upper() + str(i+1)
-
-            if aname in box['anchors']: aname = aname + '_%d' % i
-
             # Add lead lines
             if leads:
                 box['paths'].append([[x, y], _np.array([x, y])+leadext])
-                box['anchors'][aname] = _np.array([x, y])+leadext
+                anchorpos = _np.array([x, y]) + leadext
             else:
-                box['anchors'][aname] = [x, y]
+                anchorpos = _np.array([x, y])
+            
+            # Always add an anchor with side/input name, i.e. 'inL1'
+            aname = 'in{}{}'.format(side[0].upper(), i+1)
+            box['anchors'][aname] = anchorpos
+
+            # Add singal name as attribute
+            if len(sidelabels) == cnt and sidelabels[i]:
+                aname = sidelabels[i]
+                box['anchors'][aname] = anchorpos
+ 
+                # But, can end up with attributes not accessible via dot
+                # e.g. getattr(X, '>') works but X.> does not.
+                if sidelabels[i] == '>':
+                    box['anchors']['CLK'] = anchorpos
+                else:
+                    # so try stripping out weird chars and adding again
+                    aname = re.sub(r'\W+', '', sidelabels[i])
+                    if aname != sidelabels[i] and aname != '':
+                        box['anchors'][aname] = anchorpos
+                        
+            # If pin label is given, add it as anchor 'pinXXX'
+            if len(plabels) == cnt and plabels[i]:
+                aname = 'pin{}'.format(re.sub(r'\W+', '', plabels[i]))
+                box['anchors'][aname] = anchorpos
 
             # Add labels
             if len(sidelabels) == cnt and sidelabels[i]:
@@ -1443,12 +1736,40 @@ def blackbox(w, h, linputs=None, rinputs=None, tinputs=None, binputs=None,
                                    [clkxy[0], clkxy[1]-clkh]]
                     box['paths'].append(clkpath)
                 else:
-                    box['labels'].append({'label': sidelabels[i], 'pos': _np.array([x, y])+lblpos, 'align': lblalign, 'size': _lblsize})
+                    box['labels'].append({'label': sidelabels[i],
+                                          'pos': _np.array([x, y])+lblpos,
+                                          'align': lblalign,
+                                          'size': _lblsize,
+                                          'rotation': rotation})
 
             if len(plabels) == cnt and plabels[i]:
-                box['labels'].append({'label': plabels[i], 'pos': _np.array([x, y])+plblpos, 'align': plblalign, 'size': _plblsize})
+                box['labels'].append({'label': plabels[i],
+                                      'pos': _np.array([x, y])+plblpos,
+                                      'align': plblalign,
+                                      'size': _plblsize,
+                                      'rotation': protation})
 
     return box
+
+
+def multiplexer(*pins, demux=False, **kwargs):
+    ''' Draw a multiplexer or demultiplexer.
+    
+        Parameters
+        ----------
+        *pins: dict
+            List of pin definitions. See IC method.
+        
+        Keyword Arguments
+        -----------------
+        demux: bool
+            Draw demultiplexer (opposite slope)
+        **kwargs:
+            See IC method.
+    '''
+    slant = kwargs.pop('slant', 25)
+    slant = -slant if not demux else slant
+    return ic(*pins, slant=slant, **kwargs)
 
 
 def mux(inputs=None, outputs=None, ctrls=None, topctrls=None,
@@ -1485,6 +1806,8 @@ def mux(inputs=None, outputs=None, ctrls=None, topctrls=None,
         -------
         element dictionary
     '''
+    warnings.warn('mux function is deprecated and may be removed in the future. Use multiplexer() instead.', DeprecationWarning, 2)
+    
     linputs = None
     rinputs = None
     binputs = None
@@ -1518,3 +1841,4 @@ def mux(inputs=None, outputs=None, ctrls=None, topctrls=None,
     return blackbox(w, h, linputs=linputs, rinputs=rinputs,
                     binputs=binputs, tinputs=tinputs,
                     hslant=slope, **kwargs)
+

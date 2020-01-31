@@ -870,7 +870,7 @@ class SegmentText(object):
             Rotation angle (degrees)
         color : string
              Matplotlib color for this segment
-        fontsize : float
+        size : float
             Font size
         zorder : int
             Z-order for segment
@@ -880,9 +880,10 @@ class SegmentText(object):
         self.text = label
         self.xy = transform.transform(self._xy)
         self.align = kwargs.get('align', ('center', 'center'))
-        self.fontsize = kwargs.get('fontsize', 14)
+        self.fontsize = kwargs.get('size', 14)
         self.color = kwargs.get('color', 'black')
         self.rotation = kwargs.get('rotation', 0)
+        self.rotation_mode = kwargs.get('rotation_mode', 'anchor')  # 'anchor' or 'default'
         self.zorder = kwargs.get('zorder', 3)
 
     def getdef(self):
@@ -912,7 +913,7 @@ class SegmentText(object):
         ax.text(self.xy[0], self.xy[1], self.text, transform=ax.transData,
                 color=self.color, fontsize=self.fontsize, rotation=self.rotation,
                 horizontalalignment=self.align[0], verticalalignment=self.align[1],
-                zorder=self.zorder, rotation_mode='anchor')
+                zorder=self.zorder, rotation_mode=self.rotation_mode)##rotation_mode='anchor')
 
 
 def _reversedef(elmdef, flip, reverse):
@@ -1238,6 +1239,7 @@ class Element(object):
         # Add labels from element definition
         for label in labels:
             labelargs = self._setup_params(label)
+            labelargs['rotation'] = labelargs.get('rotation', 0) + self.theta
             labelargs['pos'] = np.asarray(labelargs.get('pos', [0, 0])) - leadofst
             self.segments.append(SegmentText(transform=self.transform, **labelargs))
 
@@ -1320,7 +1322,7 @@ class Element(object):
             ymin, ymax = min(ymin, ymax), max(ymin, ymax)
         return BBox(xmin, ymin, xmax, ymax)
 
-    def add_label(self, label, loc='top', ofst=None, align=None, size=None, rotation=0):
+    def add_label(self, label, loc='top', ofst=None, align=None, rotation=0, **kwargs):
         ''' Add a label to the element
 
             Parameters
@@ -1336,10 +1338,15 @@ class Element(object):
                 Tuple of (horizontal, vertical) alignment where horizontal
                 is ['center', 'left', 'right'] and vertical is ['center',
                 'top', 'bottom']
-            size : float
-                Font size
             rotation : float
                 Rotation angle (degrees)
+                
+            Keyword Arguments
+            -----------------
+            size : float
+                Font size
+            color: string
+                Matplotlib color
         '''
         if isinstance(ofst, list) and loc != 'center':
             raise TypeError('Offset must not be list for loc={}'.format(loc))
@@ -1398,12 +1405,13 @@ class Element(object):
         ymax = self.ymax
         ymin = self.ymin
 
-        if size is None:
-            size = self.drawing.fontsize
+        size = kwargs.get('size', self.drawing.fontsize)
 
         lblparams = self.drawing.params.copy()
         lblparams.update(self.userparams)
-        lblparams.update({'align': align, 'rotation': rotation, 'transform': self.transform})
+        lblparams.update(kwargs)
+        lblparams.update({'align': align, 'rotation': rotation, 
+                          'transform': self.transform, 'fontsize': size})
 
         if isinstance(label, list):
             # Divide list along length

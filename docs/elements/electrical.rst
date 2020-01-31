@@ -263,54 +263,56 @@ Example usage with taps:
     d.draw()
 
 
-Blackboxes and ICs
-------------------
+Integrated Circuits
+-------------------
 
-Elements drawn as boxes, such as integrated circuits, can be generated using the :py:func:`SchemDraw.elements.blackbox` function.
+Elements drawn as boxes, such as integrated circuits, can be generated using the :py:func:`SchemDraw.elements.ic` function.
 An arbitrary number of inputs/outputs can be drawn to each side of the box.
 The inputs can be evenly spaced (default) or arbitrarily placed anywhere along each edge.
 
-.. function:: SchemDraw.elements.blackbox(w, h, linputs=None, rinputs=None, tinputs=None, binputs=None, \
-    mainlabel='', leadlen=0.5, lblsize=16, lblofst=.15, plblofst=.1, plblsize=12, hslant=None, vslant=None)
+.. function:: SchemDraw.elements.ic(*pins, **kwargs)
 
-   :param w: width of blackbox rectangle
-   :param h: height of blackbox rectangle
-   :param mainlabel: main box label
-   :param leadlen: length of lead exetensions from each pin
-   :param lblsize: font size for labels (inside the box)
-   :param lblofst: label offset
-   :param plblsize: font size for pin labels (outside the box)
-   :param plblofst: pin label offset
-   :param hslant: angle (degrees) to slant horizontal sides (e.g. for multiplexers)
-   :param vslant: angle (degrees) to slant vertical sides
-   :param linputs: pin definition dictionary for left side of box
-   :type linputs: dict
-   :param rinputs: pin definition dictionary for right side of box
-   :type rinputs: dict
-   :param tinputs: pin definition dictionary for top side of box
-   :type tinputs: dict
-   :param binputs: pin definition dictionary for bottom side of box
-   :type binputs: dict
-   :returns: element definition dictionary
-   :rtype: dict
+    Define an integrated circuit element
 
-Each pin definition dictionary may contain the following keys:
+    :param pins: Dictionaries defining each input pin entered as positional arguments
+    
+    :pins dictionary:
+        * name: (string) Signal name, labeled inside the IC box. \
+                If name is '>', a proper clock input triangle \
+                will be drawn instead of a text label.
+        * pin: (string) Pin name, labeled outside the IC box
+        * side: ['left', 'right', 'top', 'bottom']. Which side the pin belongs on. \
+                Can be abbreviated 'L', 'R', 'T', or 'B'.
+        * pos: (float) Absolute position as fraction from 0-1 along the \
+                side. If not provided, pins are evenly spaced along \
+                the side.
+        * slot: (string) Position designation for the pin in "X/Y" format
+                where X is the pin number and Y the total number
+                of pins along the side. Use when missing pins
+                are desired with even spacing.
+        * invert: (bool) Draw an invert bubble outside the pin
+        * invertradius: (float) Radius of invert bubble
+        * color: (string) Matplotlib color for label
+        * rotation: (float) Rotation angle for label (degrees)
+        * anchorname: (string) Name of anchor at end of pin lead. By default pins
+                will have anchors of both the `name` parameter 
+                and `inXY` where X the side designation
+                ['L', 'R', 'T', 'B'] and Y the pin number along 
+                that side.
 
-- **labels**: list of string labels for each input. drawn inside the box. default is blank. label of '>' will be converted to a clock input.
-- **plabels**: list of pin label strings. drawn outside the box. Default is blank.
-- **spacing**: distance between pins. Defaults to evenly spaced pins along side.
-- **loc**: list of pin locations (0 to 1), along side. Defaults to evenly spaced pins. Overrides spacing argument.
-- **leads**: True/False, draw leads coming out of box. Default=True.
-- **lblofst**: float offset for labels. Default=.15
-- **plblofst**: float offset for pin labels. Default=.1
-- **lblsize**: font size for labels. Default=16
-- **plblsize**: font size for pin labels. Default=12
+    :Keyword Arguments:
+        * size: (w, h) tuple specifying size of the IC. 
+            If not provided, size is automatically determined based on number of 
+            pins and the pinspacing parameter.
+        * pinspacing: Smallest distance between pins [1.25]
+        * edgepadH, edgepadW: Additional distance from edge to first pin on each sides [.25]
+        * lblofst: Default offset for (internal) labels [.15]
+        * plblofst: Default offset for external pin labels [.1]
+        * leadlen: Length of leads extending from box [.5]
+        * lblsize: Font size for (internal) labels [14]
+        * plblsize: Font size for external pin labels [11]
+        * slant: Degrees to slant top and bottom sides (e.g. for multiplexers) [0]
 
-
-Anchors to each input will be automatically generated using the 'labels' keyword of the pin definition dictionary 
-for each side of the box if provided.
-Duplicate input names will be appended with a number. If not provided, the anchors will be named 'inL1', 'inL2'...
-for the left side, for the right side 'inR1', inR2', etc.
 
 Here, a J-K flip flop, as part of an HC7476 integrated circuit, is drawn with input names and pin numbers.
 
@@ -324,43 +326,42 @@ Here, a J-K flip flop, as part of an HC7476 integrated circuit, is drawn with in
 
     linputs = {'labels':['>', 'K', 'J'], 'plabels':['1', '16', '4']}
     rinputs = {'labels':['$\overline{Q}$', 'Q'], 'plabels':['14', '15']}
-    JK = e.blackbox(3, 6, linputs=linputs, rinputs=rinputs, mainlabel='7476')
-    d.add(JK)
+    JKdef = e.ic({'name': '>', 'pin': '1', 'side': 'left'},
+                 {'name': 'K', 'pin': '16', 'side': 'left'},
+                 {'name': 'J', 'pin': '4', 'side': 'left'},
+                 {'name': '$\overline{Q}$', 'pin': '14', 'side': 'right', 'anchorname': 'QBAR'},
+                 {'name': 'Q', 'pin': '15', 'side': 'right'},
+                 edgepadW = .5  # Make it a bit wider
+                 )
+    JK = d.add(JKdef, label='HC7476', lblsize=12, lblofst=.5)
 
 .. jupyter-execute::
     :hide-code:
     
     d.draw()
 
-
-
+Notice the use of `$\overline{Q}$` to acheive the label on the inverting output.
+The anchor positions can be accessed using attributes, such as `JK.Q` for the
+non-inverting output. However, inverting output is named `$\overline{Q}`, which is
+not accessible using the typical dot notation. It could be accessed using 
+`getattr(JK, '$\overline{Q}$')`, but to avoid this an alternative anchorname of `QBAR`
+was defined.
 
 
 Multiplexers
 ^^^^^^^^^^^^
 
-Multiplexers and demultiplexers may be drawn using the :py:func:`SchemDraw.elements.mux` function which wraps the :py:func:`SchemDraw.elements.blackbox` function.
+Multiplexers and demultiplexers may be drawn using the :py:func:`SchemDraw.elements.mux` function which wraps the :py:func:`SchemDraw.elements.ic` function.
 
-.. function:: SchemDraw.elements.mux(inputs=None, outputs=None, ctrls=None, topctrls=None, \
-                                     demux=False, h=None, w=None, pinspacing=1, ctrlspacing=.6,  \
-                                     slope=25, **kwargs)
-   
-   :param inputs: names of input pins
-   :type inputs: list
-   :param outputs: names of output pins
-   :type outputs: list
-   :param ctrls: names of control signals on bottom of mux
-   :type ctrls: list
-   :param topctrls: names of control signals on top of mux
-   :type topctrls: list
-   :param demux: draw as demultiplexer
-   :type demux: bool
-   :param h: height of mux
-   :param w: width of mux
-   :param pinspacing: distance between pins on input and output sides
-   :param ctrlspacing: distance between pins on top and bottom sides
-   :param slope: angle (degrees) o slope top and bottom
-   :param kwargs: passed to blackbox function
+.. function:: SchemDraw.elements.multiplexer(*pins, demux=False, **kwargs)
+        
+        Define a multiplexer or demultiplexer element
+    
+        :param pins: Pin definition dictionaries. See :py:func:`SchemDraw.elements.ic`.
+        
+        :Keyword Arguments:
+            * demux: (bool) Draw demultiplexer (opposite slope)
+            * \**kwargs: See :py:func:`SchemDraw.elements.ic`.
 
 .. jupyter-execute::
     :hide-code:
@@ -370,7 +371,12 @@ Multiplexers and demultiplexers may be drawn using the :py:func:`SchemDraw.eleme
 .. jupyter-execute::
     :hide-output:
 
-    m1 = e.mux(inputs=['A','B','C','D'], outputs=['X'], ctrls=['0','1'])
+    m1 = e.multiplexer({'name': 'C', 'side': 'L'},
+                       {'name': 'B', 'side': 'L'},
+                       {'name': 'A', 'side': 'L'},
+                       {'name': 'Q', 'side': 'R'},
+                       {'name': 'T', 'side': 'B', 'invert':True},
+                       edgepadH=-.5)
     d.add(m1)
 
 .. jupyter-execute::

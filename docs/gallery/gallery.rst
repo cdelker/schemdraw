@@ -724,31 +724,26 @@ S-R Latch (Transistors)
 555 LED Blinker Circuit
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-Using the `blackbox` function to generate a custom IC.
+Using the `IC` function to generate a custom IC.
 
 .. jupyter-execute::
     :code-below:
     
     d = SchemDraw.Drawing()
-    left = {'labels':['TRG','THR','DIS'],
-            'plabels':['2','6','7'],
-            'loc':[.2,.35,.75],
-            'lblsize':12,}
-    right = {'labels':['CTL','OUT'],
-             'plabels':['5','3'],
-             'lblsize':12}
-    top = {'labels':['RST','Vcc'],
-           'plabels':['4','8'],
-           'lblsize':12}
-    bot = {'labels':['GND'],
-           'plabels':['1'],
-           'lblsize':12}
-
-    IC555 = e.blackbox(d.unit*1.5, d.unit*2.25, 
-                       linputs=left, rinputs=right, tinputs=top, binputs=bot,
-                       leadlen=1, mainlabel='555')
-    T = d.add(IC555)
-    BOT = d.add(e.GND, xy=T.GND)  # Note: Anchors named same as pin labels
+    IC555def = e.ic({'name': 'TRG', 'side': 'left', 'pin': '2'},
+                    {'name': 'THR', 'side': 'left', 'pin': '6'},
+                    {'name': 'DIS', 'side': 'left', 'pin': '7'},
+                    {'name': 'CTL', 'side': 'right', 'pin': '5'},
+                    {'name': 'OUT', 'side': 'right', 'pin': '3'},
+                    {'name': 'RST', 'side': 'top', 'pin': '4'},
+                    {'name': 'Vcc', 'side': 'top', 'pin': '8'},
+                    {'name': 'GND', 'side': 'bot', 'pin': '1'},
+                    edgepadW=.5,
+                    edgepadH=1,
+                    pinspacing=2,
+                    leadlen=1)
+    T = d.add(IC555def, label='555')
+    BOT = d.add(e.GND, xy=T.GND)
     d.add(e.DOT)
     d.add(e.RES, endpts=[T.DIS, T.THR], label='Rb')
     d.add(e.RES, d='up', xy=T.DIS, label='Ra', rgtlabel='+Vcc')
@@ -886,7 +881,7 @@ Direct Conversion Receiver
     adc1 = d.add(dsp.ADC, label='ADC')
     d.add(dsp.LINE, l=d.unit/3)
     d.add(dsp.ARROWHEAD)
-    dsp1 = d.add(dsp.blackbox(2.75, 5, linputs={'labels':['','']}, rinputs={'labels': ['']}, mainlabel='DSP', leadlen=0), anchor='inL2')
+    dsp1 = d.add(dsp.ic({'side': 'L'}, {'side': 'L'}, {'side': 'R'}, size=(2.75, 5), leadlen=0), anchor='inL2', label='DSP')
     d.add(dsp.LINE, xy=dsp1.inR1, l=d.unit/3)
     d.add(dsp.ARROWHEAD)
     d.pop()

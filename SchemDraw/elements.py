@@ -1129,9 +1129,24 @@ SPEAKER = {
                 'xy': [[_rh, _sph/2], [_rh, -_sph*1.5], [_rh*2, -_sph*1.5], [_rh*2, _sph/2]]},
                {'shape': 'poly',
                 'xy': [[_rh*2, _sph/2], [_rh*3.5, _sph*1.25], [_rh*3.5, -_sph*2.25], [_rh*2, -_sph*1.5]],
-                'closed': False}]
+                'closed': False}],
+    'anchors': {'in1': [0, 0], 'in2': [0, -_sph]}
     }
 
+MIC = {'name': 'MIC',
+       'paths': [[[0, 0], [_rh, 0]],                 # Upper lead
+                 [[0, -_sph], [_rh, -_sph]],         # Lower lead
+                 [[-_rh*2, _rh], [-_rh*2, -_rh*3]]], # Vertical flat
+       'shapes': [{'shape': 'arc',
+                   'center': [-_rh*2, -_rh],
+                   'theta1': 270,
+                   'theta2': 90,
+                   'width': _rh*4,
+                   'height': 4*_rh}],
+       'drop': [0, -_sph],
+       'extend': False,
+       'anchors': {'in1': [0, 0], 'in2': [0, -_sph]}
+      }
 
 _a = .25
 _b = .7
@@ -1147,6 +1162,16 @@ LAMP = {
     'base': SOURCE,
     'paths': [_lamp_path]
     }
+
+_mw = .22
+MOTOR = {'name': 'MOTOR',
+         'paths': [[[0, -_mw], [0-_mw, -_mw], [0-_mw, _mw], [0, _mw]],
+                   [[1, -_mw], [1+_mw, -_mw], [1+_mw, _mw], [1, _mw]],             
+                   [[-_mw, 0], [-_mw, 0], _gap, [1+_mw, 0], [1+_mw, 0]]],
+         'shapes': [{'shape': 'circle',
+                     'center': [0.5, 0],
+                     'radius': 0.5}],
+         }
 
 
 def transformer(t1=4, t2=4, core=True, ltaps=None, rtaps=None, loop=False):

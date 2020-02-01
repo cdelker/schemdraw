@@ -53,8 +53,8 @@ Sources and Meters
     :hide-code:
 
     sources = [e.SOURCE, e.SOURCE_V, e.SOURCE_I, e.SOURCE_SIN, e.SOURCE_CONT,
-               e.SOURCE_CONT_I, e.SOURCE_CONT_V, e.BAT_CELL, e.BATTERY, e.LAMP,
-               e.METER_V, e.METER_I, e.METER_OHM]
+               e.SOURCE_CONT_I, e.SOURCE_CONT_V, e.BAT_CELL, e.BATTERY,
+               e.METER_V, e.METER_I, e.METER_OHM, e.LAMP, e.MOTOR]
     drawElements(sources, n=4, dy=2.25, d='right', lblofst=.2)
 
 
@@ -93,10 +93,12 @@ The GAP_LABEL is like an "invisible" element, useful for marking the voltage bet
 Other
 ^^^^^
 
+The microphone and speaker have anchors `in1` and `in2`.
+
 .. jupyter-execute::
     :hide-code:
 
-    other =[e.SPEAKER]
+    other =[e.SPEAKER, e.MIC]
     drawElements(other, n=3, lblloc='center', lblofst=1.1)
 
 
@@ -277,41 +279,27 @@ The inputs can be evenly spaced (default) or arbitrarily placed anywhere along e
     :param pins: Dictionaries defining each input pin entered as positional arguments
     
     :pins dictionary:
-        * name: (string) Signal name, labeled inside the IC box. \
-                If name is '>', a proper clock input triangle \
-                will be drawn instead of a text label.
-        * pin: (string) Pin name, labeled outside the IC box
-        * side: ['left', 'right', 'top', 'bottom']. Which side the pin belongs on. \
-                Can be abbreviated 'L', 'R', 'T', or 'B'.
-        * pos: (float) Absolute position as fraction from 0-1 along the \
-                side. If not provided, pins are evenly spaced along \
-                the side.
-        * slot: (string) Position designation for the pin in "X/Y" format
-                where X is the pin number and Y the total number
-                of pins along the side. Use when missing pins
-                are desired with even spacing.
-        * invert: (bool) Draw an invert bubble outside the pin
-        * invertradius: (float) Radius of invert bubble
-        * color: (string) Matplotlib color for label
-        * rotation: (float) Rotation angle for label (degrees)
-        * anchorname: (string) Name of anchor at end of pin lead. By default pins
-                will have anchors of both the `name` parameter 
-                and `inXY` where X the side designation
-                ['L', 'R', 'T', 'B'] and Y the pin number along 
-                that side.
+        * **name**: (string) Signal name, labeled inside the IC box. If name is '>', a proper clock input triangle will be drawn instead of a text label.
+        * **pin**: (string) Pin name, labeled outside the IC box
+        * **side**: ['left', 'right', 'top', 'bottom']. Which side the pin belongs on. Can be abbreviated 'L', 'R', 'T', or 'B'.
+        * **pos**: (float) Absolute position as fraction from 0-1 along the side. If not provided, pins are evenly spaced along the side.
+        * **slot**: (string) Position designation for the pin in "X/Y" format where X is the pin number and Y the total number of pins along the side. Use when missing pins are desired with even spacing.
+        * **invert**: (bool) Draw an invert bubble outside the pin
+        * **invertradius**: (float) Radius of invert bubble
+        * **color**: (string) Matplotlib color for label
+        * **rotation**: (float) Rotation angle for label (degrees)
+        * **anchorname**: (string) Name of anchor at end of pin lead. By default pins will have anchors of both the `name` parameter  and `inXY` where X the side designation ['L', 'R', 'T', 'B'] and Y the pin number along that side.
 
     :Keyword Arguments:
-        * size: (w, h) tuple specifying size of the IC. 
-            If not provided, size is automatically determined based on number of 
-            pins and the pinspacing parameter.
-        * pinspacing: Smallest distance between pins [1.25]
-        * edgepadH, edgepadW: Additional distance from edge to first pin on each sides [.25]
-        * lblofst: Default offset for (internal) labels [.15]
-        * plblofst: Default offset for external pin labels [.1]
-        * leadlen: Length of leads extending from box [.5]
-        * lblsize: Font size for (internal) labels [14]
-        * plblsize: Font size for external pin labels [11]
-        * slant: Degrees to slant top and bottom sides (e.g. for multiplexers) [0]
+        * **size**: (w, h) tuple specifying size of the IC. If not provided, size is automatically determined based on number of pins and the pinspacing parameter.
+        * **pinspacing**: Smallest distance between pins [1.25]
+        * **edgepadH**, **edgepadW**: Additional distance from edge to first pin on each sides [.25]
+        * **lblofst**: Default offset for (internal) labels [.15]
+        * **plblofst**: Default offset for external pin labels [.1]
+        * **leadlen**: Length of leads extending from box [.5]
+        * **lblsize**: Font size for (internal) labels [14]
+        * **plblsize**: Font size for external pin labels [11]
+        * **slant**: Degrees to slant top and bottom sides (e.g. for multiplexers) [0]
 
 
 Here, a J-K flip flop, as part of an HC7476 integrated circuit, is drawn with input names and pin numbers.

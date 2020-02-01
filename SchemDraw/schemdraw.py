@@ -868,6 +868,8 @@ class SegmentText(object):
             'top', 'bottom']
         rotation : float
             Rotation angle (degrees)
+        rotation_mode : string
+            See Matplotlib documentation.
         color : string
              Matplotlib color for this segment
         size : float
@@ -1242,7 +1244,7 @@ class Element(object):
             labelargs['rotation'] = labelargs.get('rotation', 0) + self.theta
             labelargs['pos'] = np.asarray(labelargs.get('pos', [0, 0])) - leadofst
             self.segments.append(SegmentText(transform=self.transform, **labelargs))
-
+            
         # Get bounds of element, used for positioning user labels
         self.xmin, self.ymin, self.xmax, self.ymax = self.get_bbox()
 
@@ -1348,7 +1350,7 @@ class Element(object):
             color: string
                 Matplotlib color
         '''
-        if isinstance(ofst, list) and loc != 'center':
+        if isinstance(ofst, (list, tuple)) and loc in ['top', 'lft', 'bot', 'rgt']:
             raise TypeError('Offset must not be list for loc={}'.format(loc))
 
         if ofst is None:
@@ -1358,9 +1360,11 @@ class Element(object):
         if rotation > 90 and rotation < 270:
             rotation -= 180  # Keep the label from going upside down
             
+        anchornames = self.defn.get('anchors', [])            
+            
         # This ensures a 'top' label is always on top, regardless of rotation
         if (self.theta % 360) > 90 and (self.theta % 360) <= 270:
-            if loc == 'top':
+            if loc == 'top' or loc in anchornames:
                 loc = 'bot'
             elif loc == 'bot':
                 loc = 'top'
@@ -1413,7 +1417,7 @@ class Element(object):
         lblparams.update({'align': align, 'rotation': rotation, 
                           'transform': self.transform, 'fontsize': size})
 
-        if isinstance(label, list):
+        if isinstance(label, (list, tuple)):
             # Divide list along length
             if loc == 'top':
                 for i, lbltxt in enumerate(label):
@@ -1452,10 +1456,18 @@ class Element(object):
             elif loc == 'rgt':
                 xy = [xmax+ofst, (ymax+ymin)/2]
             elif loc == 'center':
-                if isinstance(ofst, list):
+                if isinstance(ofst, (list, tuple)):
                     xy = [(xmax+xmin)/2+ofst[0], (ymax+ymin)/2+ofst[1]]
                 else:
                     xy = [(xmax+xmin)/2, (ymax+ymin)/2+ofst]
+            elif loc in anchornames:
+                xy = np.asarray(anchornames[loc])
+                if isinstance(ofst, (list, tuple)):
+                    xy = xy + ofst
+                else:
+                    xy = [xy[0], xy[1]+ofst]
+            else:
+                raise ValueError('Undefined location {}'.format(loc))
             self.segments.append(SegmentText(np.asarray(xy), label, **lblparams))
 
     def draw(self, ax):

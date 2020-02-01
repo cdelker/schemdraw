@@ -323,8 +323,8 @@ Labels can be added at arbitrary positions with any alignment.
 
     :param label: label to add
     :type label: string
-    :param loc: ['top', 'bot', 'lft' 'rgt'] label position with respect to element
-    :param txtofst: offset between element and label
+    :param loc: label position with respect to element: ['top', 'bot', 'lft' 'rgt', 'center'], or name of an anchor defined in this element
+    :param ofst: offset between element and label. Can be (x,y) list for 'center' or anchor loc, float otherwise
     :param align: label alignment as tuple of (horizontal, vertical). Horizontal can be ['center', 'left', 'right'], and vertical ['center', 'top', 'bottom']
     :param size: font size for label
     :param rotation: rotation angle, in degrees

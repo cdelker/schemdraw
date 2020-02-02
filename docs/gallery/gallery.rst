@@ -57,6 +57,7 @@ Shows how to use endpoints to specify exact start and end placement.
     d.draw()
 
 
+
 ECE201-Style Circuit
 ^^^^^^^^^^^^^^^^^^^^
 
@@ -347,6 +348,45 @@ Multi-stage amplifier
     d.add(e.LINE,d='down',toy=O2.out)
     d.add(e.DOT)
     d.add(e.LINE, xy=O2.out,d='right',l=1, rgtlabel='$v_{out}$')
+    d.draw()
+
+
+Opamp pin labeling
+^^^^^^^^^^^^^^^^^^
+
+This example shows how to label pin numbers on a 741 opamp, and connect to the offset anchors.
+Pin labels are somewhat manually placed; without the `ofst` and `align` keywords they
+will be drawn directly over the anchor position. Also note the use of the `zoom` keyword
+when placing the potentiometer to slightly reduce its size.
+
+.. jupyter-execute::
+    :code-below:
+
+    d = SchemDraw.Drawing(fontsize=12)
+    op = d.add(e.OPAMP, label='741', lblloc='center', lblofst=0)
+    d.add(e.LINE, xy=op.in1, d='left', l=.5)
+    d.add(e.LINE, d='down', l=d.unit/2)
+    d.add(e.GND)
+    d.add(e.LINE, xy=op.in2, d='left', l=.5)
+    d.add(e.LINE, xy=op.out, d='right', l=.5, rgtlabel='$V_o$')
+    d.add(e.LINE, xy=op.vd, d='up', l=1, rgtlabel='$+V_s$')
+    trim = d.add(e.POT, xy=op.n1, d='down', flip=True, zoom=.7)
+    d.add(e.LINE, d='right', tox=op.n1a)
+    d.add(e.LINE, d='up', to=op.n1a)
+    d.add(e.LINE, d='left', xy=trim.tap, tox=op.vs)
+    d.add(e.DOT)
+    d.push()
+    d.add(e.LINE, d='down', l=d.unit/3)
+    d.add(e.GND)
+    d.pop()
+    d.add(e.LINE, d='up', toy=op.vs)    
+    op.add_label('1', loc='n1', size=9, ofst=[-.1, -.25], align=('right', 'top'))
+    op.add_label('5', loc='n1a', size=9, ofst=[-.1, -.25], align=('right', 'top'))
+    op.add_label('4', loc='vs', size=9, ofst=[-.1, -.2], align=('right', 'top'))
+    op.add_label('7', loc='vd', size=9, ofst=[-.1, .2], align=('right', 'bottom'))
+    op.add_label('2', loc='in1', size=9, ofst=[-.1, .1], align=('right', 'bottom'))
+    op.add_label('3', loc='in2', size=9, ofst=[-.1, .1], align=('right', 'bottom'))
+    op.add_label('6', loc='out', size=9, ofst=[-.1, .1], align=('left', 'bottom'))
     d.draw()
 
 

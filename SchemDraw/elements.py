@@ -74,6 +74,11 @@ _gap = [_np.nan, _np.nan]   # To leave a break in the plot
 _rh = 0.25      # Resistor height
 _rw = 1.0 / 6   # Full (inner) length of resistor is 1.0 data unit
 
+# Opamp sizes
+_oa_back = 2.5
+_oa_xlen = _oa_back * _np.sqrt(3)/2
+_oa_lblx = _oa_xlen/8
+
 
 # Drawing Functions
 def _cycloid(loops=4, ofst=(0, 0), a=.06, b=.19, norm=True, vertical=False, flip=False):
@@ -148,12 +153,12 @@ POT = {
     'name': 'POT',
     'base': RES,
     'shapes': [{'shape': 'arrow',
-                'start': [_rw*3, _rw*5],
+                'start': [_rw*3, _oa_xlen/3],  # Sized so a pot fits perfectly between opamp offset pins
                 'end': [_rw*3, _rw*1.5],
                 'headwidth': .15,
                 'headlength': .25}],
     'lblloc': 'bot',
-    'anchors': {'tap': [_rw*3, _rw*1.5]}
+    'anchors': {'tap': [_rw*3, _oa_xlen/3]}
      }
 
 _cap_gap = 0.18
@@ -603,9 +608,6 @@ VDD = {
 
 
 # Opamp
-_oa_back = 2.5
-_oa_xlen = _oa_back * _np.sqrt(3)/2
-_oa_lblx = _oa_xlen/8
 _oa_pluslen = .2
 OPAMP_NOSIGN = {
     'name': 'OPAMP_NOSIGN',
@@ -615,7 +617,14 @@ OPAMP_NOSIGN = {
     'anchors': {'center': [_oa_xlen/2, 0],
                 'in1': [0, _oa_back/4],
                 'in2': [0, -_oa_back/4],
-                'out': [_oa_xlen, 0]},
+                'out': [_oa_xlen, 0],
+                'vd': [_oa_xlen/3, .84],
+                'vs': [_oa_xlen/3, -.84],
+                'n1': [_oa_xlen*2/3, -.42],
+                'n2': [_oa_xlen*2/3, .42],
+                'n1a': [_oa_xlen*.9, -.13],
+                'n2a': [_oa_xlen*.9, .13]                
+               },
     'extend': False,
     }
 
@@ -629,7 +638,14 @@ OPAMP = {
     'anchors': {'center': [_oa_xlen/2, 0],
                 'in1': [0, _oa_back/4],
                 'in2': [0, -_oa_back/4],
-                'out': [_oa_xlen, 0]},
+                'out': [_oa_xlen, 0],
+                'vd': [_oa_xlen/3, .84],
+                'vs': [_oa_xlen/3, -.84],
+                'n1': [_oa_xlen*2/3, -.42],
+                'n2': [_oa_xlen*2/3, .42],
+                'n1a': [_oa_xlen*.9, -.13],
+                'n2a': [_oa_xlen*.9, .13]                
+               },
     'extend': False,
     }
 

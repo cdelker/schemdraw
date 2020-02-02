@@ -1199,7 +1199,8 @@ class Element(object):
                 leadofst = np.array(self.defn['anchors'][anchor])
             else:
                 raise ValueError('Anchor {} not defined in element'.format(anchor))
-
+        self.leadofst = leadofst
+                
         if len(self.path_def) > 0:
             drop = self.transform.transform(self.defn.get('drop', np.asarray(self.path_def[-1][-1])-leadofst))
         else:
@@ -1360,11 +1361,11 @@ class Element(object):
         if rotation > 90 and rotation < 270:
             rotation -= 180  # Keep the label from going upside down
             
-        anchornames = self.defn.get('anchors', [])            
+        anchornames = self.defn.get('anchors', [])
             
         # This ensures a 'top' label is always on top, regardless of rotation
         if (self.theta % 360) > 90 and (self.theta % 360) <= 270:
-            if loc == 'top' or loc in anchornames:
+            if loc == 'top':
                 loc = 'bot'
             elif loc == 'bot':
                 loc = 'top'
@@ -1463,9 +1464,9 @@ class Element(object):
             elif loc in anchornames:
                 xy = np.asarray(anchornames[loc])
                 if isinstance(ofst, (list, tuple)):
-                    xy = xy + ofst
+                    xy = xy + ofst - self.leadofst
                 else:
-                    xy = [xy[0], xy[1]+ofst]
+                    xy = np.asarray([xy[0], xy[1]+ofst]) - self.leadofst
             else:
                 raise ValueError('Undefined location {}'.format(loc))
             self.segments.append(SegmentText(np.asarray(xy), label, **lblparams))

@@ -144,8 +144,8 @@ Potentiometer is defined with one additional anchor for the 'tap':
 
     d = SchemDraw.Drawing(fontsize=12)
     P = d.add(e.POT, botlabel='POT')
-    d.add(e.LINE, xy=P.tap, d='up', l=.5)
-    P.add_label('tap')
+    P.add_label('tap', loc='tap')
+    d.add(e.GAP_LABEL, d='up', l=.5)
     d.draw()
 
 
@@ -156,14 +156,14 @@ BJT and FET transistors also define three anchors:
 
     d = SchemDraw.Drawing(fontsize=12)
     bjt = d.add(e.BJT_NPN, xy=[0, 0], anchor='base')
-    d.add(e.LINE, xy=bjt.base, d='left', l=.3, lblofst=.2, lftlabel='base')
-    bjt.add_label('emitter', loc='center', ofst=[.3,-1.3])
-    bjt.add_label('collector', loc='center', ofst=[.3,1.0])
+    bjt.add_label('base', loc='base', align=('right', 'center'), ofst=[-.1, 0])
+    bjt.add_label('emitter', loc='emitter', align=('center', 'top'), ofst=-.2)
+    bjt.add_label('collector', loc='collector')
 
-    fet = d.add(e.NFET, xy=[4, 0], anchor='gate')
-    d.add(e.LINE, xy=fet.gate, d='right', l=0, lblofst=.2, lftlabel='gate')
-    fet.add_label('source', loc='center', ofst=[-.5,-1.3])
-    fet.add_label('drain', loc='center', ofst=[-.5,1.0])
+    fet = d.add(e.NFET, xy=[3, 0], anchor='gate', d='left')
+    fet.add_label('gate', loc='gate', ofst=[.1, 0], align=('right', 'center'))
+    fet.add_label('source', loc='source', align=('center', 'bottom'), ofst=-.1)
+    fet.add_label('drain', loc='drain', align=('center', 'top'))
     d.draw()
 
 Names of the different transistor elements are shown below:
@@ -188,21 +188,33 @@ Names of the different transistor elements are shown below:
     d.add(e.JFET_P_C, label='JFET_N_C', lblloc='top', xy=[9,-3])
     d.draw()
 
-An opamp defines three anchors, in1, in2, and out.
+An opamp defines anchors `in1`, `in2`, and `out`, plus `vd`, `vs` for supply voltages and `n1`, `n2`, `n1a`, `n2a` for offset inputs.
 
 .. jupyter-execute::
     :hide-code:
     
     d = SchemDraw.Drawing(fontsize=12)
-    op = d.add( e.OPAMP, label='OPAMP' )
+    op = d.add( e.OPAMP, label='OPAMP', lblofst=.6)
     d.add(e.LINE, xy=op.in1, d='left', l=.5, lftlabel='in1')
     d.add(e.LINE, xy=op.in2, d='left', l=.5, lftlabel='in2')
     d.add(e.LINE, xy=op.out, d='right', l=.5, rgtlabel='out')
-    d.add(e.GAP_LABEL )
-    op2 = d.add(e.OPAMP_NOSIGN, label='OPAMP_NOSIGN' )
+    d.add(e.LINE, xy=op.vd, d='up', l=.25, rgtlabel='vd')
+    d.add(e.LINE, xy=op.vs, d='down', l=.25, lftlabel='vs')    
+    d.add(e.LINE, xy=op.n2, d='up', l=.25, rgtlabel='n2')
+    d.add(e.LINE, xy=op.n1, d='down', l=.25, lftlabel='n1')    
+    d.add(e.LINE, xy=op.n2a, d='up', l=.22, rgtlabel='n2a', lblofst=0)
+    d.add(e.LINE, xy=op.n1a, d='down', l=.22, lftlabel='n1a', lblofst=0)    
+    
+    op2 = d.add(e.OPAMP_NOSIGN, xy=[5, 0], d='right', label='OPAMP_NOSIGN', lblofst=.6)
     d.add(e.LINE, xy=op2.in1, d='left', l=.5, lftlabel='in1')
     d.add(e.LINE, xy=op2.in2, d='left', l=.5, lftlabel='in2')
     d.add(e.LINE, xy=op2.out, d='right', l=.5, rgtlabel='out')
+    d.add(e.LINE, xy=op2.vd, d='up', l=.25, rgtlabel='vd')
+    d.add(e.LINE, xy=op2.vs, d='down', l=.25, lftlabel='vs')    
+    d.add(e.LINE, xy=op2.n2, d='up', l=.25, rgtlabel='n2')
+    d.add(e.LINE, xy=op2.n1, d='down', l=.25, lftlabel='n1')    
+    d.add(e.LINE, xy=op2.n2a, d='up', l=.22, rgtlabel='n2a', lblofst=0)
+    d.add(e.LINE, xy=op2.n1a, d='down', l=.22, lftlabel='n1a', lblofst=0)      
     d.draw()
 
 

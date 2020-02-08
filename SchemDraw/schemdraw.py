@@ -225,11 +225,11 @@ class Drawing(object):
 
         self.ax = ax
         self.fig = ax.get_figure()
+        ax.get_figure().set_size_inches(self.inches_per_unit*w, self.inches_per_unit*h)
         if not plt.isinteractive() and showplot:
             plt.show()
 
-        # Grow the figure size so that elements are always the same
-        # Do after show() because it messes with size.
+        # Resize again in case plt.show() messes with sizes
         ax.get_figure().set_size_inches(self.inches_per_unit*w, self.inches_per_unit*h)
 
     def save(self, fname, transparent=True, dpi=72):

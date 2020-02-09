@@ -3,13 +3,13 @@
 SchemDraw is a python package for producing high-quality electrical circuit schematic diagrams. Typical usage::
 
         import SchemDraw
-        import SchemDraw.elements as e
+        import SchemDraw.elements as elm
         d = SchemDraw.Drawing()
-        d.add(e.RES, label='100K$\Omega$')
-        d.add(e.CAP, d='down', botlabel='0.1$\mu$F')
-        d.add(e.LINE, d='left')
-        d.add(e.GND)
-        d.add(e.SOURCE_V, d='up', label='10V')
+        d.add(elm.RES, label='100K$\Omega$')
+        d.add(elm.CAP, d='down', botlabel='0.1$\mu$F')
+        d.add(elm.LINE, d='left')
+        d.add(elm.GND)
+        d.add(elm.SOURCE_V, d='up', label='10V')
         d.draw()
         d.save('schematic.svg')
 

@@ -6,7 +6,6 @@ Flowchart Symbols
 
     %config InlineBackend.figure_format = 'svg'
     import SchemDraw
-    from SchemDraw import elements as e
     from SchemDraw import flow
 
 
@@ -25,15 +24,15 @@ Flowchart blocks:
     
     d = SchemDraw.Drawing(fontsize=10, unit=.5)
     d.add(flow.start(), label='start()')
-    d.add(e.LINE)
+    d.add(flow.LINE)
     d.add(flow.box(), label='box()')
-    d.add(e.LINE)
+    d.add(flow.LINE)
     d.add(flow.sub(), label='sub()')
-    d.add(e.LINE)
+    d.add(flow.LINE)
     d.add(flow.data(), label='data()')
-    d.add(e.LINE)
+    d.add(flow.LINE)
     d.add(flow.decision(), label='decision()')
-    d.add(e.LINE)
+    d.add(flow.LINE)
     d.add(flow.connect(1.5), label='connect()')
     d.draw()
 
@@ -125,9 +124,9 @@ To label the decision branches, the :py:func:`SchemDraw.flow.decision` function 
     :hide-code:
     
     dec = d.add(decision, label='decision()')
-    d.add(e.LINE, xy=dec.W, d='left')
-    d.add(e.LINE, xy=dec.E, d='right')
-    d.add(e.LINE, xy=dec.S, d='down')    
+    d.add(flow.LINE, xy=dec.W, d='left')
+    d.add(flow.LINE, xy=dec.E, d='right')
+    d.add(flow.LINE, xy=dec.S, d='down')    
     d.draw()
 
 

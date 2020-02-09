@@ -3,7 +3,7 @@
     
     %config InlineBackend.figure_format = 'svg'
     import SchemDraw
-    from SchemDraw import elements as e
+    from SchemDraw import elements as elm
 
 .. _placement:
 
@@ -74,8 +74,8 @@ When no placement parameters are given, the element is placed at the endpoint of
 .. jupyter-execute::
     :hide-output:
 
-    d.add(e.RES, theta=20, label='R1')
-    d.add(e.RES, label='R2')  # Takes position and direction from R1
+    d.add(elm.RES, theta=20, label='R1')
+    d.add(elm.RES, label='R2')  # Takes position and direction from R1
 
 .. jupyter-execute::
     :hide-code:
@@ -101,8 +101,8 @@ Here, an opamp is placed at the end of the resistor, connected to its `in1` anch
 .. jupyter-execute::
     :hide-output:
 
-    d.add(e.RES, label='Resistor')
-    d.add(e.OPAMP, anchor='in1')
+    d.add(elm.RES, label='Resistor')
+    d.add(elm.OPAMP, anchor='in1')
     
 .. jupyter-execute::
     :hide-code:
@@ -119,8 +119,8 @@ Compared to anchoring the opamp at `in2` (the noninverting input):
 .. jupyter-execute::
     :hide-output:
 
-    d.add(e.RES, label='Resistor')
-    d.add(e.OPAMP, anchor='in2')
+    d.add(elm.RES, label='Resistor')
+    d.add(elm.OPAMP, anchor='in2')
     
 .. jupyter-execute::
     :hide-code:
@@ -140,8 +140,8 @@ For example, to draw an opamp and place a resistor on the output, store the retu
 .. jupyter-execute::
     :hide-output:
 
-    opamp = d.add(e.OPAMP)
-    d.add(e.RES, xy=opamp.out, d='right')
+    opamp = d.add(elm.OPAMP)
+    d.add(elm.RES, xy=opamp.out, d='right')
 
 .. jupyter-execute::
     :hide-code:
@@ -167,17 +167,17 @@ Other placement arguments can be used; these override the `d` or `theta` paramet
 .. jupyter-execute::
     :hide-output:
 
-    C = d.add(e.CAP)
-    d.add(e.DIODE)
-    d.add(e.LINE, d='down')
+    C = d.add(elm.CAP)
+    d.add(elm.DIODE)
+    d.add(elm.LINE, d='down')
 
     # Now we want to close the loop, but can use `tox` 
     # to avoid having to know exactly how far to go.
     # Note we passed the [x, y] position of capacitor C,
     # but only the x value will be used.
-    d.add(e.LINE, d='left', tox=C.start)
+    d.add(elm.LINE, d='left', tox=C.start)
     
-    d.add(e.SOURCE, d='up')
+    d.add(elm.SOURCE, d='up')
 
 .. jupyter-execute::
     :hide-code:
@@ -204,9 +204,9 @@ start and end anchors of the element.
 .. jupyter-execute::
     :hide-output:
 
-    d.add(e.ZENER, label='Normal')
-    d.add(e.ZENER, label='Flip', flip=True)
-    d.add(e.ZENER, label='Reverse', reverse=True)
+    d.add(elm.ZENER, label='Normal')
+    d.add(elm.ZENER, label='Flip', flip=True)
+    d.add(elm.ZENER, label='Reverse', reverse=True)
 
 .. jupyter-execute::
     :hide-code:
@@ -229,13 +229,13 @@ for times when it's useful to save the drawing state and come back to it later.
 .. jupyter-execute::
     :hide-output:
 
-    d.add(e.INDUCTOR)
-    d.add(e.DOT)
+    d.add(elm.INDUCTOR)
+    d.add(elm.DOT)
     d.push()  # Save this drawing position/direction for later
     
-    d.add(e.CAP, d='down')
+    d.add(elm.CAP, d='down')
     d.pop()   # Return to the pushed position/direction
-    d.add(e.DIODE)
+    d.add(elm.DIODE)
 
 .. jupyter-execute::
     :hide-code:
@@ -264,7 +264,7 @@ Each label is a string, but LaTeX math is rendered when enclosed in $..$.
 .. jupyter-execute::
     :hide-output:
 
-    d.add(e.RES, label='Label', botlabel='Bottom', rgtlabel='Right', lftlabel='Left')
+    d.add(elm.RES, label='Label', botlabel='Bottom', rgtlabel='Right', lftlabel='Left')
 
 .. jupyter-execute::
     :hide-code:
@@ -282,7 +282,7 @@ This allows for labeling positive and negative anlong with a component name, for
 .. jupyter-execute::
     :hide-output:
 
-    d.add(e.RES, label=['$-$','$R_1$','+'])  # Using $-$ to get a proper minus sign rather than a hyphen
+    d.add(elm.RES, label=['$-$','$R_1$','+'])  # Using $-$ to get a proper minus sign rather than a hyphen
 
 .. jupyter-execute::
     :hide-code:
@@ -305,10 +305,10 @@ Several other `add` arguments control the behavior of labels:
 .. jupyter-execute::
     :hide-output:
 
-    d.add(e.RES, label='no offset')
-    d.add(e.RES, label='offset', lblofst=1)
-    d.add(e.RES, theta=-45, label='no rotate')
-    d.add(e.RES, theta=-45, label='rotate', lblrotate=True)
+    d.add(elm.RES, label='no offset')
+    d.add(elm.RES, label='offset', lblofst=1)
+    d.add(elm.RES, theta=-45, label='no rotate')
+    d.add(elm.RES, theta=-45, label='rotate', lblrotate=True)
 
 .. jupyter-execute::
     :hide-code:
@@ -358,13 +358,13 @@ Typically, it can be added alongside an existing element using the :py:meth:`Sch
 .. jupyter-execute::
     :hide-output:
 
-    R1 = d.add(e.RES)
+    R1 = d.add(elm.RES)
     d.labelI(R1, '10 mA')
 
 .. jupyter-execute::
     :hide-code:
 
-    d.add(e.GAP_LABEL, d='up', l=.5)  # To bump the margins...
+    d.add(elm.GAP_LABEL, d='up', l=.5)  # To bump the margins...
     d.draw()
 
 
@@ -393,7 +393,7 @@ Alternatively, current labels can be drawn inline as arrowheads on the leads of 
 .. jupyter-execute::
     :hide-output:
 
-    R1 = d.add(e.RES)
+    R1 = d.add(elm.RES)
     d.labelI_inline(R1, '$i_1$', d='in')
 
 .. jupyter-execute::
@@ -423,10 +423,10 @@ Loop currents can be added using :py:meth:`SchemDraw.Drawing.loopI()`.
 .. jupyter-execute::
     :hide-output:
 
-    R1 = d.add(e.RES)
-    C1 = d.add(e.CAP, d='down')
-    D1 = d.add(e.DIODE_F, d='left')
-    L1 = d.add(e.INDUCTOR, d='up')
+    R1 = d.add(elm.RES)
+    C1 = d.add(elm.CAP, d='down')
+    D1 = d.add(elm.DIODE_F, d='left')
+    L1 = d.add(elm.INDUCTOR, d='up')
     d.loopI([R1, C1, D1, L1], d='cw', label='$I_1$')
 
 .. jupyter-execute::
@@ -463,10 +463,10 @@ When adding an element, it's indivudal options are:
     :hide-output:
     
     d = SchemDraw.Drawing(color='blue')  # All elements are blue unless specified otherwise
-    d.add(e.DIODE, fill='red')
-    d.add(e.RES, fill='purple')          # Fill has no effect on this non-closed element
-    d.add(e.RBOX, color='orange', ls='--')
-    d.add(e.RES, lw=5)
+    d.add(elm.DIODE, fill='red')
+    d.add(elm.RES, fill='purple')          # Fill has no effect on this non-closed element
+    d.add(elm.RBOX, color='orange', ls='--')
+    d.add(elm.RES, lw=5)
 
 .. jupyter-execute::
     :hide-code:

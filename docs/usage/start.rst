@@ -44,7 +44,7 @@ use in a drawing. A common import structure is:
 .. jupyter-execute::
 
     import SchemDraw
-    import SchemDraw.elements as e
+    import SchemDraw.elements as elm
 
 All schematics start by creating a `Drawing` object:
 
@@ -61,10 +61,10 @@ If `d` is not supplied, the element will be drawn in the same direction as the p
 .. jupyter-execute::
     :hide-output:
 
-    d.add(e.RES, d='right', label='1$\Omega$')
-    d.add(e.CAP, d='down', label='10$\mu$F')
-    d.add(e.LINE, d='left')
-    d.add(e.SOURCE_SIN, d='up', label='10V')
+    d.add(elm.RES, d='right', label='1$\Omega$')
+    d.add(elm.CAP, d='down', label='10$\mu$F')
+    d.add(elm.LINE, d='left')
+    d.add(elm.SOURCE_SIN, d='up', label='10V')
 
 Then display and optionally save the drawing to a file:
 

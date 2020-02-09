@@ -5,6 +5,8 @@
 
 import numpy as _np
 
+from .elements import ARROWHEAD, LINE, DOT
+
 _gap = [_np.nan, _np.nan]
 _leadlen = .35
 _gateh = 1.

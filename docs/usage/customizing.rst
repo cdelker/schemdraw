@@ -6,8 +6,8 @@ Customizing Elements
 
     %config InlineBackend.figure_format = 'svg'
     import SchemDraw
-    from SchemDraw import elements as e
-    from SchemDraw import logic as l
+    from SchemDraw import elements as elm
+    from SchemDraw import logic
 
 
 Reusing groups of elements
@@ -27,10 +27,10 @@ Instead, use :py:func:`group_elements`, then add the result as an element to ano
 .. jupyter-execute::
 
     d1 = SchemDraw.Drawing()
-    d1.add(e.RES)
+    d1.add(elm.RES)
     d1.push()
-    d1.add(e.CAP, d='down')
-    d1.add(e.LINE, d='left')
+    d1.add(elm.CAP, d='down')
+    d1.add(elm.LINE, d='left')
     d1.pop()
     RC = SchemDraw.group_elements(d1)   # Create the group to reuse
 
@@ -142,7 +142,7 @@ We want a dot in the center of our flux capacitor, so use the `base` key to star
 .. code-block:: python
 
     FLUX_CAP = {
-        'base': e.DOT,
+        'base': elm.DOT,
 
 Next, add the paths, which are drawn as lines. The flux capacitor will have three paths, all extending from the center dot:
 
@@ -173,7 +173,7 @@ Here's the element dictionary all in one:
 
     fclen = 0.5
     FLUX_CAP = {
-        'base': e.DOT,
+        'base': elm.DOT,
         'paths': [[[0, 0], [0, -fclen*1.41]],  # Leg going down
                   [[0, 0], [fclen, fclen]],    # Leg going up/right
                   [[0, 0], [-fclen, fclen]]],  # Leg going up/left
@@ -208,7 +208,7 @@ For even more control over individual pieces of an element, the parameters of a 
     
 .. jupyter-execute::
 
-    n = d.add(l.NAND2)
+    n = d.add(logic.NAND2)
     n.segments[-1].color = 'red'
     n.segments[-1].zorder = 5  # Put the bubble on top
     d.draw()
@@ -224,7 +224,7 @@ This axis can be obtained using `plt.gca()` and used for whatever purpose.
 
     import matplotlib.pyplot as plt
     d = SchemDraw.Drawing()
-    d.add(e.RES)
+    d.add(elm.RES)
     d.draw()
     ax = plt.gca()
     ax.axvline(.5, color='purple', ls='--')

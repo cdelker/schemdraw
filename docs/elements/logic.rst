@@ -11,8 +11,8 @@ Logic Gates
     def drawElements(elm_list, n=5, dx=1, dy=2, ofst=.8, fname=None, **kwargs):
         x, y = 0, 0
         d = SchemDraw.Drawing(fontsize=12)
-        for elm in elm_list:
-            A = d.add(elm, xy=[(d.unit+1)*x+1,y], label=elm['name'], **kwargs)
+        for element in elm_list:
+            A = d.add(element, xy=[(d.unit+1)*x+1,y], label=element['name'], **kwargs)
             x = x + dx
             if x >= n:
                 x=0

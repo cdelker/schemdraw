@@ -8,12 +8,12 @@ Basic Circuit Elements
 
     %config InlineBackend.figure_format = 'svg'
     import SchemDraw
-    from SchemDraw import elements as e
+    from SchemDraw import elements as elm
     def drawElements(elm_list, n=5, dx=1, dy=2, ofst=.8, fname=None, **kwargs):
         x, y = 0, 0
         d = SchemDraw.Drawing(fontsize=12)
-        for elm in elm_list:
-            A = d.add(elm, xy=[(d.unit+1)*x+1,y], label=elm['name'], **kwargs)
+        for element in elm_list:
+            A = d.add(element, xy=[(d.unit+1)*x+1,y], label=element['name'], **kwargs)
             x = x + dx
             if x >= n:
                 x=0
@@ -37,11 +37,11 @@ to make the element the desired length.
     :hide-code:
 
     elms = [
-        e.RES, e.RES_VAR, e.RBOX, e.CAP, e.CAP2, e.CAP_P, e.CAP2_P, e.CAP_VAR,
-        e.INDUCTOR, e.INDUCTOR2, e.DIODE, e.DIODE_F, e.SCHOTTKY,
-        e.SCHOTTKY_F, e.DIODE_TUNNEL, e.DIODE_TUNNEL_F, e.ZENER, e.ZENER_F,
-        e.LED, e.LED2, e.PHOTODIODE, e.DIAC, e.DIAC_F, e.TRIAC, e.TRIAC_F,
-        e.SCR, e.SCR_F, e.FUSE, e.XTAL, e.MEMRISTOR, e.MEMRISTOR2, e.JJ]
+        elm.RES, elm.RES_VAR, elm.RBOX, elm.CAP, elm.CAP2, elm.CAP_P, elm.CAP2_P, elm.CAP_VAR,
+        elm.INDUCTOR, elm.INDUCTOR2, elm.DIODE, elm.DIODE_F, elm.SCHOTTKY,
+        elm.SCHOTTKY_F, elm.DIODE_TUNNEL, elm.DIODE_TUNNEL_F, elm.ZENER, elm.ZENER_F,
+        elm.LED, elm.LED2, elm.PHOTODIODE, elm.DIAC, elm.DIAC_F, elm.TRIAC, elm.TRIAC_F,
+        elm.SCR, elm.SCR_F, elm.FUSE, elm.XTAL, elm.MEMRISTOR, elm.MEMRISTOR2, elm.JJ]
     drawElements(elms, n=4, dy=2.25, lblofst=.8, lblloc='center')
 
 
@@ -52,9 +52,9 @@ Sources and Meters
 .. jupyter-execute::
     :hide-code:
 
-    sources = [e.SOURCE, e.SOURCE_V, e.SOURCE_I, e.SOURCE_SIN, e.SOURCE_CONT,
-               e.SOURCE_CONT_I, e.SOURCE_CONT_V, e.BAT_CELL, e.BATTERY,
-               e.METER_V, e.METER_I, e.METER_OHM, e.LAMP, e.MOTOR]
+    sources = [elm.SOURCE, elm.SOURCE_V, elm.SOURCE_I, elm.SOURCE_SIN, elm.SOURCE_CONT,
+               elm.SOURCE_CONT_I, elm.SOURCE_CONT_V, elm.BAT_CELL, elm.BATTERY,
+               elm.METER_V, elm.METER_I, elm.METER_OHM, elm.LAMP, elm.MOTOR]
     drawElements(sources, n=4, dy=2.25, d='right', lblofst=.2)
 
 
@@ -65,10 +65,10 @@ Switches
 .. jupyter-execute::
     :hide-code:
 
-    switches =[e.SWITCH_SPST, e.SWITCH_SPST_OPEN, e.SWITCH_SPST_CLOSE,
-               e.SWITCH_SPDT, e.SWITCH_SPDT_OPEN, e.SWITCH_SPDT_CLOSE,
-               e.SWITCH_SPDT2, e.SWITCH_SPDT2_OPEN, e.SWITCH_SPDT2_CLOSE,
-               e.BUTTON, e.BUTTON_NC]
+    switches =[elm.SWITCH_SPST, elm.SWITCH_SPST_OPEN, elm.SWITCH_SPST_CLOSE,
+               elm.SWITCH_SPDT, elm.SWITCH_SPDT_OPEN, elm.SWITCH_SPDT_CLOSE,
+               elm.SWITCH_SPDT2, elm.SWITCH_SPDT2_OPEN, elm.SWITCH_SPDT2_CLOSE,
+               elm.BUTTON, elm.BUTTON_NC]
     drawElements(switches, n=4, dx=1.4, dy=2.5)#, lblofst=.8)
 
 
@@ -82,12 +82,12 @@ The GAP_LABEL is like an "invisible" element, useful for marking the voltage bet
     :hide-code:
 
     d = SchemDraw.Drawing(fontsize=12)
-    d.add(e.LINE, d='right', l=1)
-    d.add(e.LABEL, xy=[3,-.5], label='LABEL')
-    d.add(e.DOT_OPEN)
-    d.add(e.GAP_LABEL, d='down', label=['+','GAP_LABEL','$-$'])  # Use math mode to make it a minus, not a hyphen.
-    d.add(e.DOT_OPEN)
-    d.add(e.LINE, d='left', l=1)
+    d.add(elm.LINE, d='right', l=1)
+    d.add(elm.LABEL, xy=[3,-.5], label='LABEL')
+    d.add(elm.DOT_OPEN)
+    d.add(elm.GAP_LABEL, d='down', label=['+','GAP_LABEL','$-$'])  # Use math mode to make it a minus, not a hyphen.
+    d.add(elm.DOT_OPEN)
+    d.add(elm.LINE, d='left', l=1)
     d.draw()
 
 Other
@@ -98,7 +98,7 @@ The microphone and speaker have anchors `in1` and `in2`.
 .. jupyter-execute::
     :hide-code:
 
-    other =[e.SPEAKER, e.MIC]
+    other =[elm.SPEAKER, elm.MIC]
     drawElements(other, n=3, lblloc='center', lblofst=1.1)
 
 
@@ -109,12 +109,12 @@ Lines, Dots, Arrows
     :hide-code:
 
     d = SchemDraw.Drawing(fontsize=12)
-    d.add(e.LINE, l=4, label='LINE')
-    d.add(e.DOT, label='DOT')
-    d.add(e.LINE, l=2)
-    d.add(e.DOT_OPEN, label='DOT_OPEN')
-    d.add(e.LINE, l=3)
-    d.add(e.ARROWHEAD, label='ARROWHEAD')
+    d.add(elm.LINE, l=4, label='LINE')
+    d.add(elm.DOT, label='DOT')
+    d.add(elm.LINE, l=2)
+    d.add(elm.DOT_OPEN, label='DOT_OPEN')
+    d.add(elm.LINE, l=3)
+    d.add(elm.ARROWHEAD, label='ARROWHEAD')
     d.draw()
 
 
@@ -127,7 +127,7 @@ that specify an endpoint.
 .. jupyter-execute::
     :hide-code:
 
-    grounds = [e.GND, e.GND_SIG, e.GND_CHASSIS, e.VSS, e.VDD, e.ANT]
+    grounds = [elm.GND, elm.GND_SIG, elm.GND_CHASSIS, elm.VSS, elm.VDD, elm.ANT]
     drawElements(grounds, n=3, dy=3)
 
 
@@ -143,9 +143,9 @@ Potentiometer is defined with one additional anchor for the 'tap':
     :hide-code:
 
     d = SchemDraw.Drawing(fontsize=12)
-    P = d.add(e.POT, botlabel='POT')
+    P = d.add(elm.POT, botlabel='POT')
     P.add_label('tap', loc='tap')
-    d.add(e.GAP_LABEL, d='up', l=.5)
+    d.add(elm.GAP_LABEL, d='up', l=.5)
     d.draw()
 
 
@@ -155,12 +155,12 @@ BJT and FET transistors also define three anchors:
     :hide-code:
 
     d = SchemDraw.Drawing(fontsize=12)
-    bjt = d.add(e.BJT_NPN, xy=[0, 0], anchor='base')
+    bjt = d.add(elm.BJT_NPN, xy=[0, 0], anchor='base')
     bjt.add_label('base', loc='base', align=('right', 'center'), ofst=[-.1, 0])
     bjt.add_label('emitter', loc='emitter', align=('center', 'top'), ofst=-.2)
     bjt.add_label('collector', loc='collector')
 
-    fet = d.add(e.NFET, xy=[3, 0], anchor='gate', d='left')
+    fet = d.add(elm.NFET, xy=[3, 0], anchor='gate', d='left')
     fet.add_label('gate', loc='gate', ofst=[.1, 0], align=('right', 'center'))
     fet.add_label('source', loc='source', align=('center', 'bottom'), ofst=-.1)
     fet.add_label('drain', loc='drain', align=('center', 'top'))
@@ -171,21 +171,21 @@ Names of the different transistor elements are shown below:
 .. jupyter-execute::
     :hide-code:
 
-    bjt = [e.BJT,e.BJT_NPN,e.BJT_PNP,e.BJT_NPN_C,e.BJT_PNP_C,e.BJT_PNP_2C]
+    bjt = [elm.BJT,elm.BJT_NPN,elm.BJT_PNP,elm.BJT_NPN_C,elm.BJT_PNP_C,elm.BJT_PNP_2C]
     drawElements(bjt, n=3, dy=2.5, lblloc='top')
 
 .. jupyter-execute::
     :hide-code:
 
     d = SchemDraw.Drawing(fontsize=12)
-    d.add(e.NFET, label='NFET', lblloc='top')
-    d.add(e.PFET, label='PFET', lblloc='top', xy=[3,0] )
-    d.add(e.NFET4, label='NFET4', lblloc='top', xy=[6,0])
-    d.add(e.PFET4, label='PFET4', lblloc='top', xy=[9,0])
-    d.add(e.JFET_N, label='JFET_N', lblloc='top', xy=[0,-3])
-    d.add(e.JFET_P, label='JFET_N', lblloc='top', xy=[3,-3])
-    d.add(e.JFET_N_C, label='JFET_N_C', lblloc='top', xy=[6,-3])
-    d.add(e.JFET_P_C, label='JFET_N_C', lblloc='top', xy=[9,-3])
+    d.add(elm.NFET, label='NFET', lblloc='top')
+    d.add(elm.PFET, label='PFET', lblloc='top', xy=[3,0] )
+    d.add(elm.NFET4, label='NFET4', lblloc='top', xy=[6,0])
+    d.add(elm.PFET4, label='PFET4', lblloc='top', xy=[9,0])
+    d.add(elm.JFET_N, label='JFET_N', lblloc='top', xy=[0,-3])
+    d.add(elm.JFET_P, label='JFET_N', lblloc='top', xy=[3,-3])
+    d.add(elm.JFET_N_C, label='JFET_N_C', lblloc='top', xy=[6,-3])
+    d.add(elm.JFET_P_C, label='JFET_N_C', lblloc='top', xy=[9,-3])
     d.draw()
 
 An opamp defines anchors `in1`, `in2`, and `out`, plus `vd`, `vs` for supply voltages and `n1`, `n2`, `n1a`, `n2a` for offset inputs.
@@ -194,27 +194,27 @@ An opamp defines anchors `in1`, `in2`, and `out`, plus `vd`, `vs` for supply vol
     :hide-code:
     
     d = SchemDraw.Drawing(fontsize=12)
-    op = d.add( e.OPAMP, label='OPAMP', lblofst=.6)
-    d.add(e.LINE, xy=op.in1, d='left', l=.5, lftlabel='in1')
-    d.add(e.LINE, xy=op.in2, d='left', l=.5, lftlabel='in2')
-    d.add(e.LINE, xy=op.out, d='right', l=.5, rgtlabel='out')
-    d.add(e.LINE, xy=op.vd, d='up', l=.25, rgtlabel='vd')
-    d.add(e.LINE, xy=op.vs, d='down', l=.25, lftlabel='vs')    
-    d.add(e.LINE, xy=op.n2, d='up', l=.25, rgtlabel='n2')
-    d.add(e.LINE, xy=op.n1, d='down', l=.25, lftlabel='n1')    
-    d.add(e.LINE, xy=op.n2a, d='up', l=.22, rgtlabel='n2a', lblofst=0)
-    d.add(e.LINE, xy=op.n1a, d='down', l=.22, lftlabel='n1a', lblofst=0)    
+    op = d.add(elm.OPAMP, label='OPAMP', lblofst=.6)
+    d.add(elm.LINE, xy=op.in1, d='left', l=.5, lftlabel='in1')
+    d.add(elm.LINE, xy=op.in2, d='left', l=.5, lftlabel='in2')
+    d.add(elm.LINE, xy=op.out, d='right', l=.5, rgtlabel='out')
+    d.add(elm.LINE, xy=op.vd, d='up', l=.25, rgtlabel='vd')
+    d.add(elm.LINE, xy=op.vs, d='down', l=.25, lftlabel='vs')    
+    d.add(elm.LINE, xy=op.n2, d='up', l=.25, rgtlabel='n2')
+    d.add(elm.LINE, xy=op.n1, d='down', l=.25, lftlabel='n1')    
+    d.add(elm.LINE, xy=op.n2a, d='up', l=.22, rgtlabel='n2a', lblofst=0)
+    d.add(elm.LINE, xy=op.n1a, d='down', l=.22, lftlabel='n1a', lblofst=0)    
     
-    op2 = d.add(e.OPAMP_NOSIGN, xy=[5, 0], d='right', label='OPAMP_NOSIGN', lblofst=.6)
-    d.add(e.LINE, xy=op2.in1, d='left', l=.5, lftlabel='in1')
-    d.add(e.LINE, xy=op2.in2, d='left', l=.5, lftlabel='in2')
-    d.add(e.LINE, xy=op2.out, d='right', l=.5, rgtlabel='out')
-    d.add(e.LINE, xy=op2.vd, d='up', l=.25, rgtlabel='vd')
-    d.add(e.LINE, xy=op2.vs, d='down', l=.25, lftlabel='vs')    
-    d.add(e.LINE, xy=op2.n2, d='up', l=.25, rgtlabel='n2')
-    d.add(e.LINE, xy=op2.n1, d='down', l=.25, lftlabel='n1')    
-    d.add(e.LINE, xy=op2.n2a, d='up', l=.22, rgtlabel='n2a', lblofst=0)
-    d.add(e.LINE, xy=op2.n1a, d='down', l=.22, lftlabel='n1a', lblofst=0)      
+    op2 = d.add(elm.OPAMP_NOSIGN, xy=[5, 0], d='right', label='OPAMP_NOSIGN', lblofst=.6)
+    d.add(elm.LINE, xy=op2.in1, d='left', l=.5, lftlabel='in1')
+    d.add(elm.LINE, xy=op2.in2, d='left', l=.5, lftlabel='in2')
+    d.add(elm.LINE, xy=op2.out, d='right', l=.5, rgtlabel='out')
+    d.add(elm.LINE, xy=op2.vd, d='up', l=.25, rgtlabel='vd')
+    d.add(elm.LINE, xy=op2.vs, d='down', l=.25, lftlabel='vs')    
+    d.add(elm.LINE, xy=op2.n2, d='up', l=.25, rgtlabel='n2')
+    d.add(elm.LINE, xy=op2.n1, d='down', l=.25, lftlabel='n1')    
+    d.add(elm.LINE, xy=op2.n2a, d='up', l=.22, rgtlabel='n2a', lblofst=0)
+    d.add(elm.LINE, xy=op2.n1a, d='down', l=.22, lftlabel='n1a', lblofst=0)      
     d.draw()
 
 
@@ -250,17 +250,17 @@ and `s1` and `s2` for the secondary (right) side.
     :hide-code:
 
     d = SchemDraw.Drawing()
-    x = d.add(e.transformer(6,3, core=True, loop=False))
-    d.add(e.LINE, xy=x.s1, l=d.unit/4)
-    d.add(e.LINE, xy=x.s2, l=d.unit/4)
-    d.add(e.LINE, xy=x.p1, l=d.unit/4, d='left')
-    d.add(e.LINE, xy=x.p2, l=d.unit/4, d='left')
+    x = d.add(elm.transformer(6,3, core=True, loop=False))
+    d.add(elm.LINE, xy=x.s1, l=d.unit/4)
+    d.add(elm.LINE, xy=x.s2, l=d.unit/4)
+    d.add(elm.LINE, xy=x.p1, l=d.unit/4, d='left')
+    d.add(elm.LINE, xy=x.p2, l=d.unit/4, d='left')
 
-    x2 = d.add(e.transformer(6,3, core=False, loop=True), d='right', xy=(4,0))
-    d.add(e.LINE, xy=x2.s1, l=d.unit/4, d='right')
-    d.add(e.LINE, xy=x2.s2, l=d.unit/4, d='right')
-    d.add(e.LINE, xy=x2.p1, l=d.unit/4, d='left')
-    d.add(e.LINE, xy=x2.p2, l=d.unit/4, d='left')
+    x2 = d.add(elm.transformer(6, 3, core=False, loop=True), d='right', xy=(4,0))
+    d.add(elm.LINE, xy=x2.s1, l=d.unit/4, d='right')
+    d.add(elm.LINE, xy=x2.s2, l=d.unit/4, d='right')
+    d.add(elm.LINE, xy=x2.p1, l=d.unit/4, d='left')
+    d.add(elm.LINE, xy=x2.p2, l=d.unit/4, d='left')
     d.draw()
 
 Example usage with taps:
@@ -268,12 +268,12 @@ Example usage with taps:
 .. jupyter-execute::
 
     d = SchemDraw.Drawing()
-    xf = d.add( e.transformer(t1=4, t2=8, rtaps={'B':3}, loop=False ) )
-    d.add(e.LINE, xy=xf.s1, l=d.unit/4, rgtlabel='s1')
-    d.add(e.LINE, xy=xf.s2, l=d.unit/4, rgtlabel='s2')
-    d.add(e.LINE, xy=xf.p1, l=d.unit/4, d='left', lftlabel='p1')
-    d.add(e.LINE, xy=xf.p2, l=d.unit/4, d='left', lftlabel='p2')
-    d.add(e.LINE, xy=xf.B, l=d.unit/2, d='right', rgtlabel='B')
+    xf = d.add(elm.transformer(t1=4, t2=8, rtaps={'B':3}, loop=False ) )
+    d.add(elm.LINE, xy=xf.s1, l=d.unit/4, rgtlabel='s1')
+    d.add(elm.LINE, xy=xf.s2, l=d.unit/4, rgtlabel='s2')
+    d.add(elm.LINE, xy=xf.p1, l=d.unit/4, d='left', lftlabel='p1')
+    d.add(elm.LINE, xy=xf.p2, l=d.unit/4, d='left', lftlabel='p2')
+    d.add(elm.LINE, xy=xf.B, l=d.unit/2, d='right', rgtlabel='B')
     d.draw()
 
 
@@ -326,13 +326,13 @@ Here, a J-K flip flop, as part of an HC7476 integrated circuit, is drawn with in
 
     linputs = {'labels':['>', 'K', 'J'], 'plabels':['1', '16', '4']}
     rinputs = {'labels':['$\overline{Q}$', 'Q'], 'plabels':['14', '15']}
-    JKdef = e.ic({'name': '>', 'pin': '1', 'side': 'left'},
-                 {'name': 'K', 'pin': '16', 'side': 'left'},
-                 {'name': 'J', 'pin': '4', 'side': 'left'},
-                 {'name': '$\overline{Q}$', 'pin': '14', 'side': 'right', 'anchorname': 'QBAR'},
-                 {'name': 'Q', 'pin': '15', 'side': 'right'},
-                 edgepadW = .5  # Make it a bit wider
-                 )
+    JKdef = elm.ic({'name': '>', 'pin': '1', 'side': 'left'},
+                   {'name': 'K', 'pin': '16', 'side': 'left'},
+                   {'name': 'J', 'pin': '4', 'side': 'left'},
+                   {'name': '$\overline{Q}$', 'pin': '14', 'side': 'right', 'anchorname': 'QBAR'},
+                   {'name': 'Q', 'pin': '15', 'side': 'right'},
+                   edgepadW = .5  # Make it a bit wider
+                   )
     JK = d.add(JKdef, label='HC7476', lblsize=12, lblofst=.5)
 
 .. jupyter-execute::
@@ -371,16 +371,15 @@ Multiplexers and demultiplexers may be drawn using the :py:func:`SchemDraw.eleme
 .. jupyter-execute::
     :hide-output:
 
-    m1 = e.multiplexer({'name': 'C', 'side': 'L'},
-                       {'name': 'B', 'side': 'L'},
-                       {'name': 'A', 'side': 'L'},
-                       {'name': 'Q', 'side': 'R'},
-                       {'name': 'T', 'side': 'B', 'invert':True},
-                       edgepadH=-.5)
+    m1 = elm.multiplexer({'name': 'C', 'side': 'L'},
+                         {'name': 'B', 'side': 'L'},
+                         {'name': 'A', 'side': 'L'},
+                         {'name': 'Q', 'side': 'R'},
+                         {'name': 'T', 'side': 'B', 'invert':True},
+                         edgepadH=-.5)
     d.add(m1)
 
 .. jupyter-execute::
     :hide-code:
     
     d.draw()
-

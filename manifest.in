@@ -1,2 +1,0 @@
-include *.txt *.md
-recursive-include docs *.txt *.html *.md *.png *.ipynb *.svg

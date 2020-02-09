@@ -1125,7 +1125,7 @@ class Element(object):
         elif theta is not None:
             self.theta = theta
         elif direction is not None:
-            self.theta = {'up': 90, 'right': 0, 'left': 180, 'down': 270}[direction]
+            self.theta = {'u': 90, 'r': 0, 'l': 180, 'd': 270}[direction[0].lower()]
         elif to is not None:
             self.theta = _angle(xy, to)
         else:

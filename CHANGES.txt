@@ -1,3 +1,30 @@
+v0.6.0, IN PROGRESS
+    - Possibly breaking changes:
+        - Refactored internals to allow more control over individual components of drawing.
+          Should have no effect unless the user is accessing internal attributes of the Element object.
+          This also adds the `segments` list to the Element object, which allows finer control over 
+          individual bits of the drawing.
+        - Updated add_label so that "top" labels should always appear on top, regardless of flip/reverse
+        - Swapped the direction of current sources, so that a current source with direction "up" has the
+          arrow pointing up.
+
+    - Enhancements:
+        - Added "zorder" parameter in the element definition dictionary and `add` method
+        - Added `elements.ic` and `elements.multiplexer` functions as replacements to `blackbox` and `mux`.
+          These include more functionality such as adjusting indiviudal pin rotation, color, and inverter bubbles.
+        - Labels can be placed relative to an anchor position using the `add_label` method. This could be
+          useful, for example, in labeling pin numbers on a logic gate or opamp.
+        
+    - Circuit Elements:
+        - Added: MIC, MOTOR
+        - Added new anchors to OPAMPs for power supply and offset nulls.
+
+    - Documentation:
+        - Upgraded documentation to Sphinx and moved to readthedocs.org at https://schemdraw.readthedocs.io/en/latest/.
+        - Changed preferred import to `import SchemDraw.elements as elm`. Apparently some people still
+          use import * with pylab; this suggestion will help avoid conflicts.        
+
+
 v0.5.0, 21-Jul-2019
     - Added flowcharting symbol methods to SchemDraw.flow module
     - Added signal processing symbols to SchemDraw.dsp module

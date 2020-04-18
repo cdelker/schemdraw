@@ -1793,7 +1793,7 @@ def blackbox(w, h, linputs=None, rinputs=None, tinputs=None, binputs=None,
     return box
 
 
-def multiplexer(*pins, demux=False, **kwargs):
+def multiplexer(*pins, **kwargs):
     ''' Draw a multiplexer or demultiplexer.
     
         Parameters
@@ -1805,10 +1805,13 @@ def multiplexer(*pins, demux=False, **kwargs):
         -----------------
         demux: bool
             Draw demultiplexer (opposite slope)
+        slant: float
+            Angle to slant top/bottom edges
         **kwargs:
             See IC method.
     '''
     slant = kwargs.pop('slant', 25)
+    demux = kwargs.pop('demux', False)
     slant = -slant if not demux else slant
     return ic(*pins, slant=slant, **kwargs)
 

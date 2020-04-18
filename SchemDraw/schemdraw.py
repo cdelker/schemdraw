@@ -882,7 +882,7 @@ class SegmentText(object):
         self.text = label
         self.xy = transform.transform(self._xy)
         self.align = kwargs.get('align', ('center', 'center'))
-        self.fontsize = kwargs.get('size', 14)
+        self.fontsize = kwargs.get('fontsize', kwargs.get('size', 14))
         self.color = kwargs.get('color', 'black')
         self.rotation = kwargs.get('rotation', 0)
         self.rotation_mode = kwargs.get('rotation_mode', 'anchor')  # 'anchor' or 'default'
@@ -915,7 +915,7 @@ class SegmentText(object):
         ax.text(self.xy[0], self.xy[1], self.text, transform=ax.transData,
                 color=self.color, fontsize=self.fontsize, rotation=self.rotation,
                 horizontalalignment=self.align[0], verticalalignment=self.align[1],
-                zorder=self.zorder, rotation_mode=self.rotation_mode)##rotation_mode='anchor')
+                zorder=self.zorder, rotation_mode=self.rotation_mode)
 
 
 def _reversedef(elmdef, flip, reverse):
@@ -1346,7 +1346,7 @@ class Element(object):
                 
             Keyword Arguments
             -----------------
-            size : float
+            fontsize : float
                 Font size
             color: string
                 Matplotlib color
@@ -1410,7 +1410,7 @@ class Element(object):
         ymax = self.ymax
         ymin = self.ymin
 
-        size = kwargs.get('size', self.drawing.fontsize)
+        size = kwargs.get('fontsize', kwargs.get('size', self.drawing.fontsize))
 
         lblparams = self.drawing.params.copy()
         lblparams.update(self.userparams)

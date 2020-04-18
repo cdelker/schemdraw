@@ -128,7 +128,7 @@ def decision(w=4, h=2, responses=None):
                      'E': ('left', 'bottom'),
                      'W': ('right', 'bottom'),
                     }.get(loc)
-            labels.append({'label': val, 'pos': pos, 'align': align})
+            labels.append({'label': val, 'pos': pos, 'align': align, 'rotation': 90})
         elem['labels'] = labels
     return elem
 

@@ -4,7 +4,7 @@ electrical elements to accomodate connections from any direction.
 
 import numpy as _np
 
-from .elements import ARROWHEAD, ANT, LINE, DOT, blackbox, mux
+from .elements import ARROWHEAD, ANT, LINE, DOT, ic, multiplexer
 from .flow import box as makebox
 
 
@@ -153,6 +153,6 @@ DEMOD = {
     'base': BOX,
     'paths': [[[.15, 0], [.85, 0]],
               [[.7, .25], [.7, -.25]]],
-    'shapes': [{'shape': 'poly', 'fill': True,
+    'shapes': [{'shape': 'poly', 'fill': True, 'zorder': 3,
                'xy': [[.7, 0], [.3, .25], [.3, -.25]]}]
     }

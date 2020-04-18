@@ -319,14 +319,14 @@ Several other `add` arguments control the behavior of labels:
 For more control over label behavior, use the :py:meth:`SchemDraw.Element.add_label` method.
 Labels can be added at arbitrary positions with any alignment.
 
-.. method:: SchemDraw.Element.add_label(label, loc='top', ofst=None, align=None, size=None, rotation=0)
+.. method:: SchemDraw.Element.add_label(label, loc='top', ofst=None, align=None, fontsize=None, rotation=0)
 
     :param label: label to add
     :type label: string
     :param loc: label position with respect to element: ['top', 'bot', 'lft' 'rgt', 'center'], or name of an anchor defined in this element
     :param ofst: offset between element and label. Can be (x,y) list for 'center' or anchor loc, float otherwise
     :param align: label alignment as tuple of (horizontal, vertical). Horizontal can be ['center', 'left', 'right'], and vertical ['center', 'top', 'bottom']
-    :param size: font size for label
+    :param fontsize: font size for label
     :param rotation: rotation angle, in degrees
     :type rotation: float
 

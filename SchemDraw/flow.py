@@ -5,7 +5,7 @@ connections from any direction.
 
 import numpy as _np
 
-from .elements import ARROWHEAD, LINE, DOT
+from .elements import ARROWHEAD, LINE, DOT, ARROW, ARROW_DOUBLE, LINE_DOT, LINE_DOT_DOUBLE, LINE_DOT_OPEN, LINE_DOT_OPEN_DOUBLE
 
 
 def box(w=3, h=2):
@@ -90,13 +90,15 @@ def start(w=3, h=2):
     t = _np.linspace(0, _np.pi*2, num=50)
     y = (w/2) * _np.cos(t)
     x = (h/2) * _np.sin(t) + h/2
+    x[-1] = x[0]
+    y[-1] = y[0]  # Ensure the path is actually closed
     elem['paths'] = [_np.transpose(_np.vstack((x, y)))]
     elem['anchors'] = {'W': [h/2, -w/2], 'E': [h/2, w/2], 'S': [h, 0], 'N': [0, 0]}
     elem['drop'] = [h, 0]
     return elem
 
 
-def decision(w=4, h=2, responses=None):
+def decision(w=4, h=2, **kwargs):
     ''' Create decision block (diamond)
         
         Parameters
@@ -105,9 +107,11 @@ def decision(w=4, h=2, responses=None):
             Width of diamond
         h: float
             Height of diamond
-        responses: dict
-            Dictionary of responses to label at each point of diamond.
-            Keys are 'N', 'S', 'E', 'W'. Example: {'E': 'Yes', 'W': 'No'}
+
+        Keyword Arguments
+        -----------------
+        N, E, S, W: strings
+            Label for each point of the diamond. Example: E='Yes', S='No'
         
         Anchors: N, S, E, W
     '''
@@ -115,21 +119,22 @@ def decision(w=4, h=2, responses=None):
     elem['paths'] = [[[0, 0], [h/2, w/2], [h, 0], [h/2, -w/2], [0, 0]]]
     elem['anchors'] = {'W': [h/2, -w/2], 'E': [h/2, w/2], 'S': [h, 0], 'N': [0, 0]}
     elem['drop'] = [h, 0]
-    if responses:
-        labels = []
-        for loc, val in responses.items():
-            lblofst = .13
-            pos = {'N': [0, lblofst],
-                   'S': [h, lblofst],
-                   'E': [h/2, w/2+lblofst],
-                   'W': [h/2, -w/2-lblofst]}.get(loc)
-            align = {'N': ('left', 'bottom'),
-                     'S': ('left', 'top'),
-                     'E': ('left', 'bottom'),
-                     'W': ('right', 'bottom'),
-                    }.get(loc)
-            labels.append({'label': val, 'pos': pos, 'align': align, 'rotation': 90})
-        elem['labels'] = labels
+    labels = []
+    if 'responses' in kwargs:
+        kwargs = kwargs.get('responses')  # compatibility with 0.6 that used single dictionary
+    for loc, val in kwargs.items():
+        lblofst = .13
+        pos = {'N': [0, lblofst],
+               'S': [h, lblofst],
+               'E': [h/2, w/2+lblofst],
+               'W': [h/2, -w/2-lblofst]}.get(loc)
+        align = {'N': ('left', 'bottom'),
+                 'S': ('left', 'top'),
+                 'E': ('left', 'bottom'),
+                 'W': ('right', 'bottom'),
+                }.get(loc)
+        labels.append({'label': val, 'pos': pos, 'align': align, 'rotation': 90})
+    elem['labels'] = labels
     return elem
 
 

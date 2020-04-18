@@ -31,7 +31,7 @@ LINE elements. The square elements define anchors 'N', 'S', 'E', and 'W' for
 the four directions. Circle-based elements also includ 'NE', 'NW', 'SE', and 'SW'
 anchors. Other elements, such as AMP, define 'in' and 'out' anchors when appropriate.
 
-The ARROWHEAD basic circuit element is useful to show signal flow.
+The ARROW, ARROW_DOUBLE, and ARROWHEAD basic circuit elements are useful to show signal flow.
 
 .. jupyter-execute::
     :hide-code:

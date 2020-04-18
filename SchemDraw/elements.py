@@ -489,6 +489,73 @@ ARROWHEAD = {
     'extend': False
     }
 
+LINE = {'name': 'LINE', 'paths': [_np.array([[0, 0]])]}
+
+ARROW = {'name': 'ARROW',
+         'paths': [_np.array([[0, 0]])],
+         'shapes': [{'shape': 'arrow', 'start': [-.3, 0], 'end': [0, 0],   # Shapes to draw AFTER lead extension
+                     'headwidth': .3, 'headlength': .3, 'leadext': 'end'}],
+        }
+
+ARROW_DOUBLE = {'name': 'ARROW_DOUBLE',
+                'paths': [_np.array([[0, 0]])],
+                'shapes': [{'shape': 'arrow', 'start': [-.3, 0], 'end': [0, 0],   # Shapes to draw AFTER lead extension
+                            'headwidth': .3, 'headlength': .3, 'leadext': 'end'},
+                           {'shape': 'arrow', 'start': [.3, 0], 'end': [0, 0],   # Shapes to draw AFTER lead extension
+                            'headwidth': .3, 'headlength': .3, 'leadext': 'start'}],
+               }
+
+LINE_DOT = {'name': 'LINE_DOT',
+            'paths': [_np.array([[0, 0]])],
+            'shapes': [{'shape': 'circle',
+                        'center': [0, 0],
+                        'radius':_dotr,
+                        'fill': True,
+                        'fillcolor': 'black',
+                        'leadext': 'end'}]}
+
+LINE_DOT_DOUBLE = {'name': 'LINE_DOT_DOUBLE',
+                   'paths': [_np.array([[0, 0]])],
+                   'shapes': [{'shape': 'circle',
+                               'center': [0, 0],
+                               'radius':_dotr,
+                               'fill': True,
+                               'fillcolor': 'black',
+                               'leadext': 'end'},
+                             {'shape': 'circle',
+                               'center': [0, 0],
+                               'radius':_dotr,
+                               'fill': True,
+                               'fillcolor': 'black',
+                               'leadext': 'start'}]}
+
+LINE_DOT_OPEN = {'name': 'LINE_DOT',
+                 'paths': [_np.array([[0, 0]])],
+                 'shapes': [{'shape': 'circle',
+                             'center': [0, 0],
+                             'radius':_dotr,
+                             'fill': True,
+                             'fillcolor': 'white',
+                             'zorder': 4,                             
+                             'leadext': 'end'}]}
+
+LINE_DOT_OPEN_DOUBLE = {'name': 'LINE_DOT_DOUBLE',
+                        'paths': [_np.array([[0, 0]])],
+                        'shapes': [{'shape': 'circle',
+                                    'center': [0, 0],
+                                    'radius':_dotr,
+                                    'fill': True,
+                                    'fillcolor': 'white',
+                                    'zorder': 4,                                    
+                                    'leadext': 'end'},
+                                   {'shape': 'circle',
+                                    'center': [0, 0],
+                                    'radius':_dotr,
+                                    'fill': True,
+                                    'fillcolor': 'white',
+                                    'zorder': 4,
+                                    'leadext': 'start'}]}
+
 ELLIPSIS = {
     'name': 'ELLIPSIS',
     'shapes': [{'shape': 'circle',
@@ -509,8 +576,6 @@ ELLIPSIS = {
     'extend': False,
     'drop': [2, 0]
     }
-
-LINE = {'name': 'LINE', 'paths': [_np.array([[0, 0]])]}
 
 # Label centered over a gap
 GAP_LABEL = {
@@ -1818,7 +1883,7 @@ def blackbox(w, h, linputs=None, rinputs=None, tinputs=None, binputs=None,
     return box
 
 
-def multiplexer(*pins, demux=False, **kwargs):
+def multiplexer(*pins, **kwargs):
     ''' Draw a multiplexer or demultiplexer.
     
         Parameters
@@ -1830,10 +1895,13 @@ def multiplexer(*pins, demux=False, **kwargs):
         -----------------
         demux: bool
             Draw demultiplexer (opposite slope)
+        slant: float
+            Angle to slant top/bottom edges
         **kwargs:
             See IC method.
     '''
     slant = kwargs.pop('slant', 25)
+    demux = kwargs.pop('demux', False)
     slant = -slant if not demux else slant
     return ic(*pins, slant=slant, **kwargs)
 

@@ -83,13 +83,15 @@ Flowchart blocks:
    :rtype: dict
    :returns: element definition dictionary
 
-.. function:: SchemDraw.flow.decision(w=4, h=2, responses=None)
+.. function:: SchemDraw.flow.decision(w=4, h=2, **kwargs)
    
    Flowchart decision block (diamond)
    
    :param w: width
    :param h: height
-   :param responses: Dictionary of responses to label at each point of diamond. Keys are 'N', 'S', 'E', 'W'. Example: {'E': 'Yes', 'W': 'No'}
+   
+   :Keyword Arguments:
+        * **N, S, E, W**: (string) Label for each point of diamond. Example: E='Yes', S='No'
    :rtype: dict
    :returns: element definition dictionary
 
@@ -99,15 +101,14 @@ four directions. The :py:func:`SchemDraw.elements.ic` function can be used with 
 to create blocks with multiple inputs/outputs per side if needed.
 
 Flowchart elements do not have "leads" like electrical elements, so they 
-must be connected with LINE elements. The ARROWHEAD element can be used to
-show flow direction. The `w` and `h` parameters must be manually specified to size each block to fit any labels.
+must be connected with LINE, ARROW, or ARROW_DOUBLE elements. The `w` and `h` parameters must be manually specified to size each block to fit any labels.
 
 
 Decisions
 ---------
 
-To label the decision branches, the :py:func:`SchemDraw.flow.decision` function takes the
-`responses` parameter, a dictionary of responses for each direction. For example:
+To label the decision branches, the :py:func:`SchemDraw.flow.decision` function takes keyword
+arguments for each cardinal direction. For example:
 
 
 .. jupyter-execute::
@@ -117,7 +118,7 @@ To label the decision branches, the :py:func:`SchemDraw.flow.decision` function 
 
 .. jupyter-execute::
 
-    decision = flow.decision(responses={'W': 'Yes', 'E': 'No', 'S': 'Maybe'})
+    decision = flow.decision(W='Yes', E='No', S='Maybe')
     
 
 .. jupyter-execute::

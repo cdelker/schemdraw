@@ -105,16 +105,22 @@ The microphone and speaker have anchors `in1` and `in2`.
 Lines, Dots, Arrows
 -------------------
 
+Most electrical schematics simply use LINE and DOT. The ARROW elements are useful for flowcharts and signal processing diagrams.
+
 .. jupyter-execute::
     :hide-code:
 
     d = SchemDraw.Drawing(fontsize=12)
-    d.add(elm.LINE, l=4, label='LINE')
-    d.add(elm.DOT, label='DOT')
-    d.add(elm.LINE, l=2)
-    d.add(elm.DOT_OPEN, label='DOT_OPEN')
-    d.add(elm.LINE, l=3)
-    d.add(elm.ARROWHEAD, label='ARROWHEAD')
+    d.add(elm.LINE, l=3, label='LINE', lblofst=.4)
+    d.add(elm.ARROWHEAD, xy=[5, 0], label='ARROWHEAD', lblofst=.4)
+    d.add(elm.DOT, xy=[7, 0], label='DOT', lblofst=.4)
+    d.add(elm.DOT_OPEN, xy=[9, 0], label='DOT_OPEN', lblofst=.4)
+    d.add(elm.ARROW, xy=[0, -1.7], label='ARROW', lblofst=.4)
+    d.add(elm.ARROW_DOUBLE, xy=[4, -1.7], label='ARROW_DOUBLE', lblofst=.4)
+    d.add(elm.LINE_DOT, xy=[0, -3.4], label='LINE_DOT', lblofst=.4)
+    d.add(elm.LINE_DOT_DOUBLE, xy=[4, -3.4], label='LINE_DOT_DOUBLE', lblofst=.4)
+    d.add(elm.LINE_DOT_OPEN, xy=[0, -5.1], label='LINE_DOT_OPEN', lblofst=.4)
+    d.add(elm.LINE_DOT_OPEN_DOUBLE, xy=[4.5, -5.1], label='LINE_DOT_OPEN_DOUBLE', lblofst=.4)
     d.draw()
 
 

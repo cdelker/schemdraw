@@ -1,0 +1,39 @@
+{% set name = "SchemDraw" %}
+{% set version = "0.6.1" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: "{{ version }}"
+
+source:
+  url: "https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz"
+  sha256: "02da30ba85846e010bac703cee4c2c89d4c8355a1966365790a565306229cc43"
+
+build:
+  number: 0
+  script: "{{ PYTHON }} -m pip install . --no-deps --ignore-installed -vv "
+
+requirements:
+  host:
+    - matplotlib
+    - numpy
+    - pip
+    - python
+  run:
+    - matplotlib
+    - numpy
+    - python
+
+test:
+  imports:
+    - SchemDraw
+
+about:
+  home: "http://cdelker.bitbucket.io/SchemDraw"
+  license: "MIT"
+  license_family: "MIT"
+  license_file: ""
+  summary: "Electrical circuit schematic drawing"
+  doc_url: ""
+  dev_url: ""
+

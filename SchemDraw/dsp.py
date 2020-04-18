@@ -4,7 +4,7 @@ electrical elements to accomodate connections from any direction.
 
 import numpy as _np
 
-from .elements import ARROWHEAD, ANT, LINE, DOT, ic, multiplexer
+from .elements import ARROWHEAD, ANT, LINE, DOT, ic, multiplexer, ARROW, ARROW_DOUBLE, LINE_DOT, LINE_DOT_DOUBLE, LINE_DOT_OPEN, LINE_DOT_OPEN_DOUBLE
 from .flow import box as makebox
 
 

@@ -1216,23 +1216,28 @@ class Element(object):
             # Apply defaults or user orverride to shape parameters
             shapeargs = self._setup_params(shape)
             shapetype = shapeargs.pop('shape', None)
+            extend = shapeargs.pop('leadext', 0)
+            if extend == 'start':
+                extend = start
+            elif extend == 'end':
+                extend = end
 
             # Adjust xy based on leadofst before adding segment
             if shapetype == 'circle':
-                shapeargs['center'] = np.asarray(shapeargs.get('center', [0, 0])) - leadofst
+                shapeargs['center'] = np.asarray(shapeargs.get('center', [0, 0])) - leadofst + extend
                 self.segments.append(SegmentCircle(transform=self.transform, **shapeargs))
 
             elif shapetype == 'poly':
-                shapeargs['xy'] = np.asarray(shapeargs.get('xy', [0, 0])) - leadofst
+                shapeargs['xy'] = np.asarray(shapeargs.get('xy', [0, 0])) - leadofst + extend
                 self.segments.append(SegmentPoly(transform=self.transform, **shapeargs))
 
             elif shapetype == 'arrow':
-                shapeargs['start'] = np.asarray(shapeargs.get('start', [0, 0])) - leadofst
-                shapeargs['end'] = np.asarray(shapeargs.get('end', [1, 0])) - leadofst
+                shapeargs['start'] = np.asarray(shapeargs.get('start', [0, 0])) - leadofst + extend
+                shapeargs['end'] = np.asarray(shapeargs.get('end', [1, 0])) - leadofst + extend
                 self.segments.append(SegmentArrow(transform=self.transform, **shapeargs))
 
             elif shapetype == 'arc':
-                shapeargs['center'] = np.asarray(shapeargs.get('center', [0, 0])) - leadofst
+                shapeargs['center'] = np.asarray(shapeargs.get('center', [0, 0])) - leadofst + extend
                 shapeargs.setdefault('angle', self.theta)
                 self.segments.append(SegmentArc(transform=self.transform, reverse=self.reverse, **shapeargs))
 

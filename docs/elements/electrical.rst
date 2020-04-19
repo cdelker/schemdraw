@@ -224,6 +224,61 @@ An opamp defines anchors `in1`, `in2`, and `out`, plus `vd`, `vs` for supply vol
     d.draw()
 
 
+Cables
+------
+
+Out of the box, COAX and TRIAX elements are avaiable:
+
+.. jupyter-execute::
+    :hide-code:
+    
+    elms = [elm.COAX, elm.TRIAX]
+    drawElements(elms, n=2)
+
+In addition to `start` and `end`, the COAX element has anchors `shieldstart`, `shieldcenter`, `shieldend`,
+and `shieldstart_top`, `shieldcenter_top`, and `shieldend_top`. The TRIAX element has the same anchors (with
+the shield being the outermost shell), plus `guardstart`, `guardend`, `guardstart_top`, and `guardend_top`. To customize or change lengths of these elements,
+the :py:func:`SchemDraw.elements.coax` and :py:func:`SchemDraw.elements.triax` methods can be used.
+
+.. function:: SchemDraw.elements.coax(length=3, radius=0.3, leadlen=0.6)
+
+    Make a coaxial cable element
+    
+    :param length: total length of the cable
+    :type length: float
+    :param radius: radius of shield
+    :type radius: float
+    :param leadlen: X-distance from start of element to start of center conductor to start of shield
+    :type leadlen: float
+    :returns: element definition
+    :rtype: dict
+    
+.. function:: SchemDraw.elements.triax(length=3, radiusinner=0.3, radiusouter=0.6, leadlen=0.6, shieldofststart=.3, shieldofstend=.45)
+
+    Make a triaxial cable element
+    
+    :param length: total length of the cable
+    :type length: float
+    :param radiusinner: radius of inner/guard
+    :type radiusinner: float
+    :param radiusouter: radius of outer/shield
+    :type radiusouter: float
+    :param leadlen: X-distance from start of element to start of center conductor to start of guard
+    :param shieldofststart: distance from start of inner guard to start of outer shield
+    :param shieldofstend: distance from end of outer shield to end of inner guard
+    :returns: element definition
+    :rtype: dict
+    
+For example, a triax with the shield covering only part of the cable, and a ground on the shield:
+
+.. jupyter-execute::
+
+    d = SchemDraw.Drawing()
+    t = d.add(elm.triax(length=6, shieldofststart=2))
+    d.add(elm.GND, xy=t.shieldend)
+    d.draw()
+
+
 Transformers
 ------------
 

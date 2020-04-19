@@ -1180,11 +1180,16 @@ class Element(object):
                 totlen = _distance(self.shift, endpt)
 
             lead_len = (totlen - in_len)/2
-            start = in_path[0] - np.array([lead_len, 0])
-            end = in_path[-1] + np.array([lead_len, 0])
-            leadofst = start
-            p = np.vstack((start, in_path, end))
-            self.path_def[-1] = p  # Put the modified path into pathdef
+            if lead_len > 0:  # Don't make element shorter
+                start = in_path[0] - np.array([lead_len, 0])
+                end = in_path[-1] + np.array([lead_len, 0])
+                leadofst = start
+                p = np.vstack((start, in_path, end))
+                self.path_def[-1] = p  # Put the modified path into pathdef
+            else:
+                start = self.path_def[-1][0]
+                end = self.path_def[-1][-1]
+                leadofst = 0
 
         else:  # Don't extend leads
             start = self.path_def[-1][0]

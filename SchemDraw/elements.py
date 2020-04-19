@@ -635,6 +635,8 @@ GND_CHASSIS = {
     'theta': 0
     }
 
+
+
 # antenna
 _ant_lead = 0.6
 _ant_h = 0.6
@@ -670,6 +672,113 @@ VDD = {
     'extend': False,
     'theta': 0
     }
+
+
+def coax(length=3, radius=0.3, leadlen=0.6):
+    ''' Make a coaxial cable element
+    
+        Parameters
+        ----------
+        length: float
+            Total length of the cable
+        radius: float
+            Radius of shield
+        leadlen: float
+            Distance (x) from start of center conductor to
+            start of shield.
+    '''
+    coax = {'name': 'COAX',
+            'paths': [[[leadlen, radius], [length-leadlen, radius]],    # Top
+                      [[leadlen, -radius], [length-leadlen, -radius]],  # Bottom
+                      [[0, 0], [leadlen, 0], _gap, [length-leadlen+radius/2, 0], [length, 0]]],  # Center conductor
+            'shapes': [{'shape': 'arc', 'center': [leadlen, 0], 'width': radius, 'height': radius*2, 'theta1': 0, 'theta2': 360},
+                       {'shape': 'arc', 'center': [length-leadlen, 0], 'width': radius, 'height': radius*2, 'theta1': 270, 'theta2': 90}],
+            'anchors': {'shieldstart': [leadlen, -radius],
+                        'shieldstart_top': [leadlen, radius],
+                        'shieldend': [length-leadlen, -radius],
+                        'shieldend_top': [length-leadlen, radius],
+                        'shieldcenter': [length/2, -radius],
+                        'shieldcenter_top': [length/2, radius]}
+           }
+    
+    if radius/2 > leadlen:
+        warnings.warn('Coax leadlen < radius/2. Coax may be malformed.')
+    if leadlen*2 > length:
+        warnings.warn('Coax length < 2*leadlen. Coax may be malformed.')
+        
+    return coax
+COAX = coax()
+
+
+def triax(length=3, radiusinner=0.3, radiusouter=0.6, leadlen=0.6, shieldofststart=.3, shieldofstend=.45):
+    ''' Make a triaxial cable element
+    
+        Parameters
+        ----------
+        length: float
+            Total length of the cable
+        radiusinner: float
+            Radius of inner guard
+        radiusouter: float
+            Radius of outer shield
+        leadlen: float
+            Distance (x) from start of center conductor to
+            start of guard.
+        shieldofststart: float
+            Distance from start of inner guard to start of outer shield
+        shieldofstend: float
+            Distance from end of outer shield to end of inner guard
+    '''
+    if radiusouter < radiusinner:
+        raise ValueError('Triax inner radius > outer radius')
+    
+    xshield = radiusouter/2 * _np.sqrt(1 - radiusinner**2/radiusouter**2)
+    if shieldofststart - xshield > -radiusinner/2:
+        thetashield = 180 - _np.rad2deg(_np.arctan2(radiusinner, xshield))
+    else:
+        thetashield = 180
+
+    # Start with shapes that are always shown...
+    triax = {'name': 'TRIAX',
+             'paths': [[[leadlen, radiusinner], [leadlen+shieldofststart+xshield, radiusinner]], # guard (inner) top/left
+                      [[leadlen, -radiusinner], [leadlen+shieldofststart+xshield, -radiusinner]],  # guard (inner) bottom/left
+                      [[leadlen+shieldofststart, radiusouter], [length-leadlen-shieldofstend, radiusouter]],    # shield (outer) top
+                      [[leadlen+shieldofststart, -radiusouter], [length-leadlen-shieldofstend, -radiusouter]]],    # shield (outer) bottom
+             'shapes': [{'shape': 'arc', 'center': [leadlen, 0], 'width': radiusinner, 'height': radiusinner*2, 'theta1': 0, 'theta2': 360},
+                        {'shape': 'arc', 'center': [leadlen+shieldofststart, 0], 'width': radiusouter, 'height': radiusouter*2, 'theta1': -thetashield, 'theta2': thetashield},                       
+                        {'shape': 'arc', 'center': [length-leadlen-shieldofstend, 0], 'width': radiusouter, 'height': radiusouter*2, 'theta1': 270, 'theta2': 90}],                      
+             'anchors': {'guardstart': [leadlen, -radiusinner],
+                         'guardstart_top': [leadlen, radiusinner],
+                         'guardend': [length-leadlen, -radiusinner],
+                         'guardend_top': [length-leadlen, radiusinner],
+                         'shieldstart': [leadlen+shieldofststart, -radiusouter],
+                         'shieldstart_top': [leadlen+shieldofststart, radiusouter],
+                         'shieldend': [length-leadlen-shieldofstend, -radiusouter],
+                         'shieldend_top': [length-leadlen-shieldofstend, radiusouter],
+                         'shieldcenter': [length/2, -radiusouter],
+                         'shieldcenter_top': [length/2, radiusouter]},
+             'lblofst': -.4,
+             }
+
+    # ... and add shapes on the end of cable if visible
+    if length - leadlen - shieldofstend + radiusouter < length:
+        # Include the inner guard on output side
+        triax['paths'].append([[0, 0], [leadlen, 0], _gap, [length-leadlen+radiusinner/2, 0], [length, 0]])  # Center conductor
+        triax['paths'].insert(1, [[length-leadlen-shieldofstend+xshield, radiusinner], [length-leadlen, radiusinner]])    # guard (inner) top/right
+        triax['paths'].insert(1, [[length-leadlen-shieldofstend+xshield, -radiusinner], [length-leadlen, -radiusinner]])  # guard (inner) bottom/right
+        triax['shapes'].append({'shape': 'arc', 'center': [length-leadlen, 0], 'width': radiusinner, 'height': radiusinner*2, 'theta1': 270, 'theta2': 90})
+    else:
+        # Don't include inner guard on output side
+        triax['paths'].append([[0, 0], [leadlen, 0], _gap, [length-leadlen-shieldofstend+radiusouter/2, 0]])  # Center conductor                        
+
+    if radiusouter <= radiusinner:
+        warnings.warn('Triax outer radius < inner radius')
+    
+    if leadlen+shieldofststart > length-leadlen-shieldofstend:
+        warnings.warn('Triax too short for outer radius')
+    
+    return triax
+TRIAX = triax()
 
 
 # Opamp

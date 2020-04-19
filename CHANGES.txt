@@ -1,4 +1,10 @@
-v0.6.0, IN PROGRESS
+v0.7.DEV
+    - Added COAX and TRIAX elements and functions for customizing coax and triax
+    - Allow fontsize or size keyword arguments interchangeably in Drawing and add_label
+    - Added ARROW, ARROW_DOUBLE, LINE_DOT, LINE_DOT_DOUBLE for use in flowcharting
+    - Updated flow.decision to use keyword arguments for labeling decision branches
+
+v0.6.0, 11-Feb-2020
     - Possibly breaking changes:
         - Refactored internals to allow more control over individual components of drawing.
           Should have no effect unless the user is accessing internal attributes of the Element object.

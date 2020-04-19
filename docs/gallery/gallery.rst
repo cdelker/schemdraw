@@ -390,6 +390,47 @@ when placing the potentiometer to slightly reduce its size.
     d.draw()
 
 
+Triaxial Cable Driver
+^^^^^^^^^^^^^^^^^^^^^
+
+.. jupyter-execute::
+    :code-below:
+    
+    d = SchemDraw.Drawing(fontsize=10)
+    d.add(elm.LINE, lftlabel='V', l=d.unit/5)
+    smu = d.add(elm.OPAMP_NOSIGN, anchor='in2')
+    smu.add_label('SMU', ofst=[-.4, 0], loc='center', align=('center', 'center'))
+    d.add(elm.LINE, xy=smu.out, l=d.unit/5)
+    d.push()
+    d.add(elm.LINE, l=d.unit/4)
+    triax = d.add(elm.triax(length=5, shieldofststart=.75))
+    d.pop()
+    d.add(elm.DOT)
+    d.add(elm.RES, d='up', l=d.unit, zoom=.6)
+    d.add(elm.LINE, d='left')
+    d.add(elm.DOT)
+    d.push()
+    d.add(elm.LINE, d='down', toy=smu.in1)
+    d.add(elm.LINE, d='right', tox=smu.in1)
+    d.pop()
+    d.add(elm.LINE, d='up', l=d.unit/5)
+    d.add(elm.LINE, d='right', l=d.unit/5)
+    buf = d.add(elm.OPAMP_NOSIGN, zoom=.6, anchor='in2')
+    buf.add_label('BUF', ofst=[-.4, 0], loc='center', align=('center', 'center'))
+    d.add(elm.LINE, xy=buf.in1, d='left', l=d.unit/5)
+    d.add(elm.LINE, d='up', l=d.unit/5)
+    d.add(elm.LINE, d='right')
+    d.add(elm.LINE, d='down', toy=buf.out)
+    d.add(elm.DOT)
+    d.push()
+    d.add(elm.LINE, d='left', tox=buf.out)
+    d.pop()
+    d.add(elm.LINE, d='right', tox=triax.guardstart_top)
+    d.add(elm.LINE, d='down', toy=triax.guardstart_top)
+    d.add(elm.GND_CHASSIS, xy=triax.shieldcenter)
+    d.draw()
+
+
 Logic Gates
 -----------    
 

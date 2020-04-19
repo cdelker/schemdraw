@@ -1,15 +1,15 @@
-SchemDraw documentation
+Schemdraw documentation
 =======================
 
 .. jupyter-execute::
     :hide-code:
 
     %config InlineBackend.figure_format = 'svg'
-    import SchemDraw
-    from SchemDraw import elements as elm
-    d = SchemDraw.Drawing()
+    import schemdraw
+    from schemdraw import elements as elm
+    d = schemdraw.Drawing()
 
-SchemDraw is a Python package for producing high-quality electrical circuit schematic diagrams.
+Schemdraw is a Python package for producing high-quality electrical circuit schematic diagrams.
 Circuit elements are added, one at a time, similar to how you might draw them by hand, using Python methods.
 
 For example,

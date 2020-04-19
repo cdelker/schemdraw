@@ -5,11 +5,11 @@ Circuit Gallery
     :hide-code:
 
     %config InlineBackend.figure_format = 'svg'
-    import SchemDraw
-    from SchemDraw import elements as elm
-    from SchemDraw import logic
-    from SchemDraw import dsp
-    from SchemDraw import flow
+    import schemdraw
+    from schemdraw import elements as elm
+    from schemdraw import logic
+    from schemdraw import dsp
+    from schemdraw import flow
 
 
 Analog Circuits
@@ -23,7 +23,7 @@ Shows how to connect to a switch with anchors.
 .. jupyter-execute::
     :code-below:
     
-    d = SchemDraw.Drawing()
+    d = schemdraw.Drawing()
     V1 = d.add(elm.SOURCE_V, label='5V')
     d.add(elm.LINE, d='right', l=d.unit*.75)
     S1 = d.add(elm.SWITCH_SPDT2_CLOSE, d='up', anchor='b', rgtlabel='$t=0$')
@@ -43,7 +43,7 @@ Shows how to use endpoints to specify exact start and end placement.
 .. jupyter-execute::
     :code-below:
 
-    d = SchemDraw.Drawing()
+    d = schemdraw.Drawing()
     A  = d.add(elm.DOT, label='a')
     C1 = d.add(elm.CAP, label='8nF')
     C2 = d.add(elm.CAP, label='18nF')
@@ -66,7 +66,7 @@ This example demonstrate use of `push()` and `pop()` and using the 'tox' and 'to
 .. jupyter-execute::
     :code-below:
 
-    d = SchemDraw.Drawing(unit=2)  # unit=2 makes elements have shorter than normal leads
+    d = schemdraw.Drawing(unit=2)  # unit=2 makes elements have shorter than normal leads
     d.push()
     R1 = d.add(elm.RES, d='down', label='20$\Omega$')
     V1 = d.add(elm.SOURCE_V, d='down', reverse=True, label='120V')
@@ -103,7 +103,7 @@ Using the :py:meth:`Drawing.loopI` method to add loop currents, and rotating a l
 .. jupyter-execute::
     :code-below:
 
-    d = SchemDraw.Drawing(unit=5)
+    d = schemdraw.Drawing(unit=5)
     V1 = d.add(elm.SOURCE_V, label='$20V$')
     R1 = d.add(elm.RES, d='right', label='400$\Omega$')
     d.add(elm.DOT)
@@ -127,7 +127,7 @@ Another good problem for ECE students...
 .. jupyter-execute::
     :code-below:
     
-    d = SchemDraw.Drawing()
+    d = schemdraw.Drawing()
     I1 = d.add(elm.SOURCE_I, label=r'$5\angle 0^{\circ}$A')
     d.add(elm.DOT)
     d.push()
@@ -158,15 +158,15 @@ This also demonstrates the :py:func:`group_elements` function to merge multiple 
 .. jupyter-execute::
     :code-below:
     
-    d1 = SchemDraw.Drawing()
+    d1 = schemdraw.Drawing()
     d1.add(elm.RES)
     d1.push()
     d1.add(elm.CAP, d='down')
     d1.add(elm.LINE, d='left')
     d1.pop()
-    RC = SchemDraw.group_elements(d1)
+    RC = schemdraw.group_elements(d1)
 
-    d2 = SchemDraw.Drawing()
+    d2 = schemdraw.Drawing()
     for i in range(3):
         d2.add(RC)
 
@@ -190,7 +190,7 @@ Also the use of newline characters inside resistor and capacitor labels.
 .. jupyter-execute::
     :code-below:
     
-    d = SchemDraw.Drawing(inches_per_unit=.5, unit=3)
+    d = schemdraw.Drawing(inches_per_unit=.5, unit=3)
     D1 = d.add(elm.DIODE, theta=-45)
     d.add(elm.DOT)
     D2 = d.add(elm.DIODE, theta=225, reverse=True)
@@ -269,7 +269,7 @@ Inverting Opamp
 .. jupyter-execute::
     :code-below:
     
-    d = SchemDraw.Drawing()
+    d = schemdraw.Drawing()
     op = d.add(elm.OPAMP)
     d.add(elm.LINE, d='left', xy=op.in2, l=d.unit/4)
     d.add(elm.LINE, d='down', l=d.unit/5)
@@ -294,7 +294,7 @@ Non-inverting Opamp
 .. jupyter-execute::
     :code-below:
 
-    d = SchemDraw.Drawing()
+    d = schemdraw.Drawing()
     op = d.add(elm.OPAMP)
     d.add(elm.LINE, xy=op.out, l=.75)
     d.add(elm.LINE, xy=op.in1, d='left', l=.75)
@@ -323,7 +323,7 @@ Multi-stage amplifier
 .. jupyter-execute::
     :code-below:
     
-    d = SchemDraw.Drawing()
+    d = schemdraw.Drawing()
     d.add(elm.GND)
     d.add(elm.SOURCE_V, label='$500mV$')
 
@@ -362,7 +362,7 @@ when placing the potentiometer to slightly reduce its size.
 .. jupyter-execute::
     :code-below:
 
-    d = SchemDraw.Drawing(fontsize=12)
+    d = schemdraw.Drawing(fontsize=12)
     op = d.add(elm.OPAMP, label='741', lblloc='center', lblofst=0)
     d.add(elm.LINE, xy=op.in1, d='left', l=.5)
     d.add(elm.LINE, d='down', l=d.unit/2)
@@ -396,7 +396,7 @@ Triaxial Cable Driver
 .. jupyter-execute::
     :code-below:
     
-    d = SchemDraw.Drawing(fontsize=10)
+    d = schemdraw.Drawing(fontsize=10)
     d.add(elm.LINE, lftlabel='V', l=d.unit/5)
     smu = d.add(elm.OPAMP_NOSIGN, anchor='in2')
     smu.add_label('SMU', ofst=[-.4, 0], loc='center', align=('center', 'center'))
@@ -434,11 +434,11 @@ Triaxial Cable Driver
 Logic Gates
 -----------    
 
-Logic gate definitions are in the :py:mod:`SchemDraw.logic` module. Here it was imported with
+Logic gate definitions are in the :py:mod:`schemdraw.logic` module. Here it was imported with
 
 .. code-block:: python
 
-    import SchemDraw.logic as l
+    import schemdraw.logic as l
 
 
 Half Adder
@@ -449,7 +449,7 @@ Notice the half and full adders set the drawing unit to 0.5 so the lines aren't 
 .. jupyter-execute::
     :code-below:
 
-    d = SchemDraw.Drawing(unit=.5)
+    d = schemdraw.Drawing(unit=.5)
     S = d.add(logic.XOR2, rgtlabel='$S$')
     A = d.add(logic.DOT, xy=S.in1)
     d.add(logic.LINE, d='left', l=d.unit*2, lftlabel='$A$')
@@ -470,7 +470,7 @@ Full Adder
 .. jupyter-execute::
     :code-below:
     
-    d = SchemDraw.Drawing(unit=.5)
+    d = schemdraw.Drawing(unit=.5)
     X1 = d.add(logic.XOR2)
     d.add(logic.DOT)
     A = d.add(logic.DOT, xy=X1.in1)
@@ -513,7 +513,7 @@ Note the use of the LaTeX command **overline{Q}** in the label to draw a bar ove
 .. jupyter-execute::
     :code-below:
     
-    d = SchemDraw.Drawing()
+    d = schemdraw.Drawing()
     # Two front gates (SR latch)
     G1 = d.add(logic.NAND2, anchor='in1')
     d.add(logic.LINE, l=d.unit/6)
@@ -559,7 +559,7 @@ S-R Latch (Gates)
 .. jupyter-execute::
     :code-below:
     
-    d = SchemDraw.Drawing()
+    d = schemdraw.Drawing()
     d.add(logic.LINE, l=d.unit/4, lftlabel='$R$')
     G1 = d.add(logic.NOR2, anchor='in1')
     d.add(logic.LINE, l=d.unit/4)
@@ -590,7 +590,7 @@ S-R Latch (Transistors)
 .. jupyter-execute::
     :code-below:
 
-    d = SchemDraw.Drawing()
+    d = schemdraw.Drawing()
     Q1 = d.add(elm.BJT_NPN_C, reverse=True, lftlabel='Q1')
     Q2 = d.add(elm.BJT_NPN_C, xy=[d.unit*2,0], label='Q2')
     d.add(elm.LINE, xy=Q1.collector, d='up', l=d.unit/2)
@@ -634,7 +634,7 @@ S-R Latch (Transistors)
 .. jupyter-execute::
     :code-below:
 
-    d = SchemDraw.Drawing(fontsize=12, unit=2.5)
+    d = schemdraw.Drawing(fontsize=12, unit=2.5)
     Q1 = d.add(elm.BJT_NPN, label='Q1', lftlabel='+IN')
     Q3 = d.add(elm.BJT_PNP, xy=Q1.emitter, anchor='emitter', lftlabel='Q3', flip=True, d='left')
     d.add(elm.LINE, d='down', xy=Q3.collector)
@@ -810,7 +810,7 @@ Using the `IC` function to generate a custom IC.
 .. jupyter-execute::
     :code-below:
     
-    d = SchemDraw.Drawing()
+    d = schemdraw.Drawing()
     IC555def = elm.ic({'name': 'TRG', 'side': 'left', 'pin': '2'},
                     {'name': 'THR', 'side': 'left', 'pin': '6'},
                     {'name': 'DIS', 'side': 'left', 'pin': '7'},
@@ -848,11 +848,11 @@ Using the `IC` function to generate a custom IC.
 Signal Processing
 -----------------
 
-Signal processing elements are in the :py:mod:`SchemDraw.dsp` module.
+Signal processing elements are in the :py:mod:`schemdraw.dsp` module.
 
 .. code-block:: python
 
-    from SchemDraw import dsp
+    from schemdraw import dsp
 
 
 Various Networks
@@ -861,7 +861,7 @@ Various Networks
 .. jupyter-execute::
     :code-below:
     
-    d = SchemDraw.Drawing()
+    d = schemdraw.Drawing()
     d.add(dsp.LINE, l=d.unit/3, label='in')
     inpt = d.add(dsp.DOT)
     d.add(dsp.ARROW, l=d.unit/3)
@@ -881,7 +881,7 @@ Various Networks
 .. jupyter-execute::
     :code-below:
     
-    d = SchemDraw.Drawing(fontsize=14)
+    d = schemdraw.Drawing(fontsize=14)
     d.add(dsp.LINE, l=d.unit/2, label='F(s)')
     d.push()
     d.add(dsp.DOT)
@@ -910,7 +910,7 @@ Superheterodyne Receiver
 .. jupyter-execute::
     :code-below:
 
-    d = SchemDraw.Drawing(fontsize=12)
+    d = schemdraw.Drawing(fontsize=12)
     d.add(dsp.ANT)
     d.add(dsp.LINE, d='right', l=d.unit/4)
     filt1 = d.add(dsp.FILT_BP, botlabel='RF filter\n#1', anchor='W', lblofst=.2, fill='thistle')
@@ -937,7 +937,7 @@ Direct Conversion Receiver
 .. jupyter-execute::
     :code-below:
 
-    d = SchemDraw.Drawing()
+    d = schemdraw.Drawing()
     d.add(dsp.ANT)
     d.add(dsp.ARROW, d='right', l=d.unit/2, botlabel='$f_{RF}$')
     d.add(dsp.AMP, label='LNA')
@@ -988,7 +988,7 @@ Digital Filter
 .. jupyter-execute::
     :code-below:
 
-    d = SchemDraw.Drawing(unit=1, fontsize=14)
+    d = schemdraw.Drawing(unit=1, fontsize=14)
     d.add(dsp.LINE, lftlabel='x[n]', l=d.unit*2)
     d.add(dsp.DOT)
 
@@ -1054,7 +1054,7 @@ Flowchart elements are defined in the :py:mod:`flow` module.
 
 .. code-block:: python
 
-    from SchemDraw import flow
+    from schemdraw import flow
 
 It's a Trap!
 ^^^^^^^^^^^^
@@ -1064,7 +1064,7 @@ Recreation of `XKCD 1195 <https://xkcd.com/1195/>`_.
 .. jupyter-execute::
     :code-below:
     
-    d = SchemDraw.Drawing()
+    d = schemdraw.Drawing()
     d.add(flow.start(2, 1.5), label='START')
     d.add(flow.ARROW, d='down', l=d.unit/3)
     h = d.add(flow.decision(5.5, 4, S='YES'), label='Hey, wait,\nthis flowchart\nis a trap!')
@@ -1082,7 +1082,7 @@ Recreation of `XKCD 518 <https://xkcd.com/518/>`_.
 .. jupyter-execute::
     :code-below:
     
-    d = SchemDraw.Drawing(fontsize=11)
+    d = schemdraw.Drawing(fontsize=11)
     b = d.add(flow.start(2, 1.5), label='START')
     d.add(flow.ARROW, d='down', l=d.unit/2)
     d1 = d.add(flow.decision(5, 3.9, E='YES', S='NO'), label='DO YOU\nUNDERSTAND\nFLOW CHARTS?')
@@ -1138,7 +1138,7 @@ Uses named colors in a loop.
 .. jupyter-execute::
     :code-below:
 
-    d = SchemDraw.Drawing()
+    d = schemdraw.Drawing()
     for i, color in enumerate(['red', 'orange', 'yellow', 'yellowgreen', 'green', 'blue', 'indigo', 'violet']):
         d.add(elm.RES, label='R{}'.format(i), theta=45*i+20, color=color)
     d.draw()
@@ -1155,7 +1155,7 @@ And for a change of pace, activate Matplotlib's XKCD mode for "hand-drawn" look!
     import matplotlib.pyplot as plt
     plt.xkcd()
 
-    d = SchemDraw.Drawing(inches_per_unit=.5)
+    d = schemdraw.Drawing(inches_per_unit=.5)
     op = d.add(elm.OPAMP)
     d.add(elm.LINE, d='left', xy=op.in2, l=d.unit/4)
     d.add(elm.LINE, d='down', l=d.unit/5)

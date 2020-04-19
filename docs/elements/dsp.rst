@@ -5,12 +5,12 @@ Signal Processing
     :hide-code:
 
     %config InlineBackend.figure_format = 'svg'
-    import SchemDraw
-    from SchemDraw import dsp
+    import schemdraw
+    from schemdraw import dsp
 
     def drawElements(elm_list, n=5, dx=1, dy=2, ofst=.8, fname=None, **kwargs):
         x, y = 0, 0
-        d = SchemDraw.Drawing(fontsize=12)
+        d = schemdraw.Drawing(fontsize=12)
         for element in elm_list:
             A = d.add(element, xy=[(d.unit+1)*x+1,y], label=element['name'], **kwargs)
             x = x + dx
@@ -23,7 +23,7 @@ Signal processing elements can be drawn by importing the :py:mod:`dsp` module:
 
 .. code-block:: python
 
-    from SchemDraw import dsp
+    from schemdraw import dsp
 
 Because each element may have multiple connections in and out, these elements
 do not automatically extend "leads", so they must be manually connected with
@@ -48,7 +48,7 @@ may be created using:
 .. jupyter-execute::
     :hide-code:
     
-    d = SchemDraw.Drawing()
+    d = schemdraw.Drawing()
 
 .. jupyter-execute::
 

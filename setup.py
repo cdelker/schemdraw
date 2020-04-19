@@ -1,18 +1,19 @@
 import setuptools
 
 with open('README.txt', 'r') as f:
-	long_description = f.read()
+    long_description = f.read()
 
 setuptools.setup(
     name = 'SchemDraw',
-    version = '0.6.0',
+    version = '0.7a1',
     description = 'Electrical circuit schematic drawing',
     author = 'Collin J. Delker',
     author_email = 'developer@collindelker.com',
     url = 'https://schemdraw.readthedocs.io/',
     long_description=long_description,
     long_description_content_type="text/markdown",
-    packages = setuptools.find_packages(),
+    packages = ['schemdraw', 'SchemDraw'],
+    package_dir={'schemdraw': 'schemdraw', 'SchemDraw': 'schemdraw'},
     keywords = ['circuit', 'schematic', 'electrical'],
     install_requires=['numpy', 'matplotlib'],
     classifiers = [

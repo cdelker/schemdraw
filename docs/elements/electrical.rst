@@ -7,11 +7,11 @@ Basic Circuit Elements
     :hide-code:
 
     %config InlineBackend.figure_format = 'svg'
-    import SchemDraw
-    from SchemDraw import elements as elm
+    import schemdraw
+    from schemdraw import elements as elm
     def drawElements(elm_list, n=5, dx=1, dy=2, ofst=.8, fname=None, **kwargs):
         x, y = 0, 0
-        d = SchemDraw.Drawing(fontsize=12)
+        d = schemdraw.Drawing(fontsize=12)
         for element in elm_list:
             A = d.add(element, xy=[(d.unit+1)*x+1,y], label=element['name'], **kwargs)
             x = x + dx
@@ -21,7 +21,7 @@ Basic Circuit Elements
         d.draw()
 
 
-These elements are defined in the `SchemDraw.elements` module.
+These elements are defined in the `schemdraw.elements` module.
 
 2-terminal Elements
 -------------------
@@ -81,7 +81,7 @@ The GAP_LABEL is like an "invisible" element, useful for marking the voltage bet
 .. jupyter-execute::
     :hide-code:
 
-    d = SchemDraw.Drawing(fontsize=12)
+    d = schemdraw.Drawing(fontsize=12)
     d.add(elm.LINE, d='right', l=1)
     d.add(elm.LABEL, xy=[3,-.5], label='LABEL')
     d.add(elm.DOT_OPEN)
@@ -110,7 +110,7 @@ Most electrical schematics simply use LINE and DOT. The ARROW elements are usefu
 .. jupyter-execute::
     :hide-code:
 
-    d = SchemDraw.Drawing(fontsize=12)
+    d = schemdraw.Drawing(fontsize=12)
     d.add(elm.LINE, l=3, label='LINE', lblofst=.4)
     d.add(elm.ARROWHEAD, xy=[5, 0], label='ARROWHEAD', lblofst=.4)
     d.add(elm.DOT, xy=[7, 0], label='DOT', lblofst=.4)
@@ -148,7 +148,7 @@ Potentiometer is defined with one additional anchor for the 'tap':
 .. jupyter-execute::
     :hide-code:
 
-    d = SchemDraw.Drawing(fontsize=12)
+    d = schemdraw.Drawing(fontsize=12)
     P = d.add(elm.POT, botlabel='POT')
     P.add_label('tap', loc='tap')
     d.add(elm.GAP_LABEL, d='up', l=.5)
@@ -160,7 +160,7 @@ BJT and FET transistors also define three anchors:
 .. jupyter-execute::
     :hide-code:
 
-    d = SchemDraw.Drawing(fontsize=12)
+    d = schemdraw.Drawing(fontsize=12)
     bjt = d.add(elm.BJT_NPN, xy=[0, 0], anchor='base')
     bjt.add_label('base', loc='base', align=('right', 'center'), ofst=[-.1, 0])
     bjt.add_label('emitter', loc='emitter', align=('center', 'top'), ofst=-.2)
@@ -183,7 +183,7 @@ Names of the different transistor elements are shown below:
 .. jupyter-execute::
     :hide-code:
 
-    d = SchemDraw.Drawing(fontsize=12)
+    d = schemdraw.Drawing(fontsize=12)
     d.add(elm.NFET, label='NFET', lblloc='top')
     d.add(elm.PFET, label='PFET', lblloc='top', xy=[3,0] )
     d.add(elm.NFET4, label='NFET4', lblloc='top', xy=[6,0])
@@ -199,7 +199,7 @@ An opamp defines anchors `in1`, `in2`, and `out`, plus `vd`, `vs` for supply vol
 .. jupyter-execute::
     :hide-code:
     
-    d = SchemDraw.Drawing(fontsize=12)
+    d = schemdraw.Drawing(fontsize=12)
     op = d.add(elm.OPAMP, label='OPAMP', lblofst=.6)
     d.add(elm.LINE, xy=op.in1, d='left', l=.5, lftlabel='in1')
     d.add(elm.LINE, xy=op.in2, d='left', l=.5, lftlabel='in2')
@@ -238,9 +238,9 @@ Out of the box, COAX and TRIAX elements are avaiable:
 In addition to `start` and `end`, the COAX element has anchors `shieldstart`, `shieldcenter`, `shieldend`,
 and `shieldstart_top`, `shieldcenter_top`, and `shieldend_top`. The TRIAX element has the same anchors (with
 the shield being the outermost shell), plus `guardstart`, `guardend`, `guardstart_top`, and `guardend_top`. To customize or change lengths of these elements,
-the :py:func:`SchemDraw.elements.coax` and :py:func:`SchemDraw.elements.triax` methods can be used.
+the :py:func:`schemdraw.elements.coax` and :py:func:`schemdraw.elements.triax` methods can be used.
 
-.. function:: SchemDraw.elements.coax(length=3, radius=0.3, leadlen=0.6)
+.. function:: schemdraw.elements.coax(length=3, radius=0.3, leadlen=0.6)
 
     Make a coaxial cable element
     
@@ -253,7 +253,7 @@ the :py:func:`SchemDraw.elements.coax` and :py:func:`SchemDraw.elements.triax` m
     :returns: element definition
     :rtype: dict
     
-.. function:: SchemDraw.elements.triax(length=3, radiusinner=0.3, radiusouter=0.6, leadlen=0.6, shieldofststart=.3, shieldofstend=.45)
+.. function:: schemdraw.elements.triax(length=3, radiusinner=0.3, radiusouter=0.6, leadlen=0.6, shieldofststart=.3, shieldofstend=.45)
 
     Make a triaxial cable element
     
@@ -273,7 +273,7 @@ For example, a triax with the shield covering only part of the cable, and a grou
 
 .. jupyter-execute::
 
-    d = SchemDraw.Drawing()
+    d = schemdraw.Drawing()
     t = d.add(elm.triax(length=6, shieldofststart=2))
     d.add(elm.GND, xy=t.shieldend)
     d.draw()
@@ -282,9 +282,9 @@ For example, a triax with the shield covering only part of the cable, and a grou
 Transformers
 ------------
 
-Transformer elements can be generated using the :py:func:`SchemDraw.elements.transformer` function.
+Transformer elements can be generated using the :py:func:`schemdraw.elements.transformer` function.
 
-.. function:: SchemDraw.elements.transformer(t1=4, t2=4, core=True, ltaps=None, rtaps=None, loop=False)
+.. function:: schemdraw.elements.transformer(t1=4, t2=4, core=True, ltaps=None, rtaps=None, loop=False)
 
    Generate an element definition for a transformer
 
@@ -310,7 +310,7 @@ and `s1` and `s2` for the secondary (right) side.
 .. jupyter-execute::
     :hide-code:
 
-    d = SchemDraw.Drawing()
+    d = schemdraw.Drawing()
     x = d.add(elm.transformer(6,3, core=True, loop=False))
     d.add(elm.LINE, xy=x.s1, l=d.unit/4)
     d.add(elm.LINE, xy=x.s2, l=d.unit/4)
@@ -328,7 +328,7 @@ Example usage with taps:
 
 .. jupyter-execute::
 
-    d = SchemDraw.Drawing()
+    d = schemdraw.Drawing()
     xf = d.add(elm.transformer(t1=4, t2=8, rtaps={'B':3}, loop=False ) )
     d.add(elm.LINE, xy=xf.s1, l=d.unit/4, rgtlabel='s1')
     d.add(elm.LINE, xy=xf.s2, l=d.unit/4, rgtlabel='s2')
@@ -341,11 +341,11 @@ Example usage with taps:
 Integrated Circuits
 -------------------
 
-Elements drawn as boxes, such as integrated circuits, can be generated using the :py:func:`SchemDraw.elements.ic` function.
+Elements drawn as boxes, such as integrated circuits, can be generated using the :py:func:`schemdraw.elements.ic` function.
 An arbitrary number of inputs/outputs can be drawn to each side of the box.
 The inputs can be evenly spaced (default) or arbitrarily placed anywhere along each edge.
 
-.. function:: SchemDraw.elements.ic(*pins, **kwargs)
+.. function:: schemdraw.elements.ic(*pins, **kwargs)
 
     Define an integrated circuit element
 
@@ -380,7 +380,7 @@ Here, a J-K flip flop, as part of an HC7476 integrated circuit, is drawn with in
 .. jupyter-execute::
     :hide-code:
     
-    d = SchemDraw.Drawing()
+    d = schemdraw.Drawing()
 
 .. jupyter-execute::
     :hide-output:
@@ -412,22 +412,22 @@ was defined.
 Multiplexers
 ^^^^^^^^^^^^
 
-Multiplexers and demultiplexers may be drawn using the :py:func:`SchemDraw.elements.mux` function which wraps the :py:func:`SchemDraw.elements.ic` function.
+Multiplexers and demultiplexers may be drawn using the :py:func:`schemdraw.elements.mux` function which wraps the :py:func:`schemdraw.elements.ic` function.
 
-.. function:: SchemDraw.elements.multiplexer(*pins, demux=False, **kwargs)
+.. function:: schemdraw.elements.multiplexer(*pins, demux=False, **kwargs)
         
         Define a multiplexer or demultiplexer element
     
-        :param pins: Pin definition dictionaries. See :py:func:`SchemDraw.elements.ic`.
+        :param pins: Pin definition dictionaries. See :py:func:`schemdraw.elements.ic`.
         
         :Keyword Arguments:
             * demux: (bool) Draw demultiplexer (opposite slope)
-            * \**kwargs: See :py:func:`SchemDraw.elements.ic`.
+            * \**kwargs: See :py:func:`schemdraw.elements.ic`.
 
 .. jupyter-execute::
     :hide-code:
     
-    d = SchemDraw.Drawing()
+    d = schemdraw.Drawing()
 
 .. jupyter-execute::
     :hide-output:

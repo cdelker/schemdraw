@@ -2,8 +2,8 @@
     :hide-code:
     
     %config InlineBackend.figure_format = 'svg'
-    import SchemDraw
-    from SchemDraw import elements as elm
+    import schemdraw
+    from schemdraw import elements as elm
 
 .. _placement:
 
@@ -11,9 +11,9 @@
 Adding circuit elements
 =======================
 
-All SchemDraw schematics are contained within a :py:class:`SchemDraw.Drawing` object:
+All schemdraw schematics are contained within a :py:class:`schemdraw.Drawing` object:
 
-.. class:: SchemDraw.Drawing(**kwargs)
+.. class:: schemdraw.Drawing(**kwargs)
 
     Set up a new circuit drawing
     
@@ -24,16 +24,16 @@ The first step of any schematic is to create a drawing:
 
 .. code-block:: python
 
-    d = SchemDraw.Drawing()
+    d = schemdraw.Drawing()
 
 Circuit elements, such as resistors and capacitors, are added to the Drawing using 
-the :py:meth:`SchemDraw.Drawing.add` method, which takes
+the :py:meth:`schemdraw.Drawing.add` method, which takes
 a dictionary defining the element as a parameter, and other keyword arguments that
 define the element's position and other properties.
-The element definition will usually be something defined in :py:mod:`SchemDraw.elements`, but can be your onw dictionary defining how to draw the element.
+The element definition will usually be something defined in :py:mod:`schemdraw.elements`, but can be your onw dictionary defining how to draw the element.
 For a description of what goes in to an element definition, see :ref:`customelements`.
 
-.. function:: SchemDraw.Drawing.add(elm_def, **kwargs)
+.. function:: schemdraw.Drawing.add(elm_def, **kwargs)
 
     Add an element to the drawing
     
@@ -41,9 +41,9 @@ For a description of what goes in to an element definition, see :ref:`customelem
     :type elm_def: dict
     :param kwargs: keyword arguments to define placement, styling, labels, etc. (see below)
     :returns: an Element instance
-    :rtype: SchemDraw.Element
+    :rtype: schemdraw.Element
 
-This method returns a :py:class:`SchemDraw.Element` object. Typically, you shouldn't need
+This method returns a :py:class:`schemdraw.Element` object. Typically, you shouldn't need
 to instantiate this object yourself; it is done using the `add` method, which will
 automatically place a new `Element` into the `Drawing` and shift it to the desired position.
 
@@ -53,9 +53,9 @@ Placement
 
 The position of each element can be specified in a number of ways.
 If no position is given, it will start at the current drawing position, typically where the previous element ends, and in the current drawing direction.
-Otherwise, position can be specified using some combination of the keyword arguments to the :py:func:`SchemDraw.Drawing.add` method.
+Otherwise, position can be specified using some combination of the keyword arguments to the :py:func:`schemdraw.Drawing.add` method.
 
-The following :py:func:`SchemDraw.Drawing.add` keyword arguments can be used to define the starting position and ending position of the element:
+The following :py:func:`schemdraw.Drawing.add` keyword arguments can be used to define the starting position and ending position of the element:
 
 - **xy** (float array [x, y]): Specifies the starting coordinate of the element. Defaults to the current drawing position (endpoint of the last drawn element.)
 - **d** (string) ['up', 'down', 'left', 'right']: Direction to draw the element
@@ -69,7 +69,7 @@ When no placement parameters are given, the element is placed at the endpoint of
 .. jupyter-execute::
     :hide-code:
 
-    d = SchemDraw.Drawing()
+    d = schemdraw.Drawing()
 
 .. jupyter-execute::
     :hide-output:
@@ -96,7 +96,7 @@ Here, an opamp is placed at the end of the resistor, connected to its `in1` anch
 .. jupyter-execute::
     :hide-code:
 
-    d = SchemDraw.Drawing()
+    d = schemdraw.Drawing()
 
 .. jupyter-execute::
     :hide-output:
@@ -114,7 +114,7 @@ Compared to anchoring the opamp at `in2` (the noninverting input):
 .. jupyter-execute::
     :hide-code:
 
-    d = SchemDraw.Drawing()
+    d = schemdraw.Drawing()
 
 .. jupyter-execute::
     :hide-output:
@@ -129,13 +129,13 @@ Compared to anchoring the opamp at `in2` (the noninverting input):
 
 
 Elements can also be placed starting at the anchor point of another existing element.
-The :py:class:`SchemDraw.Element` object returned from the `add` function contains attributes defining the x, y coordinates of the element's anchors.
+The :py:class:`schemdraw.Element` object returned from the `add` function contains attributes defining the x, y coordinates of the element's anchors.
 For example, to draw an opamp and place a resistor on the output, store the return from `add`. Then set the `xy` parameter of the new element as the `out` attribute of the existing element:
 
 .. jupyter-execute::
     :hide-code:
 
-    d = SchemDraw.Drawing()
+    d = schemdraw.Drawing()
 
 .. jupyter-execute::
     :hide-output:
@@ -162,7 +162,7 @@ Other placement arguments can be used; these override the `d` or `theta` paramet
 .. jupyter-execute::
     :hide-code:
 
-    d = SchemDraw.Drawing()
+    d = schemdraw.Drawing()
 
 .. jupyter-execute::
     :hide-output:
@@ -199,7 +199,7 @@ start and end anchors of the element.
 .. jupyter-execute::
     :hide-code:
 
-    d = SchemDraw.Drawing()
+    d = schemdraw.Drawing()
 
 .. jupyter-execute::
     :hide-output:
@@ -217,14 +217,14 @@ start and end anchors of the element.
 Drawing State
 ^^^^^^^^^^^^^
 
-The :py:class:`SchemDraw.Drawing` maintains a drawing state that includes the current x, y position and drawing direction.
-A LIFO stack of drawing states can be used, via the :py:meth:`SchemDraw.Drawing.push` and :py:meth:`SchemDraw.Drawing.pop` method,
+The :py:class:`schemdraw.Drawing` maintains a drawing state that includes the current x, y position and drawing direction.
+A LIFO stack of drawing states can be used, via the :py:meth:`schemdraw.Drawing.push` and :py:meth:`schemdraw.Drawing.pop` method,
 for times when it's useful to save the drawing state and come back to it later.
 
 .. jupyter-execute::
     :hide-code:
 
-    d = SchemDraw.Drawing()
+    d = schemdraw.Drawing()
 
 .. jupyter-execute::
     :hide-output:
@@ -259,7 +259,7 @@ Each label is a string, but LaTeX math is rendered when enclosed in $..$.
 .. jupyter-execute::
     :hide-code:
 
-    d = SchemDraw.Drawing()
+    d = schemdraw.Drawing()
 
 .. jupyter-execute::
     :hide-output:
@@ -277,7 +277,7 @@ This allows for labeling positive and negative anlong with a component name, for
 .. jupyter-execute::
     :hide-code:
 
-    d = SchemDraw.Drawing()
+    d = schemdraw.Drawing()
 
 .. jupyter-execute::
     :hide-output:
@@ -300,7 +300,7 @@ Several other `add` arguments control the behavior of labels:
 .. jupyter-execute::
     :hide-code:
 
-    d = SchemDraw.Drawing()
+    d = schemdraw.Drawing()
 
 .. jupyter-execute::
     :hide-output:
@@ -316,10 +316,10 @@ Several other `add` arguments control the behavior of labels:
     d.draw()
 
 
-For more control over label behavior, use the :py:meth:`SchemDraw.Element.add_label` method.
+For more control over label behavior, use the :py:meth:`schemdraw.Element.add_label` method.
 Labels can be added at arbitrary positions with any alignment.
 
-.. method:: SchemDraw.Element.add_label(label, loc='top', ofst=None, align=None, fontsize=None, rotation=0)
+.. method:: schemdraw.Element.add_label(label, loc='top', ofst=None, align=None, fontsize=None, rotation=0)
 
     :param label: label to add
     :type label: string
@@ -335,13 +335,13 @@ Current Labels
 ^^^^^^^^^^^^^^
 
 To label the current through an element, the ARROWI element is defined.
-Typically, it can be added alongside an existing element using the :py:meth:`SchemDraw.Drawing.labelI` method:
+Typically, it can be added alongside an existing element using the :py:meth:`schemdraw.Drawing.labelI` method:
 
-.. method:: SchemDraw.Drawing.labelI(elm, label='', arrowofst=0.4, arrowlen=2, reverse=False, top=True)
+.. method:: schemdraw.Drawing.labelI(elm, label='', arrowofst=0.4, arrowlen=2, reverse=False, top=True)
 
     Add a current arrow along the element
     
-    :param elm: SchemDraw.Element to add arrow to
+    :param elm: schemdraw.Element to add arrow to
     :param label: string or list of strings to space along arrow
     :param arrowofst: distance between element and arrow
     :param arrowlen: length of arrow in drawing units
@@ -353,7 +353,7 @@ Typically, it can be added alongside an existing element using the :py:meth:`Sch
 .. jupyter-execute::
     :hide-code:
 
-    d = SchemDraw.Drawing()
+    d = schemdraw.Drawing()
 
 .. jupyter-execute::
     :hide-output:
@@ -368,13 +368,13 @@ Typically, it can be added alongside an existing element using the :py:meth:`Sch
     d.draw()
 
 
-Alternatively, current labels can be drawn inline as arrowheads on the leads of 2-terminal elements using :py:meth:`SchemDraw.Drawing.labelI_inline`.
+Alternatively, current labels can be drawn inline as arrowheads on the leads of 2-terminal elements using :py:meth:`schemdraw.Drawing.labelI_inline`.
 
-.. method:: SchemDraw.Drawing.labelI_inline(elm, label='', botlabel='', d='in', start=True, ofst=0)
+.. method:: schemdraw.Drawing.labelI_inline(elm, label='', botlabel='', d='in', start=True, ofst=0)
 
         Draw an inline current arrow on the element.
         
-        :param elm: SchemDraw.element to add arrow to
+        :param elm: schemdraw.element to add arrow to
         :param label: string label above the arrowhead
         :type label: string
         :param botlabel: string label below the arrowhead
@@ -388,7 +388,7 @@ Alternatively, current labels can be drawn inline as arrowheads on the leads of 
 .. jupyter-execute::
     :hide-code:
 
-    d = SchemDraw.Drawing()
+    d = schemdraw.Drawing()
 
 .. jupyter-execute::
     :hide-output:
@@ -402,9 +402,9 @@ Alternatively, current labels can be drawn inline as arrowheads on the leads of 
     d.draw()
 
 
-Loop currents can be added using :py:meth:`SchemDraw.Drawing.loopI()`.
+Loop currents can be added using :py:meth:`schemdraw.Drawing.loopI()`.
 
-.. method:: SchemDraw.Drawing.loopI(elm_list, label='', d='cw', theta1=35, theta2=-35, pad=.2)
+.. method:: schemdraw.Drawing.loopI(elm_list, label='', d='cw', theta1=35, theta2=-35, pad=.2)
 
     Draw an arc to indicate a loop current bordered by elements in list
     
@@ -418,7 +418,7 @@ Loop currents can be added using :py:meth:`SchemDraw.Drawing.loopI()`.
 .. jupyter-execute::
     :hide-code:
 
-    d = SchemDraw.Drawing()
+    d = schemdraw.Drawing()
 
 .. jupyter-execute::
     :hide-output:
@@ -439,7 +439,7 @@ Loop currents can be added using :py:meth:`SchemDraw.Drawing.loopI()`.
 Styling
 -------
 
-When creating a new drawing, the keyword arguments to :py:class:`SchemDraw.Drawing` are used to set default styles such as colors and fontsize.
+When creating a new drawing, the keyword arguments to :py:class:`schemdraw.Drawing` are used to set default styles such as colors and fontsize.
 
 - **unit** (float): default length of a 2-terminal element, including leads. The zigzag portion of resistor element is length 1 unit, and by default the total length is 3 units.
 - **inches_per_unit** (float): Inches per unit to scale drawing into real dimensions
@@ -450,7 +450,7 @@ When creating a new drawing, the keyword arguments to :py:class:`SchemDraw.Drawi
 - **lw** (float): default line width
 - **ls** (stirng): default line style (matplotlib style name)
 
-The Drawing color, lw, and ls parameters apply to all elements, unless overriden in argumetns to :py:func:`SchemDraw.Drawing.add`.
+The Drawing color, lw, and ls parameters apply to all elements, unless overriden in argumetns to :py:func:`schemdraw.Drawing.add`.
 When adding an element, it's indivudal options are:
 
 - **color** (string): matplotlib color name for the element
@@ -462,7 +462,7 @@ When adding an element, it's indivudal options are:
 .. jupyter-execute::
     :hide-output:
     
-    d = SchemDraw.Drawing(color='blue')  # All elements are blue unless specified otherwise
+    d = schemdraw.Drawing(color='blue')  # All elements are blue unless specified otherwise
     d.add(elm.DIODE, fill='red')
     d.add(elm.RES, fill='purple')          # Fill has no effect on this non-closed element
     d.add(elm.RBOX, color='orange', ls='--')

@@ -5,9 +5,9 @@ Customizing Elements
     :hide-code:
 
     %config InlineBackend.figure_format = 'svg'
-    import SchemDraw
-    from SchemDraw import elements as elm
-    from SchemDraw import logic
+    import schemdraw
+    from schemdraw import elements as elm
+    from schemdraw import logic
 
 
 Reusing groups of elements
@@ -17,24 +17,24 @@ If a set of circuit elements are to be reused multiple times, they can be groupe
 Create and populate a drawing, but don't call `draw` on it.
 Instead, use :py:func:`group_elements`, then add the result as an element to another drawing
 
-.. function:: SchemDraw.group_elements(drawing, anchors=None)
+.. function:: schemdraw.group_elements(drawing, anchors=None)
 
     Create a new element definition based on all the elements in the drawing.
     
-    :param drawing: SchemDraw.Drawing with elements to group
+    :param drawing: schemdraw.Drawing with elements to group
     :param anchors: dictionary of anchor names: locations within the group
     
 .. jupyter-execute::
 
-    d1 = SchemDraw.Drawing()
+    d1 = schemdraw.Drawing()
     d1.add(elm.RES)
     d1.push()
     d1.add(elm.CAP, d='down')
     d1.add(elm.LINE, d='left')
     d1.pop()
-    RC = SchemDraw.group_elements(d1)   # Create the group to reuse
+    RC = schemdraw.group_elements(d1)   # Create the group to reuse
 
-    d2 = SchemDraw.Drawing()   # Add the group to another drawing several times
+    d2 = schemdraw.Drawing()   # Add the group to another drawing several times
     for i in range(3):
         d2.add(RC)
     d2.draw()
@@ -188,7 +188,7 @@ Test it out by adding the new custom element to a drawing:
 
 .. jupyter-execute::
 
-    d = SchemDraw.Drawing()
+    d = schemdraw.Drawing()
     fc = d.add(FLUX_CAP)
     d.draw()
 
@@ -197,14 +197,14 @@ Test it out by adding the new custom element to a drawing:
 Segment objects
 ---------------
 
-Each path and shape in the element definition is translated into drawing coordinates and becomes a :py:class:`SchemDraw.Segment` object
-contained in `segments` list attribute of the :py:class:`SchemDraw.Element` instance.
+Each path and shape in the element definition is translated into drawing coordinates and becomes a :py:class:`schemdraw.Segment` object
+contained in `segments` list attribute of the :py:class:`schemdraw.Element` instance.
 For even more control over individual pieces of an element, the parameters of a Segment can be changed.
 
 .. jupyter-execute::
     :hide-code:
     
-    d = SchemDraw.Drawing()
+    d = schemdraw.Drawing()
     
 .. jupyter-execute::
 
@@ -217,13 +217,13 @@ For even more control over individual pieces of an element, the parameters of a 
 Matplotlib axis
 ---------------
 
-As a final customization option, remember that SchemDraw draws everything on a Matplotlib axis.
+As a final customization option, remember that schemdraw draws everything on a Matplotlib axis.
 This axis can be obtained using `plt.gca()` and used for whatever purpose.
 
 .. jupyter-execute::
 
     import matplotlib.pyplot as plt
-    d = SchemDraw.Drawing()
+    d = schemdraw.Drawing()
     d.add(elm.RES)
     d.draw()
     ax = plt.gca()

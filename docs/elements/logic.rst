@@ -5,12 +5,12 @@ Logic Gates
     :hide-code:
 
     %config InlineBackend.figure_format = 'svg'
-    import SchemDraw
-    from SchemDraw import logic
+    import schemdraw
+    from schemdraw import logic
 
     def drawElements(elm_list, n=5, dx=1, dy=2, ofst=.8, fname=None, **kwargs):
         x, y = 0, 0
-        d = SchemDraw.Drawing(fontsize=12)
+        d = schemdraw.Drawing(fontsize=12)
         for element in elm_list:
             A = d.add(element, xy=[(d.unit+1)*x+1,y], label=element['name'], **kwargs)
             x = x + dx
@@ -24,7 +24,7 @@ Logic gates can be drawn by importing the :py:mod:`logic` module:
 
 .. code-block:: python
 
-    from SchemDraw import logic
+    from schemdraw import logic
 
 Typical AND, OR, NAND, NOR, XOR, XNOR, and NOT gates with 2, 3, or 4 inputs are predefined.
 Anchors are defined as 'in1', 'in2', etc. for each input, and 'out' for the output.
@@ -42,7 +42,7 @@ Anchors are defined as 'in1', 'in2', etc. for each input, and 'out' for the outp
 Two functions are available to generate gates with higher number of inputs, including invert-bubbles on the inputs.
 The :py:func:`andgate` and :py:func:`orgate` method:
 
-.. function:: SchemDraw.logic.andgate(inputs=2, nand=False, inputnots=[])
+.. function:: schemdraw.logic.andgate(inputs=2, nand=False, inputnots=[])
    
    :param inputs: number of inputs
    :type inputs: int
@@ -53,7 +53,7 @@ The :py:func:`andgate` and :py:func:`orgate` method:
    :rtype: dict
    :returns: element definition dictionary
 
-.. function:: SchemDraw.logic.orgate(inputs=2, nor=False, xor=False, inputnots=[])
+.. function:: schemdraw.logic.orgate(inputs=2, nor=False, xor=False, inputnots=[])
    
    :param inputs: number of inputs
    :type inputs: int
@@ -75,6 +75,6 @@ As an example, the following line generates a 3-input NAND gate with one input p
 .. jupyter-execute::
     :hide-code:
     
-    d = SchemDraw.Drawing()
+    d = schemdraw.Drawing()
     d.add(gate)
     d.draw()

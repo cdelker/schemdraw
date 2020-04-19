@@ -4,11 +4,11 @@ Getting Started
 Installation
 ------------
 
-SchemDraw can be installed from pip using
+schemdraw can be installed from pip using
 
 .. code-block:: bash
 
-    pip install SchemDraw
+    pip install schemdraw
 
 or directly by downloading the source and running
 
@@ -21,13 +21,13 @@ Jupyter Notebooks
 -----------------
 
 Using a Jupyter Notebook in inline mode is recommended for the easy creation of circuit diagrams. 
-If your schematics pop up in an external window, set Matplotlib to inline mode before importing SchemDraw:
+If your schematics pop up in an external window, set Matplotlib to inline mode before importing schemdraw:
 
 .. code-block:: python
 
     %matplotlib inline
 
-For best results when viewing circuits in the notebook, use a vector figure format, such as svg before importing SchemDraw:
+For best results when viewing circuits in the notebook, use a vector figure format, such as svg before importing schemdraw:
 
 .. code-block:: python
 
@@ -37,21 +37,21 @@ For best results when viewing circuits in the notebook, use a vector figure form
 Overview
 ---------
 
-The :py:mod:`SchemDraw` module allows for drawing circuit elements.
-:py:mod:`SchemDraw.elements` contains :ref:`electrical` pre-defined for
+The :py:mod:`schemdraw` module allows for drawing circuit elements.
+:py:mod:`schemdraw.elements` contains :ref:`electrical` pre-defined for
 use in a drawing. A common import structure is:
 
 .. jupyter-execute::
 
-    import SchemDraw
-    import SchemDraw.elements as elm
+    import schemdraw
+    import schemdraw.elements as elm
 
 All schematics start by creating a `Drawing` object:
 
 .. jupyter-execute::
     :hide-output:
 
-    d = SchemDraw.Drawing()
+    d = schemdraw.Drawing()
     
 Then, circuit elements can be added to the drawing, one at a time.
 The `d` keyword specifies the drawing direction, either 'right', 'left', 'up', or 'down'.

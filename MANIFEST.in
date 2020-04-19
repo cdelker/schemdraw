@@ -1,7 +1,7 @@
 include LICENSE.txt CHANGES.txt readthedocs.yml
 recursive-include docs *
-recursive-include SchemDraw *.py
-recursive-include test
+recursive-include schemdraw *.py
+recursive-include test *
 prune docs/_build
 global-exclude *.ipynb_checkpoints*
 global-exclude *.pyc

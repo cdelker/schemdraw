@@ -5,24 +5,24 @@ Flowchart Symbols
     :hide-code:
 
     %config InlineBackend.figure_format = 'svg'
-    import SchemDraw
-    from SchemDraw import flow
+    import schemdraw
+    from schemdraw import flow
 
 
-SchemDraw provides basic flowcharting abilities. 
-The :py:mod:`SchemDraw.flow` module contains a set of functions for defining
-flowchart blocks that can be added to SchemDraw Drawings.
+schemdraw provides basic flowcharting abilities. 
+The :py:mod:`schemdraw.flow` module contains a set of functions for defining
+flowchart blocks that can be added to schemdraw Drawings.
 
 .. code-block:: python
 
-    from SchemDraw import flow
+    from schemdraw import flow
 
 Flowchart blocks:
 
 .. jupyter-execute::
     :hide-code:
     
-    d = SchemDraw.Drawing(fontsize=10, unit=.5)
+    d = schemdraw.Drawing(fontsize=10, unit=.5)
     d.add(flow.start(), label='start()')
     d.add(flow.LINE)
     d.add(flow.box(), label='box()')
@@ -37,7 +37,7 @@ Flowchart blocks:
     d.draw()
 
 
-.. function:: SchemDraw.flow.box(w=3, h=2)
+.. function:: schemdraw.flow.box(w=3, h=2)
    
    Flowchart box
    
@@ -46,7 +46,7 @@ Flowchart blocks:
    :rtype: dict
    :returns: element definition dictionary
 
-.. function:: SchemDraw.flow.sub(w=3.5, h=2, s=.3)
+.. function:: schemdraw.flow.sub(w=3.5, h=2, s=.3)
    
    Flowchart subprocess box (box with extra vertical lines)
    
@@ -56,7 +56,7 @@ Flowchart blocks:
    :rtype: dict
    :returns: element definition dictionary
 
-.. function:: SchemDraw.flow.data(w=3, h=2, s=.5)
+.. function:: schemdraw.flow.data(w=3, h=2, s=.5)
    
    Flowchart data or I/O block (parallelogram)
    
@@ -66,7 +66,7 @@ Flowchart blocks:
    :rtype: dict
    :returns: element definition dictionary
 
-.. function:: SchemDraw.flow.start(w=3, h=2)
+.. function:: schemdraw.flow.start(w=3, h=2)
    
    Flowchart start block (oval)
    
@@ -75,7 +75,7 @@ Flowchart blocks:
    :rtype: dict
    :returns: element definition dictionary
 
-.. function:: SchemDraw.flow.connect(r=0.75)
+.. function:: schemdraw.flow.connect(r=0.75)
    
    Flowchart connect block (circle)
    
@@ -83,7 +83,7 @@ Flowchart blocks:
    :rtype: dict
    :returns: element definition dictionary
 
-.. function:: SchemDraw.flow.decision(w=4, h=2, **kwargs)
+.. function:: schemdraw.flow.decision(w=4, h=2, **kwargs)
    
    Flowchart decision block (diamond)
    
@@ -97,7 +97,7 @@ Flowchart blocks:
 
 
 All flowchart symbols have four anchors named 'N', 'S', 'E', and 'W' for the
-four directions. The :py:func:`SchemDraw.elements.ic` function can be used with the flowchart elements
+four directions. The :py:func:`schemdraw.elements.ic` function can be used with the flowchart elements
 to create blocks with multiple inputs/outputs per side if needed.
 
 Flowchart elements do not have "leads" like electrical elements, so they 
@@ -107,14 +107,14 @@ must be connected with LINE, ARROW, or ARROW_DOUBLE elements. The `w` and `h` pa
 Decisions
 ---------
 
-To label the decision branches, the :py:func:`SchemDraw.flow.decision` function takes keyword
+To label the decision branches, the :py:func:`schemdraw.flow.decision` function takes keyword
 arguments for each cardinal direction. For example:
 
 
 .. jupyter-execute::
     :hide-code:
     
-    d = SchemDraw.Drawing(fontsize=12, unit=1)
+    d = schemdraw.Drawing(fontsize=12, unit=1)
 
 .. jupyter-execute::
 

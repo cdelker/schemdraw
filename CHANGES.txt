@@ -1,6 +1,3 @@
-v0.6.1, 18-Apr-2020
-    - New elements: COAX and Triax
-
 v0.6.0, IN PROGRESS
     - Possibly breaking changes:
         - Refactored internals to allow more control over individual components of drawing.

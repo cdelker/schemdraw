@@ -27,7 +27,7 @@ def andgate(inputs=2, nand=False, inputnots=[], name='AND'):
             Input numbers (starting at 1) of inputs that have invert bubble
         name : string
             Define a name for gate. Only used in documentation.
-            
+
         Returns
         -------
         elmdef : dict
@@ -41,7 +41,7 @@ def andgate(inputs=2, nand=False, inputnots=[], name='AND'):
     paths = _np.transpose(arcpoints).tolist()
     paths.extend([[_leadlen, rad], [_leadlen, 0],
                    [_leadlen, -rad], [_gatel+_leadlen, -rad]])
-    
+
     AND = {
         'name': name,
         'paths': [paths],
@@ -140,7 +140,7 @@ def orgate(inputs=2, nor=False, xor=False, inputnots=[], name='OR'):
         path.extend(_np.transpose(_np.vstack((x2[::-1]+xorgap, y2[::-1]))).tolist())
     else:
         path.extend(_np.transpose(_np.vstack((x2[::-1], y2[::-1]))).tolist())
-                        
+
     OR = {
         'name': name,
         'paths': [path],

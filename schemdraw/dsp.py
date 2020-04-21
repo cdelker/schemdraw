@@ -74,7 +74,7 @@ AMP = {
     }
 
 _sinx = _np.linspace(-_np.pi, _np.pi, num=20)
-_siny = -_np.sin(_sinx) 
+_siny = -_np.sin(_sinx)
 _sinx = _sinx / _np.pi *.3 + .5
 _siny = _siny / 10
 

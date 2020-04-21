@@ -1,7 +1,7 @@
 '''
 SchemDraw - Electrical Schematic Drawing
 
-https://cdelker.bitbucket.io/SchemDraw/
+https://schemdraw.readthedocs.io/
 '''
 
 import matplotlib.pyplot as plt
@@ -157,7 +157,70 @@ class Drawing(object):
                 Move the Drawing.here position after drawing this element.
                 (Default True)
 
-            See Element class for full list of Keyword Arguments.
+            xy : [x, y] float array
+                Starting coordinate of element. Defaults to Drawing.here,
+                the endpoint of the last drawn element.
+            d : ['up', 'down', 'left', 'right']
+                Direction of element.
+            theta : float
+                Angle (in degrees) of element. Overrides `d` parameter.
+            flip : bool
+                Flip the element up/down
+            reverse : bool
+                Reverse the element (for example a DIODE)
+            anchor : string
+                Name of the "pin" in the element to place at `xy` in the
+                Drawing. Typically used for elements with more than two
+                terminals. For example, an OPAMP element has `in1`, `in2`,
+                and `out` anchors.
+
+            Parameters that override `d` parameter:
+            to : [x, y] float array
+                The end coordinate of the element
+            tox : float
+                x-value of end coordinate. y-value will be same as start
+            toy : float
+                y-value of end coordinate. x-value will be same as start
+            l : float
+                Total length of element
+            zoom : float
+                Zoom/magnification factor for element. Default = 1.
+
+            endpts: tuple of 2 [x, y] float arrays
+                The start and end points of the element. Overrides `xy`
+                and `to` parameters.
+
+            label, toplabel, botlabel, lftlabel, rgtlabel : string or list
+                Add a string to label the element on the given side.
+                Can be a string or list of strings that will be evenly-
+                spaced along the element (['-', 'V1', '+']). Use $
+                for latex formatting, for example `$R_1 = 100 \Omega$`.
+                See also: `add_label` method.
+            lblofst : float
+                Offset between label and element
+            lblsize : float
+                Font size of labels, overrides Drawing.fontsize
+                for this element
+            lblrotate : bool
+                Rotate the label text to align with the element,
+                for example vertical text with an element having
+                `d="up"`.
+            lblloc : ['top', 'bottom', 'left', 'right', 'center']
+                Location for drawing the label specified by `label`
+                parameter.
+
+            zorder : int
+                Z-order parameter for placing element in front or behind
+                others.
+
+            color : string
+                Matplotlib color for the element
+            ls : string
+                Matplotlib line style for the element
+            lw : float
+                Line width for the element
+            fill : string
+                Fill color for elements with closed paths or shapes
 
             Returns
             -------
@@ -483,7 +546,7 @@ class Segment(object):
             xmax = max(xmax, p[0])
             ymax = max(ymax, p[1])
         return BBox(xmin, ymin, xmax, ymax)
-  
+
     def draw(self, ax):
         ''' Draw the segment '''
         if self.fill is not None:
@@ -945,7 +1008,7 @@ def _reversedef(elmdef, flip, reverse):
 
     def _flip(pt):
         return [pt[0], -pt[1]]
-    
+
     def translate(pt):
         if reverse:
             pt = _reverse(pt)
@@ -1205,7 +1268,7 @@ class Element(object):
             else:
                 raise ValueError('Anchor {} not defined in element'.format(anchor))
         self.leadofst = leadofst
-                
+
         if len(self.path_def) > 0:
             drop = self.transform.transform(self.defn.get('drop', np.asarray(self.path_def[-1][-1])-leadofst))
         else:
@@ -1255,7 +1318,7 @@ class Element(object):
             labelargs['rotation'] = labelargs.get('rotation', 0) + self.theta
             labelargs['pos'] = np.asarray(labelargs.get('pos', [0, 0])) - leadofst
             self.segments.append(SegmentText(transform=self.transform, **labelargs))
-            
+
         # Get bounds of element, used for positioning user labels
         self.xmin, self.ymin, self.xmax, self.ymax = self.get_bbox()
 
@@ -1353,7 +1416,7 @@ class Element(object):
                 'top', 'bottom']
             rotation : float
                 Rotation angle (degrees)
-                
+
             Keyword Arguments
             -----------------
             fontsize : float
@@ -1370,9 +1433,9 @@ class Element(object):
         rotation = (rotation + 360) % 360
         if rotation > 90 and rotation < 270:
             rotation -= 180  # Keep the label from going upside down
-            
+
         anchornames = self.defn.get('anchors', [])
-            
+
         # This ensures a 'top' label is always on top, regardless of rotation
         if (self.theta % 360) > 90 and (self.theta % 360) <= 270:
             if loc == 'top':
@@ -1383,7 +1446,7 @@ class Element(object):
                 loc = 'rgt'
             elif loc == 'rgt':
                 loc = 'lft'
-        
+
         if align is None:   # Determine best alignment for label based on angle
             th = self.theta - rotation
             # Below alignment divisions work for label on top. Rotate angle for other sides.

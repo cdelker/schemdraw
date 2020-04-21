@@ -10,14 +10,14 @@ from .elements import ARROWHEAD, LINE, DOT, ARROW, ARROW_DOUBLE, LINE_DOT, LINE_
 
 def box(w=3, h=2):
     ''' Create flowchart block
-    
+
         Parameters
         ----------
         w: float
             Width of box
         h: float
             Height of box
-            
+
         Anchors: N, S, E, W
     '''
     elem = {'name': 'FLOWBOX', 'extend': False, 'lblloc': 'center', 'lblofst': 0, 'theta': -90}
@@ -29,7 +29,7 @@ def box(w=3, h=2):
 
 def sub(w=3.5, h=2, s=.3):
     ''' Create flowchart subprocess (block with extra vertical lines)
-        
+
         Parameters
         ----------
         w: float
@@ -38,7 +38,7 @@ def sub(w=3.5, h=2, s=.3):
             Height of box
         s: float
             Spacing of side lines
-            
+
         Anchors: N, S, E, W
     '''
     elem = {'name': 'FLOWSUB', 'extend': False, 'lblloc': 'center', 'lblofst': 0, 'theta': -90}
@@ -52,8 +52,8 @@ def sub(w=3.5, h=2, s=.3):
 
 
 def data(w=3, h=2, s=.5):
-    ''' Create flowchart data or I/O block (parallelogram)    
-        
+    ''' Create flowchart data or I/O block (parallelogram)
+
         Parameters
         ----------
         w: float
@@ -62,7 +62,7 @@ def data(w=3, h=2, s=.5):
             Height of box
         s: float
             Slant of parallelogram
-        
+
         Anchors: N, S, E, W
     '''
     elem = {'name': 'FLOWDATA', 'extend': False, 'lblloc': 'center', 'lblofst': 0, 'theta': -90}
@@ -74,14 +74,14 @@ def data(w=3, h=2, s=.5):
 
 def start(w=3, h=2):
     ''' Create flowchart oval (start block)
-        
+
         Parameters
         ----------
         w: float
             Width of box
         h: float
             Height of box
-            
+
         Anchors: N, S, E, W
     '''
     # We could change base schemdraw code to take "ellipse" as a shape, or just make one
@@ -100,7 +100,7 @@ def start(w=3, h=2):
 
 def decision(w=4, h=2, **kwargs):
     ''' Create decision block (diamond)
-        
+
         Parameters
         ----------
         w: float
@@ -112,7 +112,7 @@ def decision(w=4, h=2, **kwargs):
         -----------------
         N, E, S, W: strings
             Label for each point of the diamond. Example: E='Yes', S='No'
-        
+
         Anchors: N, S, E, W
     '''
     elem = {'name': 'DECISION', 'extend': False, 'lblloc': 'center', 'lblofst': 0, 'theta': -90}
@@ -139,8 +139,8 @@ def decision(w=4, h=2, **kwargs):
 
 
 def connect(r=0.75):
-    ''' Connector (circle) 
-    
+    ''' Connector (circle)
+
         Parameters
         ----------
         r: float

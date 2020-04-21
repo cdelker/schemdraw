@@ -202,7 +202,7 @@ CAP_VAR = {  # Variable cap
                 'start': [-2*_rw, -_rh],
                 'end': [3*_rw, _rw*2],
                 'headwidth': .12,
-                'headlength': .2}],                
+                'headlength': .2}],
     }
 
 _cap_gap = 0.2
@@ -536,7 +536,7 @@ LINE_DOT_OPEN = {'name': 'LINE_DOT',
                              'radius':_dotr,
                              'fill': True,
                              'fillcolor': 'white',
-                             'zorder': 4,                             
+                             'zorder': 4,
                              'leadext': 'end'}]}
 
 LINE_DOT_OPEN_DOUBLE = {'name': 'LINE_DOT_DOUBLE',
@@ -546,7 +546,7 @@ LINE_DOT_OPEN_DOUBLE = {'name': 'LINE_DOT_DOUBLE',
                                     'radius':_dotr,
                                     'fill': True,
                                     'fillcolor': 'white',
-                                    'zorder': 4,                                    
+                                    'zorder': 4,
                                     'leadext': 'end'},
                                    {'shape': 'circle',
                                     'center': [0, 0],
@@ -676,7 +676,7 @@ VDD = {
 
 def coax(length=3, radius=0.3, leadlen=0.6):
     ''' Make a coaxial cable element
-    
+
         Parameters
         ----------
         length: float
@@ -700,19 +700,19 @@ def coax(length=3, radius=0.3, leadlen=0.6):
                         'shieldcenter': [length/2, -radius],
                         'shieldcenter_top': [length/2, radius]}
            }
-    
+
     if radius/2 > leadlen:
         warnings.warn('Coax leadlen < radius/2. Coax may be malformed.')
     if leadlen*2 > length:
         warnings.warn('Coax length < 2*leadlen. Coax may be malformed.')
-        
+
     return coax
 COAX = coax()
 
 
 def triax(length=3, radiusinner=0.3, radiusouter=0.6, leadlen=0.6, shieldofststart=.3, shieldofstend=.45):
     ''' Make a triaxial cable element
-    
+
         Parameters
         ----------
         length: float
@@ -731,7 +731,7 @@ def triax(length=3, radiusinner=0.3, radiusouter=0.6, leadlen=0.6, shieldofststa
     '''
     if radiusouter < radiusinner:
         raise ValueError('Triax inner radius > outer radius')
-    
+
     xshield = radiusouter/2 * _np.sqrt(1 - radiusinner**2/radiusouter**2)
     if shieldofststart - xshield > -radiusinner/2:
         thetashield = 180 - _np.rad2deg(_np.arctan2(radiusinner, xshield))
@@ -773,10 +773,10 @@ def triax(length=3, radiusinner=0.3, radiusouter=0.6, leadlen=0.6, shieldofststa
 
     if radiusouter <= radiusinner:
         warnings.warn('Triax outer radius < inner radius')
-    
+
     if leadlen+shieldofststart > length-leadlen-shieldofstend:
         warnings.warn('Triax too short for outer radius')
-    
+
     return triax
 TRIAX = triax()
 
@@ -797,7 +797,7 @@ OPAMP_NOSIGN = {
                 'n1': [_oa_xlen*2/3, -.42],
                 'n2': [_oa_xlen*2/3, .42],
                 'n1a': [_oa_xlen*.9, -.13],
-                'n2a': [_oa_xlen*.9, .13]                
+                'n2a': [_oa_xlen*.9, .13]
                },
     'extend': False,
     }
@@ -818,7 +818,7 @@ OPAMP = {
                 'n1': [_oa_xlen*2/3, -.42],
                 'n2': [_oa_xlen*2/3, .42],
                 'n1a': [_oa_xlen*.9, -.13],
-                'n2a': [_oa_xlen*.9, .13]                
+                'n2a': [_oa_xlen*.9, .13]
                },
     'extend': False,
     }
@@ -1462,12 +1462,12 @@ def transformer(t1=4, t2=4, core=True, ltaps=None, rtaps=None, loop=False):
 
 def ic(*pins, **kwargs):
     ''' Define an integrated circuit element
-    
+
         Parameters
         ----------
         *pins: dict
             A dictionary defining each input/output pin.
-            Each dictionary may contain the following 
+            Each dictionary may contain the following
             optional keys:
 
             name: string
@@ -1497,11 +1497,11 @@ def ic(*pins, **kwargs):
                 Rotation angle for label (degrees)
             anchorname: string
                 Name of anchor at end of pin lead. By default pins
-                will have anchors of both the `name` parameter 
+                will have anchors of both the `name` parameter
                 and `inXY` where X the side designation
-                ['L', 'R', 'T', 'B'] and Y the pin number along 
+                ['L', 'R', 'T', 'B'] and Y the pin number along
                 that side.
-            
+
         Keyword Arguments
         -----------------
         size: (w, h) tuple
@@ -1551,11 +1551,11 @@ def ic(*pins, **kwargs):
         sidepins[side] = [p for p in pins if p['side'] == side]
         slots = [p.get('slot', None) for p in sidepins[side]]
         slots = [int(p.split('/')[1]) for p in slots if p is not None] + [0]  # Add a 0 - can't max an empty list
-        pincount[side] = max(len(sidepins[side]), max(slots))        
+        pincount[side] = max(len(sidepins[side]), max(slots))
 
     if 'size' not in kwargs:
         hcnt = max(pincount.get('L', 1), pincount.get('R', 1))
-        wcnt = max(pincount.get('T', 1), pincount.get('B', 1)) 
+        wcnt = max(pincount.get('T', 1), pincount.get('B', 1))
         try:
             h = (hcnt-1)*pinspacing/(1-2/(hcnt+2)) + edgepadH*2
         except ZeroDivisionError:
@@ -1581,7 +1581,7 @@ def ic(*pins, **kwargs):
     elif slant < 0:
         y1 = 0 + w * _np.tan(_np.deg2rad(slant))
         y2 = h - w * _np.tan(_np.deg2rad(slant))
-        paths = [[[0, y1], [w, 0], [w, h], [0, y2], [0, y1]]]        
+        paths = [[[0, y1], [w, 0], [w, h], [0, y2], [0, y1]]]
     else:
         y1 = 0
         y2 = h
@@ -1598,14 +1598,14 @@ def ic(*pins, **kwargs):
                    'R': _np.array([leadlen, 0]),
                    'T': _np.array([0, leadlen]),
                    'B': _np.array([0, -leadlen])}.get(side)
-            
+
         for i, pin in enumerate(sidepins[side]):
             # Determine pin position
             if 'pos' in pin:
                 z = pin['pos'] * sidelen
             elif 'slot' not in pin:
                 pin['slot'] = '{}/{}'.format(i+1, len(sidepins[side]))
-    
+
             if 'slot' in pin:
                 num, tot = pin['slot'].split('/')
                 num = int(num)
@@ -1615,7 +1615,7 @@ def ic(*pins, **kwargs):
                 else:
                     # Evenly spaced along side
                     z = _np.linspace(1/(tot+2), 1-1/(tot+2), num=tot)[num-1] * sidelen
-                    
+
             pin['pos'] = _np.asarray({
                             'L': [0, z+edgepadH],
                             'R': [w, z+edgepadH],
@@ -1659,7 +1659,7 @@ def ic(*pins, **kwargs):
                          'R': ('right', 'center'),
                          'T': ('center', 'top'),
                          'B': ('center', 'bottom')}.get(side)
-            
+
                 label = {'label': pin['name'],
                          'pos': pin['pos'] + pofst,
                          'align': align,
@@ -1670,7 +1670,7 @@ def ic(*pins, **kwargs):
                 if 'rotation' in pin:
                     label['rotation'] = pin['rotation']
                     label['rotation_mode'] = 'default'
-                    
+
                 labels.append(label)
 
             # Add pin number outside the IC
@@ -1686,13 +1686,13 @@ def ic(*pins, **kwargs):
                          'R': ('left', 'bottom'),
                          'T': ('left', 'bottom'),
                          'B': ('left', 'top')}.get(side)
-            
+
                 label = {'label': pin['pin'],
                          'pos': pin['pos'] + pofst,
                          'align': align,
                          'size': pin.get('psize', plblsize)}
 
-                labels.append(label)                
+                labels.append(label)
 
             # Draw leads                
             if leadlen > 0:
@@ -1703,7 +1703,7 @@ def ic(*pins, **kwargs):
                                   'R': _np.array([invertradius, 0]),
                                   'T': _np.array([0, invertradius]),
                                   'B': _np.array([0, -invertradius])}.get(side)
-                    
+
                     shapes.append({'shape': 'circle',
                                    'center': pin['pos']+invertofst,
                                    'radius': invertradius,})
@@ -1722,7 +1722,7 @@ def ic(*pins, **kwargs):
                 anchors[pin.get('name')] = anchorpos
             if pin.get('pin'):
                 anchors['pin{}'.format(pin.get('pin'))] = anchorpos
-    
+
     box = {'paths': paths,
            'shapes': shapes,
            'anchors': anchors,
@@ -1779,7 +1779,7 @@ def blackbox(w, h, linputs=None, rinputs=None, tinputs=None, binputs=None,
         labels, anchors are named 'inL1', 'inL2', ... 'inR1', 'inR2', 'inT1', 'inB1', etc.
     '''
     warnings.warn('blackbox function is deprecated and may be removed in the future. Use ic() instead.', DeprecationWarning, 2)
-    
+
     if hslant is not None and vslant is not None:
         print('Warning - hslant and vslant both defined. Weird pins may result.')
 
@@ -1908,7 +1908,7 @@ def blackbox(w, h, linputs=None, rinputs=None, tinputs=None, binputs=None,
                 anchorpos = _np.array([x, y]) + leadext
             else:
                 anchorpos = _np.array([x, y])
-            
+
             # Always add an anchor with side/input name, i.e. 'inL1'
             aname = 'in{}{}'.format(side[0].upper(), i+1)
             box['anchors'][aname] = anchorpos
@@ -1917,7 +1917,7 @@ def blackbox(w, h, linputs=None, rinputs=None, tinputs=None, binputs=None,
             if len(sidelabels) == cnt and sidelabels[i]:
                 aname = sidelabels[i]
                 box['anchors'][aname] = anchorpos
- 
+
                 # But, can end up with attributes not accessible via dot
                 # e.g. getattr(X, '>') works but X.> does not.
                 if sidelabels[i] == '>':
@@ -1927,7 +1927,7 @@ def blackbox(w, h, linputs=None, rinputs=None, tinputs=None, binputs=None,
                     aname = re.sub(r'\W+', '', sidelabels[i])
                     if aname != sidelabels[i] and aname != '':
                         box['anchors'][aname] = anchorpos
-                        
+
             # If pin label is given, add it as anchor 'pinXXX'
             if len(plabels) == cnt and plabels[i]:
                 aname = 'pin{}'.format(re.sub(r'\W+', '', plabels[i]))
@@ -1969,12 +1969,12 @@ def blackbox(w, h, linputs=None, rinputs=None, tinputs=None, binputs=None,
 
 def multiplexer(*pins, **kwargs):
     ''' Draw a multiplexer or demultiplexer.
-    
+
         Parameters
         ----------
         *pins: dict
             List of pin definitions. See IC method.
-        
+
         Keyword Arguments
         -----------------
         demux: bool
@@ -2025,7 +2025,7 @@ def mux(inputs=None, outputs=None, ctrls=None, topctrls=None,
         element dictionary
     '''
     warnings.warn('mux function is deprecated and may be removed in the future. Use multiplexer() instead.', DeprecationWarning, 2)
-    
+
     linputs = None
     rinputs = None
     binputs = None

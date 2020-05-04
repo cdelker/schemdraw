@@ -124,9 +124,7 @@ class Drawing(object):
         self.unit = unit
         self.inches_per_unit = inches_per_unit
         self.txtofst = txtofst
-        self.fontdict = {
-            'family': font
-        }
+        self.font = font
         self.fontsize = fontsize
         self.params = kwargs
 
@@ -942,7 +940,7 @@ class SegmentText(object):
         self.text = label
         self.xy = transform.transform(self._xy)
         self.align = kwargs.get('align', ('center', 'center'))
-        self.fontdict = kwargs.get('fontdict', {'family': 'sans-serif'})
+        self.font = kwargs.get('font', 'sans-serif')
         self.fontsize = kwargs.get('fontsize', kwargs.get('size', 14))
         self.color = kwargs.get('color', 'black')
         self.rotation = kwargs.get('rotation', 0)
@@ -974,7 +972,7 @@ class SegmentText(object):
     def draw(self, ax):
         ''' Draw the segment '''
         ax.text(self.xy[0], self.xy[1], self.text, transform=ax.transData,
-                color=self.color, fontsize=self.fontsize, fontdict=self.fontdict, rotation=self.rotation,
+                color=self.color, fontsize=self.fontsize, family=self.font, rotation=self.rotation,
                 horizontalalignment=self.align[0], verticalalignment=self.align[1],
                 zorder=self.zorder, rotation_mode=self.rotation_mode)
 
@@ -1482,13 +1480,13 @@ class Element(object):
         ymin = self.ymin
 
         size = kwargs.get('fontsize', kwargs.get('size', self.drawing.fontsize))
-        fontdict = kwargs.get('fontdict', self.drawing.fontdict)
+        font = kwargs.get('font', self.drawing.font)
 
         lblparams = self.drawing.params.copy()
         lblparams.update(self.userparams)
         lblparams.update(kwargs)
         lblparams.update({'align': align, 'rotation': rotation,
-                          'transform': self.transform, 'fontsize': size, 'fontdict': fontdict})
+                          'transform': self.transform, 'fontsize': size, 'font': font})
 
         if isinstance(label, (list, tuple)):
             # Divide list along length

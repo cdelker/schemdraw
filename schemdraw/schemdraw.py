@@ -13,15 +13,6 @@ from collections import namedtuple
 
 from . import elements
 
-# Set up matplotlib parameters
-mpl.rcParams['figure.subplot.left']   = 0.05
-mpl.rcParams['figure.subplot.bottom'] = 0.05
-mpl.rcParams['figure.subplot.right']  = 0.95
-mpl.rcParams['figure.subplot.top']    = 0.90
-mpl.rcParams['font.family'] = 'sans-serif'
-mpl.rcParams['mathtext.fontset'] = 'stixsans'
-mpl.rcParams['mathtext.default'] = 'regular'
-
 # Define transformation matricies
 mirror_matrix = np.array([[-1, 0], [0, 1]])
 flip_matrix = np.array([[1, 0], [0, -1]])
@@ -133,8 +124,8 @@ class Drawing(object):
         self.unit = unit
         self.inches_per_unit = inches_per_unit
         self.txtofst = txtofst
-        self.fontsize = fontsize
         self.font = font
+        self.fontsize = fontsize
         self.params = kwargs
 
         # Drawing state variables
@@ -257,11 +248,15 @@ class Drawing(object):
             showplot : bool
                 Show the plot in matplotlib window in non-interactive mode.
         '''
-        mpl.rcParams['font.size'] = self.fontsize
-        mpl.rcParams['font.family'] = self.font
 
         if ax is None:
             fig, ax = plt.subplots()
+            fig.subplots_adjust(
+                left=0.05,
+                bottom=0.05,
+                right=0.95,
+                top=0.90
+            )
         else:
             fig = ax.get_figure()
 
@@ -385,7 +380,7 @@ class Drawing(object):
                 reverse = True
             else:
                 reverse = False
-        self.add(elements.ARROWHEAD, theta=elm.theta, reverse=reverse, 
+        self.add(elements.ARROWHEAD, theta=elm.theta, reverse=reverse,
                  xy=[x, y], label=label, botlabel=botlabel)
 
     def loopI(self, elm_list, label='', d='cw', theta1=35, theta2=-35, pad=.2):
@@ -945,6 +940,7 @@ class SegmentText(object):
         self.text = label
         self.xy = transform.transform(self._xy)
         self.align = kwargs.get('align', ('center', 'center'))
+        self.font = kwargs.get('font', 'sans-serif')
         self.fontsize = kwargs.get('fontsize', kwargs.get('size', 14))
         self.color = kwargs.get('color', 'black')
         self.rotation = kwargs.get('rotation', 0)
@@ -976,7 +972,7 @@ class SegmentText(object):
     def draw(self, ax):
         ''' Draw the segment '''
         ax.text(self.xy[0], self.xy[1], self.text, transform=ax.transData,
-                color=self.color, fontsize=self.fontsize, rotation=self.rotation,
+                color=self.color, fontsize=self.fontsize, family=self.font, rotation=self.rotation,
                 horizontalalignment=self.align[0], verticalalignment=self.align[1],
                 zorder=self.zorder, rotation_mode=self.rotation_mode)
 
@@ -1484,12 +1480,13 @@ class Element(object):
         ymin = self.ymin
 
         size = kwargs.get('fontsize', kwargs.get('size', self.drawing.fontsize))
+        font = kwargs.get('font', self.drawing.font)
 
         lblparams = self.drawing.params.copy()
         lblparams.update(self.userparams)
         lblparams.update(kwargs)
-        lblparams.update({'align': align, 'rotation': rotation, 
-                          'transform': self.transform, 'fontsize': size})
+        lblparams.update({'align': align, 'rotation': rotation,
+                          'transform': self.transform, 'fontsize': size, 'font': font})
 
         if isinstance(label, (list, tuple)):
             # Divide list along length

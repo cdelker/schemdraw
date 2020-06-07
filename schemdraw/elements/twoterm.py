@@ -1,5 +1,6 @@
 ''' Two-terminal element definitions '''
 
+from collections import ChainMap
 import numpy as np
 
 from .elements import Element, gap
@@ -54,7 +55,7 @@ class Element2Term(Element):
         toy = self.cparams.get('toy', None)
         anchor = self.cparams.get('anchor', None)
         zoom = self.cparams.get('zoom', 1)
-        xy = np.asarray(self.cparams.get('xy', dwgxy))
+        xy = np.asarray(self.cparams.get('at', dwgxy))
 
         # set up transformation
         theta = self.cparams.get('theta', dwgtheta)
@@ -182,6 +183,8 @@ class Capacitor(Element2Term):
                                   [capgap, resheight], [capgap, -resheight], gap,
                                   [capgap, 0]], **kwargs)]
         if kwargs.get('polar', False):
+            kwargs = dict(kwargs)
+            kwargs.pop('label', None)  # Remove existing element label from kwargs
             self.segments.append(SegmentText([-capgap*1.2, capgap], '+', **kwargs))
 
 
@@ -340,7 +343,7 @@ class Memristor(Element2Term):
         mr = 0.2
         self.segments.append(Segment([[0, 0], [mr, 0], [mr, -mr*.75], [mr*2, -mr*.75], [mr*2, mr*.75], [mr*3, mr*.75], [mr*3, -mr*.75], [mr*4, -mr*.75], [mr*4, 0], [mr*5, 0]], **kwargs))
         self.segments.append(Segment([[0, mr*1.25], [mr*5, mr*1.25], [mr*5, mr*-1.25], [0, mr*-1.25], [0, mr*1.25]], **kwargs))
-        args = ChainMap({'fill', 'black'}, kwargs)
+        args = ChainMap({'fill': 'black'}, kwargs)
         self.segments.append(SegmentPoly([[0, mr*1.25], [0, -mr*1.25], [mr/2, -mr*1.25], [mr/2, mr*1.25]], **args))
 
 
@@ -366,9 +369,12 @@ class Fuse(Element2Term):
         fusey = np.sin(np.linspace(0, 1)*2*np.pi) * resheight
         self.segments.append(Segment(np.transpose(np.vstack((fusex, fusey))), **kwargs))
         self.segments.append(Segment([[0, 0], gap, [1+fuser*3, 0]], **kwargs))
-        args = ChainMap({'fill': 'white', 'zorder': 5}, kwargs)
-        self.segments.append(SegmentCircle([fuser, 0], fuser, **args))
-        self.segments.append(SegmentCircle([fuser*2+1, 0], fuser, **args))
+        if 'fill' not in kwargs or kwargs['fill'] is None:
+            fill = 'white' if kwargs.get('open', False) else True
+            kwargs = ChainMap({'fill': fill}, kwargs)
+        kwargs = ChainMap({'zorder': 4}, kwargs)    
+        self.segments.append(SegmentCircle([fuser, 0], fuser, **kwargs))
+        self.segments.append(SegmentCircle([fuser*2+1, 0], fuser, **kwargs))
 
 
 class Arrow(Line):
@@ -414,7 +420,7 @@ class LineDot(Line):
 
 class Gap(Element2Term):
     def setup(self, **kwargs):
-        kwargs.setdefault('color', 'white')
+        kwargs['color'] = self.userparams.get('color', 'white')
         self.segments.append(Segment([[0, 0], gap, [1, 0]], **kwargs))
         self.params['lblloc'] = 'center'
         self.params['lblofst'] = 0
@@ -487,5 +493,5 @@ class Inductor2(Element2Term):
     '''
     def setup(self, **kwargs):
         loops = kwargs.get('loops', 4)
-        self.segments.append(Segment(cycloid(loops=loops)))
+        self.segments.append(Segment(cycloid(loops=loops), **kwargs))
 

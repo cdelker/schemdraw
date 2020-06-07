@@ -1,8 +1,9 @@
 ''' Other elements '''
 
+from collections import ChainMap
 import numpy as np
 
-from .elements import Element
+from .elements import Element, gap
 from .twoterm import Element2Term, resheight
 from ..transform import Transform
 from ..segments import *
@@ -14,7 +15,7 @@ class Speaker(Element):
         self.segments.append(Segment([[0, 0], [resheight, 0]], **kwargs))
         self.segments.append(Segment([[0, -sph], [resheight, -sph]], **kwargs))
         self.segments.append(SegmentPoly([[resheight, sph/2], [resheight, -sph*1.5], [resheight*2, -sph*1.5], [resheight*2, sph/2]], **kwargs))
-        self.segments.append(SegmentPoly([[resheight*2, sph/2], [resheight*3.5, sph*1.25], [resheight*3.5, -sph*2.25], [resheight*2, -sph*1.5]], closed=False))
+        self.segments.append(SegmentPoly([[resheight*2, sph/2], [resheight*3.5, sph*1.25], [resheight*3.5, -sph*2.25], [resheight*2, -sph*1.5]], closed=False, **kwargs))
         self.anchors['in1'] = [0, 0]
         self.anchors['in2'] = [0, -sph]
         self.params['drop'] = [0, -sph]
@@ -64,15 +65,19 @@ class CurrentLabel(Element):
         length = kwargs.pop('length', 2)
         top = kwargs.pop('top', True)
         reverse = kwargs.pop('rev', False)
-        self.lblofst = .1    
-        self.drop = None  # None means don't move xy from previous element
+        self.params['lblofst'] = .1    
+        self.params['drop'] = None  # None means don't move xy from previous element
         self.anchor = 'center'
         self.anchors['center'] = [0, 0]        
 
         if not top:
             ofst = -ofst
-
+            self.params['lblloc'] = 'bot'
         a, b = [-length/2, ofst], [length/2, ofst]
+        
+        if reverse:
+            a, b = b, a
+
         self.segments.append(SegmentArrow(a, b, headwidth=.2, headlength=.3, **kwargs))
 
 
@@ -140,11 +145,11 @@ class LoopCurrent(Element):
     '''
     def setup(self, **kwargs):
         direction = kwargs.get('direction', 'cw')
-        theta1 = kwargs.get('theta1', 35)
-        theta2 = kwargs.get('theta2', -35)
-        width = kwargs.get('width', .75)
-        height = kwargs.get('height', .75)
-        self.segments.append(SegmentArc([0, 0], theta1=theta1, theta2=theta2, width=width, height=height, arrow=direction))
+        kwargs.setdefault('theta1', 35)
+        kwargs.setdefault('theta2', -35)
+        kwargs.setdefault('width', .75)
+        kwargs.setdefault('height', .75)
+        self.segments.append(SegmentArc([0, 0], arrow=direction, **kwargs))
         self.params['lblloc'] = 'center'
         self.params['lblofst'] = 0
         self.params['theta'] = 0        

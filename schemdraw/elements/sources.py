@@ -83,25 +83,33 @@ class Battery(Element2Term):
 class MeterV(Source):
     def setup(self, **kwargs):
         super().setup(**kwargs)
-        self.segments.append(SegmentText([.5, 0], 'V'))
+        kwargs = dict(kwargs)
+        kwargs.pop('label', None)
+        self.segments.append(SegmentText([.5, 0], 'V', **kwargs))
 
 
 class MeterI(Source):
     def setup(self, **kwargs):
-        super().setup(**kwargs)        
-        self.segments.append(SegmentText([.5, 0], 'I'))
+        super().setup(**kwargs)
+        kwargs = dict(kwargs)
+        kwargs.pop('label', None)
+        self.segments.append(SegmentText([.5, 0], 'I', **kwargs))
 
 
 class MeterA(Source):
     def setup(self, **kwargs):
-        super().setup(**kwargs)        
-        self.segments.append(SegmentText([.5, 0], 'A'))
+        super().setup(**kwargs)
+        kwargs = dict(kwargs)
+        kwargs.pop('label', None)        
+        self.segments.append(SegmentText([.5, 0], 'A', **kwargs))
 
 
 class MeterOhm(Source):        
     def setup(self, **kwargs):
-        super().setup(**kwargs)        
-        self.segments.append(SegmentText([.5, 0], '$\Omega$'))
+        super().setup(**kwargs)
+        kwargs = dict(kwargs)
+        kwargs.pop('label', None)
+        self.segments.append(SegmentText([.5, 0], '$\Omega$', **kwargs))
 
 
 class Lamp(Source):

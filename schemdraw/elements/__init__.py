@@ -8,7 +8,7 @@ from .transistors import NFet, PFet, JFet, JFetN, JFetP, Bjt, BjtNpn, BjtPnp, Bj
 from .misc import Speaker, Mic, CurrentLabel, CurrentLabelInline, LoopCurrent, Motor
 from .xform import Transformer
 from .cables import Coax, Triax
-from .ic import IcPin, Ic, Multiplexer
+from .intcircuits import IcPin, Ic, Multiplexer
 
 
 from . import legacy

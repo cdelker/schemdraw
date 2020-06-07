@@ -6,13 +6,24 @@ from functools import partial
 
 from .. import flow
 
-    
-connect = flow.Connect
-decision = flow.Decision
-sub = flow.Subroutine
-data = flow.Data
-start = flow.Start
-box = flow.Box
+def start(w, h):
+    return partial(flow.Start, w=w, h=h)
+
+def connect(w, h):
+    return partial(flow.Connect, w=w, h=h)
+
+def decision(w, h, **kwargs):
+    return partial(flow.Decision, w=w, h=h, **kwargs)
+
+def sub(w, h, s=.3):
+    return partial(flow.Subroutine, w=w, h=h, s=s)
+
+def data(w, h, s=.5):
+    return partial(flow.Data, w=w, h=h, s=s)
+
+def box(w, h):
+    return partial(flow.Box, w=w, h=h)
+
 ARROWHEAD = flow.Arrowhead
 ARROW = flow.Arrow
 DOT = flow.Dot

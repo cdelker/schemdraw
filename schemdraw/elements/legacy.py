@@ -60,6 +60,7 @@ ARROW_DOUBLE = partial(elm.Arrow, double=True)
 ARROWLINE = elm.CurrentLabel
 ARROW_I = elm.CurrentLabel
 LINEDOT = elm.LineDot
+LINE_DOT = elm.LineDot
 LINE_DOT_DOUBLE = partial(elm.LineDot, double=True)
 LINE_DOT_OPEN = partial(elm.LineDot, fill='white')
 LINE_DOT_OPEN_DOUBLE = partial(elm.LineDot, fill='white', double=True)

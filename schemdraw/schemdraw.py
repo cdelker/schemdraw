@@ -77,14 +77,14 @@ class Drawing(object):
         ''' SVG representation for Jupyter '''
         output = StringIO()
         fig = self.draw()
-        fig.savefig(output, format='svg')
+        fig.savefig(output, format='svg', bbox_inches='tight')
         return output.getvalue()
 
     def _repr_png_(self):
         ''' PNG representation for Jupyter '''        
         output = BytesIO()
         fig = self.draw()
-        fig.savefig(output, format='png')
+        fig.savefig(output, format='png', bbox_inches='tight')
         return output.getvalue()
 
     def add(self, element, **kwargs):
@@ -148,7 +148,9 @@ class Drawing(object):
         left = bbox4.xmax + pad
         rght = bbox2.xmin - pad
         center = [(left+rght)/2, (top+bot)/2]
-        self.add(LoopCurrent(xy=center, label=label, width=rght-left, height=top-bot, direction=d, theta1=theta1, theta2=theta2))
+        element = LoopCurrent(xy=center, label=label, width=rght-left, height=top-bot, direction=d, theta1=theta1, theta2=theta2) 
+        self.add(element)
+        return element
 
     def labelI(self, elm, label='', arrowofst=0.4, arrowlen=2, reverse=False, top=True):
         ''' Add an arrow element along side another element
@@ -168,9 +170,10 @@ class Drawing(object):
             top : bool
                 Draw arrow on top (True) or bottom (False) of element
         '''
-        element = CurrentLabel(xy=elm.center, label=label, ofst=arrowofst,
+        element = CurrentLabel(xy=elm.center, theta=elm.transform.theta, label=label, ofst=arrowofst,
                                length=arrowlen, rev=reverse, top=top)
         self.add(element)
+        return element
         
     def labelI_inline(self, elm, label='', botlabel='', d='in', start=True, ofst=.8):
         ''' Add an arrowhead for labeling current inline with leads.
@@ -194,6 +197,7 @@ class Drawing(object):
         element = CurrentLabelInline(xy=elm.center, label=label, botlabel=botlabel,
                                      direction=d, ofst=ofst, start=start, theta=elm.transform.theta)
         self.add(element)
+        return element
         
     def draw(self, showframe=False):
         ''' Draw the schematic
@@ -211,7 +215,7 @@ class Drawing(object):
             top=0.90)
         ax = fig.add_subplot()
         ax.autoscale_view(True)  # This autoscales all the shapes too        
-        
+
         for element in self.elements:
             element.draw(ax)
 

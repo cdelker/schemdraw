@@ -5,7 +5,11 @@
 from functools import partial
 
 from .. import dsp
+from ..elements.legacy import LINE, DOT, LINEDOT, LINE_DOT, ARROW, ARROWHEAD, ANT, ic, multiplexer
+from ..flow import Box
 
+def makebox(w, h):
+    return partial(Box, w=w, h=h)
 
 BOX = dsp.Square
 CIRCLE = dsp.Circle

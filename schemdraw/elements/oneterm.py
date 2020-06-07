@@ -20,6 +20,9 @@ class Ground(Element):
                                   [resheight*.2, -gndgap*2-gnd_lead]], **kwargs)]
         self.params['theta'] = 0
         self.params['drop'] = [0, 0]
+        self.anchors['start'] = [0, 0]
+        self.anchors['center'] = [0, 0]
+        self.anchors['end'] = [0, 0]        
 
 
 class GroundSignal(Element):
@@ -27,6 +30,10 @@ class GroundSignal(Element):
         self.segments.append(Segment([[0, 0], [0, -gnd_lead], [-resheight, -gnd_lead], [0, -gnd_lead*2],
                                       [resheight, -gnd_lead], [0, -gnd_lead]], **kwargs))
         self.params['drop'] = [0, 0]
+        self.params['theta'] = 0        
+        self.anchors['start'] = [0, 0]
+        self.anchors['center'] = [0, 0]
+        self.anchors['end'] = [0, 0]        
 
 
 class GroundChassis(Element):
@@ -37,6 +44,10 @@ class GroundChassis(Element):
         self.segments.append(Segment([[0, -gnd_lead], [-dx, -gnd_lead], [-dx*2, -gnd_lead-dy]], **kwargs))
         self.segments.append(Segment([[0, -gnd_lead], [dx, -gnd_lead], [0, -gnd_lead-dy]], **kwargs))
         self.params['drop'] = [0, 0]
+        self.params['theta'] = 0
+        self.anchors['start'] = [0, 0]
+        self.anchors['center'] = [0, 0]
+        self.anchors['end'] = [0, 0]        
 
         
 class Antenna(Element):
@@ -46,6 +57,10 @@ class Antenna(Element):
         w = 0.38        
         self.segments.append(Segment([[0, 0], [0, lead], [-w, lead+h], [w, lead+h], [0, lead]], **kwargs))
         self.params['drop'] = [0, 0]
+        self.params['theta'] = 0
+        self.anchors['start'] = [0, 0]
+        self.anchors['center'] = [0, 0]
+        self.anchors['end'] = [0, 0]        
 
 
 class Vss(Element):
@@ -55,7 +70,12 @@ class Vss(Element):
         self.segments.append(Segment([[0, 0], [0, -gnd_lead]], **kwargs))
         self.segments.append(Segment([[0, -gnd_lead], [-dx, -gnd_lead]], **kwargs))
         self.segments.append(Segment([[0, -gnd_lead], [dx, -gnd_lead]], **kwargs))
+        self.theta = 0        
         self.params['drop'] = [0, 0]
+        self.params['theta'] = 0
+        self.anchors['start'] = [0, 0]
+        self.anchors['center'] = [0, 0]
+        self.anchors['end'] = [0, 0]        
 
 
 class Vdd(Element):
@@ -65,7 +85,12 @@ class Vdd(Element):
         self.segments.append(Segment([[0, 0], [0, gnd_lead]], **kwargs))
         self.segments.append(Segment([[0, gnd_lead], [-dx, gnd_lead]], **kwargs))
         self.segments.append(Segment([[0, gnd_lead], [dx, gnd_lead]], **kwargs))
+        self.theta = 0        
         self.params['drop'] = [0, 0]
+        self.params['theta'] = 0
+        self.anchors['start'] = [0, 0]
+        self.anchors['center'] = [0, 0]
+        self.anchors['end'] = [0, 0]        
 
 
 class Dot(Element):
@@ -82,18 +107,29 @@ class Dot(Element):
     '''
     def setup(self, **kwargs):
         radius = kwargs.pop('radius', 0.075)
-        fill = kwargs.pop('fill', 'white' if kwargs.pop('open', False) else 'black')
-        args = ChainMap({'fill': fill, 'zorder': 4}, kwargs)
-        self.segments.append(SegmentCircle([0, 0], radius, **args))
+        if 'fill' not in kwargs or kwargs['fill'] is None:
+            fill = 'white' if kwargs.get('open', False) else True
+            kwargs = ChainMap({'fill': fill}, kwargs)
+        kwargs = ChainMap({'zorder': 9}, kwargs)
+        self.anchors['start'] = [0, 0]
+        self.anchors['center'] = [0, 0]
+        self.anchors['end'] = [0, 0]
+        self.params['drop'] = [0, 0]
+        self.params['theta'] = 0
+        self.segments.append(SegmentCircle([0, 0], radius, **kwargs))
 
 
 class Arrowhead(Element):
     def setup(self, **kwargs):
         self.segments.append(SegmentArrow([-.3, 0], [0, 0], headwidth=.3, headlength=.3, **kwargs))
+        self.theta = 0
+        self.anchors['start'] = [0, 0]
+        self.anchors['center'] = [0, 0]
+        self.anchors['end'] = [0, 0]                
         self.params['lblofst'] = .25
 
         
-class DotDotDot(Element):   # Used to call this ELLIPSIS, but that's a reserved class in Python slicing
+class DotDotDot(Element):
     ''' Ellipsis element
     
         Parameters
@@ -114,11 +150,12 @@ class DotDotDot(Element):   # Used to call this ELLIPSIS, but that's a reserved 
     '''
     def setup(self, **kwargs):
         radius = kwargs.pop('radius', .075)
-        fill = kwargs.pop('fill', 'white' if kwargs.pop('open', False) else 'black')
-        args = ChainMap({'fill': fill}, kwargs)        
-        self.segments.append(SegmentCircle([.5, 0], radius, **args))
-        self.segments.append(SegmentCircle([1, 0], radius, **args))
-        self.segments.append(SegmentCircle([1.5, 0], radius, **args))
+        if 'fill' not in kwargs or kwargs['fill'] is None:
+            fill = 'white' if kwargs.get('open', False) else True
+            kwargs = ChainMap({'fill': fill}, kwargs)
+        self.segments.append(SegmentCircle([.5, 0], radius, **kwargs))
+        self.segments.append(SegmentCircle([1, 0], radius, **kwargs))
+        self.segments.append(SegmentCircle([1.5, 0], radius, **kwargs))
         self.params['drop'] = [2, 0]
         
 

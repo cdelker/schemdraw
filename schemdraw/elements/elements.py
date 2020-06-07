@@ -15,10 +15,15 @@ class Element(object):
     ''' Element Keyword Arguments
         -------------------------
         d : string
-            Drawing direction ['down', 'up', 'left', 'right']
-        xy : float list
+            Drawing direction ['down', 'up', 'left', 'right'] or
+            abbreviated ['d', 'u', 'l', 'r']
+        at : float list [x, y]
             Starting coordinate of element, defaults to current
-            drawing position.
+            drawing position. OR xy can be tuple of (Element, anchorname)
+            to be resolved after the Element has been placed (see Walrus
+            mode in documentation)
+        xy : float list [x, y]
+            Alias for at keyword
         theta : float
             Angle (degrees) of element. Overrides the `d` parameter.
         flip : bool
@@ -47,7 +52,7 @@ class Element(object):
             Rotate the label text to align with the element,
             for example vertical text with an element having
             `d="up"`.
-        lblloc : ['top', 'bottom', 'left', 'right', 'center']
+        lblloc : ['top', 'bot', 'lft', 'rgt', 'center']
             Location for drawing the label specified by `label`
             parameter.
         zorder : int
@@ -61,9 +66,11 @@ class Element(object):
             Line width for the element
         fill : string
             Fill color for elements with closed paths or shapes
+        move_cur : bool
+            Move the Drawing cursor to the endpoint of the element
     '''
     def __init__(self, d=None, **kwargs):
-        self.userparams = kwargs ## ONLY for generic setup args of subclasses
+        self.userparams = kwargs
         if d is not None:  # Allow direction to be specified as first param without name
             self.userparams['d'] = d
 
@@ -86,14 +93,17 @@ class Element(object):
         ''' Combine parameters from user, setup, and drawing '''
         self.setup(**ChainMap(self.userparams, self.dwgparams))
 
+        if 'xy' in self.userparams:
+            self.userparams.setdefault('at', self.userparams.pop('xy'))
+
         # Accomodate xy positions based on other elements before they are fully set up.
-        if 'xy' in self.userparams and isinstance(self.userparams['xy'][1], str):
-            element, pos = self.userparams['xy']
+        if 'at' in self.userparams and isinstance(self.userparams['at'][1], str):
+            element, pos = self.userparams['at']
             if pos in element.absanchors:
                 xy = element.absanchors[pos]
             else:
                 raise KeyError('Unknown anchor name {}'.format(pos))
-            self.userparams['xy'] = xy
+            self.userparams['at'] = xy
 
         self.cparams = ChainMap(self.userparams, self.params, self.dwgparams)  # All subsequent actions get params from this one
         self.flipreverse()
@@ -117,7 +127,7 @@ class Element(object):
     
     def place(self, dwgxy, dwgtheta, **dwgparams):
         ''' Determine position within the drawing '''
-        self.dwgparams = dwgparams  # SHOULD dwgxy and theta be combined with this?
+        self.dwgparams = dwgparams
         if self.cparams is None:
             self.buildparams()
         
@@ -126,12 +136,11 @@ class Element(object):
         params = {}
         anchor = self.cparams.get('anchor', None)
         zoom = self.cparams.get('zoom', 1)
-        xy = np.asarray(self.cparams.get('xy', dwgxy))
+        xy = np.asarray(self.cparams.get('at', dwgxy))
         
         # Get bounds of element, used for positioning user labels
-        self.xmin, self.ymin, self.xmax, self.ymax = self.get_bbox()   # TODO: use BBOx named tuple instead of 4 attributes
+        self.xmin, self.ymin, self.xmax, self.ymax = self.get_bbox()
         
-        # set up transformation
         if self.cparams.get('d') is not None:
             theta = {'u': 90, 'r': 0, 'l': 180, 'd': 270}[self.cparams.get('d')[0].lower()]
         else:
@@ -175,8 +184,11 @@ class Element(object):
             setattr(self, name, pos)
 
         drop = self.cparams.get('drop', None)
-        if drop is None:
+        if drop is None or not self.cparams.get('move_cur', True):
             return dwgxy, dwgtheta
+        elif self.params.get('theta', None) == 0:
+            # Element def specified theta = 0, don't change
+            return self.transform.transform(drop), dwgtheta
         else:
             return self.transform.transform(drop), theta
         
@@ -304,8 +316,7 @@ class Element(object):
         lblparams.pop('label', None)  # Can't pop from nested chainmap, convert to flat dict first
         size = lblparams.get('fontsize', lblparams.get('size', 14))
         font = lblparams.get('font', 'sans-serif')
-        lblparams.update({'align': align,
-                           'rotation': rotation})  # JUST PUT THESE IN KWARGS AT BEGINNING OF FUNC
+        lblparams.update({'align': align, 'rotation': rotation})
 
         if isinstance(label, (list, tuple)):
             # Divide list along length
@@ -353,9 +364,9 @@ class Element(object):
             elif loc in self.anchors:
                 xy = np.asarray(self.anchors[loc])
                 if isinstance(ofst, (list, tuple)):
-                    xy = xy + ofst# - self.leadofst
+                    xy = xy + ofst
                 else:
-                    xy = np.asarray([xy[0], xy[1]+ofst])# - self.leadofst
+                    xy = np.asarray([xy[0], xy[1]+ofst])
             else:
                 raise ValueError('Undefined location {}'.format(loc))
             self.segments.append(SegmentText(np.asarray(xy), label, **lblparams))
@@ -430,4 +441,4 @@ class ElementDrawing(Element):
         ''' Set up the element by combineing all segments in drawing '''
         for element in self.drawing.elements:
             self.segments.extend([s.xform(element.transform) for s in element.segments])
-        self.drop = self.drawing.xy
+        self.params['drop'] = self.drawing.here

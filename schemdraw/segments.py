@@ -172,6 +172,7 @@ class SegmentText(object):
             xmin, ymin, xmax, ymax
                 Bounding box limits
         '''
+        # Matplotlib doesn't know text dimensions until AFTER it is drawn
         return BBox(np.inf, np.inf, -np.inf, -np.inf)
 
     def draw(self, ax, transform):
@@ -516,7 +517,7 @@ class SegmentArc(object):
         self.width = width
         self.height = height
         self.theta1 = kwargs.get('theta1', 35)
-        self.theta2 = kwargs.get('theta2', 35)
+        self.theta2 = kwargs.get('theta2', -35)
         self.arrow = kwargs.get('arrow', None)  # cw or ccw
         self.color = kwargs.get('color', 'black')
         self.lw = kwargs.get('lw', 2)
@@ -540,7 +541,7 @@ class SegmentArc(object):
     def xform(self, transform):
         ''' Return a new Segment that has been transformed '''
         kwargs = self.kwargs.copy()
-        kwargs['angle'] = kwargs.get('angle', 0) + transform.theta
+        kwargs['angle'] = self.angle + transform.theta
         return SegmentArc(transform.transform(self.center), self.width, self.height, **kwargs)
 
     def end(self):
@@ -555,11 +556,19 @@ class SegmentArc(object):
             xmin, ymin, xmax, ymax
                 Bounding box limits
         '''
-        xmin = self.center[0] - self.width
-        ymin = self.center[1] - self.height
-        xmax = self.center[0] + self.width
-        ymax = self.center[1] + self.height
-        return BBox(xmin, ymin, xmax, ymax)
+        # Who wants to do trigonometry when we can just brute-force the bounding box?
+        t = np.deg2rad(np.linspace(self.theta1, self.theta2, num=500))
+        phi = np.deg2rad(self.angle)        
+        rx = self.width/2
+        ry = self.height/2
+        xx = self.center[0] + rx * np.cos(t)*np.cos(phi) - ry * np.sin(t)*np.sin(phi)
+        yy = self.center[1] + rx * np.cos(t)*np.sin(phi) + ry * np.sin(t)*np.cos(phi)
+        return BBox(xx.min(), yy.min(), xx.max(), yy.max())
+#        xmin = self.center[0] - self.width
+#        ymin = self.center[1] - self.height
+#        xmax = self.center[0] + self.width
+#        ymax = self.center[1] + self.height
+#        return BBox(xmin, ymin, xmax, ymax)
 
     def draw(self, ax, transform):
         ''' Draw the segment

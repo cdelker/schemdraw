@@ -159,7 +159,7 @@ class Bjt(Element):
         self.segments.append(Segment([[bjt_v, bjt_a], [bjt_emx, bjt_emy], [bjt_emx, bjt_emy+bjt_a]], **kwargs))
         self.segments.append(Segment([[bjt_v, -bjt_a], [bjt_emx, -bjt_emy], [bjt_emx, -bjt_emy-bjt_a]], **kwargs))
         if circle:
-            self.segments.append(SegmentCircle([bjt_r, 0], bjt_r, **kwargs))        
+            self.segments.append(SegmentCircle([bjt_r, 0], bjt_r, **kwargs))
         self.params['drop'] = [bjt_emx, bjt_emy+bjt_a]
         self.params['lblloc'] = 'rgt'
         self.anchors['base'] = [0, 0]

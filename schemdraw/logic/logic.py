@@ -4,8 +4,7 @@ from functools import partial
 import numpy as np
 
 from ..segments import *
-from ..elements import Element
-from ..elements.twoterm import Element2Term
+from ..elements import Element, Element2Term
 
 
 _gap = [np.nan, np.nan]

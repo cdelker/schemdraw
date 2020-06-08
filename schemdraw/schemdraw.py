@@ -16,7 +16,7 @@ class Drawing(object):
         
         Parameters
         ----------
-        *elements : list
+        *elements : Element
             List of Element instances to add to the drawing
         unit : float
             Full length of a 2-terminal element. Inner zig-zag portion 
@@ -219,13 +219,8 @@ class Drawing(object):
         for element in self.elements:
             element.draw(ax)
 
-        x1, y1, x2, y2 = self.get_bbox()
-        x1 = x1-.1  # Add a .1 unit border to pick up clipped pixels
-        x2 = x2+.1
-        y1 = y1-.1
-        y2 = y2+.1
-        ax.set_xlim((x1, x2))
-        ax.set_ylim((y1, y2))
+        x1, x2 = ax.get_xlim()
+        y1, y2 = ax.get_ylim()
         w = x2-x1
         h = y2-y1
         self.ax = ax
@@ -237,3 +232,19 @@ class Drawing(object):
             ax.set_frame_on(False)
         ax.get_figure().set_size_inches(self.inches_per_unit*w, self.inches_per_unit*h)
         return self.fig
+    
+    def save(self, fname, transparent=True, dpi=72):
+        ''' Save figure to a file
+
+            Parameters
+            ----------
+            fname : string
+                Filename to save. File type automatically determined
+                from extension (png, svg, jpg)
+            transparent : bool
+                Save as transparent background, if available
+            dpi : float
+                Dots-per-inch for raster formats
+        '''
+        self.fig.savefig(fname, bbox_extra_artists=self.ax.get_default_bbox_extra_artists(),
+                         bbox_inches='tight', transparent=transparent, dpi=dpi)

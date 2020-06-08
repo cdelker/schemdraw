@@ -3,8 +3,7 @@
 import numpy as np
 
 from ..segments import *
-from .elements import Element, gap
-from .twoterm import Element2Term
+from .elements import Element, Element2Term, gap
 
 
 class Coax(Element2Term):

@@ -64,14 +64,9 @@ class Segment(object):
             xmin, ymin, xmax, ymax
                 Bounding box limits
         '''
-        xmin = ymin = np.inf
-        xmax = ymax = -np.inf
-        for p in self.path:
-            xmin = min(xmin, p[0])
-            ymin = min(ymin, p[1])
-            xmax = max(xmax, p[0])
-            ymax = max(ymax, p[1])
-        return BBox(xmin, ymin, xmax, ymax)
+        x = [p[0] for p in self.path]
+        y = [p[1] for p in self.path]
+        return BBox(min(x), min(y), max(x), max(y))
 
     def doreverse(self, centerx):
         ''' Reverse the path (flip horizontal about the center of the path) '''
@@ -256,14 +251,9 @@ class SegmentPoly(object):
             xmin, ymin, xmax, ymax
                 Bounding box limits
         '''
-        xmin = ymin = np.inf
-        xmax = ymax = -np.inf
-        for v in self.verts:
-            xmin = min(xmin, v[0])
-            ymin = min(ymin, v[1])
-            xmax = max(xmax, v[0])
-            ymax = max(ymax, v[1])
-        return BBox(xmin, ymin, xmax, ymax)
+        x = [p[0] for p in self.verts]
+        y = [p[1] for p in self.verts]
+        return BBox(min(x), min(y), max(x), max(y))
 
     def draw(self, ax, transform):
         ''' Draw the segment
@@ -431,8 +421,8 @@ class SegmentArrow(object):
         self.head = mirror_point(self.head, centerx)
     
     def doflip(self):
-        self.tail = flip_point(self.tail)###[self.tail[0], -self.tail[1]]
-        self.head = flip_point(self.head)####[self.head[0], -self.head[1]]        
+        self.tail = flip_point(self.tail)
+        self.head = flip_point(self.head)
 
     def xform(self, transform):
         ''' Return a new Segment that has been transformed '''
@@ -557,18 +547,16 @@ class SegmentArc(object):
                 Bounding box limits
         '''
         # Who wants to do trigonometry when we can just brute-force the bounding box?
-        t = np.deg2rad(np.linspace(self.theta1, self.theta2, num=500))
+        theta1, theta2 = self.theta1, self.theta2
+        while theta2 < theta1:
+            theta2 += 360
+        t = np.deg2rad(np.linspace(theta1, theta2, num=500))
         phi = np.deg2rad(self.angle)        
         rx = self.width/2
         ry = self.height/2
         xx = self.center[0] + rx * np.cos(t)*np.cos(phi) - ry * np.sin(t)*np.sin(phi)
         yy = self.center[1] + rx * np.cos(t)*np.sin(phi) + ry * np.sin(t)*np.cos(phi)
         return BBox(xx.min(), yy.min(), xx.max(), yy.max())
-#        xmin = self.center[0] - self.width
-#        ymin = self.center[1] - self.height
-#        xmax = self.center[0] + self.width
-#        ymax = self.center[1] + self.height
-#        return BBox(xmin, ymin, xmax, ymax)
 
     def draw(self, ax, transform):
         ''' Draw the segment

@@ -3,8 +3,8 @@
 from collections import ChainMap
 import numpy as np
 
-from .elements import Element, gap
-from .twoterm import Element2Term, resheight
+from .elements import Element, Element2Term, gap
+from .twoterm import resheight
 from ..transform import Transform
 from ..segments import *
 
@@ -152,5 +152,6 @@ class LoopCurrent(Element):
         self.segments.append(SegmentArc([0, 0], arrow=direction, **kwargs))
         self.params['lblloc'] = 'center'
         self.params['lblofst'] = 0
-        self.params['theta'] = 0        
+        self.params['theta'] = 0
+        self.anchors['center'] = [0, 0]
  

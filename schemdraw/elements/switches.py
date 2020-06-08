@@ -1,7 +1,6 @@
 ''' Switches and buttons '''
 
-from .elements import Element, gap
-from .twoterm import Element2Term
+from .elements import Element, Element2Term, gap
 from ..transform import Transform
 from ..segments import *
 

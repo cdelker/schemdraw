@@ -2,8 +2,8 @@
 
 import numpy as np
 
-from .elements import Element, gap
-from .twoterm import Element2Term, resheight
+from .elements import Element, Element2Term, gap
+from .twoterm import resheight
 from ..transform import Transform
 from ..segments import *
 

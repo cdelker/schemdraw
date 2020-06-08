@@ -12,7 +12,9 @@ gap = [np.nan, np.nan]  # Put a gap in a path (matplotlib skips NaNs)
 
 
 class Element(object):
-    ''' Element Keyword Arguments
+    ''' Parent class for a single circuit element.
+    
+        Keyword Arguments
         -------------------------
         d : string
             Drawing direction ['down', 'up', 'left', 'right'] or
@@ -141,7 +143,9 @@ class Element(object):
         # Get bounds of element, used for positioning user labels
         self.xmin, self.ymin, self.xmax, self.ymax = self.get_bbox()
         
-        if self.cparams.get('d') is not None:
+        if 'endpts' in self.cparams:
+            theta = dwgtheta
+        elif self.cparams.get('d') is not None:
             theta = {'u': 90, 'r': 0, 'l': 180, 'd': 270}[self.cparams.get('d')[0].lower()]
         else:
             theta = self.cparams.get('theta', dwgtheta)
@@ -442,3 +446,135 @@ class ElementDrawing(Element):
         for element in self.drawing.elements:
             self.segments.extend([s.xform(element.transform) for s in element.segments])
         self.params['drop'] = self.drawing.here
+
+
+def angle(a, b):
+    ''' Compute angle from coordinate a to b '''
+    theta = np.degrees(np.arctan2(b[1] - a[1], (b[0] - a[0])))
+    return theta
+
+
+def distance(a, b):
+    ''' Compute distance from A to B '''
+    r = np.sqrt((a[0]-b[0])**2 + (a[1]-b[1])**2)
+    return r
+
+
+class Element2Term(Element):
+    ''' Two terminal element, with automatic lead extensions to result in the
+        desired length.
+    
+        Keyword Arguments
+        -----------------
+        to : [x, y] float array
+            The end coordinate of the element
+        tox : float
+            x-value of end coordinate. y-value will be same as start
+        toy : float
+            y-value of end coordinate. x-value will be same as start
+        l : float
+            Total length of element
+        endpts: tuple of 2 [x, y] float arrays
+            The start and end points of the element. Overrides other
+            2-terminal placement parameters.
+        **kwargs : various
+            See schemdraw.elements.Element parent class
+        
+        Attributes
+        ----------
+        anchors: start, center, end
+    '''
+    def place(self, dwgxy, dwgtheta, **dwgparams):
+        ''' Place the element, adding lead extensions '''
+        self.dwgparams = dwgparams
+        if self.cparams is None:
+            self.buildparams()
+        
+        totlen = self.cparams.get('l', self.cparams.get('unit', 3))
+        endpts = self.cparams.get('endpts', None)
+        to = self.cparams.get('to', None)
+        tox = self.cparams.get('tox', None)
+        toy = self.cparams.get('toy', None)
+        anchor = self.cparams.get('anchor', None)
+        zoom = self.cparams.get('zoom', 1)
+        xy = np.asarray(self.cparams.get('at', dwgxy))
+
+        # set up transformation
+        theta = self.cparams.get('theta', dwgtheta)
+        if endpts is not None:
+            theta = angle(endpts[0], endpts[1])
+        elif self.cparams.get('d') is not None:
+            theta = {'u': 90, 'r': 0, 'l': 180, 'd': 270}[self.cparams.get('d')[0].lower()]
+        elif to is not None:
+            theta = angle(xy, np.asarray(to))
+
+        # Get offset to element position within drawing (global shift)
+        if endpts is not None:
+            xy = endpts[0]
+        
+        if endpts is not None:
+            totlen = distance(endpts[0], endpts[1])
+        elif to is not None:
+            # Move until X or Y position is 'end'. Depends on direction
+            totlen = distance(xy, np.asarray(to))
+        elif tox is not None:
+            # Allow either full coordinate (only keeping x), or just an x value
+            if isinstance(tox, float) or isinstance(tox, int):
+                x = float(tox)
+            else:
+                x = tox[0]
+            endpt = [x, xy[1]]
+            totlen = distance(xy, endpt)
+        elif toy is not None:
+            # Allow either full coordinate (only keeping y), or just a y value
+            if isinstance(toy, float) or isinstance(toy, int):
+                y = toy
+            else:
+                y = toy[1]
+            endpt = [xy[0], y]
+            totlen = distance(xy, endpt)
+        
+        self.localshift = 0
+        if self.cparams.get('extend', True):
+            in_path = np.array(self.segments[0].path)
+            dz = in_path[-1]-in_path[0]   # Defined delta of path
+            in_len = np.sqrt(dz[0]*dz[0]+dz[1]*dz[1])   # Defined length of path
+            lead_len = (totlen - in_len)/2
+            
+            if lead_len > 0:  # Don't make element shorter
+                start = in_path[0] - np.array([lead_len, 0])
+                end = in_path[-1] + np.array([lead_len, 0])
+                self.localshift = -start
+                params = self.cparams.copy()
+                params.update({'color': self.segments[0].color,
+                               'lw': self.segments[0].lw,
+                               'ls': self.segments[0].ls})
+                              
+                self.segments.append(Segment([start, in_path[0]], **params))
+                self.segments.append(Segment([in_path[-1], end], **params))
+            else:
+                start = in_path[0]
+                end = in_path[-1]
+                self.localshift = 0
+
+        self.anchors['start'] = start
+        self.anchors['end'] = end
+        self.anchors['center'] = (start+end)/2
+                
+        if anchor is not None:
+            self.localshift = -np.asarray(self.anchors[anchor])
+        transform = Transform(theta, xy, self.localshift, zoom)
+
+        self.absanchors = {}
+        if len(self.segments) == 0:
+            self.absanchors['start'] =  transform.transform(np.array([0, 0]))
+            self.absanchors['end'] = transform.transform(np.array([0, 0]))
+            self.absanchors['center'] = transform.transform(np.array([0, 0]))
+        else:
+            self.absanchors['start'] = transform.transform(start)
+            self.absanchors['end'] = transform.transform(end)
+            self.absanchors['center'] = transform.transform((start+end)/2)
+
+        self.params['drop'] = end
+        return super().place(xy, theta, **dwgparams)
+    

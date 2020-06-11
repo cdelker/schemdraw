@@ -5,6 +5,7 @@ from collections import ChainMap
 import numpy as np
 from matplotlib.pyplot import Figure
 
+from ..adddocs import adddocs
 from ..segments import *
 from ..transform import Transform, mirror_point, flip_point
 
@@ -241,8 +242,9 @@ class Element(object):
                 along the element.
             loc : ['top', 'bot', 'lft', 'rgt']
                 Location for text relative to element
-            ofst : float
+            ofst : float or list
                 Offset between text and element. Defaults to Element.lblofst.
+                Can be list of [x, y] offets.
             align : tuple
                 Tuple of (horizontal, vertical) alignment where horizontal
                 is ['center', 'left', 'right'] and vertical is ['center',
@@ -293,6 +295,21 @@ class Element(object):
 
             if loc == 'center':
                 align = ('center', 'center')
+            elif loc in self.anchors:
+                x1, y1, x2, y2 = self.get_bbox()
+                if self.anchors[loc][1] == 0:
+                    alignV = 'center'
+                elif self.anchors[loc][1] > (y2+y1)/2:
+                    alignV = 'bottom'
+                else:
+                    alignV = 'top'
+                    ofst = -ofst                    
+                if self.anchors[loc][0] > (x2+x1)/2:
+                    alignH = 'left'
+                else:
+                    alignH = 'right'
+                    
+                align = (alignH, alignV)
             elif th < 22.5:       # 0 to +22 deg
                 align = ('center', 'bottom')
             elif th < 22.5+45:    # 22 to 67
@@ -386,17 +403,16 @@ class Element(object):
         ax = fig.add_subplot()
         ax.autoscale_view(True)  # This autoscales all the shapes too        
         self.draw(ax)
-        
-        xlim = np.array(ax.get_xlim())
-        ylim = np.array(ax.get_ylim())
-        xlim[0] = xlim[0]-.1   # Add a .1 unit border to pick up lost pixels
-        ylim[0] = ylim[0]-.1
-        xlim[1] = xlim[1]+.1
-        ylim[1] = ylim[1]+.1
-        ax.set_xlim(xlim)
-        ax.set_ylim(ylim)
-        w = xlim[1]-xlim[0]
-        h = ylim[1]-ylim[0]        
+
+        x1, y1, x2, y2 = self.get_bbox()
+        x1 -= .1
+        x2 += .1
+        y1 -= .1
+        y2 += .1
+        ax.set_xlim(x1, x2)
+        ax.set_ylim(y1, y2)
+        w = x2-x1
+        h = y2-y1
         ax.axes.get_xaxis().set_visible(False)
         ax.axes.get_yaxis().set_visible(False)
         ax.set_frame_on(False)
@@ -425,6 +441,7 @@ class Element(object):
             segment.draw(ax, self.transform)
 
 
+@adddocs(Element)
 class ElementDrawing(Element):
     ''' Create an element from a Drawing
     
@@ -433,9 +450,6 @@ class ElementDrawing(Element):
         drawing: Drawing instance
             The drawing to convert to an element
         
-        Keyword arguments
-        -----------------
-        See schemdraw.Element
     '''
     def __init__(self, drawing, **kwargs):
         self.drawing = drawing
@@ -460,9 +474,10 @@ def distance(a, b):
     return r
 
 
+@adddocs(Element)
 class Element2Term(Element):
     ''' Two terminal element, with automatic lead extensions to result in the
-        desired length.
+        desired length. Anchors: start, center, end.
     
         Keyword Arguments
         -----------------
@@ -477,12 +492,6 @@ class Element2Term(Element):
         endpts: tuple of 2 [x, y] float arrays
             The start and end points of the element. Overrides other
             2-terminal placement parameters.
-        **kwargs : various
-            See schemdraw.elements.Element parent class
-        
-        Attributes
-        ----------
-        anchors: start, center, end
     '''
     def place(self, dwgxy, dwgtheta, **dwgparams):
         ''' Place the element, adding lead extensions '''

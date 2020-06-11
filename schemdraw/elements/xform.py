@@ -5,10 +5,13 @@ import numpy as np
 from ..segments import *
 from .elements import Element
 from .twoterm import cycloid
+from ..adddocs import adddocs
 
 
+@adddocs(Element)
 class Transformer(Element):
     ''' Transformer Element
+        Anchors: `p1`, `p2`, `s1`, `s2` (primary and secondary sides)
 
         Parameters
         ----------
@@ -24,17 +27,13 @@ class Transformer(Element):
             Same as ltaps, on right side
         loop : bool
             Use spiral/cycloid (loopy) style
-            
-        Keyword Arguments
-        -----------------
-        See schemdraw.Element
     '''
     def setup(self, **kwargs):
         t1 = kwargs.get('t1', 4)
         t2 = kwargs.get('t2', 4)
         core = kwargs.get('core', True)
         ltaps = kwargs.get('ltaps', None)
-        rtaps = kwargs.get('rpats', None)
+        rtaps = kwargs.get('rtaps', None)
         loop = kwargs.get('loop', False)
         # Set initial parameters
         ind_w = .4
@@ -61,7 +60,8 @@ class Transformer(Element):
             rtapx = max([i[0] for i in c2])
             ltop = c1[-1][1]
             rtop = c2[-1][1]
-            self.segments.append(Segment([c1, c2], **kwargs))
+            self.segments.append(Segment(c1, **kwargs))
+            self.segments.append(Segment(c2, **kwargs))            
         else:
             for i in range(t1):
                 self.segments.append(SegmentArc([0, ltop-(i*ind_w+ind_w/2)],

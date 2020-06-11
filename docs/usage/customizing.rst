@@ -8,6 +8,7 @@ Customizing Elements
     import schemdraw
     from schemdraw import elements as elm
     from schemdraw import logic
+    from schemdraw.segments import *    
 
 
 Reusing groups of elements
@@ -15,28 +16,21 @@ Reusing groups of elements
 
 If a set of circuit elements are to be reused multiple times, they can be grouped into a single element.
 Create and populate a drawing, but don't call `draw` on it.
-Instead, use :py:func:`group_elements`, then add the result as an element to another drawing
-
-.. function:: schemdraw.group_elements(drawing, anchors=None)
-
-    Create a new element definition based on all the elements in the drawing.
-    
-    :param drawing: schemdraw.Drawing with elements to group
-    :param anchors: dictionary of anchor names: locations within the group
+Instead, use the Drawing to create a new :py:class:`ElementDrawing`, which converts the drawing into an element instance
+to add to other drawings.
     
 .. jupyter-execute::
 
     d1 = schemdraw.Drawing()
-    d1.add(elm.RES)
+    d1.add(elm.Resistor)
     d1.push()
-    d1.add(elm.CAP, d='down')
-    d1.add(elm.LINE, d='left')
+    d1.add(elm.Capacitor, d='down')
+    d1.add(elm.Line, d='left')
     d1.pop()
-    RC = schemdraw.group_elements(d1)   # Create the group to reuse
 
-    d2 = schemdraw.Drawing()   # Add the group to another drawing several times
+    d2 = schemdraw.Drawing()   # Add a second drawing
     for i in range(3):
-        d2.add(RC)
+        d2.add(elm.ElementDrawing(d1))   # Add the first drawing to it 3 times
     d2.draw()
     
     
@@ -45,161 +39,147 @@ Instead, use :py:func:`group_elements`, then add the result as an element to ano
 Defining custom elements
 ------------------------
 
-New elements can be defined by creating a dictionary describing how the element should be drawn.
-An element is made up of paths and/or shapes.
-A path is simply a list of xy coordinates (drawn using Matplotlib's `plot` function).
-A shape can be a circle, polygon, arrow, or arc (a Matplotlib patch).
+All elements are subclasses of :py:class:`schemdraw.elements.Element` or :py:class:`schemdraw.elements.Element2Term`.
+Subclasses should only define the `setup` method in order to add lines, shapes, and text to the new element, all of which are defined by `Segment` classes. New Segments should be appended to the `Element.segments` attribute list.
 
 Coordinates are all defined in element cooridnates, where the element begins
 at [0, 0] and is drawn from left to right. The drawing engine will then rotate
 and translate the element to its final position. A standard resistor is
 1 drawing unit long, and with default lead extension will become 3 units long.
 
-Possible dictionary keys:
 
-- **name**:  A name string for the element. Currently only used for documentation and testing.
-- **paths**: A list of each path line in the element. For example, a capacitor has two paths, one for each capacitor "plate". On 2-terminal elements, the leads will be automatically extended away from the first and last points of the first path, and don't need to be included in the path.
-- **base**:  Dictionary defining a base element. For example, the variable resistor has a base of resistor, then adds an additional path.
-- **shapes**: A list of shape dictionaries. See below for options.
-- **theta**: Default angle (in degrees) for the element. Overrides the current drawing angle.
-- **anchors**: A dictionary defining named positions within the element. For example, the NFET element has a 'source', 'gate', and 'drain' anchor. Each anchor will become an attribute of the element class which can then be used for connecting other elements.
-- **extend** (bool) Extend the leads to fill the full element length.
-- **move_cur**: (bool) Move the drawing cursor location after drawing.
-- **color**: A matplotlib-compatible color for the element. Examples include 'red', 'blue', '#34ac92'
-- **drop**: Final location to leave drawing cursor.
-- **lblloc**: ['top', 'bot', 'lft', 'rgt'] default location for text label. Defaults to 'top'.
-- **lblofst**: Default distance between element and text label.
-- **labels**: List of (label, pos) tuples defining text labels to always draw in the element.
-- **ls**: [':', '--', '-'] linestyle (same as matplotlib). Only applies to paths.
+.. autoclass:: schemdraw.segments.Segment
 
-In the `shapes` list, each shape is defined by a dictionary. All shape dictionaries contain
+.. autoclass:: schemdraw.segments.SegmentPoly
 
-- **shape**: key can be [ 'circle', 'poly', 'arc', 'arrow' ]
-- **zorder**: drawing order within the element
+.. autoclass:: schemdraw.segments.SegmentCircle
 
-The remaining keys depend on the type of shape as follows.
+.. autoclass:: schemdraw.segments.SegmentArc
 
-Circle:
+.. autoclass:: schemdraw.segments.SegmentArrow
 
-- **center**: [x, y] center coordinate
-- **radius**: radius of circle
-- **fill**: (bool) fill the circle
-- **fillcolor**: color for fill
+.. autoclass:: schemdraw.segments.SegmentText
 
-Poly:
 
-- **xy**: List of xy coordinates defining polygon
-- **closed**: (bool) Close the polygon
-- **fill**: (bool) fill the polygon
-- **fillcolor**: color for fill
 
-Arc:
+The `Element` setup function takes arbitrary keyword arguments than can help define the circuit element to draw.
+Generally, `setup` function should pass along its kwargs to the Segment to ensure things like custom colors are drawn correctly.
 
-- **center**: Center coordinate of arc
-- **width**, **height'** width and height of arc
-- **theta1**: Starting angle (degrees)
-- **theta2**: Ending angle (degrees)
-- **angle**: Rotation angle of entire arc
-- **arrow**: ['cw', 'ccw'] Add an arrowhead, clockwise or counterclockwise
+In addition to the list of Segments, named anchors and other parameters should be specified in the `setup` function. 
+Anchors should be added to the `Element.anchors` dictionary as name: [x, y] pairs.
 
-Arrow:
+The Element instance maintains its own parameters dictionary in `Element.params` that can be set by the `setup` function and override the default drawing parameters.
+Parameters are resolved by a ChainMap of user arguments to the `Element` instance, the `Element.params` attribute, then the `schemdraw.Drawing` parameters.
+A common use of setting `Element.params` in the setup function is to change the default position of text labels, for example Transistor elements apply labels on the right side of the element by default, so they add to the setup:
 
-- **start**: [x, y] start of arrow
-- **end**: [x, y] end of arrow
-- **headwidth**: width of arrowhead
-- **headlength**: length of arrowhead
+.. code-block::
 
-Here's the definition of our favorite element, the resistor:
+    self.params['lblloc'] = 'rgt'
+
+The user can still override this label position by creating, for example, `Transistor(lblloc='top')`.
+
+
+As an example, here's the definition of our favorite element, the resistor:
 
 .. code-block:: python
 
-    RES = {
-        'name': 'RES',
-        'paths': [
-                  [[0, 0], [0.5*_rw, _rh], [1.5*_rw, -_rh], [2.5*_rw, _rh], [3.5*_rw, -_rh], [4.5*_rw, _rh], [5.5*_rw, -_rh], [6*_rw, 0]]
-                 ]
-          }
+    class Resistor(Element2Term):
+        def setup(self, **kwargs):
+            self.segments.append(Segment([[0, 0], [0.5*reswidth, resheight],
+                                          [1.5*reswidth, -resheight], [2.5*reswidth, resheight],
+                                          [3.5*reswidth, -resheight], [4.5*reswidth, resheight],
+                                          [5.5*reswidth, -resheight], [6*reswidth, 0]],
+                                          **kwargs))
+
 
 The resistor is made of just one path.
-`_rw` and `_rh` are constants that define the height and width of the resistor.
-Browse the source code in elements.py to see the definitions of the other built-in elements.
+`reswidth` and `resheight` are constants that define the height and width of the resistor (and are referenced by several other elements too).
+Browse the source code in the `Schemdraw.elements` module to see the definitions of the other built-in elements.
 
 
 Flux Capacitor Example
 ^^^^^^^^^^^^^^^^^^^^^^
 
 For an example, let's make a flux capacitor circuit element.
-Here, we'll start by defining the `fclen` variable as the length of one leg so we can change it easily.
-Remember a resistor is 1 unit long.
+
+Since everyone knows a flux-capacitor has three branches, we should subclass the standard :py:class:`schemdraw.elements.Element` class instead of :py:class:`schemdraw.elements.Element2Term`.
+Start by importing the Segments and define the class name and setup function:
 
 .. code-block:: python
 
-    fclen = 0.5
+    from schemdraw.segments import *
+
+    class FluxCapacitor(Element):
+        def setup(self, **kwargs):
+
+We want a dot in the center of our flux capacitor, so start by adding a `SegmentCircle`. The `fclen` and `radius` variables could be pulled from kwargs for the user to adjust, if desired.
+
+.. code-block:: python
+
+            fclen = 0.5
+            radius = 0.075
+            self.segments.append(SegmentCircle([0, 0], radius, **kwargs))
+
+Next, add the paths as Segment instances, which are drawn as lines. The flux capacitor will have three paths, all extending from the center dot:
+
+.. code-block:: python
+
+            self.segments.append(Segment([[0, 0], [0, -fclen*1.41]], **kwargs))
+            self.segments.append(Segment([[0, 0], [fclen, fclen]], **kwargs))
+            self.segments.append(Segment([[0, 0], [-fclen, fclen]], **kwargs))
+        
+        
+And at the end of each path is an open circle. Append three more `SegmentCircle` instances.
+
+.. code-block:: python
+
+            self.segments.append(SegmentCircle([0, -fclen*1.41], 0.2, fill=None, **kwargs))
+            self.segments.append(SegmentCircle([fclen, fclen], 0.2, fill=None, **kwargs))
+            self.segments.append(SegmentCircle([-fclen, fclen], 0.2, fill=None, **kwargs))
     
-The custom element is a dictionary of parameters.
-We want a dot in the center of our flux capacitor, so use the `base` key to start with the already defined `DOT` element.
 
-.. code-block:: python
-
-    FLUX_CAP = {
-        'base': elm.DOT,
-
-Next, add the paths, which are drawn as lines. The flux capacitor will have three paths, all extending from the center dot:
-
-.. code-block:: python
-
-    'paths': [[[0, 0], [0, -fclen*1.41]],  # Leg going down
-              [[0, 0], [fclen, fclen]],    # Leg going up/right
-              [[0, 0], [-fclen, fclen]]],  # Leg going up/left
-
-And at the end of each path is an open circle. These are added to the dictionary using the `shapes` key as a list of shape dictionaries.
-
-.. code-block:: python
-
-    'shapes': [{'shape': 'circle', 'center': [0, -fclen*1.41], 'radius': .2, 'fill': False},
-               {'shape': 'circle', 'center': [fclen, fclen], 'radius': .2, 'fill': False},
-               {'shape': 'circle', 'center': [-fclen, fclen], 'radius': .2, 'fill': False}],
-    
 Finally, we need to define anchor points so that other elements can be connected to the right places.
 Here, they're called `p1`, `p2`, and `p3` for lack of better names (what do you call the inputs to a flux capacitor?)
+Add these to the `self.anchors` dictionary.
 
 .. code-block:: python
 
-    'anchors': {'p1': [-fclen, fclen], 'p2': [fclen, fclen], 'p3': [0, -fclen]}
-    
-Here's the element dictionary all in one:
+            self.anchors['p1'] = [-fclen, fclen]
+            self.anchors['p2'] = [fclen, fclen]
+            self.anchors['p3'] = [0, -fclen*1.41]    
+
+Here's the Flux Capacitor class all in one:
 
 .. jupyter-execute::
 
-    fclen = 0.5
-    FLUX_CAP = {
-        'base': elm.DOT,
-        'paths': [[[0, 0], [0, -fclen*1.41]],  # Leg going down
-                  [[0, 0], [fclen, fclen]],    # Leg going up/right
-                  [[0, 0], [-fclen, fclen]]],  # Leg going up/left
-        'shapes': [{'shape': 'circle', 'center': [0, -fclen*1.41], 'radius': .2, 'fill': False},
-                   {'shape': 'circle', 'center': [fclen, fclen], 'radius': .2, 'fill': False},
-                   {'shape': 'circle', 'center': [-fclen, fclen], 'radius': .2, 'fill': False}],
-        'anchors': {'p1': [-fclen, fclen], 'p2': [fclen, fclen], 'p3': [0, -fclen]}
-        }
+    class FluxCapacitor(elm.Element):
+        def setup(self, **kwargs):
+            radius = 0.075
+            fclen = 0.5
+            self.segments.append(SegmentCircle([0, 0], radius, **kwargs))
+            self.segments.append(Segment([[0, 0], [0, -fclen*1.41]], **kwargs))
+            self.segments.append(Segment([[0, 0], [fclen, fclen]], **kwargs))
+            self.segments.append(Segment([[0, 0], [-fclen, fclen]], **kwargs))
+            self.segments.append(SegmentCircle([0, -fclen*1.41], 0.2, fill=None, **kwargs))
+            self.segments.append(SegmentCircle([fclen, fclen], 0.2, fill=None, **kwargs))
+            self.segments.append(SegmentCircle([-fclen, fclen], 0.2, fill=None, **kwargs))
+            self.anchors['p1'] = [-fclen, fclen]
+            self.anchors['p2'] = [fclen, fclen]
+            self.anchors['p3'] = [0, -fclen*1.41]
 
 
-Test it out by adding the new custom element to a drawing:
+Try it out:
 
 .. jupyter-execute::
 
-    d = schemdraw.Drawing()
-    fc = d.add(FLUX_CAP)
-    d.draw()
-
+    FluxCapacitor()
 
 
 Segment objects
 ---------------
 
-Each path and shape in the element definition is translated into drawing coordinates and becomes a :py:class:`schemdraw.Segment` object
-contained in `segments` list attribute of the :py:class:`schemdraw.Element` instance.
-For even more control over individual pieces of an element, the parameters of a Segment can be changed.
+After an element is added to a drawing, the :py:class:`schemdraw.Segment` objects defining it are accessible in the `segments` attribute list of the Element.
+For even more control over customizing individual pieces of an element, the parameters of a Segment can be changed.
 
 .. jupyter-execute::
     :hide-code:
@@ -208,9 +188,9 @@ For even more control over individual pieces of an element, the parameters of a 
     
 .. jupyter-execute::
 
-    n = d.add(logic.NAND2)
-    n.segments[-1].color = 'red'
-    n.segments[-1].zorder = 5  # Put the bubble on top
+    n = d.add(logic.Nand)
+    n.segments[1].color = 'red'
+    n.segments[1].zorder = 5  # Put the bubble on top
     d.draw()
 
 
@@ -218,16 +198,14 @@ Matplotlib axis
 ---------------
 
 As a final customization option, remember that schemdraw draws everything on a Matplotlib axis.
-This axis can be obtained using `plt.gca()` and used for whatever purpose.
+The figure and axis are stored in the `Drawing.fig` and `Drawing.ax` attributes, respectively.
 
 .. jupyter-execute::
 
-    import matplotlib.pyplot as plt
     d = schemdraw.Drawing()
-    d.add(elm.RES)
+    d.add(elm.Resistor)
     d.draw()
-    ax = plt.gca()
-    ax.axvline(.5, color='purple', ls='--')
-    ax.axvline(2.5, color='orange', ls='-', lw=3);
-
+    d.ax.axvline(.5, color='purple', ls='--')
+    d.ax.axvline(2.5, color='orange', ls='-', lw=3);
+    display(d.fig)
     

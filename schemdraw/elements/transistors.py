@@ -6,6 +6,7 @@ from .elements import Element, gap
 from .twoterm import reswidth
 from ..transform import Transform
 from ..segments import *
+from ..adddocs import adddocs
 
 
 fetw = reswidth*4
@@ -14,17 +15,16 @@ fetl = feth/2
 fetgap = reswidth*1.5
 fetr = reswidth*.7  # Radius of "not" bubble
 
+
+@adddocs(Element)
 class NFet(Element):
     ''' N-type Field Effect Transistor
-    
+        Anchors: `source`, `drain`, `gate`.
+
         Parameters
         ----------
         bulk : bool
             Draw bulk contact
-            
-        Keyword Arguments
-        -----------------
-        See schemdraw.Element
     '''
     def setup(self, **kwargs):
         bulk = kwargs.pop('bulk', False)
@@ -41,17 +41,15 @@ class NFet(Element):
             self.anchors['bulk'] = [0, -fetl-fetw/2]
 
 
+@adddocs(Element)
 class PFet(Element):
     ''' P-type Field Effect Transistor
+        Anchors: `source`, `drain`, `gate`.    
     
         Parameters
         ----------
         bulk : bool
             Draw bulk contact
-            
-        Keyword Arguments
-        -----------------
-        See schemdraw.Element
     '''
     def setup(self, **kwargs):
         bulk = kwargs.pop('bulk', False)
@@ -73,13 +71,11 @@ class PFet(Element):
 # Junction FETs
 fete = fetw*.2  # JFET extension
 jfetw = reswidth*3
-            
+
+@adddocs(Element)
 class JFet(Element):
     ''' Junction Field Effect Transistor
-    
-        Keyword Arguments
-        -----------------
-        See schemdraw.Element
+        Anchors: `source`, `drain`, `gate`.
     '''
     def setup(self, **kwargs):
         self.segments.append(Segment([[0, 0], [0, -fetl], [jfetw, -fetl], [jfetw, -fetl+fete], [jfetw, -fetl-jfetw-fete],
@@ -92,17 +88,15 @@ class JFet(Element):
         self.params['lblloc'] = 'lft'
 
 
+@adddocs(Element)
 class JFetN(JFet):
     ''' N-type Junction Field Effect Transistor
+        Anchors: `source`, `drain`, `gate`.
 
         Parameters
         ----------
         circle : bool
             Draw circle around the transistor
-
-        Keyword Arguments
-        -----------------
-        See schemdraw.Element
     '''
     def setup(self, **kwargs):
         super().setup(**kwargs)
@@ -112,17 +106,15 @@ class JFetN(JFet):
             self.segments.append(SegmentCircle([jfetw/2, -fetw], fetw*1.1, **kwargs))
 
 
+@adddocs(Element)
 class JFetP(JFet):
     ''' P-type Junction Field Effect Transistor
+        Anchors: `source`, `drain`, `gate`.
 
         Parameters
         ----------
         circle : bool
             Draw circle around the transistor
-
-        Keyword Arguments
-        -----------------
-        See schemdraw.Element
     '''
     def setup(self, **kwargs):
         super().setup(**kwargs)        
@@ -140,17 +132,15 @@ bjt_a = bjt_v_len/4    # Intercept of emitter/collector lines
 bjt_emx = bjt_v + bjt_r*.7  # x-coord of emitter exiting circle
 bjt_emy = bjt_v_len*.7    # y-coord of emitter exiting circle
 
+@adddocs(Element)
 class Bjt(Element):
     ''' Bipolar Junction Transistor
+        Anchors: `collector`, `emitter`, `base`.
 
         Parameters
         ----------
         circle : bool
             Draw circle around the transistor
-
-        Keyword Arguments
-        -----------------
-        See schemdraw.Element
     '''
     def setup(self, **kwargs):
         circle = kwargs.get('circle', False)
@@ -182,12 +172,10 @@ class BjtPnp(Bjt):
         self.anchors['emitter'] = [bjt_emx, bjt_emy+bjt_a]
 
 
+@adddocs(Element)
 class BjtPnp2c(BjtPnp):
     ''' PNP Bipolar Junction Transistor with 2 collectors
-
-        Keyword Arguments
-        -----------------
-        See schemdraw.Element
+        Anchors: `collector`, `C2`, `emitter`, `base`.
     '''    
     def setup(self, **kwargs):
         super().setup(**kwargs)

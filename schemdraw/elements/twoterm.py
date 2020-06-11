@@ -6,27 +6,23 @@ import numpy as np
 from .elements import Element, Element2Term, gap
 from ..transform import Transform
 from ..segments import *
+from ..adddocs import adddocs
 
 
 resheight = 0.25      # Resistor height
 reswidth = 1.0 / 6   # Full (inner) length of resistor is 1.0 data unit
             
     
-class Line(Element2Term):
-    def setup(self, **kwargs):
-        self.segments.append(Segment([[0,0]], **kwargs))
-
-    
 class Resistor(Element2Term):
     def setup(self, **kwargs):
-        self.segments = [Segment([[0, 0], [0.5*reswidth, resheight], [1.5*reswidth, -resheight], [2.5*reswidth, resheight],
-                                  [3.5*reswidth, -resheight], [4.5*reswidth, resheight], [5.5*reswidth, -resheight], [6*reswidth, 0]], **kwargs)]
+        self.segments.append(Segment([[0, 0], [0.5*reswidth, resheight], [1.5*reswidth, -resheight], [2.5*reswidth, resheight],
+                                  [3.5*reswidth, -resheight], [4.5*reswidth, resheight], [5.5*reswidth, -resheight], [6*reswidth, 0]], **kwargs))
     
 
 class ResistorBox(Element2Term):
     def setup(self, **kwargs):
-        self.segments = [Segment([[0, 0], [0, resheight], [reswidth*6, resheight], [reswidth*6, -resheight],
-                                  [0, -resheight], [0, 0], gap, [reswidth*6, 0]], **kwargs)]
+        self.segments.append(Segment([[0, 0], [0, resheight], [reswidth*6, resheight], [reswidth*6, -resheight],
+                                  [0, -resheight], [0, 0], gap, [reswidth*6, 0]], **kwargs))
 
 class ResistorVar(Resistor):
     def setup(self, **kwargs):
@@ -36,18 +32,14 @@ class ResistorVar(Resistor):
         self.segments.append(Segment([[1.5*reswidth, -resheight*2], [4.5*reswidth, reswidth*3.5]], **kwargs))
 
     
-    
+@adddocs(Element2Term)
 class Capacitor(Element2Term):
     ''' Capacitor 2-terminal element.
     
         Parameters
         ----------
         polar : bool
-            Add polarity + sign
-            
-        Keyword Arguments
-        -----------------
-        See schemdraw.Element2Term
+            Add polarity + sign            
     '''
     def setup(self, **kwargs):
         capgap = 0.18
@@ -60,6 +52,7 @@ class Capacitor(Element2Term):
             self.segments.append(SegmentText([-capgap*1.2, capgap], '+', **kwargs))
 
 
+@adddocs(Element2Term)
 class Capacitor2(Element2Term):
     ''' Capacitor 2-terminal element, with curved side.
     
@@ -67,10 +60,6 @@ class Capacitor2(Element2Term):
         ----------
         polar : bool
             Add polarity + sign
-
-        Keyword Arguments
-        -----------------
-        See schemdraw.Element2Term
     '''    
     def setup(self, **kwargs):
         capgap = 0.18        
@@ -175,14 +164,16 @@ class Photodiode(Diode):
         self.segments.append(SegmentArrow(p[-2], p[-1], headwidth=.07, headlength=.08, **kwargs))
         self.segments.append(SegmentArrow(p2[-2], p2[-1], headwidth=.07, headlength=.08, **kwargs))
         self.params['lblloc'] = 'bot'
-        
-        
+
+
+@adddocs(Element2Term)
 class Potentiometer(Resistor):
+    ''' Potentiometer element. Anchors: `tap` '''
     # Ok, this has three terminals, but is works like a two-term with lead extension
     def setup(self, **kwargs):
         super().setup(**kwargs)
         potheight = .72
-        self.anchors = {'tap': [reswidth*3, potheight]}
+        self.anchors['tap'] = [reswidth*3, potheight]
         self.params['lblloc'] = 'bot'
         self.segments.append(SegmentArrow([reswidth*3, potheight], [reswidth*3, reswidth*1.5],
                                           headwidth=.15, headlength=.25, **kwargs))
@@ -196,14 +187,18 @@ class Diac(Element2Term):
                          SegmentPoly([[resheight*1.4, resheight+.25], [0, .25], [resheight*1.4, resheight-.25]], **kwargs)]
 
 
+@adddocs(Element2Term)
 class Triac(Diac):
+    ''' Triac element. Anchors: `gate` '''    
     def setup(self, **kwargs):
         super().setup(**kwargs)
         self.segments.append(Segment([[resheight*1.4, .25], [resheight*1.4+.5, .5]], **kwargs))
         self.anchors['gate'] = [resheight*1.4+.5, .5]
 
 
+@adddocs(Element2Term)
 class SCR(Diode):
+    ''' Silicon controlled rectifier (or thyristor) element. Anchors: `gate` '''        
     def setup(self, **kwargs):
         super().setup(**kwargs)
         self.segments.append(Segment([[resheight*1.4, 0], [resheight*1.4+.3, -.3], [resheight*1.4+.3, -.5]], **kwargs))
@@ -242,61 +237,11 @@ class Fuse(Element2Term):
         self.segments.append(Segment(np.transpose(np.vstack((fusex, fusey))), **kwargs))
         self.segments.append(Segment([[0, 0], gap, [1+fuser*3, 0]], **kwargs))
         if 'fill' not in kwargs or kwargs['fill'] is None:
-            fill = 'white' if kwargs.get('open', False) else True
-            kwargs = ChainMap({'fill': fill}, kwargs)
+            kwargs = ChainMap({'fill': 'white'}, kwargs)
         kwargs = ChainMap({'zorder': 4}, kwargs)    
         self.segments.append(SegmentCircle([fuser, 0], fuser, **kwargs))
         self.segments.append(SegmentCircle([fuser*2+1, 0], fuser, **kwargs))
 
-
-class Arrow(Line):
-    ''' Arrow element
-    
-        Parameters
-        ----------
-        double : bool
-            Show arrowhead on both ends
-            
-        Keyword Arguments
-        -----------------
-        See schemdraw.Element2Term
-    '''
-    def setup(self, **kwargs):
-        super().setup(**kwargs)
-        self.segments.append(SegmentArrow([-.3, 0], [0, 0], headwidth=.3, headlength=.3, ref='end', **kwargs))
-        if kwargs.get('double', False):
-            self.segments.append(SegmentArrow([.3, 0], [0, 0], headwidth=.3, headlength=.3, ref='start', **kwargs))
-
-
-class LineDot(Line):
-    ''' Line with a dot at the end
-    
-        Parameters
-        ----------
-        double : bool
-            Show dot on both ends
-
-        Keyword Arguments
-        -----------------
-        See schemdraw.Element2Term
-    '''    
-    def setup(self, **kwargs):
-        super().setup(**kwargs)
-        radius = kwargs.get('radius', 0.075)
-        fill = kwargs.pop('fill', 'white' if kwargs.get('open', False) else 'black')
-        args = ChainMap({'fill': fill, 'zorder': 4}, kwargs)
-        self.segments.append(SegmentCircle([0, 0], radius, ref='end', **args))
-        if kwargs.get('double', False):
-            self.segments.append(SegmentCircle([0, 0], radius, ref='start', **args))
-
-
-class Gap(Element2Term):
-    def setup(self, **kwargs):
-        kwargs['color'] = self.userparams.get('color', 'white')
-        self.segments.append(Segment([[0, 0], gap, [1, 0]], **kwargs))
-        self.params['lblloc'] = 'center'
-        self.params['lblofst'] = 0
-        self.params['zorder'] = 0
     
 
 def cycloid(loops=4, ofst=(0, 0), a=.06, b=.19, norm=True, vertical=False, flip=False):
@@ -351,6 +296,7 @@ class Inductor(Element2Term):
             self.segments.append(SegmentArc([(i*2+1)*ind_w/2, 0], theta1=0, theta2=180, width=ind_w, height=ind_w, **kwargs))
 
 
+@adddocs(Element2Term)
 class Inductor2(Element2Term):
     ''' Inductor, drawn as cycloid
     
@@ -358,12 +304,7 @@ class Inductor2(Element2Term):
         ----------
         loops : int
             Number of inductor loops
-
-        Keyword Arguments
-        -----------------
-        See schemdraw.Element2Term
     '''
     def setup(self, **kwargs):
         loops = kwargs.get('loops', 4)
         self.segments.append(Segment(cycloid(loops=loops), **kwargs))
-

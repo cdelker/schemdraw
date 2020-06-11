@@ -8,7 +8,7 @@ from matplotlib.pyplot import Figure
 import matplotlib as mpl
 
 from .elements import Element
-from .elements.misc import LoopCurrent, CurrentLabel, CurrentLabelInline
+from .elements.lines import LoopCurrent, CurrentLabel, CurrentLabelInline
 
 
 class Drawing(object):
@@ -219,8 +219,13 @@ class Drawing(object):
         for element in self.elements:
             element.draw(ax)
 
-        x1, x2 = ax.get_xlim()
-        y1, y2 = ax.get_ylim()
+        x1, y1, x2, y2 = self.get_bbox()
+        x1 -= .1
+        x2 += .1
+        y1 -= .1
+        y2 += .1
+        ax.set_xlim(x1, x2)
+        ax.set_ylim(y1, y2)
         w = x2-x1
         h = y2-y1
         self.ax = ax

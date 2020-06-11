@@ -341,11 +341,10 @@ class SegmentCircle(object):
             xmin, ymin, xmax, ymax
                 Bounding box limits
         '''
-        center = self.center
-        xmin = center[0] - self.radius
-        xmax = center[0] + self.radius
-        ymin = center[1] - self.radius
-        ymax = center[1] + self.radius
+        xmin = self.center[0] - self.radius# - .1
+        xmax = self.center[0] + self.radius# + .1
+        ymin = self.center[1] - self.radius# - .1
+        ymax = self.center[1] + self.radius# + .1
         return BBox(xmin, ymin, xmax, ymax)
 
     def draw(self, ax, transform):

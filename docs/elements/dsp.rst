@@ -5,19 +5,9 @@ Signal Processing
     :hide-code:
 
     %config InlineBackend.figure_format = 'svg'
+    from functools import partial
     import schemdraw
     from schemdraw import dsp
-
-    def drawElements(elm_list, n=5, dx=1, dy=2, ofst=.8, fname=None, **kwargs):
-        x, y = 0, 0
-        d = schemdraw.Drawing(fontsize=12)
-        for element in elm_list:
-            A = d.add(element, xy=[(d.unit+1)*x+1,y], label=element['name'], **kwargs)
-            x = x + dx
-            if x >= n:
-                x=0
-                y=y-dy
-        d.draw()
 
 Signal processing elements can be drawn by importing the :py:mod:`dsp` module:
 
@@ -26,35 +16,40 @@ Signal processing elements can be drawn by importing the :py:mod:`dsp` module:
     from schemdraw import dsp
 
 Because each element may have multiple connections in and out, these elements
-do not automatically extend "leads", so they must be manually connected with
-LINE elements. The square elements define anchors 'N', 'S', 'E', and 'W' for
+are not 2-terminal elements that extend "leads", so they must be manually connected with
+`Line` or `Arrow` elements. The square elements define anchors 'N', 'S', 'E', and 'W' for
 the four directions. Circle-based elements also includ 'NE', 'NW', 'SE', and 'SW'
-anchors. Other elements, such as AMP, define 'in' and 'out' anchors when appropriate.
+anchors.
+Directional elements, such as `Amp`, `Adc`, and `Dac` define anchors `in` and `out`.
 
-The ARROW, ARROW_DOUBLE, and ARROWHEAD basic circuit elements are useful to show signal flow.
 
 .. jupyter-execute::
     :hide-code:
 
-    elms = [dsp.BOX, dsp.CIRCLE, dsp.SUM, dsp.SUMSIGMA, dsp.MIX, dsp.SPEAKER1,
-            dsp.AMP, dsp.OSCBOX, dsp.OSC, dsp.FILT, dsp.FILT_LP, dsp.FILT_BP,
-            dsp.FILT_HP, dsp.ADC, dsp.DAC, dsp.DEMOD]
-    drawElements(elms, n=4, lblofst=.8, lblloc='center')
+    def drawElements(elmlist, cols=3, dx=8, dy=2):
+        d = schemdraw.Drawing(fontsize=12)
+        for i, e in enumerate(elmlist):
+            y = i//cols*-dy
+            x = (i%cols) * dx
 
-Labels are placed in the center of the element. The generic BOX and CIRCLE element can
-be used with a label to define other operations. For example, an integrator
+            name = type(e()).__name__
+            if hasattr(e, 'keywords'):  # partials have keywords attribute
+                args = ', '.join(['{}={}'.format(k, v) for k, v in e.keywords.items()])
+                name = '{}({})'.format(name, args)
+            eplaced = d.add(e, d='right', xy=[x, y])
+            eplaced.add_label(name, loc='rgt', ofst=.2, align=('left', 'center'))
+        return d
+
+    elms = [dsp.Square, dsp.Circle, dsp.Sum, dsp.SumSigma, dsp.Mixer, dsp.Speaker,
+            dsp.Amp, dsp.OscillatorBox, dsp.Oscillator, dsp.Filter, 
+            partial(dsp.Filter, response='lp'), partial(dsp.Filter, response='bp'),
+            partial(dsp.Filter, response='hp'), dsp.Adc, dsp.Dac, dsp.Demod]
+    drawElements(elms, dx=6)
+
+
+Labels are placed in the center of the element. The generic `Square` and `Circle` elements can be used with a label to define other operations. For example, an integrator
 may be created using:
 
 .. jupyter-execute::
-    :hide-code:
-    
-    d = schemdraw.Drawing()
 
-.. jupyter-execute::
-
-    d.add(dsp.BOX, label='$\int$');
-
-.. jupyter-execute::
-    :hide-code:
-    
-    d.draw()
+    dsp.Square(label='$\int$')

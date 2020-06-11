@@ -4,25 +4,24 @@ import numpy as np
 from .elements import Element, gap
 from ..segments import *
 from ..transform import Transform
+from ..adddocs import adddocs
 
 
-# Opamp sizes
 oa_back = 2.5
 oa_xlen = oa_back * np.sqrt(3)/2
 oa_lblx = oa_xlen/8
 oa_pluslen = .2
 
+
+@adddocs(Element)
 class Opamp(Element):
-    ''' Operational Amplifier
+    ''' Operational Amplifier. Anchors: `in1`, `in2`, `out`, `vd`, 
+        `vs`, `n1`, `n2`, `n1a`, `n2a`.
     
         Parameters
         ----------
         sign : bool
             Draw +/- sign labels at each input
-            
-        Keyword Arguments
-        -----------------
-        See schemdraw.Element
     '''
     def setup(self, **kwargs):
         self.segments.append(Segment([[0, 0], [0, oa_back/2], [oa_xlen, 0], [0, -oa_back/2], [0, 0], gap, [oa_xlen, 0]], **kwargs))

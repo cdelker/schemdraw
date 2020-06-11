@@ -3,10 +3,13 @@
 from .elements import Element, Element2Term, gap
 from ..transform import Transform
 from ..segments import *
+from ..adddocs import adddocs
+
 
 sw_dot_r = .12
 
 
+@adddocs(Element2Term)
 class Switch(Element2Term):
     ''' Switch
     
@@ -14,10 +17,6 @@ class Switch(Element2Term):
         ----------
         action : string or None
             'open' or 'close', action arrow to draw
-
-        Keyword Arguments
-        -----------------
-        See schemdraw.Element2Term
     '''
     def setup(self, **kwargs):
         action = kwargs.get('action', None)        
@@ -30,7 +29,11 @@ class Switch(Element2Term):
             self.segments.append(SegmentArc([.4, .25], width=.5, height=.75, theta1=-10, theta2=70, arrow='cw'))
 
 
+@adddocs(Switch)
 class SwitchSpdt(Switch):
+    ''' Single-pole double throw switch.
+        Anchors: `a`, `b`, `c`.
+    '''
     def setup(self, **kwargs):
         super().setup(**kwargs)
         self.segments.append(SegmentCircle([1-sw_dot_r, .7], sw_dot_r, **kwargs))
@@ -39,17 +42,15 @@ class SwitchSpdt(Switch):
         self.anchors['c'] = [1, .7]
 
 
+@adddocs(Element)
 class SwitchSpdt2(Element):
-    ''' Switch with throws above and below
+    ''' Single-pole double throw switch, throws above and below.
+        Anchors: `a`, `b`, `c`.
     
         Parameters
         ----------
         action : string or None
             'open' or 'close', action arrow to draw
-
-        Keyword Arguments
-        -----------------
-        See schemdraw.Element2Term
     '''
     def setup(self, **kwargs):
         action = kwargs.get('action', None)        
@@ -67,6 +68,7 @@ class SwitchSpdt2(Element):
         self.params['drop'] = [1, .4]
 
 
+@adddocs(Element2Term)
 class Button(Element2Term):
     ''' Push button
 
@@ -74,10 +76,6 @@ class Button(Element2Term):
         ----------
         nc : bool
             Normally closed?
-
-        Keyword Arguments
-        -----------------
-        See schemdraw.Element2Term
     '''
     def setup(self, **kwargs):
         if kwargs.get('nc', False):

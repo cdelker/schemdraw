@@ -1,14 +1,15 @@
 from .elements import Element, ElementDrawing, Element2Term
-from .twoterm import Line, Resistor, ResistorBox, ResistorVar, Capacitor, Capacitor2, CapacitorVar, Diode, Schottky, DiodeTunnel, Zener, LED, LED2, Photodiode, Potentiometer, Diac, Triac, SCR, Memristor, Memristor2, Josephson, Fuse, Arrow, LineDot, Gap, Inductor, Inductor2, Crystal
-from .oneterm import Ground, GroundSignal, GroundChassis, Antenna, Vss, Vdd, Dot, Arrowhead, DotDotDot, Label
+from .twoterm import Resistor, ResistorBox, ResistorVar, Capacitor, Capacitor2, CapacitorVar, Diode, Schottky, DiodeTunnel, Zener, LED, LED2, Photodiode, Potentiometer, Diac, Triac, SCR, Memristor, Memristor2, Josephson, Fuse, Inductor, Inductor2, Crystal
+from .oneterm import Ground, GroundSignal, GroundChassis, Antenna, Vss, Vdd
 from .opamp import Opamp
 from .sources import Source, SourceV, SourceI, SourceSin, SourceControlled, SourceControlledV, SourceControlledI, BatteryCell, Battery, MeterV, MeterI, MeterA, MeterOhm, Lamp
 from .switches import Switch, SwitchSpdt, SwitchSpdt2, Button
 from .transistors import NFet, PFet, JFet, JFetN, JFetP, Bjt, BjtNpn, BjtPnp, BjtPnp2c
-from .misc import Speaker, Mic, CurrentLabel, CurrentLabelInline, LoopCurrent, Motor
+from .misc import Speaker, Mic, Motor
 from .xform import Transformer
 from .cables import Coax, Triax
 from .intcircuits import IcPin, Ic, Multiplexer
+from .lines import Line, Dot, Arrowhead, Arrow, LineDot, DotDotDot, Gap, Label, CurrentLabel, CurrentLabelInline, LoopCurrent
 
 
 from . import legacy

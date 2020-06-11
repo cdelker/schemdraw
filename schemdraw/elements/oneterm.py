@@ -2,12 +2,12 @@
 
 from collections import ChainMap
 import numpy as np
-import matplotlib.pyplot as plt
 
 from ..transform import Transform
 from ..segments import *
 from .elements import Element
 from .twoterm import resheight, gap
+from ..adddocs import adddocs
 
 
 gndgap = 0.12
@@ -93,73 +93,3 @@ class Vdd(Element):
         self.anchors['end'] = [0, 0]        
 
 
-class Dot(Element):
-    ''' Connection Dot
-    
-        Parameters
-        ----------
-        radius : float
-            Radius of dot
-            
-        Keyword Arguments
-        -----------------
-        See schemdraw.Element
-    '''
-    def setup(self, **kwargs):
-        radius = kwargs.pop('radius', 0.075)
-        if 'fill' not in kwargs or kwargs['fill'] is None:
-            fill = 'white' if kwargs.get('open', False) else True
-            kwargs = ChainMap({'fill': fill}, kwargs)
-        kwargs = ChainMap({'zorder': 9}, kwargs)
-        self.anchors['start'] = [0, 0]
-        self.anchors['center'] = [0, 0]
-        self.anchors['end'] = [0, 0]
-        self.params['drop'] = [0, 0]
-        self.params['theta'] = 0
-        self.segments.append(SegmentCircle([0, 0], radius, **kwargs))
-
-
-class Arrowhead(Element):
-    def setup(self, **kwargs):
-        self.segments.append(SegmentArrow([-.3, 0], [0, 0], headwidth=.3, headlength=.3, **kwargs))
-        self.theta = 0
-        self.anchors['start'] = [0, 0]
-        self.anchors['center'] = [0, 0]
-        self.anchors['end'] = [0, 0]                
-        self.params['lblofst'] = .25
-
-        
-class DotDotDot(Element):
-    ''' Ellipsis element
-    
-        Parameters
-        ----------
-        radius : float
-            Radius of dots
-        open : bool
-            Draw open dots
-
-        Keyword Arguments
-        -----------------
-        See schemdraw.Element
-        
-        Note
-        ----
-        "Ellipsis" is a reserved keyword in Python used for slicing, thus
-        the name DotDotDot.
-    '''
-    def setup(self, **kwargs):
-        radius = kwargs.pop('radius', .075)
-        if 'fill' not in kwargs or kwargs['fill'] is None:
-            fill = 'white' if kwargs.get('open', False) else True
-            kwargs = ChainMap({'fill': fill}, kwargs)
-        self.segments.append(SegmentCircle([.5, 0], radius, **kwargs))
-        self.segments.append(SegmentCircle([1, 0], radius, **kwargs))
-        self.segments.append(SegmentCircle([1.5, 0], radius, **kwargs))
-        self.params['drop'] = [2, 0]
-        
-
-class Label(Element):
-    def setup(self, **kwargs):
-        self.params['lblloc'] = 'center'
-        self.params['lblofst'] = 0

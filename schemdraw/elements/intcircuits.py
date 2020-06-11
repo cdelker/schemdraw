@@ -3,6 +3,7 @@ import numpy as np
 
 from ..segments import *
 from ..elements import Element
+from ..adddocs import adddocs
 
 
 class IcPin(dict):
@@ -34,6 +35,7 @@ class IcPin(dict):
      '''        
         
 
+@adddocs(Element)        
 class Ic(Element):
     ''' Integrated Circuit element
     
@@ -47,9 +49,9 @@ class Ic(Element):
             Padding between top/bottom and first pin
         edgepadW : float
             Padding between left/right and first pin
-        lblofst : float
+        lofst : float
             Offset between edge and label (inside box)
-        lblsize : float
+        lsize : float
             Font size of labels (inside box)
         plblofst : float
             Offset between edge and pin label (outside box)
@@ -57,18 +59,14 @@ class Ic(Element):
             Font size of pin labels (outside box)
         slant : float
             Slant angle of top/bottom edges (e.g. for multiplexers)
-
-        Keyword Arguments
-        -----------------
-        See schemdraw.Element
     '''
     def setup(self, **kwargs):
         pins = kwargs.get('pins', [])  # List of IcPin objects
         pinspacing = kwargs.get('pinspacing', 1.25)
         edgepadH = kwargs.get('edgepadH', .25)
         edgepadW = kwargs.get('edgepadW', .25)
-        lblofst = kwargs.get('lblofst', .15)
-        lblsize = kwargs.get('lblsize', 14)
+        lblofst = kwargs.get('lofst', .15)   # lblofst would conflict with main IC label
+        lblsize = kwargs.get('lsize', 14)
         leadlen = kwargs.get('leadlen', 0.5)
         plblofst = kwargs.get('plblofst', .1)
         plblsize = kwargs.get('plblsize', 11)
@@ -255,6 +253,7 @@ class Ic(Element):
         self.params['lblloc'] = 'center'
 
 
+@adddocs(Ic)
 class Multiplexer(Ic):
     ''' Multiplexer
     
@@ -264,10 +263,6 @@ class Multiplexer(Ic):
             Slant of top/bottom edges
         demux : bool
             Draw as demultiplexer
-        
-        Keyword Arguments
-        -----------------
-        See schemdraw.elements.Ic
     '''
     def setup(self, **kwargs):
         slant = kwargs.pop('slant', 25)

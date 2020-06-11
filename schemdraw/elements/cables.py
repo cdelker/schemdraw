@@ -4,10 +4,12 @@ import numpy as np
 
 from ..segments import *
 from .elements import Element, Element2Term, gap
+from ..adddocs import adddocs
 
-
+@adddocs(Element2Term)
 class Coax(Element2Term):
-    ''' Coaxial cable element
+    ''' Coaxial cable element. Anchors: `shieldstart`, `shieldstart_top`,
+        `shieldend`, `shieldend_top`, `shieldcenter`, `shieldcenter_top`.
 
         Parameters
         ----------
@@ -18,10 +20,6 @@ class Coax(Element2Term):
         leadlen: float
             Distance (x) from start of center conductor to
             start of shield.
-
-        Keyword Arguments
-        -----------------
-        See schemdraw.Element2Term
     '''
     def setup(self, **kwargs):
         length = kwargs.get('length', 3)
@@ -47,8 +45,11 @@ class Coax(Element2Term):
             warnings.warn('Coax length < 2*leadlen. Coax may be malformed.')
 
 
+@adddocs(Element2Term)
 class Triax(Element2Term):
-    ''' Make a triaxial cable element
+    ''' Triaxial cable element. Anchors: `shieldstart`, `shieldstart_top`,
+        `shieldend`, `shieldend_top`, `shieldcenter`, `shieldcenter_top`,
+        `guardstart`, `guardstart_top`, `guardend`, `guardend_top`.
 
         Parameters
         ----------
@@ -65,10 +66,6 @@ class Triax(Element2Term):
             Distance from start of inner guard to start of outer shield
         shieldofstend: float
             Distance from end of outer shield to end of inner guard
-
-        Keyword Arguments
-        -----------------
-        See schemdraw.Element2Term
     '''
     def setup(self, **kwargs):
         length = kwargs.get('length', 3)
@@ -130,7 +127,7 @@ class Triax(Element2Term):
         self.anchors['shieldend_top'] = [length-leadlen-shieldofstend, radiusouter]
         self.anchors['shieldcenter'] = [length/2, -radiusouter]
         self.anchors['shieldcenter_top'] = [length/2, radiusouter]
-        self.params['lblofst'] = -0.4
+#        self.params['lblofst'] = -0.4
 
         if radiusouter <= radiusinner:
             warnings.warn('Triax outer radius < inner radius')

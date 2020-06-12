@@ -10,6 +10,8 @@ import matplotlib as mpl
 from .elements import Element
 from .elements.lines import LoopCurrent, CurrentLabel, CurrentLabelInline
 
+BBox = namedtuple('BBox', ['xmin', 'ymin', 'xmax', 'ymax'])
+
 
 class Drawing(object):
     ''' Create a schematic drawing
@@ -66,13 +68,20 @@ class Drawing(object):
         ymin = np.inf
         ymax = -np.inf
         for element in self.elements:
-            x1, y1, x2, y2 = element.get_bbox(transform=True)
-            xmin = min(x1, xmin)
-            xmax = max(x2, xmax)
-            ymin = min(y1, ymin)
-            ymax = max(y2, ymax)
-        return xmin, ymin, xmax, ymax
-            
+            bbox = element.get_bbox(transform=True)
+            xmin = min(bbox.xmin, xmin)
+            xmax = max(bbox.xmax, xmax)
+            ymin = min(bbox.ymin, ymin)
+            ymax = max(bbox.ymax, ymax)
+        return BBox(xmin, ymin, xmax, ymax)
+
+    def get_segments(self):
+        ''' Get flattened list of all segments in the drawing '''
+        segments = []
+        for element in self.elements:
+            segments.extend([s.xform(element.transform) for s in element.segments])
+        return segments
+    
     def _repr_svg_(self):
         ''' SVG representation for Jupyter '''
         output = StringIO()

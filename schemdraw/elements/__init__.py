@@ -9,7 +9,7 @@ from .misc import Speaker, Mic, Motor
 from .xform import Transformer
 from .cables import Coax, Triax
 from .intcircuits import IcPin, Ic, Multiplexer
-from .lines import Line, Dot, Arrowhead, Arrow, LineDot, DotDotDot, Gap, Label, CurrentLabel, CurrentLabelInline, LoopCurrent
+from .lines import Line, Dot, Arrowhead, Arrow, LineDot, DotDotDot, Gap, Label, CurrentLabel, CurrentLabelInline, LoopCurrent, Rect
 
 
 from . import legacy

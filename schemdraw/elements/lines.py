@@ -27,9 +27,10 @@ class Arrow(Line):
     '''
     def setup(self, **kwargs):
         super().setup(**kwargs)
-        self.segments.append(SegmentArrow([-.3, 0], [0, 0], headwidth=.3, headlength=.3, ref='end', **kwargs))
+#        kwargs = ChainMap(kwargs, {'headwidth':.3, 'headlength': .3})
+        self.segments.append(SegmentArrow([-.3, 0], [0, 0], ref='end', **kwargs))
         if kwargs.get('double', False):
-            self.segments.append(SegmentArrow([.3, 0], [0, 0], headwidth=.3, headlength=.3, ref='start', **kwargs))
+            self.segments.append(SegmentArrow([.3, 0], [0, 0], ref='start', **kwargs))
 
 
 @adddocs(Element2Term)
@@ -232,3 +233,14 @@ class LoopCurrent(Element):
         self.params['lblofst'] = 0
         self.params['theta'] = 0
         self.anchors['center'] = [0, 0]
+
+
+class Rect(Element):
+    def setup(self, **kwargs):
+        c1 = kwargs.get('corner1', [0, 0])
+        c2 = kwargs.get('corner2', [1, 1])
+        c1a = [c1[0], c2[1]]
+        c2a = [c2[0], c1[1]]
+        self.segments.append(Segment([c1, c1a, c2, c2a, c1], **kwargs))
+        self.params['zorder'] = 0   # Put on bottom
+        

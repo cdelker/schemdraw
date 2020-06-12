@@ -327,7 +327,7 @@ class SegmentCircle(object):
         self.center = mirror_point(self.center, centerx)
 
     def doflip(self):
-        self.cener = flip_point(self.center)
+        self.center = flip_point(self.center)
     
     def xform(self, transform):
         ''' Return a new Segment that has been transformed '''
@@ -425,7 +425,7 @@ class SegmentArrow(object):
 
     def xform(self, transform):
         ''' Return a new Segment that has been transformed '''
-        return SegmentArrow(transform.transform(self.tail), transform.transform(self.head), **self.kwargs)
+        return SegmentArrow(transform.transform(self.tail, ref=self.ref), transform.transform(self.head, ref=self.ref), **self.kwargs)
 
     def get_bbox(self):
         ''' Get bounding box (untransformed)
@@ -436,9 +436,9 @@ class SegmentArrow(object):
                 Bounding box limits
         '''
         xmin = min(self.tail[0], self.head[0])
-        ymin = min(self.tail[1], self.head[1])
+        ymin = min(self.tail[1], self.head[1]-self.headwidth)
         xmax = max(self.tail[0], self.head[0])
-        ymax = max(self.tail[1], self.head[1])
+        ymax = max(self.tail[1], self.head[1]+self.headwidth)
         return BBox(xmin, ymin, xmax, ymax)
 
     def end(self):

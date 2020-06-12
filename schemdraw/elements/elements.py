@@ -213,23 +213,14 @@ class Element(object):
         xmin = ymin = np.inf
         xmax = ymax = -np.inf
         for segment in self.segments:
+            if transform:
+                segment = segment.xform(self.transform)
             segxmin, segymin, segxmax, segymax = segment.get_bbox()
             xmin = min(xmin, segxmin)
             xmax = max(xmax, segxmax)
             ymin = min(ymin, segymin)
             ymax = max(ymax, segymax)
 
-        # Don't want to propogate infinities (e.g. shape not defined above)
-        if xmax == -np.Inf: xmax = 0
-        if ymax == -np.Inf: ymax = 0
-        if xmin ==  np.Inf: xmin = 0
-        if ymin ==  np.Inf: ymin = 0
-
-        if transform:
-            xmin, ymin = self.transform.transform([xmin, ymin])
-            xmax, ymax = self.transform.transform([xmax, ymax])
-            xmin, xmax = min(xmin, xmax), max(xmin, xmax)
-            ymin, ymax = min(ymin, ymax), max(ymin, ymax)
         return BBox(xmin, ymin, xmax, ymax)
 
     def add_label(self, label, loc='top', ofst=None, align=None, rotation=0, **kwargs):
@@ -457,8 +448,7 @@ class ElementDrawing(Element):
 
     def setup(self, **kwargs):
         ''' Set up the element by combineing all segments in drawing '''
-        for element in self.drawing.elements:
-            self.segments.extend([s.xform(element.transform) for s in element.segments])
+        self.segments = self.drawing.get_segments()
         self.params['drop'] = self.drawing.here
 
 

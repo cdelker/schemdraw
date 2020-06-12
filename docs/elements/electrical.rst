@@ -107,7 +107,8 @@ and the `action` parameter to add an open or closing arrow.
     :hide-code:
 
     elmlist = [SwitchSpdt, partial(SwitchSpdt, action='open'), partial(SwitchSpdt, action='close'),
-               SwitchSpdt2, partial(SwitchSpdt2, action='open'), partial(SwitchSpdt2, action='close')]
+               SwitchSpdt2, partial(SwitchSpdt2, action='open'), partial(SwitchSpdt2, action='close'),
+               SwitchDpst, SwitchDpdt]
     drawElements(elmlist, dx=8, dy=3)
 
 

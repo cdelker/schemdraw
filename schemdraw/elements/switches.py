@@ -1,5 +1,7 @@
 ''' Switches and buttons '''
 
+from collections import ChainMap
+
 from .elements import Element, Element2Term, gap
 from ..transform import Transform
 from ..segments import *
@@ -88,3 +90,41 @@ class Button(Element2Term):
             
         self.segments.append(SegmentCircle([sw_dot_r, 0], sw_dot_r, **kwargs))
         self.segments.append(SegmentCircle([1-sw_dot_r, 0], sw_dot_r, **kwargs))        
+
+        
+class SwitchDpst(Element):
+    def setup(self, **kwargs):
+        yofst = -1
+        self.segments.append(Segment([[0, 0], gap, [sw_dot_r*2, .1], [.8, .45], gap, [1, 0]], **kwargs))
+        self.segments.append(SegmentCircle([sw_dot_r, 0], sw_dot_r, **kwargs))
+        self.segments.append(SegmentCircle([1-sw_dot_r, 0], sw_dot_r, **kwargs))        
+        self.segments.append(Segment([[0, yofst], gap, [sw_dot_r*2, yofst+.1], [.8, yofst+.45], gap, [1, yofst]], **kwargs))
+        self.segments.append(SegmentCircle([sw_dot_r, yofst], sw_dot_r, **kwargs))
+        self.segments.append(SegmentCircle([1-sw_dot_r, yofst], sw_dot_r, **kwargs))
+        kwargs = ChainMap({'ls': ':'}, kwargs)
+        self.segments.append(Segment([[0.5, yofst+.25], [0.5, 0.2]], **kwargs))
+        self.anchors['p1'] = [0, 0]
+        self.anchors['t1'] = [1, 0]
+        self.anchors['p2'] = [0, yofst]
+        self.anchors['t2'] = [1, yofst]
+        
+
+class SwitchDpdt(Element):
+    def setup(self, **kwargs):
+        yofst = -1.4
+        self.segments.append(Segment([[0, 0], gap, [sw_dot_r*2, .1], [.7, .25], gap, [1, .4]], **kwargs))
+        self.segments.append(SegmentCircle([sw_dot_r, 0], sw_dot_r, **kwargs))
+        self.segments.append(SegmentCircle([1-sw_dot_r, -.4], sw_dot_r, **kwargs))
+        self.segments.append(SegmentCircle([1-sw_dot_r, .4], sw_dot_r, **kwargs))
+        self.segments.append(Segment([[0, yofst], gap, [sw_dot_r*2, yofst+.1], [.7, yofst+.25], gap, [1, yofst+.4]], **kwargs))
+        self.segments.append(SegmentCircle([sw_dot_r, yofst], sw_dot_r, **kwargs))
+        self.segments.append(SegmentCircle([1-sw_dot_r, yofst-.4], sw_dot_r, **kwargs))
+        self.segments.append(SegmentCircle([1-sw_dot_r, yofst+.4], sw_dot_r, **kwargs))
+        kwargs = ChainMap({'ls': ':'}, kwargs)
+        self.segments.append(Segment([[0.5, yofst+.25], [0.5, 0.2]], **kwargs))
+        self.anchors['p1'] = [0, 0]
+        self.anchors['t1'] = [1, .4]
+        self.anchors['t2'] = [1, -.4]
+        self.anchors['p2'] = [0, yofst]
+        self.anchors['t3'] = [1, yofst+.4]
+        self.anchors['t4'] = [1, yofst-.4]  

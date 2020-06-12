@@ -3,7 +3,7 @@ from .twoterm import Resistor, ResistorBox, ResistorVar, Capacitor, Capacitor2, 
 from .oneterm import Ground, GroundSignal, GroundChassis, Antenna, Vss, Vdd
 from .opamp import Opamp
 from .sources import Source, SourceV, SourceI, SourceSin, SourceControlled, SourceControlledV, SourceControlledI, BatteryCell, Battery, MeterV, MeterI, MeterA, MeterOhm, Lamp
-from .switches import Switch, SwitchSpdt, SwitchSpdt2, Button
+from .switches import Switch, SwitchSpdt, SwitchSpdt2, SwitchDpst, SwitchDpdt, Button
 from .transistors import NFet, PFet, JFet, JFetN, JFetP, Bjt, BjtNpn, BjtPnp, BjtPnp2c
 from .misc import Speaker, Mic, Motor
 from .xform import Transformer

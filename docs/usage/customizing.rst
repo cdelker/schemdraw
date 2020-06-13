@@ -40,7 +40,7 @@ Defining custom elements
 ------------------------
 
 All elements are subclasses of :py:class:`schemdraw.elements.Element` or :py:class:`schemdraw.elements.Element2Term`.
-Subclasses should only define the `setup` method in order to add lines, shapes, and text to the new element, all of which are defined by `Segment` classes. New Segments should be appended to the `Element.segments` attribute list.
+Subclasses only need to define the `__init__` method in order to add lines, shapes, and text to the new element, all of which are defined using `Segment` classes. New Segments should be appended to the `Element.segments` attribute list.
 
 Coordinates are all defined in element cooridnates, where the element begins
 at [0, 0] and is drawn from left to right. The drawing engine will then rotate
@@ -62,13 +62,13 @@ and translate the element to its final position. A standard resistor is
 
 
 
-The `Element` setup function takes arbitrary keyword arguments than can help define the circuit element to draw.
-Generally, `setup` function should pass along its kwargs to the Segment to ensure things like custom colors are drawn correctly.
+The `Element.__init__` method takes arbitrary keyword arguments than can help define the circuit element to draw.
+Keyword arguments passed to the Segment instances will override the drawing defaults or kwargs passed in to the `Element.__init__`.
 
 In addition to the list of Segments, named anchors and other parameters should be specified in the `setup` function. 
 Anchors should be added to the `Element.anchors` dictionary as name: [x, y] pairs.
 
-The Element instance maintains its own parameters dictionary in `Element.params` that can be set by the `setup` function and override the default drawing parameters.
+The Element instance maintains its own parameters dictionary in `Element.params` that override the default drawing parameters.
 Parameters are resolved by a ChainMap of user arguments to the `Element` instance, the `Element.params` attribute, then the `schemdraw.Drawing` parameters.
 A common use of setting `Element.params` in the setup function is to change the default position of text labels, for example Transistor elements apply labels on the right side of the element by default, so they add to the setup:
 
@@ -84,12 +84,12 @@ As an example, here's the definition of our favorite element, the resistor:
 .. code-block:: python
 
     class Resistor(Element2Term):
-        def setup(self, **kwargs):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
             self.segments.append(Segment([[0, 0], [0.5*reswidth, resheight],
                                           [1.5*reswidth, -resheight], [2.5*reswidth, resheight],
                                           [3.5*reswidth, -resheight], [4.5*reswidth, resheight],
-                                          [5.5*reswidth, -resheight], [6*reswidth, 0]],
-                                          **kwargs))
+                                          [5.5*reswidth, -resheight], [6*reswidth, 0]]))
 
 
 The resistor is made of just one path.
@@ -103,14 +103,14 @@ Flux Capacitor Example
 For an example, let's make a flux capacitor circuit element.
 
 Since everyone knows a flux-capacitor has three branches, we should subclass the standard :py:class:`schemdraw.elements.Element` class instead of :py:class:`schemdraw.elements.Element2Term`.
-Start by importing the Segments and define the class name and setup function:
+Start by importing the Segments and define the class name and `__init__` function:
 
 .. code-block:: python
 
     from schemdraw.segments import *
 
     class FluxCapacitor(Element):
-        def setup(self, **kwargs):
+        def __init__(self, *args, **kwargs):
 
 We want a dot in the center of our flux capacitor, so start by adding a `SegmentCircle`. The `fclen` and `radius` variables could be pulled from kwargs for the user to adjust, if desired.
 
@@ -118,24 +118,25 @@ We want a dot in the center of our flux capacitor, so start by adding a `Segment
 
             fclen = 0.5
             radius = 0.075
-            self.segments.append(SegmentCircle([0, 0], radius, **kwargs))
+            self.segments.append(SegmentCircle([0, 0], radius))
 
 Next, add the paths as Segment instances, which are drawn as lines. The flux capacitor will have three paths, all extending from the center dot:
 
 .. code-block:: python
 
-            self.segments.append(Segment([[0, 0], [0, -fclen*1.41]], **kwargs))
-            self.segments.append(Segment([[0, 0], [fclen, fclen]], **kwargs))
-            self.segments.append(Segment([[0, 0], [-fclen, fclen]], **kwargs))
+            self.segments.append(Segment([[0, 0], [0, -fclen*1.41]]))
+            self.segments.append(Segment([[0, 0], [fclen, fclen]]))
+            self.segments.append(Segment([[0, 0], [-fclen, fclen]]))
         
         
 And at the end of each path is an open circle. Append three more `SegmentCircle` instances.
+By specifying `fill=None` the SegmentCircle will always remain unfilled regardless of any `fill` arguments provided to `Drawing` or `FluxCapacitor`.
 
 .. code-block:: python
 
-            self.segments.append(SegmentCircle([0, -fclen*1.41], 0.2, fill=None, **kwargs))
-            self.segments.append(SegmentCircle([fclen, fclen], 0.2, fill=None, **kwargs))
-            self.segments.append(SegmentCircle([-fclen, fclen], 0.2, fill=None, **kwargs))
+            self.segments.append(SegmentCircle([0, -fclen*1.41], 0.2, fill=None))
+            self.segments.append(SegmentCircle([fclen, fclen], 0.2, fill=None))
+            self.segments.append(SegmentCircle([-fclen, fclen], 0.2, fill=None))
     
 
 Finally, we need to define anchor points so that other elements can be connected to the right places.
@@ -153,16 +154,17 @@ Here's the Flux Capacitor class all in one:
 .. jupyter-execute::
 
     class FluxCapacitor(elm.Element):
-        def setup(self, **kwargs):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
             radius = 0.075
             fclen = 0.5
-            self.segments.append(SegmentCircle([0, 0], radius, **kwargs))
-            self.segments.append(Segment([[0, 0], [0, -fclen*1.41]], **kwargs))
-            self.segments.append(Segment([[0, 0], [fclen, fclen]], **kwargs))
-            self.segments.append(Segment([[0, 0], [-fclen, fclen]], **kwargs))
-            self.segments.append(SegmentCircle([0, -fclen*1.41], 0.2, fill=None, **kwargs))
-            self.segments.append(SegmentCircle([fclen, fclen], 0.2, fill=None, **kwargs))
-            self.segments.append(SegmentCircle([-fclen, fclen], 0.2, fill=None, **kwargs))
+            self.segments.append(SegmentCircle([0, 0], radius))
+            self.segments.append(Segment([[0, 0], [0, -fclen*1.41]]))
+            self.segments.append(Segment([[0, 0], [fclen, fclen]]))
+            self.segments.append(Segment([[0, 0], [-fclen, fclen]]))
+            self.segments.append(SegmentCircle([0, -fclen*1.41], 0.2, fill=None))
+            self.segments.append(SegmentCircle([fclen, fclen], 0.2, fill=None))
+            self.segments.append(SegmentCircle([-fclen, fclen], 0.2, fill=None))
             self.anchors['p1'] = [-fclen, fclen]
             self.anchors['p2'] = [fclen, fclen]
             self.anchors['p3'] = [0, -fclen*1.41]

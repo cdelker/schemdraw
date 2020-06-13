@@ -3,6 +3,8 @@
 Basic Circuit Elements
 ======================
 
+These elements are defined in the `schemdraw.elements` module.
+
 .. jupyter-execute::
     :hide-code:
 
@@ -10,24 +12,6 @@ Basic Circuit Elements
     from functools import partial
     import schemdraw
     from schemdraw import elements as elm
-    def drawElements(elm_list, n=5, dx=1, dy=2, ofst=.8, fname=None, **kwargs):
-        x, y = 0, 0
-        d = schemdraw.Drawing(fontsize=12)
-        for e in elm_list:
-            A = d.add(e, xy=[(d.unit+1)*x+1,y], toplabel=e.__name__, **kwargs)
-            x = x + dx
-            if x >= n:
-                x=0
-                y=y-dy
-        return d
-
-
-These elements are defined in the `schemdraw.elements` module.
-
-.. jupyter-execute::
-    :hide-code:
-
-    import schemdraw
     from schemdraw.elements import *
     
     def drawElements(elmlist, cols=3, dx=8, dy=2):
@@ -109,7 +93,7 @@ and the `action` parameter to add an open or closing arrow.
     elmlist = [SwitchSpdt, partial(SwitchSpdt, action='open'), partial(SwitchSpdt, action='close'),
                SwitchSpdt2, partial(SwitchSpdt2, action='open'), partial(SwitchSpdt2, action='close'),
                SwitchDpst, SwitchDpdt]
-    drawElements(elmlist, dx=8, dy=3)
+    drawElements(elmlist, cols=2, dx=8, dy=3)
 
 
 Audio Elements

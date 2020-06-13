@@ -28,7 +28,8 @@ class Transformer(Element):
         loop : bool
             Use spiral/cycloid (loopy) style
     '''
-    def setup(self, **kwargs):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         t1 = kwargs.get('t1', 4)
         t2 = kwargs.get('t2', 4)
         core = kwargs.get('core', True)
@@ -65,18 +66,18 @@ class Transformer(Element):
         else:
             for i in range(t1):
                 self.segments.append(SegmentArc([0, ltop-(i*ind_w+ind_w/2)],
-                                                theta1=270, theta2=90, width=ind_w, height=ind_w, **kwargs))
+                                                theta1=270, theta2=90, width=ind_w, height=ind_w))
             for i in range(t2):
                 self.segments.append(SegmentArc([ind_gap, rtop-(i*ind_w+ind_w/2)],
-                                                theta1=90, theta2=270, width=ind_w, height=ind_w, **kwargs))
+                                                theta1=90, theta2=270, width=ind_w, height=ind_w))
         # Add the core
         if core:
             top = max(ltop, rtop)
             bot = min(lbot, rbot)
             center = ind_gap/2
             core_w = ind_gap/10
-            self.segments.append(Segment([[center-core_w, top], [center-core_w, bot]], **kwargs))
-            self.segments.append(Segment([[center+core_w, top], [center+core_w, bot]], **kwargs))
+            self.segments.append(Segment([[center-core_w, top], [center-core_w, bot]]))
+            self.segments.append(Segment([[center+core_w, top], [center+core_w, bot]]))
 
         self.anchors['p1'] = [0, ltop]
         self.anchors['p2'] = [0, lbot]

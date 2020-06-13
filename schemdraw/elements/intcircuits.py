@@ -1,4 +1,5 @@
-from collections import ChainMap
+''' Integrated Circuit Element '''
+
 import numpy as np
 
 from ..segments import *
@@ -41,6 +42,8 @@ class Ic(Element):
     
         Parameters
         ----------
+        size: tuple
+            (Width, Height) of box
         pins : list
             List of IcPin instances defining the inputs/outputs
         pinspacing : float
@@ -60,7 +63,8 @@ class Ic(Element):
         slant : float
             Slant angle of top/bottom edges (e.g. for multiplexers)
     '''
-    def setup(self, **kwargs):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         pins = kwargs.get('pins', [])  # List of IcPin objects
         pinspacing = kwargs.get('pinspacing', 1.25)
         edgepadH = kwargs.get('edgepadH', .25)
@@ -145,11 +149,10 @@ class Ic(Element):
                         # Evenly spaced along side
                         z = np.linspace(1/(tot+2), 1-1/(tot+2), num=tot)[num-1] * sidelen
 
-                pin['pos'] = np.asarray({
-                                'L': [0, z+edgepadH],
-                                'R': [w, z+edgepadH],
-                                'T': [z+edgepadW, h],
-                                'B': [z+edgepadW, 0]}.get(side))
+                pin['pos'] = np.asarray({'L': [0, z+edgepadH],
+                                         'R': [w, z+edgepadH],
+                                         'T': [z+edgepadW, h],
+                                         'B': [z+edgepadW, 0]}.get(side))
 
                 # Adjust pin position for slant
                 if side == 'T' and slant > 0:
@@ -200,7 +203,7 @@ class Ic(Element):
                         label['rotation'] = pin['rotation']
                         label['rotation_mode'] = 'default'
 
-                    self.segments.append(SegmentText(**ChainMap(label, kwargs)))
+                    self.segments.append(SegmentText(**label))
 
                 # Add pin number outside the IC
                 if pin.get('pin', '') != '':
@@ -219,7 +222,7 @@ class Ic(Element):
                              'pos': pin['pos'] + pofst,
                              'align': align,
                              'fontsize': pin.get('psize', plblsize)}
-                    self.segments.append(SegmentText(**ChainMap(label, kwargs)))
+                    self.segments.append(SegmentText(**label))
 
                 # Draw leads                
                 if leadlen > 0:
@@ -231,7 +234,7 @@ class Ic(Element):
                                       'T': np.array([0, invertradius]),
                                       'B': np.array([0, -invertradius])}.get(side)
 
-                        self.segments.append(SegmentCircle(np.asarray(pin['pos'])+invertofst, invertradius, **kwargs))
+                        self.segments.append(SegmentCircle(np.asarray(pin['pos'])+invertofst, invertradius))
                         paths.append([pin['pos']+invertofst*2, pin['pos']+leadext])
                     else:
                         paths.append([pin['pos'], pin['pos']+leadext])
@@ -249,7 +252,7 @@ class Ic(Element):
                     self.anchors['pin{}'.format(pin.get('pin'))] = anchorpos
 
         for p in paths:
-            self.segments.append(Segment(p, **kwargs))
+            self.segments.append(Segment(p))
         self.params['lblloc'] = 'center'
 
 
@@ -264,8 +267,8 @@ class Multiplexer(Ic):
         demux : bool
             Draw as demultiplexer
     '''
-    def setup(self, **kwargs):
+    def __init__(self, *args, **kwargs):
         slant = kwargs.pop('slant', 25)
         demux = kwargs.pop('demux', False)
         slant = -slant if not demux else slant
-        super().setup(slant=slant, **kwargs)
+        super().__init__(*args, slant=slant, **kwargs)

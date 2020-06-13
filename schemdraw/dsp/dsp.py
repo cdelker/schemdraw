@@ -9,7 +9,8 @@ from ..flow import Box
 
 
 class Square(Element):
-    def setup(self, **kwargs):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.segments.append(Segment([[0, 0], [0, .5], [1, .5], [1, -.5], [0, -0.5], [0, 0]], **kwargs))
         self.params['lblloc'] = 'center'
         self.params['lblofst'] = 0
@@ -21,7 +22,8 @@ class Square(Element):
     
 
 class Circle(Element):
-    def setup(self, **kwargs):    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         rad = .5
         k = rad*np.sqrt(2)/2  # Diagonal distance
         self.segments.append(SegmentCircle([rad, 0], rad, **kwargs))
@@ -40,21 +42,21 @@ class Circle(Element):
 
         
 class Sum(Circle):
-    def setup(self, **kwargs):
-        super().setup(**kwargs)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.segments.append(Segment([[.5, .2], [.5, -.2]], **kwargs))
         self.segments.append(Segment([[.3, 0], [.7, 0]], **kwargs))
 
 
 class SumSigma(Circle):
-    def setup(self, **kwargs):
-        super().setup(**kwargs)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.segments.append(SegmentText(label='$\Sigma$', pos=[0.45, 0], align=('center', 'center'), **kwargs))
 
         
 class Mixer(Circle):
-    def setup(self, **kwargs):
-        super().setup(**kwargs)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         rad = .5
         k = rad*np.sqrt(2)/2  # Diagonal distance        
         self.segments.append(Segment([[rad+k, k], [rad-k, -k]], **kwargs))
@@ -65,13 +67,15 @@ class Mixer(Circle):
 
 class Speaker(Element):
     # Speaker with only one terminal
-    def setup(self, **kwargs):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.segments.append(Segment([[0, 0], [0, 0.25], [0.25, 0.25], [0.25, -.25], [0, -.25], [0, 0]], **kwargs))
         self.segments.append(Segment([[0.25, 0.25], [0.5, 0.5], [0.5, -0.5], [0.25, -0.25], [.25, .25]], **kwargs))
 
 
 class Amp(Element):
-    def setup(self, **kwargs):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         amph = 1.
         ampl = .75
         self.segments.append(Segment([[0, 0], [0, -amph/2], [ampl, 0], [0, amph/2], [0, 0]], **kwargs))
@@ -90,15 +94,15 @@ def _makesine():
 
         
 class OscillatorBox(Square):
-    def setup(self, **kwargs):
-        super().setup(**kwargs)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         path = _makesine()
         self.segments.append(Segment(path, **kwargs))
 
         
 class Oscillator(Circle):
-    def setup(self, **kwargs):
-        super().setup(**kwargs)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         path = _makesine()
         self.segments.append(Segment(path, **kwargs))
 
@@ -116,8 +120,8 @@ class Filter(Square):
         -----------------
         See schemdraw.Element
     '''
-    def setup(self, **kwargs):
-        super().setup(**kwargs)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         response = kwargs.get('response', None)
         
         path = _makesine()
@@ -137,7 +141,8 @@ class Filter(Square):
         
 
 class Adc(Element):
-    def setup(self, **kwargs):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.segments.append(Segment([[0, 0], [.22, .5], [1.4, .5], [1.4, -.5], [.22, -.5], [0, 0]], **kwargs))
         self.params['lblloc'] = 'center'
         self.params['lblofst'] = 0
@@ -149,7 +154,8 @@ class Adc(Element):
 
 
 class Dac(Element):
-    def setup(self, **kwargs):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.segments.append(Segment([[0, 0], [0, .5], [1.18, .5], [1.4, 0], [1.18, -.5], [0, -.5], [0, 0]], **kwargs))
         self.params['lblloc'] = 'center'
         self.params['lblofst'] = 0
@@ -162,8 +168,8 @@ class Dac(Element):
 
 class Demod(Square):
     # Demodulator, box with diode in it
-    def setup(self, **kwargs):
-        super().setup(**kwargs)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.segments.append(Segment([[.15, 0], [.3, 0]], **kwargs))
         self.segments.append(Segment([[.3, .25], [.7, 0], [.3, -.25], [.3, .25]], **kwargs))
         self.segments.append(Segment([[.7, .25], [.7, -.25]], **kwargs))

@@ -37,14 +37,13 @@ class Segment(object):
     '''
     def __init__(self, path, **kwargs):
         self.path = np.asarray(path)  # Untranformed path
-        self.zorder = kwargs.pop('zorder', 2)
-        self.color = kwargs.get('color', 'black')
-        self.lw = kwargs.get('lw', 2)
-        self.ls = kwargs.get('ls', '-')
-        self.capstyle = kwargs.get('capstyle', 'round')
-        self.joinstyle = kwargs.get('joinstyle', 'round')
-        self.fill = kwargs.get('fill', None)
-        self.kwargs = kwargs
+        self.zorder = kwargs.get('zorder', None)
+        self.color = kwargs.get('color', None)
+        self.fill = kwargs.get('fill', None)        
+        self.lw = kwargs.get('lw', None)
+        self.ls = kwargs.get('ls', None)
+        self.capstyle = kwargs.get('capstyle', None)
+        self.joinstyle = kwargs.get('joinstyle', None)
 
     def end(self):
         ''' Get endpoint of this segment, untransformed '''
@@ -54,7 +53,14 @@ class Segment(object):
         ''' Return a new Segment that has been transformed
             to its global position
         '''
-        return Segment(transform.transform(self.path), **self.kwargs)
+        return Segment(transform.transform(self.path),
+                       zorder=self.zorder,
+                       color=self.color,
+                       fill=self.fill,
+                       lw=self.lw,
+                       ls=self.ls,
+                       capstyle=self.capstyle,
+                       joinstyle=self.joinstyle)
 
     def get_bbox(self):
         ''' Get bounding box (untransformed)
@@ -79,7 +85,7 @@ class Segment(object):
             flipped.append(flip_point(p))
         self.path = flipped
     
-    def draw(self, ax, transform):
+    def draw(self, ax, transform, **style):
         ''' Draw the segment
         
             Parameters
@@ -91,15 +97,22 @@ class Segment(object):
         '''
         path = transform.transform_array(self.path)
 
-        if self.fill is not None:
-            fill = self.color if self.fill is True else self.fill
-            tlist = list(map(tuple, path))  # Need path as tuples for set()
-            if len(tlist) != len(set(tlist)):  # Duplicate points - assume closed shape
-                ax.fill(path[:, 0], path[:, 1], color=fill, zorder=self.zorder)
+        zorder = self.zorder if self.zorder is not None else style.get('zorder', 2)
+        color = self.color if self.color else style.get('color', 'black')
+        fill = self.fill if self.fill else style.get('fill', None)
+        ls = self.ls if self.ls else style.get('ls', '-')
+        lw = self.lw if self.lw else style.get('lw', 2)
+        capstyle = self.capstyle if self.capstyle else style.get('capstyle', 'round')
+        joinstyle = self.joinstyle if self.joinstyle else style.get('joinstyle', 'round')
 
-        ax.plot(path[:, 0], path[:, 1], color=self.color, lw=self.lw,
-                solid_capstyle=self.capstyle, solid_joinstyle=self.joinstyle,
-                ls=self.ls, zorder=self.zorder)
+        if fill:  # Check if path is closed
+            fill = color if fill is True else fill
+            tlist = list(map(tuple, path))  # Need path as tuples for set()
+            if len(tlist) != len(set(tlist)):  # Path has duplicates
+                ax.fill(path[:, 0], path[:, 1], color=fill, zorder=zorder)
+                
+        ax.plot(path[:, 0], path[:, 1], zorder=zorder, color=color,
+                ls=ls, lw=lw, solid_capstyle=capstyle, solid_joinstyle=joinstyle)
 
 
 class SegmentText(object):
@@ -134,14 +147,13 @@ class SegmentText(object):
     def __init__(self, pos, label, **kwargs):
         self.xy = pos
         self.text = label
-        self.align = kwargs.get('align', ('center', 'center'))
-        self.font = kwargs.get('font', 'sans-serif')
-        self.fontsize = kwargs.get('fontsize', kwargs.get('size', 14))
-        self.color = kwargs.get('color', 'black')
-        self.rotation = kwargs.get('rotation', 0)
-        self.rotation_mode = kwargs.get('rotation_mode', 'anchor')  # 'anchor' or 'default'
-        self.zorder = kwargs.get('zorder', 3)
-        self.kwargs = kwargs
+        self.align = kwargs.get('align', None)
+        self.font = kwargs.get('font', None)
+        self.fontsize = kwargs.get('fontsize', None)
+        self.color = kwargs.get('color', None)
+        self.rotation = kwargs.get('rotation', None)
+        self.rotation_mode = kwargs.get('rotation_mode', None)
+        self.zorder = kwargs.get('zorder', None)
 
     def doreverse(self, centerx):
         ''' Reverse the path (flip horizontal about the centerx point) '''        
@@ -153,7 +165,15 @@ class SegmentText(object):
 
     def xform(self, transform):
         ''' Return a new Segment that has been transformed '''
-        return SegmentText(transform.transform(self.xy), self.text, **self.kwargs)
+        return SegmentText(transform.transform(self.xy),
+                           self.text,
+                           align=self.align,
+                           font=self.font,
+                           fontsize=self.fontsize,
+                           color=self.color,
+                           rotation=self.rotation,
+                           rotation_mode=self.rotation_mode,
+                           zorder=self.zorder)
 
     def end(self):
         ''' Get endpoint of this segment, untransformed '''        
@@ -170,7 +190,7 @@ class SegmentText(object):
         # Matplotlib doesn't know text dimensions until AFTER it is drawn
         return BBox(np.inf, np.inf, -np.inf, -np.inf)
 
-    def draw(self, ax, transform):
+    def draw(self, ax, transform, **style):
         ''' Draw the segment
         
             Parameters
@@ -181,10 +201,18 @@ class SegmentText(object):
                 Transform to apply before drawing
         '''
         xy = transform.transform(self.xy)
+        color = self.color if self.color else style.get('color', 'black')
+        fontsize = self.fontsize if self.fontsize else style.get('fontsize', style.get('size', 14))
+        font = self.font if self.font else style.get('font', 'sans-serif')
+        align = self.align if self.align else style.get('align', ('center', 'center'))
+        rotation = self.rotation if self.rotation else style.get('rotation', 0)
+        rotmode = self.rotation_mode if self.rotation_mode else style.get('rotation_mode', 'anchor')
+        zorder = self.zorder if self.zorder is not None else style.get('zorder', 3)
+        
         ax.text(xy[0], xy[1], self.text, transform=ax.transData,
-                color=self.color, fontsize=self.fontsize, family=self.font, rotation=self.rotation,
-                horizontalalignment=self.align[0], verticalalignment=self.align[1],
-                zorder=self.zorder, rotation_mode=self.rotation_mode)
+                color=color, fontsize=fontsize, family=font, rotation=rotation,
+                horizontalalignment=align[0], verticalalignment=align[1],
+                zorder=zorder, rotation_mode=rotmode)
         
 
 class SegmentPoly(object):
@@ -214,15 +242,14 @@ class SegmentPoly(object):
     '''
     def __init__(self, verts, **kwargs):
         self.verts = verts
-        self.closed = kwargs.get('closed', True)
-        self.color = kwargs.get('color', 'black')
+        self.closed = kwargs.get('closed', None)
+        self.color = kwargs.get('color', None)
         self.fill = kwargs.get('fill', None)
-        self.joinstyle = kwargs.get('joinstyle', 'round')
-        self.capstyle = kwargs.get('capstyle', 'round')
-        self.zorder = kwargs.pop('zorder', 1)
-        self.lw = kwargs.get('lw', 2)
-        self.ls = kwargs.get('ls', '-')
-        self.kwargs = kwargs
+        self.joinstyle = kwargs.get('joinstyle', None)
+        self.capstyle = kwargs.get('capstyle', None)
+        self.zorder = kwargs.pop('zorder', None)
+        self.lw = kwargs.get('lw', None)
+        self.ls = kwargs.get('ls', None)
 
     def doreverse(self, centerx):
         ''' Reverse the path (flip horizontal about the centerx point) '''        
@@ -237,7 +264,14 @@ class SegmentPoly(object):
         
     def xform(self, transform):
         ''' Return a new Segment that has been transformed '''
-        return SegmentPoly(transform.transform(self.verts), **self.kwargs)
+        return SegmentPoly(transform.transform(self.verts),
+                           color=self.color,
+                           fill=self.fill,
+                           joinstyle=self.joinstyle,
+                           capstyle=self.capstyle,
+                           lw=self.lw,
+                           ls=self.ls,
+                           zorder=self.zorder)
 
     def end(self):
         ''' Get endpoint of this segment, untransformed '''        
@@ -255,7 +289,7 @@ class SegmentPoly(object):
         y = [p[1] for p in self.verts]
         return BBox(min(x), min(y), max(x), max(y))
 
-    def draw(self, ax, transform):
+    def draw(self, ax, transform, **style):
         ''' Draw the segment
         
             Parameters
@@ -265,25 +299,33 @@ class SegmentPoly(object):
             transform : Transform
                 Transform to apply before drawing
         '''
-        if self.fill is True:
-            fillcolor = self.color
+        closed = self.closed if self.closed is not None else style.get('closed', True)
+        fill = self.fill if self.fill is not None else style.get('fill', None)
+        color = self.color if self.color else style.get('color', 'black')
+        joinstyle = self.joinstyle if self.joinstyle else style.get('joinstyle', 'round')
+        capstyle = self.capstyle if self.capstyle else style.get('capstyle', 'round')        
+        zorder = self.zorder if self.zorder is not None else style.get('zorder', 1)
+        lw = self.lw if self.lw else style.get('lw', 2)
+        ls = self.ls if self.ls else style.get('ls', '-')
+        
+        if fill is True:
+            fillcolor = color
             dofill = True
-        elif self.fill is not None:
-            fillcolor = self.fill
+        elif fill is not None:
+            fillcolor = fill
             dofill = True
         else:
             dofill = False
             fillcolor = None
 
         verts = transform.transform(self.verts)
-        poly = plt.Polygon(xy=verts, closed=self.closed, ec=self.color,
-                           fc=fillcolor, fill=dofill, lw=self.lw, ls=self.ls,
-                           capstyle=self.capstyle, joinstyle=self.joinstyle,
-                           zorder=self.zorder)
+        poly = plt.Polygon(xy=verts, closed=closed, ec=color,
+                           fc=fillcolor, fill=dofill, lw=lw, ls=ls,
+                           capstyle=capstyle, joinstyle=joinstyle,
+                           zorder=zorder)
         ax.add_patch(poly)
 
-        
-        
+
 class SegmentCircle(object):
     ''' A circle drawing segment
 
@@ -306,18 +348,19 @@ class SegmentCircle(object):
             Matplotlib color to fill (if path is closed)
         zorder : int
             Z-order for segment
+        ref: string
+            Flip reference ['start', 'end', None]. 
     '''
     def __init__(self, center, radius, **kwargs):
         self.center = np.asarray(center)
         self.radius = radius
-        self.zorder = kwargs.pop('zorder', 1)
-        self.color = kwargs.get('color', 'black')
+        self.zorder = kwargs.pop('zorder', None)
+        self.color = kwargs.get('color', None)
         self.fill = kwargs.get('fill', None)
-        self.lw = kwargs.get('lw', 2)
-        self.ls = kwargs.get('ls', '-')
-        self.ref = kwargs.get('ref', None)
-        self.kwargs = kwargs
-
+        self.lw = kwargs.get('lw', None)
+        self.ls = kwargs.get('ls', None)
+        self.endref = kwargs.get('ref', None)  # Reference for adding things AFTER lead extensions
+        
     def end(self):
         ''' Get endpoint of this segment, untransformed '''
         return self.center
@@ -325,13 +368,21 @@ class SegmentCircle(object):
     def doreverse(self, centerx):
         ''' Reverse the path (flip horizontal about the centerx point) '''
         self.center = mirror_point(self.center, centerx)
-
+        self.endref = {None: None, 'start': 'end', 'end': 'start'}.get(self.endref)
+        
     def doflip(self):
         self.center = flip_point(self.center)
     
     def xform(self, transform):
         ''' Return a new Segment that has been transformed '''
-        return SegmentCircle(transform.transform(self.center), self.radius, **self.kwargs)
+        return SegmentCircle(transform.transform(self.center, self.endref),
+                             self.radius,
+                             zorder=self.zorder,
+                             color=self.color,
+                             fill=self.fill,
+                             lw=self.lw,
+                             ls=self.ls,
+                             ref=self.endref)
 
     def get_bbox(self):
         ''' Get bounding box (untransformed)
@@ -341,13 +392,13 @@ class SegmentCircle(object):
             xmin, ymin, xmax, ymax
                 Bounding box limits
         '''
-        xmin = self.center[0] - self.radius# - .1
-        xmax = self.center[0] + self.radius# + .1
-        ymin = self.center[1] - self.radius# - .1
-        ymax = self.center[1] + self.radius# + .1
+        xmin = self.center[0] - self.radius
+        xmax = self.center[0] + self.radius
+        ymin = self.center[1] - self.radius
+        ymax = self.center[1] + self.radius
         return BBox(xmin, ymin, xmax, ymax)
 
-    def draw(self, ax, transform):
+    def draw(self, ax, transform, **style):
         ''' Draw the segment
         
             Parameters
@@ -357,23 +408,28 @@ class SegmentCircle(object):
             transform : Transform
                 Transform to apply before drawing
         '''
-        center = transform.transform(self.center, self.ref)
+        center = transform.transform(self.center, self.endref)
         radius = transform.zoom * self.radius
+        zorder = self.zorder if self.zorder is not None else style.get('zorder', 1)
+        color = self.color if self.color else style.get('color', 'black')
+        fill = self.fill if self.fill else style.get('fill', None)
+        ls = self.ls if self.ls else style.get('ls', '-')
+        lw = self.lw if self.lw else style.get('lw', 2)
 
-        if self.fill is True:
-            fillcolor = self.color
+        if fill is True:
+            fillcolor = color
             dofill = True
-        elif self.fill is not None:
-            fillcolor = self.fill
+        elif fill is not None:
+            fillcolor = fill
             dofill = True
         else:
             dofill = False
             fillcolor = None
         
         circ = plt.Circle(xy=center, radius=radius,
-                          ec=self.color, fc=fillcolor, fill=dofill,
-                          lw=self.lw, ls=self.ls,
-                          zorder=self.zorder)
+                          ec=color, fc=fillcolor, fill=dofill,
+                          lw=lw, ls=ls,
+                          zorder=zorder)
         ax.add_patch(circ)
 
         
@@ -405,27 +461,34 @@ class SegmentArrow(object):
     def __init__(self, tail, head, **kwargs):
         self.tail = tail
         self.head = head
-        self.zorder = kwargs.pop('zorder', 1)
-        self.headwidth = kwargs.get('headwidth', .1)
-        self.headlength = kwargs.get('headlength', .2)
-        self.color = kwargs.get('color', 'black')
-        self.lw = kwargs.get('lw', 2)
-        self.ls = kwargs.get('ls', '-')
-        self.ref = kwargs.get('ref', None)
-        self.kwargs = kwargs
+        self.zorder = kwargs.pop('zorder', None)
+        self.headwidth = kwargs.get('headwidth', None)
+        self.headlength = kwargs.get('headlength', None)
+        self.color = kwargs.get('color', None)
+        self.lw = kwargs.get('lw', None)
+        self.ls = kwargs.get('ls', None)
+        self.endref = kwargs.get('ref', None)
 
     def doreverse(self, centerx):
         ''' Reverse the path (flip horizontal about the centerx point) '''
         self.tail = mirror_point(self.tail, centerx)
         self.head = mirror_point(self.head, centerx)
-    
+        self.endref = {None: None, 'start': 'end', 'end': 'start'}.get(self.endref)
+
     def doflip(self):
         self.tail = flip_point(self.tail)
         self.head = flip_point(self.head)
 
     def xform(self, transform):
         ''' Return a new Segment that has been transformed '''
-        return SegmentArrow(transform.transform(self.tail, ref=self.ref), transform.transform(self.head, ref=self.ref), **self.kwargs)
+        return SegmentArrow(transform.transform(self.tail, ref=self.endref), transform.transform(self.head, ref=self.endref),
+                            zorder=self.zorder,
+                            color=self.color,
+                            ls=self.ls,
+                            lw=self.lw,
+                            headwidth=self.headwidth,
+                            headlength=self.headlength,
+                            ref=self.endref)
 
     def get_bbox(self):
         ''' Get bounding box (untransformed)
@@ -435,17 +498,18 @@ class SegmentArrow(object):
             xmin, ymin, xmax, ymax
                 Bounding box limits
         '''
+        hw = self.headwidth if self.headwidth else .1
         xmin = min(self.tail[0], self.head[0])
-        ymin = min(self.tail[1], self.head[1]-self.headwidth)
+        ymin = min(self.tail[1], self.head[1]-hw)
         xmax = max(self.tail[0], self.head[0])
-        ymax = max(self.tail[1], self.head[1]+self.headwidth)
+        ymax = max(self.tail[1], self.head[1]+hw)
         return BBox(xmin, ymin, xmax, ymax)
 
     def end(self):
         ''' Get endpoint of this segment, untransformed '''        
         return self.head
     
-    def draw(self, ax, transform):
+    def draw(self, ax, transform, **style):
         ''' Draw the segment
         
             Parameters
@@ -455,13 +519,20 @@ class SegmentArrow(object):
             transform : Transform
                 Transform to apply before drawing
         '''
-        tail = transform.transform(self.tail, ref=self.ref)
-        head = transform.transform(self.head, ref=self.ref)
+        tail = transform.transform(self.tail, ref=self.endref)
+        head = transform.transform(self.head, ref=self.endref)
+        zorder = self.zorder if self.zorder is not None else style.get('zorder', 1)
+        color = self.color if self.color else style.get('color', 'black')
+        ls = self.ls if self.ls else style.get('ls', '-')
+        lw = self.lw if self.lw else style.get('lw', 2)
+        headwidth = self.headwidth if self.headwidth else style.get('headwidth', .2)
+        headlength = self.headlength if self.headlength else style.get('headlength', .2)
+        
         ax.arrow(tail[0], tail[1],
                  head[0]-tail[0], head[1]-tail[1],
-                 head_width=self.headwidth, head_length=self.headlength,
-                 length_includes_head=True, color=self.color, lw=self.lw,
-                 zorder=self.zorder)
+                 head_width=headwidth, head_length=headlength,
+                 length_includes_head=True, color=color, lw=lw,
+                 zorder=zorder)
 
 
 class SegmentArc(object):
@@ -508,12 +579,11 @@ class SegmentArc(object):
         self.theta1 = kwargs.get('theta1', 35)
         self.theta2 = kwargs.get('theta2', -35)
         self.arrow = kwargs.get('arrow', None)  # cw or ccw
-        self.color = kwargs.get('color', 'black')
-        self.lw = kwargs.get('lw', 2)
-        self.ls = kwargs.get('ls', '-')
-        self.zorder = kwargs.get('zorder', 1)
         self.angle = kwargs.get('angle', 0)
-        self.kwargs = kwargs
+        self.color = kwargs.get('color', None)
+        self.lw = kwargs.get('lw', None)
+        self.ls = kwargs.get('ls', None)
+        self.zorder = kwargs.get('zorder', None)
 
     def doreverse(self, centerx):
         ''' Reverse the path (flip horizontal about the centerx point) '''               
@@ -529,9 +599,9 @@ class SegmentArc(object):
 
     def xform(self, transform):
         ''' Return a new Segment that has been transformed '''
-        kwargs = self.kwargs.copy()
-        kwargs['angle'] = self.angle + transform.theta
-        return SegmentArc(transform.transform(self.center), self.width, self.height, **kwargs)
+        angle = self.angle + transform.theta
+        return SegmentArc(transform.transform(self.center), self.width, self.height, angle=angle,
+                          color=self.color, lw=self.lw, ls=self.ls, zorder=self.zorder)
 
     def end(self):
         ''' Get endpoint of this segment, untransformed '''        
@@ -557,7 +627,7 @@ class SegmentArc(object):
         yy = self.center[1] + rx * np.cos(t)*np.sin(phi) + ry * np.sin(t)*np.cos(phi)
         return BBox(xx.min(), yy.min(), xx.max(), yy.max())
 
-    def draw(self, ax, transform):
+    def draw(self, ax, transform, **style):
         ''' Draw the segment
         
             Parameters
@@ -569,9 +639,15 @@ class SegmentArc(object):
         '''
         center = transform.transform(self.center)
         angle = self.angle + transform.theta
+
+        zorder = self.zorder if self.zorder is not None else style.get('zorder', 1)
+        color = self.color if self.color else style.get('color', 'black')
+        ls = self.ls if self.ls else style.get('ls', '-')
+        lw = self.lw if self.lw else style.get('lw', 2)
+        
         arc = Arc(center, width=self.width, height=self.height,
                   theta1=self.theta1, theta2=self.theta2, angle=angle,
-                  color=self.color, lw=self.lw, ls=self.ls, zorder=self.zorder)
+                  color=color, lw=lw, ls=ls, zorder=zorder)
         ax.add_patch(arc)
 
         if self.arrow is not None:
@@ -601,5 +677,5 @@ class SegmentArc(object):
             darrow = np.dot([dx, dy], m)
 
             ax.arrow(s[0], s[1], darrow[0], darrow[1], head_width=.15,
-                     head_length=.25, color=self.color, zorder=self.zorder)
+                     head_length=.25, color=color, zorder=zorder)
         

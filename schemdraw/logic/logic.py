@@ -30,7 +30,8 @@ class And(Element):
         -----------------
         See schemdraw.Element
     '''
-    def setup(self, **kwargs):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         inputs = kwargs.get('inputs', 2)
         nand = kwargs.get('nand', False)
         inputnots = kwargs.get('inputnots', [])
@@ -104,7 +105,8 @@ class Or(Element):
         -----------------
         See schemdraw.Element
     '''
-    def setup(self, **kwargs):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         inputs = kwargs.get('inputs', 2)
         nor = kwargs.get('nor', False)
         xor = kwargs.get('xor', False)
@@ -193,7 +195,8 @@ Xnor = partial(Or, nor=True, xor=True)
 
 
 class Buf(Element2Term):
-    def setup(self, **kwargs):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.segments.append(Segment([[0, 0], [_leadlen, 0], _gap, [_gatel+_leadlen, 0]], **kwargs))
         self.segments.append(Segment([[_gatel+_leadlen, 0], [_gatel+_leadlen*2, 0]], **kwargs), )
         self.segments.append(Segment([[_leadlen, 0], [_leadlen, -_gateh/2], [_gatel+_leadlen, 0], [_leadlen, _gateh/2], [_leadlen, 0]], **kwargs))
@@ -202,7 +205,8 @@ class Buf(Element2Term):
         
 
 class Not(Element2Term):
-    def setup(self, **kwargs):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.segments.append(Segment([[0, 0], [_leadlen, 0], _gap, [_gatel+_leadlen+_notbubble*2, 0]], **kwargs))
         self.segments.append(Segment([[_gatel+_leadlen+_notbubble*2, 0], [_gatel+_leadlen*2, 0]], **kwargs))
         self.segments.append(Segment([[_leadlen, 0], [_leadlen, -_gateh/2], [_gatel+_leadlen, 0], [_leadlen, _gateh/2], [_leadlen, 0]], **kwargs))
@@ -212,7 +216,8 @@ class Not(Element2Term):
 
 
 class NotNot(Element2Term):
-    def setup(self, **kwargs):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.segments.append(Segment([[0, 0], [_leadlen-_notbubble*2, 0], _gap, [_gatel+_leadlen+_notbubble*2, 0]], **kwargs))
         self.segments.append(Segment([[_gatel+_leadlen+_notbubble*2, 0], [_gatel+_leadlen*2, 0]], **kwargs))
         self.segments.append(Segment([[_leadlen, 0], [_leadlen, -_gateh/2], [_gatel+_leadlen, 0], [_leadlen, _gateh/2], [_leadlen, 0]], **kwargs))

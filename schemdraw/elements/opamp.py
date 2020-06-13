@@ -1,4 +1,5 @@
 ''' Operation amplifier '''
+
 import numpy as np
 
 from .elements import Element, gap
@@ -23,13 +24,14 @@ class Opamp(Element):
         sign : bool
             Draw +/- sign labels at each input
     '''
-    def setup(self, **kwargs):
-        self.segments.append(Segment([[0, 0], [0, oa_back/2], [oa_xlen, 0], [0, -oa_back/2], [0, 0], gap, [oa_xlen, 0]], **kwargs))
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.segments.append(Segment([[0, 0], [0, oa_back/2], [oa_xlen, 0], [0, -oa_back/2], [0, 0], gap, [oa_xlen, 0]]))
                              
         if kwargs.get('sign', True):
-            self.segments.append(Segment([[oa_lblx-oa_pluslen/2, oa_back/4], [oa_lblx+oa_pluslen/2, oa_back/4]], **kwargs))
-            self.segments.append(Segment([[oa_lblx-oa_pluslen/2, -oa_back/4], [oa_lblx+oa_pluslen/2, -oa_back/4]], **kwargs))
-            self.segments.append(Segment([[oa_lblx, -oa_back/4-oa_pluslen/2], [oa_lblx, -oa_back/4+oa_pluslen/2]], **kwargs))
+            self.segments.append(Segment([[oa_lblx-oa_pluslen/2, oa_back/4], [oa_lblx+oa_pluslen/2, oa_back/4]]))
+            self.segments.append(Segment([[oa_lblx-oa_pluslen/2, -oa_back/4], [oa_lblx+oa_pluslen/2, -oa_back/4]]))
+            self.segments.append(Segment([[oa_lblx, -oa_back/4-oa_pluslen/2], [oa_lblx, -oa_back/4+oa_pluslen/2]]))
 
         self.anchors['center'] = [oa_xlen/2, 0]
         self.anchors['in1'] = [0, oa_back/4]

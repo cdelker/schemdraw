@@ -18,7 +18,8 @@ class Box(Element):
         -----------------
         See schemdraw.Element
     '''
-    def setup(self, **kwargs):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         w = kwargs.get('w', 3)
         h = kwargs.get('h', 2)
         self.segments.append(Segment([[0, 0], [0, w/2], [h, w/2], [h, -w/2], [0, -w/2], [0, 0]], **kwargs))
@@ -47,7 +48,8 @@ class Subroutine(Element):
         -----------------
         See schemdraw.Element
     '''
-    def setup(self, **kwargs):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         w = kwargs.get('w', 3.5)
         h = kwargs.get('h', 2)
         s = kwargs.get('s', 0.3)
@@ -78,7 +80,8 @@ class Data(Element):
         -----------------
         See schemdraw.Element
     '''    
-    def setup(self, **kwargs):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         w = kwargs.get('w', 3)
         h = kwargs.get('h', 2)
         s = kwargs.get('s', 0.5)
@@ -105,7 +108,8 @@ class Start(Element):
         -----------------
         See schemdraw.Element
     '''    
-    def setup(self, **kwargs):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         w = kwargs.get('w', 3)
         h = kwargs.get('h', 2)
 
@@ -140,7 +144,8 @@ class Decision(Element):
         -----------------
         See schemdraw.Element
     '''
-    def setup(self, **kwargs):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         w = kwargs.get('w', 4)
         h = kwargs.get('h', 2)
         self.segments.append(Segment([[0, 0], [h/2, w/2], [h, 0], [h/2, -w/2], [0, 0]], **kwargs))
@@ -182,7 +187,8 @@ class Connect(Element):
         -----------------
         See schemdraw.Element
     '''    
-    def setup(self, **kwargs):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         r = kwargs.get('r', 0.75)
         self.segments.append(SegmentCircle([r, 0], r, **kwargs))
         self.params['lblloc'] = 'center'

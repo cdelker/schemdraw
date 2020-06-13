@@ -87,19 +87,12 @@ class Element(object):
         self.segments = []
         self.transform = Transform(0, [0, 0])
 
-    def setup(self, **kwargs):
-        ''' Set up element definition. Subclass this to define different elements. '''
-        self.segments = []
-        self.params = {}
+        if 'xy' in self.userparams:  # Allow legacy 'xy' parameter
+            self.userparams.setdefault('at', self.userparams.pop('xy'))        
 
     def buildparams(self):
         ''' Combine parameters from user, setup, and drawing '''
-        self.setup(**ChainMap(self.userparams, self.dwgparams))
-
-        if 'xy' in self.userparams:
-            self.userparams.setdefault('at', self.userparams.pop('xy'))
-
-        # Accomodate xy positions based on other elements before they are fully set up.
+        # Accomodate xy positions based on OTHER elements before they are fully set up.
         if 'at' in self.userparams and isinstance(self.userparams['at'][1], str):
             element, pos = self.userparams['at']
             if pos in element.absanchors:
@@ -108,17 +101,18 @@ class Element(object):
                 raise KeyError('Unknown anchor name {}'.format(pos))
             self.userparams['at'] = xy
 
-        self.cparams = ChainMap(self.userparams, self.params, self.dwgparams)  # All subsequent actions get params from this one
+        # All subsequent actions get params from cparams
+        self.cparams = ChainMap(self.userparams, self.params, self.dwgparams)
         self.flipreverse()
         
     def flipreverse(self):
         ''' Flip and/or reverse segments if necessary '''
-        if self.cparams.get('flip', False):
+        if self.userparams.get('flip', False):
             [s.doflip() for s in self.segments]
             for name, pt in self.anchors.items():
                 self.anchors[name] = flip_point(pt)
             
-        if self.cparams.get('reverse', False):
+        if self.userparams.get('reverse', False):
             if 'center' in self.anchors:
                 centerx = self.anchors['center'][0]
             else:
@@ -133,7 +127,7 @@ class Element(object):
         self.dwgparams = dwgparams
         if self.cparams is None:
             self.buildparams()
-        
+            
         localshift = np.array([0, 0])
         
         params = {}
@@ -142,7 +136,7 @@ class Element(object):
         xy = np.asarray(self.cparams.get('at', dwgxy))
         
         # Get bounds of element, used for positioning user labels
-        self.xmin, self.ymin, self.xmax, self.ymax = self.get_bbox()
+        self.bbox = self.get_bbox()
         
         if 'endpts' in self.cparams:
             theta = dwgtheta
@@ -319,10 +313,10 @@ class Element(object):
                 align = ('left', 'bottom')
             else:                 # 337 to 0
                 align = ('center', 'bottom')
-        xmax = self.xmax
-        xmin = self.xmin
-        ymax = self.ymax
-        ymin = self.ymin
+        xmax = self.bbox.xmax
+        xmin = self.bbox.xmin
+        ymax = self.bbox.ymax
+        ymin = self.bbox.ymin
 
         lblparams = dict(ChainMap(kwargs, self.cparams))
         lblparams.pop('label', None)  # Can't pop from nested chainmap, convert to flat dict first
@@ -393,9 +387,12 @@ class Element(object):
             top=0.90)
         ax = fig.add_subplot()
         ax.autoscale_view(True)  # This autoscales all the shapes too        
+        
+        if self.cparams is None:
+            self.place([0, 0], 0)
         self.draw(ax)
 
-        x1, y1, x2, y2 = self.get_bbox()
+        x1, y1, x2, y2 = self.get_bbox(transform=True)
         x1 -= .1
         x2 += .1
         y1 -= .1
@@ -429,7 +426,7 @@ class Element(object):
             self.place([0, 0], 0)
 
         for segment in self.segments:
-            segment.draw(ax, self.transform)
+            segment.draw(ax, self.transform, **self.cparams)
 
 
 @adddocs(Element)
@@ -443,11 +440,8 @@ class ElementDrawing(Element):
         
     '''
     def __init__(self, drawing, **kwargs):
-        self.drawing = drawing
         super().__init__(**kwargs)
-
-    def setup(self, **kwargs):
-        ''' Set up the element by combineing all segments in drawing '''
+        self.drawing = drawing
         self.segments = self.drawing.get_segments()
         self.params['drop'] = self.drawing.here
 

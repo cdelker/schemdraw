@@ -46,6 +46,7 @@ Display the results using the `draw` method.
    usage/customizing   
    elements/electrical
    elements/intcircuits
+   elements/compound
    elements/logic 
    elements/dsp
    elements/flow

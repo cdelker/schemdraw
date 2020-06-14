@@ -92,8 +92,16 @@ class Button(Element2Term):
         self.segments.append(SegmentCircle([sw_dot_r, 0], sw_dot_r))
         self.segments.append(SegmentCircle([1-sw_dot_r, 0], sw_dot_r))
 
-        
+
+@adddocs(Element)
 class SwitchDpst(Element):
+    ''' Double-pole single-throw switch
+    
+        Parameters
+        ----------
+        link : bool
+            Show dotted line linking switch levers
+    '''
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         yofst = -1
@@ -103,14 +111,23 @@ class SwitchDpst(Element):
         self.segments.append(Segment([[0, yofst], gap, [sw_dot_r*2, yofst+.1], [.8, yofst+.45], gap, [1, yofst]]))
         self.segments.append(SegmentCircle([sw_dot_r, yofst], sw_dot_r))
         self.segments.append(SegmentCircle([1-sw_dot_r, yofst], sw_dot_r))
-        self.segments.append(Segment([[0.5, yofst+.25], [0.5, 0.2]], ls=':'))
+        if kwargs.get('link', True):
+            self.segments.append(Segment([[0.5, yofst+.25], [0.5, 0.2]], ls=':'))
         self.anchors['p1'] = [0, 0]
         self.anchors['t1'] = [1, 0]
         self.anchors['p2'] = [0, yofst]
         self.anchors['t2'] = [1, yofst]
-        
 
+
+@adddocs(Element)
 class SwitchDpdt(Element):
+    ''' Double-pole double-throw switch
+    
+        Parameters
+        ----------
+        link : bool
+            Show dotted line linking switch levers
+    '''
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         yofst = -1.4
@@ -122,7 +139,8 @@ class SwitchDpdt(Element):
         self.segments.append(SegmentCircle([sw_dot_r, yofst], sw_dot_r))
         self.segments.append(SegmentCircle([1-sw_dot_r, yofst-.4], sw_dot_r))
         self.segments.append(SegmentCircle([1-sw_dot_r, yofst+.4], sw_dot_r))
-        self.segments.append(Segment([[0.5, yofst+.25], [0.5, 0.2]], ls=':'))
+        if kwargs.get('link', True):
+            self.segments.append(Segment([[0.5, yofst+.25], [0.5, 0.2]], ls=':'))
         self.anchors['p1'] = [0, 0]
         self.anchors['t1'] = [1, .4]
         self.anchors['t2'] = [1, -.4]

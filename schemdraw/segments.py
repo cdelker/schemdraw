@@ -49,18 +49,25 @@ class Segment(object):
         ''' Get endpoint of this segment, untransformed '''
         return self.path[-1]
         
-    def xform(self, transform):
+    def xform(self, transform, **style):
         ''' Return a new Segment that has been transformed
             to its global position
+            
+            Parameters
+            ----------
+            transform : schemdraw.Transform
+                Transformation to apply
+            style : Style keyword arguments from Element to apply as default
         '''
-        return Segment(transform.transform(self.path),
-                       zorder=self.zorder,
-                       color=self.color,
-                       fill=self.fill,
-                       lw=self.lw,
-                       ls=self.ls,
-                       capstyle=self.capstyle,
-                       joinstyle=self.joinstyle)
+        params = {'zorder': self.zorder,
+                  'color': self.color,
+                  'fill': self.fill,
+                  'lw': self.lw,
+                  'ls': self.ls,
+                  'capstyle': self.capstyle,
+                  'joinstyle': self.joinstyle}
+        params.update(style)
+        return Segment(transform.transform(self.path), **params)
 
     def get_bbox(self):
         ''' Get bounding box (untransformed)
@@ -99,7 +106,7 @@ class Segment(object):
 
         zorder = self.zorder if self.zorder is not None else style.get('zorder', 2)
         color = self.color if self.color else style.get('color', 'black')
-        fill = self.fill if self.fill else style.get('fill', None)
+        fill = self.fill if self.fill is not None else style.get('fill', None)
         ls = self.ls if self.ls else style.get('ls', '-')
         lw = self.lw if self.lw else style.get('lw', 2)
         capstyle = self.capstyle if self.capstyle else style.get('capstyle', 'round')
@@ -163,17 +170,21 @@ class SegmentText(object):
         ''' Vertically flip the element '''
         self.xy = flip_point(self.xy)
 
-    def xform(self, transform):
-        ''' Return a new Segment that has been transformed '''
+    def xform(self, transform, **style):
+        ''' Return a new Segment that has been transformed with all
+            styling applied
+        '''
+        params = {'align': self.align,
+                  'font': self.font,
+                  'fontsize': self.fontsize,
+                  'color': self.color,
+                  'rotation': self.rotation,
+                  'rotation_mode': self.rotation_mode,
+                  'zorder': self.zorder
+                 }
+        params.update(style)
         return SegmentText(transform.transform(self.xy),
-                           self.text,
-                           align=self.align,
-                           font=self.font,
-                           fontsize=self.fontsize,
-                           color=self.color,
-                           rotation=self.rotation,
-                           rotation_mode=self.rotation_mode,
-                           zorder=self.zorder)
+                           self.text, **params)
 
     def end(self):
         ''' Get endpoint of this segment, untransformed '''        
@@ -262,16 +273,17 @@ class SegmentPoly(object):
             flipped.append(flip_point(p))
         self.verts = flipped
         
-    def xform(self, transform):
+    def xform(self, transform, **style):
         ''' Return a new Segment that has been transformed '''
-        return SegmentPoly(transform.transform(self.verts),
-                           color=self.color,
-                           fill=self.fill,
-                           joinstyle=self.joinstyle,
-                           capstyle=self.capstyle,
-                           lw=self.lw,
-                           ls=self.ls,
-                           zorder=self.zorder)
+        params = {'color': self.color,
+                  'fill': self.fill,
+                  'joinstyle': self.joinstyle,
+                  'capstyle': self.capstyle,
+                  'lw': self.lw,
+                  'ls': self.ls,
+                  'zorder': self.zorder}
+        params.update(style)
+        return SegmentPoly(transform.transform(self.verts), **params)
 
     def end(self):
         ''' Get endpoint of this segment, untransformed '''        
@@ -311,12 +323,12 @@ class SegmentPoly(object):
         if fill is True:
             fillcolor = color
             dofill = True
-        elif fill is not None:
-            fillcolor = fill
-            dofill = True
-        else:
+        elif fill is False or fill is None:
             dofill = False
             fillcolor = None
+        else:
+            fillcolor = fill
+            dofill = True
 
         verts = transform.transform(self.verts)
         poly = plt.Polygon(xy=verts, closed=closed, ec=color,
@@ -373,16 +385,17 @@ class SegmentCircle(object):
     def doflip(self):
         self.center = flip_point(self.center)
     
-    def xform(self, transform):
+    def xform(self, transform, **style):
         ''' Return a new Segment that has been transformed '''
+        params = {'zorder': self.zorder,
+                  'color': self.color,
+                  'fill': self.fill,
+                  'lw': self.lw,
+                  'ls': self.ls,
+                  'ref': self.endref}
+        params.update(style)
         return SegmentCircle(transform.transform(self.center, self.endref),
-                             self.radius,
-                             zorder=self.zorder,
-                             color=self.color,
-                             fill=self.fill,
-                             lw=self.lw,
-                             ls=self.ls,
-                             ref=self.endref)
+                             self.radius, **params)
 
     def get_bbox(self):
         ''' Get bounding box (untransformed)
@@ -412,19 +425,19 @@ class SegmentCircle(object):
         radius = transform.zoom * self.radius
         zorder = self.zorder if self.zorder is not None else style.get('zorder', 1)
         color = self.color if self.color else style.get('color', 'black')
-        fill = self.fill if self.fill else style.get('fill', None)
+        fill = self.fill if self.fill is not None else style.get('fill', None)
         ls = self.ls if self.ls else style.get('ls', '-')
         lw = self.lw if self.lw else style.get('lw', 2)
 
         if fill is True:
             fillcolor = color
             dofill = True
-        elif fill is not None:
-            fillcolor = fill
-            dofill = True
-        else:
+        elif fill is False or fill is None:
             dofill = False
             fillcolor = None
+        else:
+            fillcolor = fill
+            dofill = True
         
         circ = plt.Circle(xy=center, radius=radius,
                           ec=color, fc=fillcolor, fill=dofill,
@@ -479,16 +492,19 @@ class SegmentArrow(object):
         self.tail = flip_point(self.tail)
         self.head = flip_point(self.head)
 
-    def xform(self, transform):
+    def xform(self, transform, **style):
         ''' Return a new Segment that has been transformed '''
-        return SegmentArrow(transform.transform(self.tail, ref=self.endref), transform.transform(self.head, ref=self.endref),
-                            zorder=self.zorder,
-                            color=self.color,
-                            ls=self.ls,
-                            lw=self.lw,
-                            headwidth=self.headwidth,
-                            headlength=self.headlength,
-                            ref=self.endref)
+        params = {'zorder': self.zorder,
+                  'color': self.color,
+                  'ls': self.ls,
+                  'lw': self.lw,
+                  'headwidth': self.headwidth,
+                  'headlength': self.headlength,
+                  'ref': self.endref}
+        params.update(style)
+        return SegmentArrow(transform.transform(self.tail, ref=self.endref), 
+                            transform.transform(self.head, ref=self.endref), 
+                            **params)
 
     def get_bbox(self):
         ''' Get bounding box (untransformed)
@@ -590,18 +606,24 @@ class SegmentArc(object):
         self.center = mirror_point(self.center, centerx)
         self.theta1, self.theta2 = 180-self.theta2, 180-self.theta1
         self.arrow = {'cw': 'ccw', 'ccw': 'cw'}.get(self.arrow, None)
-    
+
     def doflip(self):
         ''' Vertically flip the element '''
         self.center = flip_point(self.center)
         self.theta1, self.theta2 = -self.theta2, -self.theta1
         self.arrow = {'cw': 'ccw', 'ccw': 'cw'}.get(self.arrow, None)
 
-    def xform(self, transform):
+    def xform(self, transform, **style):
         ''' Return a new Segment that has been transformed '''
         angle = self.angle + transform.theta
-        return SegmentArc(transform.transform(self.center), self.width, self.height, angle=angle,
-                          color=self.color, lw=self.lw, ls=self.ls, zorder=self.zorder)
+        params = {'color': self.color,
+                  'lw': self.lw,
+                  'ls': self.ls,
+                  'zorder': self.zorder}
+        params.update(style)
+        return SegmentArc(transform.transform(self.center), self.width, self.height, 
+                          angle=angle, theta1=self.theta1, theta2=self.theta2,
+                          **params)
 
     def end(self):
         ''' Get endpoint of this segment, untransformed '''        

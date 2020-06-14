@@ -40,6 +40,7 @@ Defining custom elements
 ------------------------
 
 All elements are subclasses of :py:class:`schemdraw.elements.Element` or :py:class:`schemdraw.elements.Element2Term`.
+For elements consisting of several other already-defined elements (like a relay), :py:class:`schemdraw.elements.compound.ElementCompound` can be used for easy combining of multiple elements.
 Subclasses only need to define the `__init__` method in order to add lines, shapes, and text to the new element, all of which are defined using `Segment` classes. New Segments should be appended to the `Element.segments` attribute list.
 
 Coordinates are all defined in element cooridnates, where the element begins

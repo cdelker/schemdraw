@@ -10,12 +10,15 @@ from .xform import Transformer
 from .cables import Coax, Triax
 from .intcircuits import IcPin, Ic, Multiplexer
 from .lines import Line, Dot, Arrowhead, Arrow, LineDot, DotDotDot, Gap, Label, CurrentLabel, CurrentLabelInline, LoopCurrent, Rect
+from .compound import ElementCompound, Optocoupler, Relay
 
 
 from . import legacy
 import warnings
 
 def __getattr__(name):
-    e = getattr(legacy, name)
+    e = getattr(legacy, name, None)
+    if e is None:
+        raise AttributeError('Element `{}` not found.'.format(name))
     warnings.warn('Dictionary-based elements are deprecated. Update to class-based elements or import from schemdraw.elements.legacy.', DeprecationWarning)
     return e

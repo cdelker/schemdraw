@@ -77,12 +77,13 @@ class Dot(Element):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         radius = kwargs.pop('radius', 0.075)
-        fill = None if kwargs.get('open', False) else kwargs.get('fill', True)
+        fill = 'white' if kwargs.get('open', False) else kwargs.get('fill', True)
         self.anchors['start'] = [0, 0]
         self.anchors['center'] = [0, 0]
         self.anchors['end'] = [0, 0]
         self.params['drop'] = [0, 0]
         self.params['theta'] = 0
+        self.params['zorder'] = 4
         self.segments.append(SegmentCircle([0, 0], radius, fill=fill))
 
 
@@ -246,6 +247,7 @@ class Rect(Element):
         c2 = kwargs.get('corner2', [1, 1])
         c1a = [c1[0], c2[1]]
         c2a = [c2[0], c1[1]]
-        self.segments.append(Segment([c1, c1a, c2, c2a, c1]))
+        fill = kwargs.get('fill', False)
+        self.segments.append(Segment([c1, c1a, c2, c2a, c1], zorder=0, fill=fill))
         self.params['zorder'] = 0   # Put on bottom
         

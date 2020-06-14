@@ -79,7 +79,7 @@ class Drawing(object):
         ''' Get flattened list of all segments in the drawing '''
         segments = []
         for element in self.elements:
-            segments.extend([s.xform(element.transform) for s in element.segments])
+            segments.extend([s.xform(element.transform, **element.cparams) for s in element.segments])
         return segments
     
     def _repr_svg_(self):
@@ -105,7 +105,7 @@ class Drawing(object):
                 The element class to add.
             **kwargs : passed to element instantiation if element is a class
         '''
-        if not isinstance(element, Element):
+        if not isinstance(element, Element):  # Not instantiated
             element = element(**kwargs)  # Instantiate it (for support of legacy add method)
         elif len(kwargs) > 0:
             warnings.warn('kwargs to add method are ignored because element is already instantiated')

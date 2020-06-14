@@ -116,7 +116,7 @@ class Element(object):
             if 'center' in self.anchors:
                 centerx = self.anchors['center'][0]
             else:
-                xmin, xmax, _, _ = self.get_bbox()
+                xmin, _, xmax, _ = self.get_bbox()
                 centerx = (xmin + xmax)/2
             [s.doreverse(centerx) for s in self.segments]
             for name, pt in self.anchors.items():
@@ -444,8 +444,8 @@ class ElementDrawing(Element):
         self.drawing = drawing
         self.segments = self.drawing.get_segments()
         self.params['drop'] = self.drawing.here
-
-
+        
+        
 def angle(a, b):
     ''' Compute angle from coordinate a to b '''
     theta = np.degrees(np.arctan2(b[1] - a[1], (b[0] - a[0])))
@@ -538,13 +538,7 @@ class Element2Term(Element):
                 start = in_path[0] - np.array([lead_len, 0])
                 end = in_path[-1] + np.array([lead_len, 0])
                 self.localshift = -start
-                params = self.cparams.copy()
-                params.update({'color': self.segments[0].color,
-                               'lw': self.segments[0].lw,
-                               'ls': self.segments[0].ls})
-                              
-                self.segments.append(Segment([start, in_path[0]], **params))
-                self.segments.append(Segment([in_path[-1], end], **params))
+                self.segments[0].path = np.concatenate(([start], self.segments[0].path, [end]))
             else:
                 start = in_path[0]
                 end = in_path[-1]

@@ -596,7 +596,7 @@ S-R Latch (Transistors)
 
     d = schemdraw.Drawing()
     Q1 = d.add(elm.BJT_NPN_C, reverse=True, lftlabel='Q1')
-    Q2 = d.add(elm.BJT_NPN_C, xy=[d.unit*1.5, 0], label='Q2')
+    Q2 = d.add(elm.BJT_NPN_C, xy=[d.unit*2, 0], label='Q2')
     d.add(elm.LINE, xy=Q1.collector, d='up', l=d.unit/2)
 
     R1 = d.add(elm.RES, d='up', label='R1', move_cur=False)

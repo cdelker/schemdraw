@@ -4,11 +4,10 @@ from io import StringIO, BytesIO
 from collections import namedtuple, ChainMap
 import warnings
 import numpy as np
-from matplotlib.pyplot import Figure
-import matplotlib as mpl
 
 from .elements import Element
 from .elements.lines import LoopCurrent, CurrentLabel, CurrentLabelInline
+from .backends.mpl import Figure
 
 BBox = namedtuple('BBox', ['xmin', 'ymin', 'xmax', 'ymax'])
 
@@ -36,7 +35,7 @@ class Drawing(object):
         lw : float
             Default line width for elements
         ls : string
-            Default line style (see Matplotlib line styles) for elements
+            Default line style '-', ':', '--', etc.
         fill : string or tuple
             Deault fill color for closed elements
     '''
@@ -84,17 +83,11 @@ class Drawing(object):
     
     def _repr_svg_(self):
         ''' SVG representation for Jupyter '''
-        output = StringIO()
-        fig = self.draw()
-        fig.savefig(output, format='svg', bbox_inches='tight')
-        return output.getvalue()
+        return self.draw().getimage('svg', bbox=self.get_bbox())
 
     def _repr_png_(self):
         ''' PNG representation for Jupyter '''        
-        output = BytesIO()
-        fig = self.draw()
-        fig.savefig(output, format='png', bbox_inches='tight')
-        return output.getvalue()
+        return self.draw().getimage('png', bbox=self.get_bbox())
 
     def add(self, element, **kwargs):
         ''' Add an element to the drawing.
@@ -217,35 +210,9 @@ class Drawing(object):
                 Show axis frame. Useful for debugging a drawing.
         '''
         fig = Figure()
-        fig.subplots_adjust(
-            left=0.05,
-            bottom=0.05,
-            right=0.95,
-            top=0.90)
-        ax = fig.add_subplot()
-        ax.autoscale_view(True)  # This autoscales all the shapes too        
-
         for element in self.elements:
-            element.draw(ax)
-
-        x1, y1, x2, y2 = self.get_bbox()
-        x1 -= .1
-        x2 += .1
-        y1 -= .1
-        y2 += .1
-        ax.set_xlim(x1, x2)
-        ax.set_ylim(y1, y2)
-        w = x2-x1
-        h = y2-y1
-        self.ax = ax
-        self.fig = fig
-        
-        if not showframe:
-            ax.axes.get_xaxis().set_visible(False)
-            ax.axes.get_yaxis().set_visible(False)
-            ax.set_frame_on(False)
-        ax.get_figure().set_size_inches(self.inches_per_unit*w, self.inches_per_unit*h)
-        return self.fig
+            element.draw(fig)
+        return fig
     
     def save(self, fname, transparent=True, dpi=72):
         ''' Save figure to a file
@@ -260,5 +227,6 @@ class Drawing(object):
             dpi : float
                 Dots-per-inch for raster formats
         '''
-        self.fig.savefig(fname, bbox_extra_artists=self.ax.get_default_bbox_extra_artists(),
-                         bbox_inches='tight', transparent=transparent, dpi=dpi)
+        fig = self.draw()
+        fig.save(fname, transparent=transparent, dpi=dpi,
+                 bbox=self.get_bbox(), inches_per_unit=self.inches_per_unit)

@@ -3,13 +3,13 @@
 from io import StringIO, BytesIO
 from collections import ChainMap
 import numpy as np
-from matplotlib.pyplot import Figure
 
+from ..backends.mpl import Figure
 from ..adddocs import adddocs
 from ..segments import *
 from ..transform import Transform, mirror_point, flip_point
 
-gap = [np.nan, np.nan]  # Put a gap in a path (matplotlib skips NaNs)    
+gap = [np.nan, np.nan]  # Put a gap in a path
 
 
 class Element(object):
@@ -62,9 +62,9 @@ class Element(object):
             Z-order parameter for placing element in front or behind
             others.
         color : string
-            Matplotlib color for the element
+            Color for the element
         ls : string
-            Matplotlib line style for the element
+            Line style for the element '-', '--', ':', etc.
         lw : float
             Line width for the element
         fill : string
@@ -243,7 +243,7 @@ class Element(object):
                 Font size
             font:
             color: string
-                Matplotlib color
+                Label text color
         '''
         if isinstance(ofst, (list, tuple)) and loc in ['top', 'lft', 'bot', 'rgt']:
             raise TypeError('Offset must not be list for loc={}'.format(loc))
@@ -380,53 +380,28 @@ class Element(object):
     def _draw_on_figure(self):
         ''' Draw the element on a new figure. Useful for _repr_ functions. '''
         fig = Figure()
-        fig.subplots_adjust(
-            left=0.05,
-            bottom=0.05,
-            right=0.95,
-            top=0.90)
-        ax = fig.add_subplot()
-        ax.autoscale_view(True)  # This autoscales all the shapes too        
-        
         if self.cparams is None:
             self.place([0, 0], 0)
-        self.draw(ax)
-
-        x1, y1, x2, y2 = self.get_bbox(transform=True)
-        x1 -= .1
-        x2 += .1
-        y1 -= .1
-        y2 += .1
-        ax.set_xlim(x1, x2)
-        ax.set_ylim(y1, y2)
-        w = x2-x1
-        h = y2-y1
-        ax.axes.get_xaxis().set_visible(False)
-        ax.axes.get_yaxis().set_visible(False)
-        ax.set_frame_on(False)
-        inches_per_unit = 0.5
-        ax.get_figure().set_size_inches(inches_per_unit*w, inches_per_unit*h)
+        self.draw(fig)
         return fig
 
     def _repr_svg_(self):
-        output = StringIO()
+        ''' SVG representation for Jupyter '''
         fig = self._draw_on_figure()
-        fig.savefig(output, format='svg', bbox_inches='tight')
-        return output.getvalue()
+        return fig.getimage(ext='svg', bbox=self.get_bbox(transform=True))
 
     def _repr_png_(self):
+        ''' PNG representation for Jupyter '''
         output = BytesIO()
         fig = self._draw_on_figure()
-        fig.savefig(output, format='png', bbox_inches='tight')
-        return output.getvalue()
+        return fig.getimage(ext='png', bbox=self.get_bbox(transform=True))
 
-    def draw(self, ax):
+    def draw(self, fig):
         ''' Draw the element '''
         if len(self.segments) == 0:
             self.place([0, 0], 0)
-
         for segment in self.segments:
-            segment.draw(ax, self.transform, **self.cparams)
+            segment.draw(fig, self.transform, **self.cparams)
 
 
 @adddocs(Element)

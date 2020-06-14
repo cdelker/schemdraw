@@ -2,8 +2,6 @@
 
 from collections import namedtuple
 import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib.patches import Arc
 
 from .transform import mirror_point, mirror_array, flip_point
 
@@ -21,17 +19,17 @@ class Segment(object):
         Keyword Arguments
         -----------------
         color : string
-             Matplotlib color for this segment
+             Color for this segment
         lw : float
             Line width for the segment
         ls : string
-            Matplotlib line style for the segment
+            Line style for the segment '-', '--', ':', etc.
         capstyle : string
-            Matplotlib capstyle for the segment
+            Capstyle for the segment: 'round', 'miter', or 'bevel'
         joinstyle : string
-            Matplotlib joinstyle for the segment
+            Joinstyle for the segment: 'round', 'miter', or 'bevel'
         fill : string
-            Matplotlib color to fill (if path is closed)
+            Color to fill if path is closed
         zorder : int
             Z-order for segment
     '''
@@ -92,13 +90,13 @@ class Segment(object):
             flipped.append(flip_point(p))
         self.path = flipped
     
-    def draw(self, ax, transform, **style):
+    def draw(self, fig, transform, **style):
         ''' Draw the segment
         
             Parameters
             ----------
-            ax : Matplotlib axis
-                Axis to draw on
+            fig : schemdraw.Figure
+                Figure to draw on
             transform : Transform
                 Transform to apply before drawing
         '''
@@ -113,13 +111,16 @@ class Segment(object):
         joinstyle = self.joinstyle if self.joinstyle else style.get('joinstyle', 'round')
 
         if fill:  # Check if path is closed
-            fill = color if fill is True else fill
             tlist = list(map(tuple, path))  # Need path as tuples for set()
-            if len(tlist) != len(set(tlist)):  # Path has duplicates
-                ax.fill(path[:, 0], path[:, 1], color=fill, zorder=zorder)
-                
-        ax.plot(path[:, 0], path[:, 1], zorder=zorder, color=color,
-                ls=ls, lw=lw, solid_capstyle=capstyle, solid_joinstyle=joinstyle)
+            dofill = len(tlist) != len(set(tlist))  # Path has duplicates, can fill it
+            if not dofill:
+                fill = None
+            elif fill is True:
+                fill = color
+            elif fill is False:
+                fill = None
+
+        fig.plot(path[:, 0], path[:, 1], color=color, fill=fill, ls=ls, lw=lw, capstyle=capstyle, joinstyle=joinstyle, zorder=zorder)
 
 
 class SegmentText(object):
@@ -143,7 +144,7 @@ class SegmentText(object):
         rotation_mode : string
             See Matplotlib documentation. 'anchor' or 'default'.
         color : string
-             Matplotlib color for this segment
+             Color for this segment
         fontsize : float
             Font size
         font : string
@@ -201,12 +202,12 @@ class SegmentText(object):
         # Matplotlib doesn't know text dimensions until AFTER it is drawn
         return BBox(np.inf, np.inf, -np.inf, -np.inf)
 
-    def draw(self, ax, transform, **style):
+    def draw(self, fig, transform, **style):
         ''' Draw the segment
         
             Parameters
             ----------
-            ax : Matplotlib axis
+            fig : schemdraw.Figure
                 Axis to draw on
             transform : Transform
                 Transform to apply before drawing
@@ -220,10 +221,9 @@ class SegmentText(object):
         rotmode = self.rotation_mode if self.rotation_mode else style.get('rotation_mode', 'anchor')
         zorder = self.zorder if self.zorder is not None else style.get('zorder', 3)
         
-        ax.text(xy[0], xy[1], self.text, transform=ax.transData,
-                color=color, fontsize=fontsize, family=font, rotation=rotation,
-                horizontalalignment=align[0], verticalalignment=align[1],
-                zorder=zorder, rotation_mode=rotmode)
+        fig.text(self.text, xy[0], xy[1],
+                color=color, fontsize=fontsize, fontfamily=font, rotation=rotation,
+                halign=align[0], valign=align[1], zorder=zorder, rotation_mode=rotmode)
         
 
 class SegmentPoly(object):
@@ -241,13 +241,13 @@ class SegmentPoly(object):
         closed : bool
             Draw a closed polygon (default True)
         color : string
-            Matplotlib color for this segment
+            Color for this segment
         lw : float
             Line width for the segment
         ls : string
-            Matplotlib line style for the segment
+            Line style for the segment
         fill : string
-            Matplotlib color to fill (if path is closed)
+            Color to fill if path is closed
         zorder : int
             Z-order for segment
     '''
@@ -301,12 +301,12 @@ class SegmentPoly(object):
         y = [p[1] for p in self.verts]
         return BBox(min(x), min(y), max(x), max(y))
 
-    def draw(self, ax, transform, **style):
+    def draw(self, fig, transform, **style):
         ''' Draw the segment
         
             Parameters
             ----------
-            ax : Matplotlib axis
+            fig : schemdraw.Figure
                 Axis to draw on
             transform : Transform
                 Transform to apply before drawing
@@ -320,22 +320,10 @@ class SegmentPoly(object):
         lw = self.lw if self.lw else style.get('lw', 2)
         ls = self.ls if self.ls else style.get('ls', '-')
         
-        if fill is True:
-            fillcolor = color
-            dofill = True
-        elif fill is False or fill is None:
-            dofill = False
-            fillcolor = None
-        else:
-            fillcolor = fill
-            dofill = True
-
+        fill = color if fill is True else None if fill is False else fill
         verts = transform.transform(self.verts)
-        poly = plt.Polygon(xy=verts, closed=closed, ec=color,
-                           fc=fillcolor, fill=dofill, lw=lw, ls=ls,
-                           capstyle=capstyle, joinstyle=joinstyle,
-                           zorder=zorder)
-        ax.add_patch(poly)
+        fig.poly(verts, closed=closed, color=color, fill=fill, lw=lw, ls=ls,
+                 capstyle=capstyle, joinstyle=joinstyle, zorder=zorder)
 
 
 class SegmentCircle(object):
@@ -351,13 +339,13 @@ class SegmentCircle(object):
         Keyword Arguments
         -----------------
         color : string
-             Matplotlib color for this segment
+             Color for this segment
         lw : float
             Line width for the segment
         ls : string
-            Matplotlib line style for the segment
+            Line style for the segment
         fill : string
-            Matplotlib color to fill (if path is closed)
+            Color to fill if path is closed
         zorder : int
             Z-order for segment
         ref: string
@@ -411,12 +399,12 @@ class SegmentCircle(object):
         ymax = self.center[1] + self.radius
         return BBox(xmin, ymin, xmax, ymax)
 
-    def draw(self, ax, transform, **style):
+    def draw(self, fig, transform, **style):
         ''' Draw the segment
         
             Parameters
             ----------
-            ax : Matplotlib axis
+            fig : schemdraw.Figure
                 Axis to draw on
             transform : Transform
                 Transform to apply before drawing
@@ -429,21 +417,8 @@ class SegmentCircle(object):
         ls = self.ls if self.ls else style.get('ls', '-')
         lw = self.lw if self.lw else style.get('lw', 2)
 
-        if fill is True:
-            fillcolor = color
-            dofill = True
-        elif fill is False or fill is None:
-            dofill = False
-            fillcolor = None
-        else:
-            fillcolor = fill
-            dofill = True
-        
-        circ = plt.Circle(xy=center, radius=radius,
-                          ec=color, fc=fillcolor, fill=dofill,
-                          lw=lw, ls=ls,
-                          zorder=zorder)
-        ax.add_patch(circ)
+        fill = color if fill is True else None if fill is False else fill        
+        fig.circle(center, radius, color=color, fill=fill, lw=lw, ls=ls, zorder=zorder)
 
         
 class SegmentArrow(object):
@@ -463,11 +438,11 @@ class SegmentArrow(object):
         headlength : float
             Lenght of arrowhead
         color : string
-             Matplotlib color for this segment
+             Color for this segment
         lw : float
             Line width for the segment
         ls : string
-            Matplotlib line style for the segment
+            Line style for the segment
         zorder : int
             Z-order for segment
     '''
@@ -525,12 +500,12 @@ class SegmentArrow(object):
         ''' Get endpoint of this segment, untransformed '''        
         return self.head
     
-    def draw(self, ax, transform, **style):
+    def draw(self, fig, transform, **style):
         ''' Draw the segment
         
             Parameters
             ----------
-            ax : Matplotlib axis
+            fig : schemdraw.Figure
                 Axis to draw on
             transform : Transform
                 Transform to apply before drawing
@@ -544,11 +519,9 @@ class SegmentArrow(object):
         headwidth = self.headwidth if self.headwidth else style.get('headwidth', .2)
         headlength = self.headlength if self.headlength else style.get('headlength', .2)
         
-        ax.arrow(tail[0], tail[1],
-                 head[0]-tail[0], head[1]-tail[1],
-                 head_width=headwidth, head_length=headlength,
-                 length_includes_head=True, color=color, lw=lw,
-                 zorder=zorder)
+        fig.arrow(tail[0], tail[1], head[0]-tail[0], head[1]-tail[1],
+                 headwidth=headwidth, headlength=headlength,
+                 color=color, lw=lw, zorder=zorder)
 
 
 class SegmentArc(object):
@@ -578,13 +551,13 @@ class SegmentArc(object):
         arrow : [None, 'cw', 'ccw']
             Direction of arrowhead
         color : string
-             Matplotlib color for this segment
+             Color for this segment
         lw : float
             Line width for the segment
         ls : string
-            Matplotlib line style for the segment
+            Line style for the segment
         fill : string
-            Matplotlib color to fill (if path is closed)
+            Color to fill if path is closed
         zorder : int
             Z-order for segment
     '''
@@ -649,12 +622,12 @@ class SegmentArc(object):
         yy = self.center[1] + rx * np.cos(t)*np.sin(phi) + ry * np.sin(t)*np.cos(phi)
         return BBox(xx.min(), yy.min(), xx.max(), yy.max())
 
-    def draw(self, ax, transform, **style):
+    def draw(self, fig, transform, **style):
         ''' Draw the segment
         
             Parameters
             ----------
-            ax : Matplotlib axis
+            fig : schemdraw.Figure
                 Axis to draw on
             transform : Transform
                 Transform to apply before drawing
@@ -667,37 +640,6 @@ class SegmentArc(object):
         ls = self.ls if self.ls else style.get('ls', '-')
         lw = self.lw if self.lw else style.get('lw', 2)
         
-        arc = Arc(center, width=self.width, height=self.height,
-                  theta1=self.theta1, theta2=self.theta2, angle=angle,
-                  color=color, lw=lw, ls=ls, zorder=zorder)
-        ax.add_patch(arc)
-
-        if self.arrow is not None:
-            # Apply stretch to theta to match MPL's arc
-            # (See change https://github.com/matplotlib/matplotlib/pull/8047/files)
-            x, y = np.cos(np.deg2rad(self.theta2)), np.sin(np.deg2rad(self.theta2))
-            th2 = np.rad2deg(np.arctan2((self.width/self.height)*y, x))
-            x, y = np.cos(np.deg2rad(self.theta1)), np.sin(np.deg2rad(self.theta1))
-            th1 = np.rad2deg(np.arctan2((self.width/self.height)*y, x))
-            if self.arrow == 'ccw':
-                dx = np.cos(np.deg2rad(th2+90)) / 100
-                dy = np.sin(np.deg2rad(self.theta2+90)) / 100
-                s = [center[0] + self.width/2*np.cos(np.deg2rad(th2)),
-                     center[1] + self.height/2*np.sin(np.deg2rad(th2))]
-            else:
-                dx = -np.cos(np.deg2rad(th1+90)) / 100
-                dy = - np.sin(np.deg2rad(th1+90)) / 100
-
-                s = [center[0] + self.width/2*np.cos(np.deg2rad(th1)),
-                     center[1] + self.height/2*np.sin(np.deg2rad(th1))]
-
-            # Rotate the arrow head
-            co = np.cos(np.radians(angle))
-            so = np.sin(np.radians(angle))
-            m = np.array([[co, so], [-so, co]])
-            s = np.dot(s-center, m)+center
-            darrow = np.dot([dx, dy], m)
-
-            ax.arrow(s[0], s[1], darrow[0], darrow[1], head_width=.15,
-                     head_length=.25, color=color, zorder=zorder)
-        
+        arc = fig.arc(center, width=self.width, height=self.height,
+                       theta1=self.theta1, theta2=self.theta2, angle=angle,
+                       color=color, lw=lw, ls=ls, zorder=zorder, arrow=self.arrow)

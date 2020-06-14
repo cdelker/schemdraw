@@ -200,15 +200,15 @@ For even more control over customizing individual pieces of an element, the para
 Matplotlib axis
 ---------------
 
-As a final customization option, remember that schemdraw draws everything on a Matplotlib axis.
-The figure and axis are stored in the `Drawing.fig` and `Drawing.ax` attributes, respectively.
+As a final customization option, remember that by default schemdraw draws everything on a Matplotlib figure.
+A :py:class:`schemdraw.Figure` is returned from the `draw` method, which contains `fig` and `ax` attributes holding the Matplotlib figure.
 
 .. jupyter-execute::
 
     d = schemdraw.Drawing()
     d.add(elm.Resistor)
-    d.draw()
-    d.ax.axvline(.5, color='purple', ls='--')
-    d.ax.axvline(2.5, color='orange', ls='-', lw=3);
-    display(d.fig)
+    schemfig = d.draw()
+    schemfig.ax.axvline(.5, color='purple', ls='--')
+    schemfig.ax.axvline(2.5, color='orange', ls='-', lw=3);
+    display(schemfig)
     

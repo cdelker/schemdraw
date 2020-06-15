@@ -40,7 +40,7 @@ class Transform(object):
         self.shift = np.asarray(globalshift)
         self.localshift = np.asarray(localshift)
         self.zoom = zoom
-        
+
         # Set up initial translation matrix
         c = np.cos(np.radians(self.theta))
         s = np.sin(np.radians(self.theta))
@@ -48,7 +48,7 @@ class Transform(object):
 
     def __repr__(self):
         return 'Transform: xy={}; theta={}; scale={}'.format(self.shift, self.theta, self.zoom)
-        
+
     def transform(self, pt, ref=None):
         ''' Apply the transform to the point
 
@@ -57,14 +57,16 @@ class Transform(object):
             pt: [x, y] array
                 Original coordinates
             ref: string
-                'start', 'end', or None, transformation reference (whether to apply localshift)
+                'start', 'end', or None, transformation reference
+                (whether to apply localshift)
 
             Returns
             -------
             pt: [x, y] array
                 Transformed coordinates
         '''
-        lshift = {'start': np.asarray([0, 0]), 'end': self.localshift*2}.get(ref, self.localshift)
+        lshift = {'start': np.asarray([0, 0]),
+                  'end': self.localshift*2}.get(ref, self.localshift)
         return np.dot((pt+lshift)*self.zoom, self.rotate) + self.shift
 
     def transform_array(self, pts):

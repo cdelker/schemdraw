@@ -3,7 +3,7 @@
 from functools import partial
 import numpy as np
 
-from ..segments import *
+from ..segments import Segment, SegmentCircle
 from ..elements import Element, Element2Term
 
 
@@ -25,7 +25,7 @@ class And(Element):
             Draw invert bubble on output
         inputnots : list
             Input numbers (starting at 1) of inputs that have invert bubble
-            
+
         Keyword Arguments
         -----------------
         See schemdraw.Element
@@ -38,17 +38,19 @@ class And(Element):
 
         rad = _gateh/2
         theta = np.linspace(np.radians(-90), np.radians(90), num=50)
-        arcpoints = np.vstack((rad*np.cos(theta) + _gatel+_leadlen, 
-                                rad*np.sin(theta)))
+        arcpoints = np.vstack((rad*np.cos(theta) + _gatel+_leadlen,
+                               rad*np.sin(theta)))
 
-        
         path = np.transpose(arcpoints).tolist()
-        path += [[_gatel+_leadlen, rad], [_leadlen, rad], [_leadlen, 0], [_leadlen, -rad], [_gatel+_leadlen, -rad]]        
-        self.segments.append(Segment(path, **kwargs))
+        path += [[_gatel+_leadlen, rad], [_leadlen, rad],
+                 [_leadlen, 0], [_leadlen, -rad],
+                 [_gatel+_leadlen, -rad]]
+        self.segments.append(Segment(path))
         self.anchors['out'] = [_gatel+_gateh/2+_leadlen*2, 0]
 
         if nand:
-            self.segments.append(SegmentCircle([_leadlen+_gatel+_gateh/2+_notbubble, 0], _notbubble, **kwargs))
+            self.segments.append(SegmentCircle(
+                [_leadlen+_gatel+_gateh/2+_notbubble, 0], _notbubble))
 
         # Set distance between inputs. A little larger for 2 input gates.
         if inputs == 2:
@@ -65,20 +67,25 @@ class And(Element):
             self.anchors['in%d' % (inputs-i)] = [0, y]
 
             if (inputs-i) in inputnots:
-                self.segments.append(SegmentCircle([_leadlen-_notbubble, y], _notbubble, **kwargs))
-                self.segments.append(Segment([[0, y], [_leadlen-_notbubble*2, y]], **kwargs))
+                self.segments.append(SegmentCircle([_leadlen-_notbubble, y], _notbubble))
+                self.segments.append(Segment([[0, y], [_leadlen-_notbubble*2, y]]))
             else:
-                self.segments.append(Segment([[0, y], [_leadlen, y]], **kwargs))
+                self.segments.append(Segment([[0, y], [_leadlen, y]]))
 
         # Extended back for large number of inputs
         if inputs > 3:
-            self.segments.append(Segment([[_leadlen, backlen/2+dy/2], [_leadlen, -backlen/2-dy/2]], **kwargs))
+            self.segments.append(Segment([[_leadlen, backlen/2+dy/2],
+                                          [_leadlen, -backlen/2-dy/2]]))
 
         # Output lead
         if nand:
-            self.segments.append(Segment([[0, 0], _gap, [_gatel+_gateh/2+_leadlen+_notbubble*2, 0], [_gatel+_gateh/2+_leadlen*2, 0]], **kwargs))
+            self.segments.append(Segment(
+                [[0, 0], _gap, [_gatel+_gateh/2+_leadlen+_notbubble*2, 0],
+                 [_gatel+_gateh/2+_leadlen*2, 0]]))
         else:
-            self.segments.append(Segment([[0, 0], _gap, [_gatel+_gateh/2+_leadlen, 0], [_gatel+_gateh/2+_leadlen*2, 0]], **kwargs))
+            self.segments.append(Segment(
+                [[0, 0], _gap, [_gatel+_gateh/2+_leadlen, 0],
+                 [_gatel+_gateh/2+_leadlen*2, 0]]))
         self.params['drop'] = self.segments[-1].path[-1]
 
 
@@ -100,7 +107,7 @@ class Or(Element):
             Input numbers (starting at 1) of inputs that have invert bubble
         name : string
             Define a name for gate. Only used in documentation.
-            
+
         Keyword Arguments
         -----------------
         See schemdraw.Element
@@ -136,12 +143,12 @@ class Or(Element):
 
         tip = max(x)
         orheight = abs(min(y))
-        
+
         path = np.transpose(np.vstack((x, y))).tolist() + np.transpose(np.vstack((x[::-1], -y[::-1]))).tolist()
         if xor:
             path += np.transpose(np.vstack((x2[::-1]+xorgap, y2[::-1]))).tolist()
         else:
-            path += np.transpose(np.vstack((x2[::-1], y2[::-1]))).tolist() 
+            path += np.transpose(np.vstack((x2[::-1], y2[::-1]))).tolist()
         self.segments.append(Segment(path, **kwargs))
         self.anchors['out'] = [tip+_leadlen, 0]
 
@@ -171,21 +178,22 @@ class Or(Element):
             self.anchors['in%d' % (inputs-i)] = [0, y]
 
             if (inputs-i) in inputnots:
-                self.segments.append(SegmentCircle([xback-_notbubble, y], _notbubble, **kwargs))
-                self.segments.append(Segment([[0, y], [xback-_notbubble*2, y]], **kwargs))
+                self.segments.append(SegmentCircle([xback-_notbubble, y], _notbubble))
+                self.segments.append(Segment([[0, y], [xback-_notbubble*2, y]]))
             else:
-                self.segments.append(Segment([[0, y], [xback, y]], **kwargs))
+                self.segments.append(Segment([[0, y], [xback, y]]))
 
         # Extended back for large number of inputs
         if inputs > 3:
-            self.segments.append(Segment([[_leadlen, backlen/2+dy/2], [_leadlen, orheight]], **kwargs))
-            self.segments.append(Segment([[_leadlen, -backlen/2-dy/2], [_leadlen, -orheight]], **kwargs))
+            self.segments.append(Segment([[_leadlen, backlen/2+dy/2], [_leadlen, orheight]]))
+            self.segments.append(Segment([[_leadlen, -backlen/2-dy/2], [_leadlen, -orheight]]))
 
         # Output lead
         if nor:
-            self.segments.append(Segment([[0, 0], _gap, [tip+_notbubble*2, 0], [tip+_leadlen, 0]], **kwargs))
+            self.segments.append(Segment([[0, 0], _gap, [tip+_notbubble*2, 0],
+                                          [tip+_leadlen, 0]]))
         else:
-            self.segments.append(Segment([[0, 0], _gap, [tip, 0], [tip+_leadlen, 0]], **kwargs))
+            self.segments.append(Segment([[0, 0], _gap, [tip, 0], [tip+_leadlen, 0]]))
         self.params['drop'] = self.segments[-1].path[-1]
 
 
@@ -197,20 +205,25 @@ Xnor = partial(Or, nor=True, xor=True)
 class Buf(Element2Term):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.segments.append(Segment([[0, 0], [_leadlen, 0], _gap, [_gatel+_leadlen, 0]], **kwargs))
-        self.segments.append(Segment([[_gatel+_leadlen, 0], [_gatel+_leadlen*2, 0]], **kwargs), )
-        self.segments.append(Segment([[_leadlen, 0], [_leadlen, -_gateh/2], [_gatel+_leadlen, 0], [_leadlen, _gateh/2], [_leadlen, 0]], **kwargs))
+        self.segments.append(Segment([[0, 0], [_leadlen, 0], _gap, [_gatel+_leadlen, 0]]))
+        self.segments.append(Segment([[_gatel+_leadlen, 0], [_gatel+_leadlen*2, 0]]))
+        self.segments.append(Segment([[_leadlen, 0], [_leadlen, -_gateh/2],
+                                      [_gatel+_leadlen, 0], [_leadlen, _gateh/2], [_leadlen, 0]]))
         self.anchors['out'] = [_gatel+_gateh/2+_leadlen*2, 0]
         self.anchors['in'] = [0, 0]
-        
+
 
 class Not(Element2Term):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.segments.append(Segment([[0, 0], [_leadlen, 0], _gap, [_gatel+_leadlen+_notbubble*2, 0]], **kwargs))
-        self.segments.append(Segment([[_gatel+_leadlen+_notbubble*2, 0], [_gatel+_leadlen*2, 0]], **kwargs))
-        self.segments.append(Segment([[_leadlen, 0], [_leadlen, -_gateh/2], [_gatel+_leadlen, 0], [_leadlen, _gateh/2], [_leadlen, 0]], **kwargs))
-        self.segments.append(SegmentCircle([_gatel+_leadlen+_notbubble, 0], _notbubble, **kwargs))
+        self.segments.append(Segment([[0, 0], [_leadlen, 0], _gap,
+                                      [_gatel+_leadlen+_notbubble*2, 0]]))
+        self.segments.append(Segment([[_gatel+_leadlen+_notbubble*2, 0],
+                                      [_gatel+_leadlen*2, 0]]))
+        self.segments.append(Segment([[_leadlen, 0], [_leadlen, -_gateh/2],
+                                      [_gatel+_leadlen, 0], [_leadlen, _gateh/2],
+                                      [_leadlen, 0]]))
+        self.segments.append(SegmentCircle([_gatel+_leadlen+_notbubble, 0], _notbubble))
         self.anchors['out'] = [_gatel+_gateh/2+_leadlen*2, 0]
         self.anchors['in'] = [0, 0]
 
@@ -218,10 +231,14 @@ class Not(Element2Term):
 class NotNot(Element2Term):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.segments.append(Segment([[0, 0], [_leadlen-_notbubble*2, 0], _gap, [_gatel+_leadlen+_notbubble*2, 0]], **kwargs))
-        self.segments.append(Segment([[_gatel+_leadlen+_notbubble*2, 0], [_gatel+_leadlen*2, 0]], **kwargs))
-        self.segments.append(Segment([[_leadlen, 0], [_leadlen, -_gateh/2], [_gatel+_leadlen, 0], [_leadlen, _gateh/2], [_leadlen, 0]], **kwargs))
-        self.segments.append(SegmentCircle([_gatel+_leadlen+_notbubble, 0], _notbubble, **kwargs))
-        self.segments.append(SegmentCircle([_leadlen-_notbubble, 0], _notbubble, **kwargs))        
+        self.segments.append(Segment([[0, 0], [_leadlen-_notbubble*2, 0], _gap,
+                                      [_gatel+_leadlen+_notbubble*2, 0]]))
+        self.segments.append(Segment([[_gatel+_leadlen+_notbubble*2, 0],
+                                      [_gatel+_leadlen*2, 0]]))
+        self.segments.append(Segment([[_leadlen, 0], [_leadlen, -_gateh/2],
+                                      [_gatel+_leadlen, 0], [_leadlen, _gateh/2],
+                                      [_leadlen, 0]]))
+        self.segments.append(SegmentCircle([_gatel+_leadlen+_notbubble, 0], _notbubble))
+        self.segments.append(SegmentCircle([_leadlen-_notbubble, 0], _notbubble))
         self.anchors['out'] = [_gatel+_gateh/2+_leadlen*2, 0]
         self.anchors['in'] = [0, 0]

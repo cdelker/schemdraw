@@ -2,10 +2,9 @@
 
 import numpy as np
 
-from .elements import Element, Element2Term, gap
+from .elements import Element2Term, gap
 from .twoterm import resheight
-from ..transform import Transform
-from ..segments import *
+from ..segments import Segment, SegmentCircle, SegmentArrow, SegmentText
 
 
 class Source(Element2Term):
@@ -23,14 +22,14 @@ class SourceV(Source):
         self.segments.append(Segment([[.25, -plus_len/2], [.25, plus_len/2]])),   # '-' sign
         self.segments.append(Segment([[.75-plus_len/2, 0], [.75+plus_len/2, 0]])) # '+' sign
         self.segments.append(Segment([[.75, -plus_len/2], [.75, plus_len/2]]))    # '+' sign
-        
+
 
 class SourceI(Source):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.segments.append(SegmentArrow([.25, 0], [.75, 0]))
 
-        
+
 class SourceSin(Source):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -55,7 +54,7 @@ class SourceControlledV(SourceControlled):
         self.segments.append(Segment([[.75-plus_len/2, 0], [.75+plus_len/2, 0]]))  # '+' sign
         self.segments.append(Segment([[.75, -plus_len/2], [.75, plus_len/2]]))  # '+' sign
 
-        
+
 class SourceControlledI(SourceControlled):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -64,7 +63,9 @@ class SourceControlledI(SourceControlled):
 
 batw = resheight*.75
 bat1 = resheight*1.5
-bat2 = resheight*.75        
+bat2 = resheight*.75
+
+
 class BatteryCell(Element2Term):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -72,7 +73,6 @@ class BatteryCell(Element2Term):
         self.segments.append(Segment([[0, bat1], [0, -bat1]]))
         self.segments.append(Segment([[batw, bat2], [batw, -bat2]]))
 
-    
 
 class Battery(Element2Term):
     def __init__(self, *args, **kwargs):
@@ -82,7 +82,7 @@ class Battery(Element2Term):
         self.segments.append(Segment([[batw, bat2], [batw, -bat2]]))
         self.segments.append(Segment([[batw*2, bat1], [batw*2, -bat1]]))
         self.segments.append(Segment([[batw*3, bat2], [batw*3, -bat2]]))
-        
+
 
 class MeterV(Source):
     def __init__(self, *args, **kwargs):
@@ -102,10 +102,10 @@ class MeterA(Source):
         self.segments.append(SegmentText([.5, 0], 'A'))
 
 
-class MeterOhm(Source):        
+class MeterOhm(Source):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.segments.append(SegmentText([.5, 0], '$\Omega$'))
+        self.segments.append(SegmentText([.5, 0], r'$\Omega$'))
 
 
 class Lamp(Source):
@@ -121,5 +121,3 @@ class Lamp(Source):
         y = (y - y[0]) * .25
         lamp_path = np.transpose(np.vstack((x, y)))
         self.segments.append(Segment(lamp_path))
-
-

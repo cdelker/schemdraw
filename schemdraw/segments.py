@@ -1,4 +1,6 @@
-''' Schemdraw drawing segments. Each element is made up of one or more segments. '''
+''' Schemdraw drawing segments.
+    Each element is made up of one or more segments.
+'''
 
 from collections import namedtuple
 import numpy as np
@@ -37,7 +39,7 @@ class Segment(object):
         self.path = np.asarray(path)  # Untranformed path
         self.zorder = kwargs.get('zorder', None)
         self.color = kwargs.get('color', None)
-        self.fill = kwargs.get('fill', None)        
+        self.fill = kwargs.get('fill', None)
         self.lw = kwargs.get('lw', None)
         self.ls = kwargs.get('ls', None)
         self.capstyle = kwargs.get('capstyle', None)
@@ -46,11 +48,11 @@ class Segment(object):
     def end(self):
         ''' Get endpoint of this segment, untransformed '''
         return self.path[-1]
-        
+
     def xform(self, transform, **style):
         ''' Return a new Segment that has been transformed
             to its global position
-            
+
             Parameters
             ----------
             transform : schemdraw.Transform
@@ -82,17 +84,17 @@ class Segment(object):
     def doreverse(self, centerx):
         ''' Reverse the path (flip horizontal about the center of the path) '''
         self.path = mirror_array(self.path, centerx)[::-1]
-    
+
     def doflip(self):
         ''' Vertically flip the element '''
         flipped = []
         for p in self.path:
             flipped.append(flip_point(p))
         self.path = flipped
-    
+
     def draw(self, fig, transform, **style):
         ''' Draw the segment
-        
+
             Parameters
             ----------
             fig : schemdraw.Figure
@@ -120,7 +122,9 @@ class Segment(object):
             elif fill is False:
                 fill = None
 
-        fig.plot(path[:, 0], path[:, 1], color=color, fill=fill, ls=ls, lw=lw, capstyle=capstyle, joinstyle=joinstyle, zorder=zorder)
+        fig.plot(path[:, 0], path[:, 1], color=color, fill=fill,
+                 ls=ls, lw=lw, capstyle=capstyle, joinstyle=joinstyle,
+                 zorder=zorder)
 
 
 class SegmentText(object):
@@ -164,9 +168,9 @@ class SegmentText(object):
         self.zorder = kwargs.get('zorder', None)
 
     def doreverse(self, centerx):
-        ''' Reverse the path (flip horizontal about the centerx point) '''        
+        ''' Reverse the path (flip horizontal about the centerx point) '''
         self.xy = mirror_point(self.xy, centerx)
-    
+
     def doflip(self):
         ''' Vertically flip the element '''
         self.xy = flip_point(self.xy)
@@ -181,14 +185,13 @@ class SegmentText(object):
                   'color': self.color,
                   'rotation': self.rotation,
                   'rotation_mode': self.rotation_mode,
-                  'zorder': self.zorder
-                 }
+                  'zorder': self.zorder}
         params.update(style)
         return SegmentText(transform.transform(self.xy),
                            self.text, **params)
 
     def end(self):
-        ''' Get endpoint of this segment, untransformed '''        
+        ''' Get endpoint of this segment, untransformed '''
         return self.xy
 
     def get_bbox(self):
@@ -204,7 +207,7 @@ class SegmentText(object):
 
     def draw(self, fig, transform, **style):
         ''' Draw the segment
-        
+
             Parameters
             ----------
             fig : schemdraw.Figure
@@ -220,11 +223,12 @@ class SegmentText(object):
         rotation = self.rotation if self.rotation else style.get('rotation', 0)
         rotmode = self.rotation_mode if self.rotation_mode else style.get('rotation_mode', 'anchor')
         zorder = self.zorder if self.zorder is not None else style.get('zorder', 3)
-        
+
         fig.text(self.text, xy[0], xy[1],
-                color=color, fontsize=fontsize, fontfamily=font, rotation=rotation,
-                halign=align[0], valign=align[1], zorder=zorder, rotation_mode=rotmode)
-        
+                 color=color, fontsize=fontsize, fontfamily=font,
+                 rotation=rotation, rotation_mode=rotmode,
+                 halign=align[0], valign=align[1], zorder=zorder)
+
 
 class SegmentPoly(object):
     ''' A polygon segment
@@ -263,16 +267,16 @@ class SegmentPoly(object):
         self.ls = kwargs.get('ls', None)
 
     def doreverse(self, centerx):
-        ''' Reverse the path (flip horizontal about the centerx point) '''        
+        ''' Reverse the path (flip horizontal about the centerx point) '''
         self.verts = mirror_array(self.verts, centerx)[::-1]
-    
+
     def doflip(self):
-        ''' Vertically flip the element '''        
+        ''' Vertically flip the element '''
         flipped = []
         for p in self.verts:
             flipped.append(flip_point(p))
         self.verts = flipped
-        
+
     def xform(self, transform, **style):
         ''' Return a new Segment that has been transformed '''
         params = {'color': self.color,
@@ -286,7 +290,7 @@ class SegmentPoly(object):
         return SegmentPoly(transform.transform(self.verts), **params)
 
     def end(self):
-        ''' Get endpoint of this segment, untransformed '''        
+        ''' Get endpoint of this segment, untransformed '''
         return self.verts[-1]
 
     def get_bbox(self):
@@ -303,7 +307,7 @@ class SegmentPoly(object):
 
     def draw(self, fig, transform, **style):
         ''' Draw the segment
-        
+
             Parameters
             ----------
             fig : schemdraw.Figure
@@ -315,11 +319,11 @@ class SegmentPoly(object):
         fill = self.fill if self.fill is not None else style.get('fill', None)
         color = self.color if self.color else style.get('color', 'black')
         joinstyle = self.joinstyle if self.joinstyle else style.get('joinstyle', 'round')
-        capstyle = self.capstyle if self.capstyle else style.get('capstyle', 'round')        
+        capstyle = self.capstyle if self.capstyle else style.get('capstyle', 'round')
         zorder = self.zorder if self.zorder is not None else style.get('zorder', 1)
         lw = self.lw if self.lw else style.get('lw', 2)
         ls = self.ls if self.ls else style.get('ls', '-')
-        
+
         fill = color if fill is True else None if fill is False else fill
         verts = transform.transform(self.verts)
         fig.poly(verts, closed=closed, color=color, fill=fill, lw=lw, ls=ls,
@@ -349,7 +353,7 @@ class SegmentCircle(object):
         zorder : int
             Z-order for segment
         ref: string
-            Flip reference ['start', 'end', None]. 
+            Flip reference ['start', 'end', None].
     '''
     def __init__(self, center, radius, **kwargs):
         self.center = np.asarray(center)
@@ -359,8 +363,10 @@ class SegmentCircle(object):
         self.fill = kwargs.get('fill', None)
         self.lw = kwargs.get('lw', None)
         self.ls = kwargs.get('ls', None)
-        self.endref = kwargs.get('ref', None)  # Reference for adding things AFTER lead extensions
-        
+
+        # Reference for adding things AFTER lead extensions
+        self.endref = kwargs.get('ref', None)
+
     def end(self):
         ''' Get endpoint of this segment, untransformed '''
         return self.center
@@ -369,10 +375,11 @@ class SegmentCircle(object):
         ''' Reverse the path (flip horizontal about the centerx point) '''
         self.center = mirror_point(self.center, centerx)
         self.endref = {None: None, 'start': 'end', 'end': 'start'}.get(self.endref)
-        
+
     def doflip(self):
+        ''' Flip the segment up/down '''
         self.center = flip_point(self.center)
-    
+
     def xform(self, transform, **style):
         ''' Return a new Segment that has been transformed '''
         params = {'zorder': self.zorder,
@@ -401,7 +408,7 @@ class SegmentCircle(object):
 
     def draw(self, fig, transform, **style):
         ''' Draw the segment
-        
+
             Parameters
             ----------
             fig : schemdraw.Figure
@@ -417,10 +424,11 @@ class SegmentCircle(object):
         ls = self.ls if self.ls else style.get('ls', '-')
         lw = self.lw if self.lw else style.get('lw', 2)
 
-        fill = color if fill is True else None if fill is False else fill        
-        fig.circle(center, radius, color=color, fill=fill, lw=lw, ls=ls, zorder=zorder)
+        fill = color if fill is True else None if fill is False else fill
+        fig.circle(center, radius, color=color, fill=fill,
+                   lw=lw, ls=ls, zorder=zorder)
 
-        
+
 class SegmentArrow(object):
     ''' An arrow drawing segment
 
@@ -477,8 +485,8 @@ class SegmentArrow(object):
                   'headlength': self.headlength,
                   'ref': self.endref}
         params.update(style)
-        return SegmentArrow(transform.transform(self.tail, ref=self.endref), 
-                            transform.transform(self.head, ref=self.endref), 
+        return SegmentArrow(transform.transform(self.tail, ref=self.endref),
+                            transform.transform(self.head, ref=self.endref),
                             **params)
 
     def get_bbox(self):
@@ -497,12 +505,12 @@ class SegmentArrow(object):
         return BBox(xmin, ymin, xmax, ymax)
 
     def end(self):
-        ''' Get endpoint of this segment, untransformed '''        
+        ''' Get endpoint of this segment, untransformed '''
         return self.head
-    
+
     def draw(self, fig, transform, **style):
         ''' Draw the segment
-        
+
             Parameters
             ----------
             fig : schemdraw.Figure
@@ -518,10 +526,10 @@ class SegmentArrow(object):
         lw = self.lw if self.lw else style.get('lw', 2)
         headwidth = self.headwidth if self.headwidth else style.get('headwidth', .2)
         headlength = self.headlength if self.headlength else style.get('headlength', .2)
-        
+
         fig.arrow(tail[0], tail[1], head[0]-tail[0], head[1]-tail[1],
-                 headwidth=headwidth, headlength=headlength,
-                 color=color, lw=lw, zorder=zorder)
+                  headwidth=headwidth, headlength=headlength,
+                  color=color, lw=lw, zorder=zorder)
 
 
 class SegmentArc(object):
@@ -575,7 +583,7 @@ class SegmentArc(object):
         self.zorder = kwargs.get('zorder', None)
 
     def doreverse(self, centerx):
-        ''' Reverse the path (flip horizontal about the centerx point) '''               
+        ''' Reverse the path (flip horizontal about the centerx point) '''
         self.center = mirror_point(self.center, centerx)
         self.theta1, self.theta2 = 180-self.theta2, 180-self.theta1
         self.arrow = {'cw': 'ccw', 'ccw': 'cw'}.get(self.arrow, None)
@@ -594,14 +602,14 @@ class SegmentArc(object):
                   'ls': self.ls,
                   'zorder': self.zorder}
         params.update(style)
-        return SegmentArc(transform.transform(self.center), self.width, self.height, 
-                          angle=angle, theta1=self.theta1, theta2=self.theta2,
-                          **params)
+        return SegmentArc(transform.transform(self.center),
+                          self.width, self.height, angle=angle,
+                          theta1=self.theta1, theta2=self.theta2, **params)
 
     def end(self):
-        ''' Get endpoint of this segment, untransformed '''        
+        ''' Get endpoint of this segment, untransformed '''
         return self.center
-        
+
     def get_bbox(self):
         ''' Get bounding box (untransformed)
 
@@ -615,7 +623,7 @@ class SegmentArc(object):
         while theta2 < theta1:
             theta2 += 360
         t = np.deg2rad(np.linspace(theta1, theta2, num=500))
-        phi = np.deg2rad(self.angle)        
+        phi = np.deg2rad(self.angle)
         rx = self.width/2
         ry = self.height/2
         xx = self.center[0] + rx * np.cos(t)*np.cos(phi) - ry * np.sin(t)*np.sin(phi)
@@ -624,7 +632,7 @@ class SegmentArc(object):
 
     def draw(self, fig, transform, **style):
         ''' Draw the segment
-        
+
             Parameters
             ----------
             fig : schemdraw.Figure
@@ -639,7 +647,7 @@ class SegmentArc(object):
         color = self.color if self.color else style.get('color', 'black')
         ls = self.ls if self.ls else style.get('ls', '-')
         lw = self.lw if self.lw else style.get('lw', 2)
-        
-        arc = fig.arc(center, width=self.width, height=self.height,
-                       theta1=self.theta1, theta2=self.theta2, angle=angle,
-                       color=color, lw=lw, ls=ls, zorder=zorder, arrow=self.arrow)
+
+        fig.arc(center, width=self.width, height=self.height,
+                theta1=self.theta1, theta2=self.theta2, angle=angle,
+                color=color, lw=lw, ls=ls, zorder=zorder, arrow=self.arrow)

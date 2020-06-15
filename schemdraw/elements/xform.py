@@ -1,8 +1,6 @@
 ''' Transformer element definitions '''
 
-import numpy as np
-
-from ..segments import *
+from ..segments import Segment, SegmentArc
 from .elements import Element
 from .twoterm import cycloid
 from ..adddocs import adddocs
@@ -56,20 +54,23 @@ class Transformer(Element):
         # Draw coils
         if loop:
             c1 = cycloid(loops=t1, ofst=(0, 0), norm=False, vertical=True)
-            c2 = cycloid(loops=t2, ofst=(ind_gap, -rtop+ltop), norm=False, flip=True, vertical=True)
+            c2 = cycloid(loops=t2, ofst=(ind_gap, -rtop+ltop), norm=False,
+                         flip=True, vertical=True)
             ltapx = min([i[0] for i in c1])
             rtapx = max([i[0] for i in c2])
             ltop = c1[-1][1]
             rtop = c2[-1][1]
             self.segments.append(Segment(c1, **kwargs))
-            self.segments.append(Segment(c2, **kwargs))            
+            self.segments.append(Segment(c2, **kwargs))
         else:
             for i in range(t1):
                 self.segments.append(SegmentArc([0, ltop-(i*ind_w+ind_w/2)],
-                                                theta1=270, theta2=90, width=ind_w, height=ind_w))
+                                                theta1=270, theta2=90,
+                                                width=ind_w, height=ind_w))
             for i in range(t2):
                 self.segments.append(SegmentArc([ind_gap, rtop-(i*ind_w+ind_w/2)],
-                                                theta1=90, theta2=270, width=ind_w, height=ind_w))
+                                                theta1=90, theta2=270,
+                                                width=ind_w, height=ind_w))
         # Add the core
         if core:
             top = max(ltop, rtop)

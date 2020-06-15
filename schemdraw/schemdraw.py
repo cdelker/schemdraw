@@ -1,7 +1,6 @@
 ''' Schemdraw Drawing class '''
 
-from io import StringIO, BytesIO
-from collections import namedtuple, ChainMap
+from collections import namedtuple
 import warnings
 import numpy as np
 
@@ -14,13 +13,13 @@ BBox = namedtuple('BBox', ['xmin', 'ymin', 'xmax', 'ymax'])
 
 class Drawing(object):
     ''' Create a schematic drawing
-        
+
         Parameters
         ----------
         *elements : Element
             List of Element instances to add to the drawing
         unit : float
-            Full length of a 2-terminal element. Inner zig-zag portion 
+            Full length of a 2-terminal element. Inner zig-zag portion
             of a resistor is 1.0 units.
         inches_per_unit : float
             Inches per drawing unit for setting drawing scale
@@ -39,8 +38,9 @@ class Drawing(object):
         fill : string or tuple
             Deault fill color for closed elements
     '''
-    def __init__(self, *elements, unit=3.0, inches_per_unit=0.5, lblofst=0.1, fontsize=16,
-                 font='sans-serif', color='black', lw=2, ls='-', fill=None):
+    def __init__(self, *elements, unit=3.0, inches_per_unit=0.5, lblofst=0.1,
+                 fontsize=16, font='sans-serif', color='black',
+                 lw=2, ls='-', fill=None):
         self.elements = []
         self.inches_per_unit = inches_per_unit
         self.unit = unit
@@ -52,11 +52,11 @@ class Drawing(object):
                           'lw': lw,
                           'ls': ls,
                           'fill': fill}
-        
+
         self.here = [0, 0]
         self.theta = 0
         self._state = []  # Push/Pop stack
-        
+
         for element in elements:
             self.add(element)
 
@@ -78,31 +78,33 @@ class Drawing(object):
         ''' Get flattened list of all segments in the drawing '''
         segments = []
         for element in self.elements:
-            segments.extend([s.xform(element.transform, **element.cparams) for s in element.segments])
+            segments.extend([s.xform(element.transform, **element.cparams)
+                             for s in element.segments])
         return segments
-    
+
     def _repr_svg_(self):
         ''' SVG representation for Jupyter '''
         return self.draw().getimage('svg', bbox=self.get_bbox())
 
     def _repr_png_(self):
-        ''' PNG representation for Jupyter '''        
+        ''' PNG representation for Jupyter '''
         return self.draw().getimage('png', bbox=self.get_bbox())
 
     def add(self, element, **kwargs):
         ''' Add an element to the drawing.
-        
+
             Parameters
             ----------
             element : schemdraw.elements.Element
                 The element class to add.
             **kwargs : passed to element instantiation if element is a class
         '''
-        if not isinstance(element, Element):  # Not instantiated
-            element = element(**kwargs)  # Instantiate it (for support of legacy add method)
+        if not isinstance(element, Element):
+            # Instantiate it (for support of legacy add method)
+            element = element(**kwargs)
         elif len(kwargs) > 0:
             warnings.warn('kwargs to add method are ignored because element is already instantiated')
-        
+
         self.here, self.theta = element.place(self.here, self.theta, **self.dwgparams)
         self.elements.append(element)
         return element
@@ -111,9 +113,11 @@ class Drawing(object):
         ''' Add multiple elements to the drawing '''
         for element in elements:
             self.add(element)
-    
+
     def push(self):
-        ''' Push/save the drawing state. Drawing.here and Drawing.theta are saved. '''
+        ''' Push/save the drawing state.
+            Drawing.here and Drawing.theta are saved.
+        '''
         self._state.append((self.here, self.theta))
 
     def pop(self):
@@ -122,7 +126,7 @@ class Drawing(object):
         '''
         if len(self._state) > 0:
             self.here, self.theta = self._state.pop()
-    
+
     def loopI(self, elm_list, label='', d='cw', theta1=35, theta2=-35, pad=.2):
         ''' Draw an arc to indicate a loop current bordered by elements in list
 
@@ -150,7 +154,9 @@ class Drawing(object):
         left = bbox4.xmax + pad
         rght = bbox2.xmin - pad
         center = [(left+rght)/2, (top+bot)/2]
-        element = LoopCurrent(xy=center, label=label, width=rght-left, height=top-bot, direction=d, theta1=theta1, theta2=theta2) 
+        element = LoopCurrent(xy=center, label=label, width=rght-left,
+                              height=top-bot, direction=d, theta1=theta1,
+                              theta2=theta2)
         self.add(element)
         return element
 
@@ -172,11 +178,11 @@ class Drawing(object):
             top : bool
                 Draw arrow on top (True) or bottom (False) of element
         '''
-        element = CurrentLabel(xy=elm.center, theta=elm.transform.theta, label=label, ofst=arrowofst,
-                               length=arrowlen, rev=reverse, top=top)
+        element = CurrentLabel(xy=elm.center, theta=elm.transform.theta, label=label,
+                               ofst=arrowofst, length=arrowlen, rev=reverse, top=top)
         self.add(element)
         return element
-        
+
     def labelI_inline(self, elm, label='', botlabel='', d='in', start=True, ofst=.8):
         ''' Add an arrowhead for labeling current inline with leads.
             Works on Element2Term elements.
@@ -197,13 +203,14 @@ class Drawing(object):
                 Offset from center of element
         '''
         element = CurrentLabelInline(xy=elm.center, label=label, botlabel=botlabel,
-                                     direction=d, ofst=ofst, start=start, theta=elm.transform.theta)
+                                     direction=d, ofst=ofst, start=start,
+                                     theta=elm.transform.theta)
         self.add(element)
         return element
-        
+
     def draw(self, showframe=False):
         ''' Draw the schematic
-        
+
             Parameters
             ----------
             showframe : bool
@@ -213,7 +220,7 @@ class Drawing(object):
         for element in self.elements:
             element.draw(fig)
         return fig
-    
+
     def save(self, fname, transparent=True, dpi=72):
         ''' Save figure to a file
 

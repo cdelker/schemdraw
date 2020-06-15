@@ -1,28 +1,25 @@
 ''' Lines, Arrows, and Labels '''
 
-from ..transform import Transform
-from ..segments import *
+from ..segments import Segment, SegmentArrow, SegmentCircle, SegmentArc
 from .elements import Element
 from .twoterm import Element2Term, gap
 from ..adddocs import adddocs
 
 
-
 class Line(Element2Term):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.segments.append(Segment([[0,0]]))
-        
-        
+        self.segments.append(Segment([[0, 0]]))
+
+
 @adddocs(Element2Term)
 class Arrow(Line):
     ''' Arrow element
-    
+
         Parameters
         ----------
         double : bool
             Show arrowhead on both ends
-
     '''
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -35,20 +32,22 @@ class Arrow(Line):
 @adddocs(Element2Term)
 class LineDot(Line):
     ''' Line with a dot at the end
-    
+
         Parameters
         ----------
         double : bool
             Show dot on both ends
-    '''    
+    '''
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         radius = kwargs.get('radius', 0.075)
         fill = None if kwargs.get('open', False) else kwargs.get('fill', True)
         zorder = kwargs.get('zorder', 4)
-        self.segments.append(SegmentCircle([0, 0], radius, ref='end', fill=fill, zorder=zorder))
+        self.segments.append(SegmentCircle(
+            [0, 0], radius, ref='end', fill=fill, zorder=zorder))
         if kwargs.get('double', False):
-            self.segments.append(SegmentCircle([0, 0], radius, ref='start'))
+            self.segments.append(SegmentCircle(
+                [0, 0], radius, ref='start'))
         self.anchors['center'] = [0, 0]  # Explicitly define center so reverses work
 
 
@@ -64,12 +63,12 @@ class Gap(Element2Term):
 
 class Dot(Element):
     ''' Connection Dot
-    
+
         Parameters
         ----------
         radius : float
             Radius of dot
-            
+
         Keyword Arguments
         -----------------
         See schemdraw.Element
@@ -90,18 +89,19 @@ class Dot(Element):
 class Arrowhead(Element):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.segments.append(SegmentArrow([-.3, 0], [0, 0], headwidth=.3, headlength=.3))
+        self.segments.append(SegmentArrow(
+            [-.3, 0], [0, 0], headwidth=.3, headlength=.3))
         self.theta = 0
         self.anchors['start'] = [0, 0]
         self.anchors['center'] = [0, 0]
-        self.anchors['end'] = [0, 0]                
+        self.anchors['end'] = [0, 0]
         self.params['lblofst'] = .25
 
 
 @adddocs(Element)
 class DotDotDot(Element):
     ''' Ellipsis element
-    
+
         Parameters
         ----------
         radius : float
@@ -122,7 +122,7 @@ class DotDotDot(Element):
         self.segments.append(SegmentCircle([1, 0], radius, fill=fill))
         self.segments.append(SegmentCircle([1.5, 0], radius, fill=fill))
         self.params['drop'] = [2, 0]
-        
+
 
 class Label(Element):
     def __init__(self, *args, **kwargs):
@@ -130,7 +130,7 @@ class Label(Element):
         self.params['lblloc'] = 'center'
         self.params['lblofst'] = 0
 
-        
+
 @adddocs(Element)
 class CurrentLabel(Element):
     ''' Current label arrow drawn above an element
@@ -145,27 +145,28 @@ class CurrentLabel(Element):
             Draw arrow on top or bottom of element
         rev : bool
             Reverse the arrow direction
-    '''        
+    '''
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         ofst = kwargs.get('ofst', 0.4)
         length = kwargs.get('length', 2)
         top = kwargs.get('top', True)
         reverse = kwargs.get('rev', False)
-        self.params['lblofst'] = .1    
+        self.params['lblofst'] = .1
         self.params['drop'] = None  # None means don't move xy from previous element
         self.anchor = 'center'
-        self.anchors['center'] = [0, 0]        
+        self.anchors['center'] = [0, 0]
 
         if not top:
             ofst = -ofst
             self.params['lblloc'] = 'bot'
         a, b = [-length/2, ofst], [length/2, ofst]
-        
+
         if reverse:
             a, b = b, a
 
-        self.segments.append(SegmentArrow(a, b, headwidth=.2, headlength=.3))
+        self.segments.append(SegmentArrow(
+            a, b, headwidth=.2, headlength=.3))
 
 
 @adddocs(Element)
@@ -184,28 +185,29 @@ class CurrentLabelInline(Element):
             Length of arrowhead
         headwidth : float
             Width of arrowhead
-    '''    
+    '''
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         direction = kwargs.get('direction', 'in')
         ofst = kwargs.get('ofst', .8)
         start = kwargs.get('start', True)
-        self.lblofst = .25
-        self.drop = None
+        self.params['lblofst'] = .25
+        self.params['drop'] = None
         hlen = kwargs.get('headlength', .3)
         hwid = kwargs.get('headwidth', .3)
-        
+
         x = ofst
         dx = hlen
         if direction == 'in':
             x += hlen
             dx = -dx
-        
+
         if start:
             x = -x
             dx = -dx
 
-        self.segments.append(SegmentArrow([x, 0], [x+dx, 0], headwidth=hwid, headlength=hlen))
+        self.segments.append(SegmentArrow(
+            [x, 0], [x+dx, 0], headwidth=hwid, headlength=hlen))
 
 
 @adddocs(Element)
@@ -232,8 +234,9 @@ class LoopCurrent(Element):
         theta2 = kwargs.get('theta2', -35)
         width = kwargs.get('width', 0.75)
         height = kwargs.get('height', 0.75)
-        self.segments.append(SegmentArc([0, 0], arrow=direction, theta1=theta1,
-                                        theta2=theta2, width=width, height=height))
+        self.segments.append(SegmentArc(
+            [0, 0], arrow=direction, theta1=theta1, theta2=theta2,
+            width=width, height=height))
         self.params['lblloc'] = 'center'
         self.params['lblofst'] = 0
         self.params['theta'] = 0
@@ -250,4 +253,3 @@ class Rect(Element):
         fill = kwargs.get('fill', False)
         self.segments.append(Segment([c1, c1a, c2, c2a, c1], zorder=0, fill=fill))
         self.params['zorder'] = 0   # Put on bottom
-        

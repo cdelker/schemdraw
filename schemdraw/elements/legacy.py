@@ -1,5 +1,5 @@
-''' DEPRECATED element definitions, based on dictionaries instead of classes, translated
-    into their newer class counterparts.
+''' DEPRECATED element definitions, based on dictionaries instead
+    of classes, translated into their newer class counterparts.
 '''
 
 from functools import partial
@@ -130,7 +130,7 @@ def ic(*pins, **kwargs):
                 Which side the pin belongs on
             pos: float
                 Absolute position as fraction from 0-1 along the
-                side. If not provided, pins are evenly spaced along 
+                side. If not provided, pins are evenly spaced along
                 the side.
             slot: string
                 Position designation for the pin in "X/Y" format
@@ -182,7 +182,7 @@ def ic(*pins, **kwargs):
     '''
     pins = [elm.IcPin(**p) for p in pins]
     return elm.Ic(pins=pins, **kwargs)
-    
+
 
 def multiplexer(*pins, **kwargs):
     ''' Draw a multiplexer or demultiplexer.

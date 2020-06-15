@@ -1,20 +1,31 @@
 ''' Schemdraw base Element class '''
 
-from io import StringIO, BytesIO
 from collections import ChainMap
 import numpy as np
 
 from ..backends.mpl import Figure
 from ..adddocs import adddocs
-from ..segments import *
+from ..segments import SegmentText, BBox
 from ..transform import Transform, mirror_point, flip_point
 
 gap = [np.nan, np.nan]  # Put a gap in a path
 
 
+def angle(a, b):
+    ''' Compute angle from coordinate a to b '''
+    theta = np.degrees(np.arctan2(b[1] - a[1], (b[0] - a[0])))
+    return theta
+
+
+def distance(a, b):
+    ''' Compute distance from A to B '''
+    r = np.sqrt((a[0]-b[0])**2 + (a[1]-b[1])**2)
+    return r
+
+
 class Element(object):
     ''' Parent class for a single circuit element.
-    
+
         Keyword Arguments
         -------------------------
         d : string
@@ -44,7 +55,7 @@ class Element(object):
             Add a string to label the element on the given side.
             Can be a string or list of strings that will be evenly-
             spaced along the element (['-', 'V1', '+']). Use $
-            for latex formatting, for example `$R_1 = 100 \Omega$`.
+            for latex formatting, for example `$R_1 = 100 \\Omega$`.
             See also: `add_label` method.
         lblofst : float
             Offset between label and element
@@ -80,7 +91,6 @@ class Element(object):
         self.dwgparams = {}  # Set by drawing in place() method
         self.params = {}     # Set by element defintion in setup() method
         self.cparams = None  # Combined (ChainMap) of above params
-        
         self.localshift = 0
         self.anchors = {}     # Untransformed anchors
         self.absanchors = {}  # Transformed, absolute anchors
@@ -88,7 +98,7 @@ class Element(object):
         self.transform = Transform(0, [0, 0])
 
         if 'xy' in self.userparams:  # Allow legacy 'xy' parameter
-            self.userparams.setdefault('at', self.userparams.pop('xy'))        
+            self.userparams.setdefault('at', self.userparams.pop('xy'))
 
     def buildparams(self):
         ''' Combine parameters from user, setup, and drawing '''
@@ -104,14 +114,14 @@ class Element(object):
         # All subsequent actions get params from cparams
         self.cparams = ChainMap(self.userparams, self.params, self.dwgparams)
         self.flipreverse()
-        
+
     def flipreverse(self):
         ''' Flip and/or reverse segments if necessary '''
         if self.userparams.get('flip', False):
             [s.doflip() for s in self.segments]
             for name, pt in self.anchors.items():
                 self.anchors[name] = flip_point(pt)
-            
+
         if self.userparams.get('reverse', False):
             if 'center' in self.anchors:
                 centerx = self.anchors['center'][0]
@@ -121,30 +131,27 @@ class Element(object):
             [s.doreverse(centerx) for s in self.segments]
             for name, pt in self.anchors.items():
                 self.anchors[name] = mirror_point(pt, centerx)
-    
+
     def place(self, dwgxy, dwgtheta, **dwgparams):
         ''' Determine position within the drawing '''
         self.dwgparams = dwgparams
         if self.cparams is None:
             self.buildparams()
-            
-        localshift = np.array([0, 0])
-        
-        params = {}
+
         anchor = self.cparams.get('anchor', None)
         zoom = self.cparams.get('zoom', 1)
         xy = np.asarray(self.cparams.get('at', dwgxy))
-        
+
         # Get bounds of element, used for positioning user labels
         self.bbox = self.get_bbox()
-        
+
         if 'endpts' in self.cparams:
             theta = dwgtheta
         elif self.cparams.get('d') is not None:
             theta = {'u': 90, 'r': 0, 'l': 180, 'd': 270}[self.cparams.get('d')[0].lower()]
         else:
             theta = self.cparams.get('theta', dwgtheta)
-        
+
         if anchor is not None:
             self.localshift = -np.asarray(self.anchors[anchor])
         self.transform = Transform(theta, xy, self.localshift, zoom)
@@ -169,16 +176,18 @@ class Element(object):
         for loc, label in userlabels.items():
             if label is not None:
                 rotation = (theta if lblrotate else 0)
-                self.add_label(label, loc, ofst=lblofst, size=lblsize, rotation=rotation, color=lblcolor)
-        
+                self.add_label(label, loc, ofst=lblofst, size=lblsize,
+                               rotation=rotation, color=lblcolor)
+
         # Add element-specific anchors
         for name, pos in self.anchors.items():
-            self.absanchors[name] = self.transform.transform(np.array(pos))        
+            self.absanchors[name] = self.transform.transform(np.array(pos))
         self.absanchors['xy'] = self.transform.transform([0, 0])
-        
+
         # Set all anchors as attributes
         for name, pos in self.absanchors.items():
-            if getattr(self, name, None) is not None:  # Try not to clobber element parameter names!
+            if getattr(self, name, None) is not None:
+                # Don't clobber element parameter names!
                 name = 'anchor_' + name
             setattr(self, name, pos)
 
@@ -190,7 +199,7 @@ class Element(object):
             return self.transform.transform(drop), dwgtheta
         else:
             return self.transform.transform(drop), theta
-        
+
     def get_bbox(self, transform=False):
         ''' Get element bounding box, including path and shapes.
 
@@ -288,12 +297,12 @@ class Element(object):
                     alignV = 'bottom'
                 else:
                     alignV = 'top'
-                    ofst = -ofst                    
+                    ofst = -ofst
                 if self.anchors[loc][0] > (x2+x1)/2:
                     alignH = 'left'
                 else:
                     alignH = 'right'
-                    
+
                 align = (alignH, alignV)
             elif th < 22.5:       # 0 to +22 deg
                 align = ('center', 'bottom')
@@ -320,8 +329,6 @@ class Element(object):
 
         lblparams = dict(ChainMap(kwargs, self.cparams))
         lblparams.pop('label', None)  # Can't pop from nested chainmap, convert to flat dict first
-        size = lblparams.get('fontsize', lblparams.get('size', 14))
-        font = lblparams.get('font', 'sans-serif')
         lblparams.update({'align': align, 'rotation': rotation})
 
         if isinstance(label, (list, tuple)):
@@ -330,27 +337,27 @@ class Element(object):
                 for i, lbltxt in enumerate(label):
                     xdiv = (xmax-xmin)/(len(label)+1)
                     xy = [xmin+xdiv*(i+1), ymax+ofst]
-                    self.segments.append(SegmentText(np.asarray(xy), label[i], **lblparams))
+                    self.segments.append(SegmentText(np.asarray(xy), lbltxt, **lblparams))
             elif loc == 'bot':
                 for i, lbltxt in enumerate(label):
                     xdiv = (xmax-xmin)/(len(label)+1)
                     xy = [xmin+xdiv*(i+1), ymin-ofst]
-                    self.segments.append(SegmentText(np.asarray(xy), label[i], **lblparams))
+                    self.segments.append(SegmentText(np.asarray(xy), lbltxt, **lblparams))
             elif loc == 'lft':
                 for i, lbltxt in enumerate(label):
                     ydiv = (ymax-ymin)/(len(label)+1)
                     xy = [xmin-ofst, ymin+ydiv*(i+1)]
-                    self.segments.append(SegmentText(np.asarray(xy), label[i], **lblparams))
+                    self.segments.append(SegmentText(np.asarray(xy), lbltxt, **lblparams))
             elif loc == 'rgt':
                 for i, lbltxt in enumerate(label):
                     ydiv = (ymax-ymin)/(len(label)+1)
                     xy = [xmax+ofst, ymin+ydiv*(i+1)]
-                    self.segments.append(SegmentText(np.asarray(xy), label[i], **lblparams))
+                    self.segments.append(SegmentText(np.asarray(xy), lbltxt, **lblparams))
             elif loc == 'center':
                 for i, lbltxt in enumerate(label):
                     xdiv = (xmax-xmin)/(len(label)+1)
                     xy = [xmin+xdiv*(i+1), ofst]
-                    self.segments.append(SegmentText(np.asarray(xy), label[i], **lblparams))
+                    self.segments.append(SegmentText(np.asarray(xy), lbltxt, **lblparams))
 
         elif isinstance(label, str):
             # Place in center
@@ -392,7 +399,6 @@ class Element(object):
 
     def _repr_png_(self):
         ''' PNG representation for Jupyter '''
-        output = BytesIO()
         fig = self._draw_on_figure()
         return fig.getimage(ext='png', bbox=self.get_bbox(transform=True))
 
@@ -407,37 +413,24 @@ class Element(object):
 @adddocs(Element)
 class ElementDrawing(Element):
     ''' Create an element from a Drawing
-    
+
         Parameters
         ----------
         drawing: Drawing instance
             The drawing to convert to an element
-        
     '''
     def __init__(self, drawing, **kwargs):
         super().__init__(**kwargs)
         self.drawing = drawing
         self.segments = self.drawing.get_segments()
         self.params['drop'] = self.drawing.here
-        
-        
-def angle(a, b):
-    ''' Compute angle from coordinate a to b '''
-    theta = np.degrees(np.arctan2(b[1] - a[1], (b[0] - a[0])))
-    return theta
-
-
-def distance(a, b):
-    ''' Compute distance from A to B '''
-    r = np.sqrt((a[0]-b[0])**2 + (a[1]-b[1])**2)
-    return r
 
 
 @adddocs(Element)
 class Element2Term(Element):
     ''' Two terminal element, with automatic lead extensions to result in the
         desired length. Anchors: start, center, end.
-    
+
         Keyword Arguments
         -----------------
         to : [x, y] float array
@@ -457,7 +450,7 @@ class Element2Term(Element):
         self.dwgparams = dwgparams
         if self.cparams is None:
             self.buildparams()
-        
+
         totlen = self.cparams.get('l', self.cparams.get('unit', 3))
         endpts = self.cparams.get('endpts', None)
         to = self.cparams.get('to', None)
@@ -479,7 +472,7 @@ class Element2Term(Element):
         # Get offset to element position within drawing (global shift)
         if endpts is not None:
             xy = endpts[0]
-        
+
         if endpts is not None:
             totlen = distance(endpts[0], endpts[1])
         elif to is not None:
@@ -501,14 +494,14 @@ class Element2Term(Element):
                 y = toy[1]
             endpt = [xy[0], y]
             totlen = distance(xy, endpt)
-        
+
         self.localshift = 0
         if self.cparams.get('extend', True):
             in_path = np.array(self.segments[0].path)
             dz = in_path[-1]-in_path[0]   # Defined delta of path
             in_len = np.sqrt(dz[0]*dz[0]+dz[1]*dz[1])   # Defined length of path
             lead_len = (totlen - in_len)/2
-            
+
             if lead_len > 0:  # Don't make element shorter
                 start = in_path[0] - np.array([lead_len, 0])
                 end = in_path[-1] + np.array([lead_len, 0])
@@ -522,14 +515,14 @@ class Element2Term(Element):
         self.anchors['start'] = start
         self.anchors['end'] = end
         self.anchors['center'] = (start+end)/2
-                
+
         if anchor is not None:
             self.localshift = -np.asarray(self.anchors[anchor])
         transform = Transform(theta, xy, self.localshift, zoom)
 
         self.absanchors = {}
         if len(self.segments) == 0:
-            self.absanchors['start'] =  transform.transform(np.array([0, 0]))
+            self.absanchors['start'] = transform.transform(np.array([0, 0]))
             self.absanchors['end'] = transform.transform(np.array([0, 0]))
             self.absanchors['center'] = transform.transform(np.array([0, 0]))
         else:
@@ -539,4 +532,3 @@ class Element2Term(Element):
 
         self.params['drop'] = end
         return super().place(xy, theta, **dwgparams)
-    

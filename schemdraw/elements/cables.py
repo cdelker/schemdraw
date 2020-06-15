@@ -1,10 +1,12 @@
 ''' Cable elements, coaxial and triaxial '''
 
 import numpy as np
+import warnings
 
-from ..segments import *
-from .elements import Element, Element2Term, gap
+from ..segments import Segment, SegmentArc
+from .elements import Element2Term, gap
 from ..adddocs import adddocs
+
 
 @adddocs(Element2Term)
 class Coax(Element2Term):
@@ -27,12 +29,18 @@ class Coax(Element2Term):
         radius = kwargs.get('radius', 0.3)
         leadlen = kwargs.get('leadlen', 0.6)
 
-        self.segments.append(Segment([[0, 0], [leadlen, 0], gap, [length-leadlen+radius/2, 0],
-                                      [length, 0]], **kwargs))  # Center conductor        
-        self.segments.append(Segment([[leadlen, radius], [length-leadlen, radius]]))   # Top
-        self.segments.append(Segment([[leadlen, -radius], [length-leadlen, -radius]])) # Bottom
-        self.segments.append(SegmentArc([leadlen, 0], width=radius, height=radius*2, theta1=0, theta2=360))
-        self.segments.append(SegmentArc([length-leadlen, 0], width=radius, height=radius*2, theta1=270, theta2=90))
+        self.segments.append(Segment(    # Center conductor
+                [[0, 0], [leadlen, 0], gap, [length-leadlen+radius/2, 0],
+                 [length, 0]], **kwargs))
+        self.segments.append(Segment(
+            [[leadlen, radius], [length-leadlen, radius]]))   # Top
+        self.segments.append(Segment([
+            [leadlen, -radius], [length-leadlen, -radius]]))  # Bottom
+        self.segments.append(SegmentArc(
+            [leadlen, 0], width=radius, height=radius*2, theta1=0, theta2=360))
+        self.segments.append(SegmentArc(
+            [length-leadlen, 0], width=radius,
+            height=radius*2, theta1=270, theta2=90))
         self.anchors['shieldstart'] = [leadlen, -radius]
         self.anchors['shieldstart_top'] = [leadlen, radius]
         self.anchors['shieldend'] = [length-leadlen, -radius]
@@ -71,13 +79,12 @@ class Triax(Element2Term):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         length = kwargs.get('length', 3)
-        radius = kwargs.get('radius', 0.3)
         leadlen = kwargs.get('leadlen', 0.6)
         radiusinner = kwargs.get('radiusinner', 0.3)
         radiusouter = kwargs.get('radiusouter', 0.6)
         shieldofststart = kwargs.get('shieldofststart', 0.3)
         shieldofstend = kwargs.get('shieldofstend', 0.45)
-    
+
         if radiusouter < radiusinner:
             raise ValueError('Triax inner radius > outer radius')
 
@@ -89,36 +96,47 @@ class Triax(Element2Term):
 
         if length - leadlen - shieldofstend + radiusouter < length:
             # Include the inner guard on output side
-            self.segments.append(Segment([[0, 0], [leadlen, 0], gap,
-                                          [length-leadlen+radiusinner/2, 0], [length, 0]]))  # Center conductor (first)
-            self.segments.append(Segment([[length-leadlen-shieldofstend+xshield, radiusinner],
-                                          [length-leadlen, radiusinner]]))    # guard (inner) top/right
-            self.segments.append(Segment([[length-leadlen-shieldofstend+xshield, -radiusinner],
-                                          [length-leadlen, -radiusinner]]))  # guard (inner) bottom/right
-            self.segments.append(SegmentArc([length-leadlen, 0], width=radiusinner, height=radiusinner*2,
-                                            theta1=270, theta2=90))
+            self.segments.append(Segment(  # Center conductor (first)
+                [[0, 0], [leadlen, 0], gap,
+                 [length-leadlen+radiusinner/2, 0],
+                 [length, 0]]))
+            self.segments.append(Segment(
+                [[length-leadlen-shieldofstend+xshield, radiusinner],
+                 [length-leadlen, radiusinner]]))  # guard (inner) top/right
+            self.segments.append(Segment(
+                [[length-leadlen-shieldofstend+xshield, -radiusinner],
+                 [length-leadlen, -radiusinner]]))  # guard (inner) bottom/right
+            self.segments.append(SegmentArc(
+                [length-leadlen, 0], width=radiusinner, height=radiusinner*2,
+                theta1=270, theta2=90))
         else:
             # Don't include inner guard on output side
-            self.segments.append(Segment([[0, 0], [leadlen, 0], gap,
-                                          [length-leadlen-shieldofstend+radiusouter/2, 0]]))  # Center conductor
+            self.segments.append(Segment(    # Center conductor
+                [[0, 0], [leadlen, 0], gap,
+                 [length-leadlen-shieldofstend+radiusouter/2, 0]]))
 
         # Start with shapes that are always shown...
-        self.segments.append(Segment([[leadlen, radiusinner], 
-                                      [leadlen+shieldofststart+xshield, radiusinner]]))  # guard (inner) top/left
-        self.segments.append(Segment([[leadlen, -radiusinner],
-                                      [leadlen+shieldofststart+xshield, -radiusinner]])) # guard (inner) bottom/left
-        self.segments.append(Segment([[leadlen+shieldofststart, radiusouter],
-                                      [length-leadlen-shieldofstend, radiusouter]]))   # shield (outer) top
-        self.segments.append(Segment([[leadlen+shieldofststart, -radiusouter],
-                                      [length-leadlen-shieldofstend, -radiusouter]]))    # shield (outer) bottom
-        
-        self.segments.append(SegmentArc([leadlen, 0], width=radiusinner, height=radiusinner*2,
-                                        theta1=0, theta2=360))
-        self.segments.append(SegmentArc([leadlen+shieldofststart, 0], width=radiusouter, height=radiusouter*2,
-                                        theta1=-thetashield, theta2=thetashield))
-        self.segments.append(SegmentArc([length-leadlen-shieldofstend, 0], width=radiusouter, height=radiusouter*2,
-                                        theta1=270, theta2=90))
-        
+        self.segments.append(Segment(  # guard (inner) top/left
+            [[leadlen, radiusinner], [leadlen+shieldofststart+xshield, radiusinner]]))
+        self.segments.append(Segment(  # guard (inner) bottom/left
+            [[leadlen, -radiusinner], [leadlen+shieldofststart+xshield, -radiusinner]]))
+        self.segments.append(Segment(  # shield (outer) top
+            [[leadlen+shieldofststart, radiusouter],
+             [length-leadlen-shieldofstend, radiusouter]]))
+        self.segments.append(Segment(  # shield (outer) bottom
+            [[leadlen+shieldofststart, -radiusouter],
+             [length-leadlen-shieldofstend, -radiusouter]]))
+
+        self.segments.append(SegmentArc(
+            [leadlen, 0], width=radiusinner, height=radiusinner*2,
+            theta1=0, theta2=360))
+        self.segments.append(SegmentArc(
+            [leadlen+shieldofststart, 0], width=radiusouter,
+            height=radiusouter*2, theta1=-thetashield, theta2=thetashield))
+        self.segments.append(SegmentArc(
+            [length-leadlen-shieldofstend, 0], width=radiusouter,
+            height=radiusouter*2, theta1=270, theta2=90))
+
         self.anchors['guardstart'] = [leadlen, -radiusinner]
         self.anchors['guardstart_top'] = [leadlen, radiusinner]
         self.anchors['guardend'] = [length-leadlen, -radiusinner]

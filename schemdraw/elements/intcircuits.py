@@ -2,14 +2,14 @@
 
 import numpy as np
 
-from ..segments import *
+from ..segments import Segment, SegmentText, SegmentCircle
 from ..elements import Element
 from ..adddocs import adddocs
 
 
 class IcPin(dict):
     ''' Integrated Circuit Pin
-    
+
         Keyword Arguments
         -----------------
         name : string
@@ -33,13 +33,13 @@ class IcPin(dict):
             Rotation for label text
         anchorname : string
             Named anchor for the pin
-     '''        
-        
+     '''
 
-@adddocs(Element)        
+
+@adddocs(Element)
 class Ic(Element):
     ''' Integrated Circuit element
-    
+
         Parameters
         ----------
         size: tuple
@@ -79,14 +79,16 @@ class Ic(Element):
         # Sort pins by side
         pins = [p.copy() for p in pins]  # Make copy so user's dicts don't change
         for pin in pins:
-            pin['side'] = pin.get('side', 'L')[:1].upper()  # Convert pin designations to uppercase, single letter
+            # Convert pin designations to uppercase, single letter            
+            pin['side'] = pin.get('side', 'L')[:1].upper()
         sidepins = {}
         pincount = {}
 
         for side in ['L', 'R', 'T', 'B']:
             sidepins[side] = [p for p in pins if p['side'] == side]
             slots = [p.get('slot', None) for p in sidepins[side]]
-            slots = [int(p.split('/')[1]) for p in slots if p is not None] + [0]  # Add a 0 - can't max an empty list
+            # Add a 0 - can't max an empty list            
+            slots = [int(p.split('/')[1]) for p in slots if p is not None] + [0]
             pincount[side] = max(len(sidepins[side]), max(slots))
 
         if 'size' not in kwargs:
@@ -176,8 +178,8 @@ class Ic(Element):
                     else:
                         clkw = clkw * -np.sign(leadext[0]) if leadext[0] != 0 else clkw
                         clkpath = [[clkxy[0], clkxy[1]+clkh],
-                                       [clkxy[0]+clkw, clkxy[1]],
-                                       [clkxy[0], clkxy[1]-clkh]]
+                                   [clkxy[0]+clkw, clkxy[1]],
+                                   [clkxy[0], clkxy[1]-clkh]]
                     paths.append(clkpath)
 
                 elif pin.get('name', '') != '':
@@ -212,7 +214,8 @@ class Ic(Element):
                     pofst = np.asarray({'L': [-plblofst-invertradius*2, plblofst],
                                         'R': [plblofst+invertradius*2, plblofst],
                                         'T': [plblofst, plblofst+invertradius*2],
-                                        'B': [plblofst, -plblofst-invertradius*2]}.get(side))
+                                        'B': [plblofst, -plblofst-invertradius*2]
+                                        }.get(side))
 
                     align = {'L': ('right', 'bottom'),
                              'R': ('left', 'bottom'),
@@ -224,17 +227,18 @@ class Ic(Element):
                              'fontsize': pin.get('psize', plblsize)}
                     self.segments.append(SegmentText(**label))
 
-                # Draw leads                
+                # Draw leads 
                 if leadlen > 0:
                     if pin.get('invert', False):
-                        # Add invert-bubble                    
+                        # Add invert-bubble
                         invertradius = pin.get('invertradius', .15)
                         invertofst = {'L': np.array([-invertradius, 0]),
                                       'R': np.array([invertradius, 0]),
                                       'T': np.array([0, invertradius]),
                                       'B': np.array([0, -invertradius])}.get(side)
 
-                        self.segments.append(SegmentCircle(np.asarray(pin['pos'])+invertofst, invertradius))
+                        self.segments.append(SegmentCircle(
+                            np.asarray(pin['pos'])+invertofst, invertradius))
                         paths.append([pin['pos']+invertofst*2, pin['pos']+leadext])
                     else:
                         paths.append([pin['pos'], pin['pos']+leadext])
@@ -259,7 +263,7 @@ class Ic(Element):
 @adddocs(Ic)
 class Multiplexer(Ic):
     ''' Multiplexer
-    
+
         Parameters
         ----------
         slant : float

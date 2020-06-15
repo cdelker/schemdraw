@@ -3,8 +3,7 @@
 import numpy as np
 
 from .elements import Element, gap
-from ..segments import *
-from ..transform import Transform
+from ..segments import Segment
 from ..adddocs import adddocs
 
 
@@ -16,9 +15,9 @@ oa_pluslen = .2
 
 @adddocs(Element)
 class Opamp(Element):
-    ''' Operational Amplifier. Anchors: `in1`, `in2`, `out`, `vd`, 
+    ''' Operational Amplifier. Anchors: `in1`, `in2`, `out`, `vd`,
         `vs`, `n1`, `n2`, `n1a`, `n2a`.
-    
+
         Parameters
         ----------
         sign : bool
@@ -26,12 +25,20 @@ class Opamp(Element):
     '''
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.segments.append(Segment([[0, 0], [0, oa_back/2], [oa_xlen, 0], [0, -oa_back/2], [0, 0], gap, [oa_xlen, 0]]))
-                             
+        self.segments.append(Segment(
+            [[0, 0], [0, oa_back/2], [oa_xlen, 0], [0, -oa_back/2], [0, 0],
+             gap, [oa_xlen, 0]]))
+
         if kwargs.get('sign', True):
-            self.segments.append(Segment([[oa_lblx-oa_pluslen/2, oa_back/4], [oa_lblx+oa_pluslen/2, oa_back/4]]))
-            self.segments.append(Segment([[oa_lblx-oa_pluslen/2, -oa_back/4], [oa_lblx+oa_pluslen/2, -oa_back/4]]))
-            self.segments.append(Segment([[oa_lblx, -oa_back/4-oa_pluslen/2], [oa_lblx, -oa_back/4+oa_pluslen/2]]))
+            self.segments.append(Segment(
+                [[oa_lblx-oa_pluslen/2, oa_back/4],
+                 [oa_lblx+oa_pluslen/2, oa_back/4]]))
+            self.segments.append(Segment(
+                [[oa_lblx-oa_pluslen/2, -oa_back/4],
+                 [oa_lblx+oa_pluslen/2, -oa_back/4]]))
+            self.segments.append(Segment(
+                [[oa_lblx, -oa_back/4-oa_pluslen/2],
+                 [oa_lblx, -oa_back/4+oa_pluslen/2]]))
 
         self.anchors['center'] = [oa_xlen/2, 0]
         self.anchors['in1'] = [0, oa_back/4]

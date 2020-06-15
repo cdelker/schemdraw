@@ -14,7 +14,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     packages = ['schemdraw', 'SchemDraw'],
     package_dir={'schemdraw': 'schemdraw', 'SchemDraw': 'schemdraw'},
-    keywords = ['circuit', 'schematic', 'electrical'],
+    keywords = ['circuit', 'schematic', 'electrical', 'flowchart', 'logic'],
     install_requires=['numpy', 'matplotlib'],
     classifiers = [
     'Programming Language :: Python',

@@ -17,13 +17,13 @@ class Figure(object):
             right=0.95,
             top=0.90)
         self.ax = self.fig.add_subplot()
-        self.ax.autoscale_view(True)  # This autoscales all the shapes too        
-    
+        self.ax.autoscale_view(True)  # This autoscales all the shapes too
+
     def plot(self, x, y, color='black', ls='-', lw=2, fill=None,
              capstyle='round', joinstyle='round',  zorder=2):
         ''' Plot a path '''
         self.ax.plot(x, y, zorder=zorder, color=color, ls=ls, lw=lw,
-                    solid_capstyle=capstyle, solid_joinstyle=joinstyle)
+                     solid_capstyle=capstyle, solid_joinstyle=joinstyle)
         if fill:
             self.ax.fill(x, y, color=fill, zorder=zorder)
 
@@ -31,36 +31,44 @@ class Figure(object):
              rotation=0, halign='center', valign='center', rotation_mode='anchor',
              zorder=3):
         ''' Add text to the figure '''
-        self.ax.text(x, y, s, transform=self.ax.transData, color=color, fontsize=fontsize,
-               fontfamily=fontfamily, rotation=rotation, horizontalalignment=halign,
-               verticalalignment=valign, rotation_mode=rotation_mode, zorder=zorder)
+        self.ax.text(x, y, s, transform=self.ax.transData, color=color,
+                     fontsize=fontsize, fontfamily=fontfamily,
+                     rotation=rotation, rotation_mode=rotation_mode,
+                     horizontalalignment=halign, verticalalignment=valign,
+                     zorder=zorder)
 
     def poly(self, verts, closed=True, color='black', fill=None, lw=2, ls='-',
              capstyle='round', joinstyle='round', zorder=1):
         ''' Draw a polynomial '''
-        p = plt.Polygon(verts, closed=closed, ec=color, fc=fill, fill=fill is not None,
-                        lw=lw, ls=ls, capstyle=capstyle, joinstyle=joinstyle,
-                        zorder=zorder)
+        p = plt.Polygon(verts, closed=closed, ec=color,
+                        fc=fill, fill=fill is not None,
+                        lw=lw, ls=ls, capstyle=capstyle,
+                        joinstyle=joinstyle, zorder=zorder)
         self.ax.add_patch(p)
-        
-    def circle(self, center, radius, color='black', fill=None, lw=2, ls='-', zorder=1):
+
+    def circle(self, center, radius, color='black', fill=None,
+               lw=2, ls='-', zorder=1):
         ''' Draw a circle '''
         circ = plt.Circle(xy=center, radius=radius, ec=color, fc=fill,
                           fill=fill is not None, lw=lw, ls=ls, zorder=zorder)
         self.ax.add_patch(circ)
-        
-    def arrow(self, x, y, dx, dy, headwidth=.2, headlength=.2, color='black', lw=2, zorder=1):
+
+    def arrow(self, x, y, dx, dy, headwidth=.2, headlength=.2,
+              color='black', lw=2, zorder=1):
         ''' Draw an arrow '''
+
         self.ax.arrow(x, y, dx, dy, head_width=headwidth, head_length=headlength,
-                     length_includes_head=True, color=color, lw=lw, zorder=zorder)
-        
+                      length_includes_head=True, color=color, lw=lw, zorder=zorder)
+
     def arc(self, center, width, height, theta1=0, theta2=90, angle=0,
             color='black', lw=2, ls='-', zorder=1, arrow=None):
         ''' Draw an arc or ellipse, with optional arrowhead '''
-        arc = Arc(center, width=width, height=height, theta1=theta1, theta2=theta2,
-                  angle=angle, color=color, lw=lw, ls=ls, zorder=zorder)
+
+        arc = Arc(center, width=width, height=height, theta1=theta1,
+                  theta2=theta2, angle=angle, color=color,
+                  lw=lw, ls=ls, zorder=zorder)
         self.ax.add_patch(arc)
-        
+
         if arrow is not None:
             x, y = np.cos(np.deg2rad(theta2)), np.sin(np.deg2rad(theta2))
             th2 = np.rad2deg(np.arctan2((width/height)*y, x))
@@ -88,9 +96,11 @@ class Figure(object):
             self.ax.arrow(s[0], s[1], darrow[0], darrow[1], head_width=.15,
                           head_length=.25, color=color, zorder=zorder)
 
-    def save(self, fname, transparent=True, dpi=72, bbox=None, showframe=False, inches_per_unit=.5):
+    def save(self, fname, transparent=True, dpi=72, bbox=None,
+             showframe=False, inches_per_unit=.5):
         ''' Save the figure to a file '''
-        fig = self.getfig(bbox=bbox, showframe=showframe, inches_per_unit=inches_per_unit)
+        fig = self.getfig(bbox=bbox, showframe=showframe,
+                          inches_per_unit=inches_per_unit)
         fig.savefig(fname, bbox_inches='tight', transparent=transparent, dpi=dpi,
                     bbox_extra_artists=self.ax.get_default_bbox_extra_artists())
 
@@ -109,30 +119,32 @@ class Figure(object):
         self.ax.set_ylim(y1, y2)
         w = x2-x1
         h = y2-y1
-        
+
         if not showframe:
             self.ax.axes.get_xaxis().set_visible(False)
             self.ax.axes.get_yaxis().set_visible(False)
             self.ax.set_frame_on(False)
         self.ax.get_figure().set_size_inches(inches_per_unit*w, inches_per_unit*h)
         return self.fig
-    
-    def getimage(self, ext='svg', bbox=None, showframe=False, inches_per_unit=.5):
+
+    def getimage(self, ext='svg', bbox=None, showframe=False,
+                 inches_per_unit=.5):
         ''' Get the image as SVG or PNG '''
-        fig = self.getfig(bbox=bbox, showframe=showframe, inches_per_unit=inches_per_unit)
+        fig = self.getfig(bbox=bbox, showframe=showframe,
+                          inches_per_unit=inches_per_unit)
         if ext == 'svg':
             output = StringIO()
             fig.savefig(output, format='svg', bbox_inches='tight')
-        else: # ext == 'png':
+        else:
             output = BytesIO()
             fig.savefig(output, format=ext, bbox_inches='tight')
 
         return output.getvalue()
-    
+
     def _repr_png_(self):
         ''' PNG representation for Jupyter '''
         return self.getimage('png')
-    
+
     def _repr_svg_(self):
         ''' SVG representation for Jupyter '''
         return self.getimage('svg')

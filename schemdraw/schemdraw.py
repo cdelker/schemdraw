@@ -84,11 +84,11 @@ class Drawing(object):
 
     def _repr_svg_(self):
         ''' SVG representation for Jupyter '''
-        return self.draw().getimage('svg', bbox=self.get_bbox())
+        return self.draw().getimage('svg')
 
     def _repr_png_(self):
         ''' PNG representation for Jupyter '''
-        return self.draw().getimage('png', bbox=self.get_bbox())
+        return self.draw().getimage('png')
 
     def add(self, element, **kwargs):
         ''' Add an element to the drawing.
@@ -216,7 +216,9 @@ class Drawing(object):
             showframe : bool
                 Show axis frame. Useful for debugging a drawing.
         '''
-        fig = Figure()
+        fig = Figure(bbox=self.get_bbox(),
+                     inches_per_unit=self.inches_per_unit,
+                     showframe=showframe)
         for element in self.elements:
             element.draw(fig)
         return fig

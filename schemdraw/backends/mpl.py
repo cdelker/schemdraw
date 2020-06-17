@@ -8,8 +8,19 @@ from matplotlib.patches import Arc
 
 
 class Figure(object):
-    ''' Schemdraw figure on Matplotlib figure '''
-    def __init__(self):
+    ''' Schemdraw figure on Matplotlib figure
+
+        Parameters
+        ----------
+        bbox : schemdraw.segments.BBox
+            Coordinate bounding box for drawing, used to
+            override Matplotlib's autoscale
+        inches_per_unit : float
+            Scale for the drawing
+        showframe : bool
+            Show Matplotlib axis frame
+    '''
+    def __init__(self, **kwargs):
         self.fig = plt.Figure()
         self.fig.subplots_adjust(
             left=0.05,
@@ -18,7 +29,14 @@ class Figure(object):
             top=0.90)
         self.ax = self.fig.add_subplot()
         self.ax.autoscale_view(True)  # This autoscales all the shapes too
+        self.showframe = kwargs.get('showframe', False)
+        self.bbox = kwargs.get('bbox', None)
+        self.inches_per_unit = kwargs.get('inches_per_unit', .5)
 
+    def set_bbox(self, bbox):
+        ''' Set bounding box, to override Matplotlib's autoscale '''
+        self.bbox = bbox
+        
     def plot(self, x, y, color='black', ls='-', lw=2, fill=None,
              capstyle='round', joinstyle='round',  zorder=2):
         ''' Plot a path '''
@@ -96,21 +114,20 @@ class Figure(object):
             self.ax.arrow(s[0], s[1], darrow[0], darrow[1], head_width=.15,
                           head_length=.25, color=color, zorder=zorder)
 
-    def save(self, fname, transparent=True, dpi=72, bbox=None,
-             showframe=False, inches_per_unit=.5):
+    def save(self, fname, transparent=True, dpi=72):
         ''' Save the figure to a file '''
-        fig = self.getfig(bbox=bbox, showframe=showframe,
-                          inches_per_unit=inches_per_unit)
+        fig = self.getfig()
         fig.savefig(fname, bbox_inches='tight', transparent=transparent, dpi=dpi,
                     bbox_extra_artists=self.ax.get_default_bbox_extra_artists())
 
-    def getfig(self, bbox=None, showframe=False, inches_per_unit=.5):
+    def getfig(self):
         ''' Get the Matplotlib figure '''
-        if bbox is None:
+        if self.bbox is None:
+            # Use MPL's bbox, which sometimes clips things like arrowheads
             x1, x2 = self.ax.get_xlim()
             y1, y2 = self.ax.get_ylim()
         else:
-            x1, y1, x2, y2 = bbox
+            x1, y1, x2, y2 = self.bbox
         x1 -= .1  # Add a bit to account for line widths getting cut off
         x2 += .1
         y1 -= .1
@@ -120,18 +137,17 @@ class Figure(object):
         w = x2-x1
         h = y2-y1
 
-        if not showframe:
+        if not self.showframe:
             self.ax.axes.get_xaxis().set_visible(False)
             self.ax.axes.get_yaxis().set_visible(False)
             self.ax.set_frame_on(False)
-        self.ax.get_figure().set_size_inches(inches_per_unit*w, inches_per_unit*h)
+        self.ax.get_figure().set_size_inches(self.inches_per_unit*w,
+                                             self.inches_per_unit*h)
         return self.fig
 
-    def getimage(self, ext='svg', bbox=None, showframe=False,
-                 inches_per_unit=.5):
+    def getimage(self, ext='svg'):
         ''' Get the image as SVG or PNG '''
-        fig = self.getfig(bbox=bbox, showframe=showframe,
-                          inches_per_unit=inches_per_unit)
+        fig = self.getfig()
         if ext == 'svg':
             output = StringIO()
             fig.savefig(output, format='svg', bbox_inches='tight')

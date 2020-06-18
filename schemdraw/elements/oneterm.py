@@ -71,6 +71,42 @@ class Antenna(Element):
         self.anchors['end'] = [0, 0]
 
 
+class AntennaLoop(Element):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        lead = 0.2
+        h = 0.5
+        self.segments.append(Segment(
+            [[0, 0], [0, lead], [-h, h+lead], [lead/2, h*2+1.5*lead],
+             [h+lead, h+lead], [lead, lead], [lead, 0]]))
+        self.params['drop'] = [0, 0]
+        self.params['theta'] = 0
+        self.anchors['start'] = [0, 0]
+        self.anchors['end'] = [lead, 0]
+
+
+class AntennaLoop2(Element):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        lead = .25
+        h = 1
+        x1 = -h/2-lead/2
+        x2 = x1 + lead
+        x3 = h/2+lead/2
+        x4 = x3 + lead
+        y1 = lead
+        y2 = lead*2
+        y3 = h+y2
+        y4 = y3+lead
+        self.segments.append(Segment(
+            [[0, 0], [0, y1], [x1, y1], [x1, y3], [x3, y3], [x3, y2],
+             [x2, y2], [x2, y4], [x4, y4], [x4, y1], [lead, y1], [lead, 0]]))
+        self.params['drop'] = [lead, 0]
+        self.params['theta'] = 0
+        self.anchors['start'] = [0, 0]
+        self.anchors['end'] = [lead, 0]
+
+
 class Vss(Element):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

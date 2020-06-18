@@ -1,11 +1,11 @@
 from .elements import Element, ElementDrawing, Element2Term
-from .twoterm import Resistor, ResistorBox, ResistorVar, Capacitor, Capacitor2, CapacitorVar, Diode, Schottky, DiodeTunnel, Zener, LED, LED2, Photodiode, Potentiometer, Diac, Triac, SCR, Memristor, Memristor2, Josephson, Fuse, Inductor, Inductor2, Crystal
-from .oneterm import Ground, GroundSignal, GroundChassis, Antenna, Vss, Vdd
+from .twoterm import Resistor, RBox, ResistorVar, Thermistor, Photoresistor, PhotoresistorBox, Capacitor, Capacitor2, CapacitorVar, CapacitorTrim, Diode, Schottky, DiodeTunnel, DiodeShockley, Zener, LED, LED2, Photodiode, Potentiometer, Diac, Triac, SCR, Memristor, Memristor2, Josephson, Fuse, Inductor, Inductor2, Crystal, Breaker
+from .oneterm import Ground, GroundSignal, GroundChassis, Antenna, AntennaLoop, AntennaLoop2, Vss, Vdd
 from .opamp import Opamp
-from .sources import Source, SourceV, SourceI, SourceSin, SourceControlled, SourceControlledV, SourceControlledI, BatteryCell, Battery, MeterV, MeterI, MeterA, MeterOhm, Lamp
+from .sources import Source, SourceV, SourceI, SourceSin, SourcePulse, SourceControlled, SourceControlledV, SourceControlledI, BatteryCell, Battery, MeterV, MeterI, MeterA, MeterOhm, Lamp, Solar, Neon
 from .switches import Switch, SwitchSpdt, SwitchSpdt2, SwitchDpst, SwitchDpdt, Button
 from .transistors import NFet, PFet, JFet, JFetN, JFetP, Bjt, BjtNpn, BjtPnp, BjtPnp2c
-from .misc import Speaker, Mic, Motor
+from .misc import Speaker, Mic, Motor, AudioJack
 from .xform import Transformer
 from .cables import Coax, Triax
 from .intcircuits import IcPin, Ic, Multiplexer

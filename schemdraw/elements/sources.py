@@ -39,6 +39,14 @@ class SourceSin(Source):
         self.segments.append(Segment(sin_path))
 
 
+class SourcePulse(Source):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        sq = .15
+        x = .4
+        self.segments.append(Segment([[x, sq*2], [x, sq], [x+sq, sq], [x+sq, -sq], [x, -sq], [x, -sq*2]]))
+
+
 class SourceControlled(Element2Term):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -84,6 +92,21 @@ class Battery(Element2Term):
         self.segments.append(Segment([[batw*3, bat2], [batw*3, -bat2]]))
 
 
+class Solar(Source):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        cellw = resheight*.5
+        cellw2 = cellw + .15
+        cellx = .4
+        self.segments.append(Segment([[cellx, cellw], [cellx, -cellw]]))
+        self.segments.append(Segment([[cellx+.2, cellw2], [cellx+.2, -cellw2]]))
+        self.segments.append(Segment([[0, 0], [cellx, 0], gap, [cellx+.2, 0], [1, 0]]))
+        self.segments.append(SegmentArrow([1.1, .9], [.8, .6],
+                                          headwidth=.12, headlength=.2))
+        self.segments.append(SegmentArrow([1.3, .7], [1, .4],
+                                          headwidth=.12, headlength=.2))
+
+
 class MeterV(Source):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -121,3 +144,14 @@ class Lamp(Source):
         y = (y - y[0]) * .25
         lamp_path = np.transpose(np.vstack((x, y)))
         self.segments.append(Segment(lamp_path))
+
+
+class Neon(Source):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        cellw = resheight
+        cellx = .4
+        self.segments.append(Segment([[cellx, cellw], [cellx, -cellw]]))
+        self.segments.append(Segment([[cellx+.2, cellw], [cellx+.2, -cellw]]))
+        self.segments.append(Segment([[0, 0], [cellx, 0], gap, [cellx+.2, 0], [1, 0]]))
+        self.segments.append(SegmentCircle([cellx-.15, .2], .05, fill=True))

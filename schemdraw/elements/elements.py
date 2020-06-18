@@ -389,18 +389,19 @@ class Element(object):
         fig = Figure()
         if self.cparams is None:
             self.place([0, 0], 0)
+        fig.set_bbox(self.get_bbox(transform=True))
         self.draw(fig)
         return fig
 
     def _repr_svg_(self):
         ''' SVG representation for Jupyter '''
         fig = self._draw_on_figure()
-        return fig.getimage(ext='svg', bbox=self.get_bbox(transform=True))
+        return fig.getimage(ext='svg')
 
     def _repr_png_(self):
         ''' PNG representation for Jupyter '''
         fig = self._draw_on_figure()
-        return fig.getimage(ext='png', bbox=self.get_bbox(transform=True))
+        return fig.getimage(ext='png')
 
     def draw(self, fig):
         ''' Draw the element '''

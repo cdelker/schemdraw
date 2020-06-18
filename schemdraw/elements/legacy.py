@@ -8,7 +8,7 @@ from .. import elements as elm
 
 RES = elm.Resistor
 RES_VAR = elm.ResistorVar
-RBOX = elm.ResistorBox
+RBOX = elm.RBox
 POT = elm.Potentiometer
 CAP = elm.Capacitor
 CAP_P = partial(elm.Capacitor, polar=True)

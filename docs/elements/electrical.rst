@@ -49,16 +49,18 @@ Some elements have optional parameters, shown in parenthesis in the table below.
 .. jupyter-execute::
     :hide-code:
 
-    elmlist = [Resistor, ResistorBox, ResistorVar, Potentiometer,
+    elmlist = [Resistor, RBox, ResistorVar, Potentiometer, Photoresistor,
+               PhotoresistorBox, Thermistor,
                Capacitor, partial(Capacitor, polar=True),
                Capacitor2, partial(Capacitor2, polar=True),
                CapacitorVar, Inductor, Inductor2, partial(Inductor2, loops=2), Diode,
-               partial(Diode, fill=True), Schottky, DiodeTunnel,
+               partial(Diode, fill=True), Schottky, DiodeTunnel, DiodeShockley,
                Zener, LED, LED2, Photodiode, Diac, Triac, SCR, Fuse,
                Crystal, Memristor, Memristor2, Josephson,
-               Source, SourceV, SourceI, SourceSin, SourceControlled,
+               Source, SourceV, SourceI, SourceSin, SourcePulse, SourceControlled,
                SourceControlledV, SourceControlledI, BatteryCell,
                Battery, MeterV, MeterA, MeterI, MeterOhm, Lamp, Motor,
+               Solar, Neon,
                Button, partial(Button, nc=True),
                Switch, partial(Switch, action='open'), partial(Switch, action='close'),
                Line, Arrow, partial(Arrow, double=True), LineDot, partial(LineDot, double=True)]
@@ -76,9 +78,15 @@ Single terminal elements are drawn about a single point, and do not move the cur
     # One-terminal, don't move position
     elmlist = [Ground, GroundSignal, GroundChassis,
                Dot, partial(Dot, open=True), DotDotDot,
-               Vss, Vdd, Antenna, Arrowhead]
+               Vss, Vdd, Arrowhead]
     drawElements(elmlist, dx=4)
 
+
+.. jupyter-execute::
+    :hide-code:
+    
+    elmlist = [Antenna, AntennaLoop, AntennaLoop2]
+    drawElements(elmlist, dx=4)
 
 Switches
 --------
@@ -105,8 +113,17 @@ Speakers and Microphones
     :hide-code:
     
     elmlist = [Speaker, Mic]
-    drawElements(elmlist, dx=5)
+    drawElements(elmlist, cols=2, dy=5, dx=5)
     
+    
+.. jupyter-execute::
+    :hide-code:
+    
+    elmlist = [AudioJack, partial(AudioJack, ring=True),
+               partial(AudioJack, switch=True),
+               partial(AudioJack, switch=True, ring=True, ringswitch=True)]
+    drawElements(elmlist, cols=1, dy=5)
+
     
 Labels
 ------

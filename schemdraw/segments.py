@@ -237,8 +237,6 @@ class SegmentPoly(object):
         ----------
         xy : array-like
             List of [x,y] coordinates making the polygon
-        transform : Transform instance
-            Transformation for the path to drawing coordinates
 
         Keyword Arguments
         -----------------
@@ -545,8 +543,6 @@ class SegmentArc(object):
             Height of the arc ellipse
         reverse : bool
             Element has been reversed
-        transform : Transform instance
-            Transformation for the path to drawing coordinates
 
         Keyword Arguments
         -----------------

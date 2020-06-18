@@ -414,7 +414,7 @@ Styling parameters include `color`, `fill`, `lw` (linewidth), `ls` (linestyle), 
     d.add(elm.Diode())
     d.add(elm.Diode(fill='red'))   # Fill overrides drawing value here
     d.add(elm.Resistor(fill='purple'))  # Fill has no effect on this non-closed element
-    d.add(elm.ResistorBox(color='orange', ls='--'))
+    d.add(elm.RBox(color='orange', ls='--'))
     d.add(elm.Resistor(lw=5))
 
 .. jupyter-execute::

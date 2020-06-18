@@ -103,6 +103,7 @@ class Button(Element2Term):
 @adddocs(Element)
 class SwitchDpst(Element):
     ''' Double-pole single-throw switch
+        Anchors: p1, p2, t1, t2
 
         Parameters
         ----------
@@ -131,6 +132,7 @@ class SwitchDpst(Element):
 @adddocs(Element)
 class SwitchDpdt(Element):
     ''' Double-pole double-throw switch
+        Anchors: p1, p2, t1, t2, t3, t4
 
         Parameters
         ----------

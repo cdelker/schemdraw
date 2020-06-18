@@ -237,5 +237,4 @@ class Drawing(object):
                 Dots-per-inch for raster formats
         '''
         fig = self.draw()
-        fig.save(fname, transparent=transparent, dpi=dpi,
-                 bbox=self.get_bbox(), inches_per_unit=self.inches_per_unit)
+        fig.save(fname, transparent=transparent, dpi=dpi)

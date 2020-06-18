@@ -20,7 +20,7 @@ class Resistor(Element2Term):
              [4.5*reswidth, resheight], [5.5*reswidth, -resheight], [6*reswidth, 0]]))
 
 
-class ResistorBox(Element2Term):
+class RBox(Element2Term):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.segments.append(Segment(
@@ -37,6 +37,30 @@ class ResistorVar(Resistor):
                                           headwidth=.12, headlength=.2))
         self.segments.append(Segment([[1.5*reswidth, -resheight*2],
                                       [4.5*reswidth, reswidth*3.5]]))
+
+
+class Thermistor(RBox):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.segments.append(Segment([[0, -resheight-.2], [.2, -resheight-.2], [1, resheight+.2]]))
+
+
+class Photoresistor(Resistor):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.segments.append(SegmentArrow([.7, .75], [.4, .4],
+                                          headwidth=.12, headlength=.2))
+        self.segments.append(SegmentArrow([1, .75], [.7, .4],
+                                          headwidth=.12, headlength=.2))
+
+
+class PhotoresistorBox(RBox):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.segments.append(SegmentArrow([.7, .75], [.4, .4],
+                                          headwidth=.12, headlength=.2))
+        self.segments.append(SegmentArrow([1, .75], [.7, .4],
+                                          headwidth=.12, headlength=.2))
 
 
 @adddocs(Element2Term)
@@ -89,6 +113,14 @@ class CapacitorVar(Capacitor):
                                           headwidth=.12, headlength=.2))
 
 
+class CapacitorTrim(Capacitor):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        capgap = 0.18
+        self.segments.append(SegmentArrow([-1.8*reswidth, -resheight], [1.8*reswidth+capgap, resheight],
+                                         headlength=.0001, headwidth=.3))
+
+
 class Crystal(Element2Term):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -130,6 +162,14 @@ class DiodeTunnel(Diode):
                                       [resheight*1.4-tunnel_width, resheight]]))
         self.segments.append(Segment([[resheight*1.4, -resheight],
                                       [resheight*1.4-tunnel_width, -resheight]]))
+
+
+class DiodeShockley(Element2Term):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.segments.append(Segment([[0, 0], [resheight*1.4, 0], [resheight*1.4, resheight],
+                                      [resheight*1.4, -resheight], gap, [resheight*1.4, 0]]))
+        self.segments.append(Segment([[0, -resheight], [0, resheight], [resheight*1.4, 0]]))
 
 
 class Zener(Diode):
@@ -278,14 +318,37 @@ class Josephson(Element2Term):
 class Fuse(Element2Term):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        fuser = .15
+        fuser = .12
         fusex = np.linspace(fuser*2, 1+fuser)
         fusey = np.sin(np.linspace(0, 1)*2*np.pi) * resheight
         self.segments.append(Segment(np.transpose(np.vstack((fusex, fusey)))))
         self.segments.append(Segment([[0, 0], gap, [1+fuser*3, 0]]))
-        fill = kwargs.get('fill', None)
-        self.segments.append(SegmentCircle([fuser, 0], fuser, zorder=4, fill=fill))
-        self.segments.append(SegmentCircle([fuser*2+1, 0], fuser, zorder=4, fill=fill))
+        if kwargs.get('dots', True):
+            fill = kwargs.get('fill', 'white')
+            self.segments.append(SegmentCircle([fuser, 0], fuser, zorder=4, fill=fill))
+            self.segments.append(SegmentCircle([fuser*2+1, 0], fuser, zorder=4, fill=fill))
+
+
+class Breaker(Element2Term):
+    ''' Circuit breaker
+
+        Parameters
+        ----------
+        dots : bool
+            Show connection dots
+    '''
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        dots = kwargs.get('dots', True)
+        theta1 = 25 if dots else 10
+        theta2 = 155 if dots else 170
+        self.segments.append(Segment([[0, 0], gap, [1, 0]]))
+        self.segments.append(SegmentArc([.5, 0], 1, .65, theta1=theta1, theta2=theta2))
+        if dots:
+            fill = kwargs.get('fill', 'white')
+            rad = .12
+            self.segments.append(SegmentCircle([rad, 0], rad, zorder=4, fill=fill))
+            self.segments.append(SegmentCircle([1-rad, 0], rad, zorder=4, fill=fill))
 
 
 def cycloid(loops=4, ofst=(0, 0), a=.06, b=.19, norm=True, vertical=False, flip=False):

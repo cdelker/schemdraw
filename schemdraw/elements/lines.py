@@ -122,7 +122,7 @@ class DotDotDot(Element):
         self.segments.append(SegmentCircle([1, 0], radius, fill=fill))
         self.segments.append(SegmentCircle([1.5, 0], radius, fill=fill))
         self.params['drop'] = [2, 0]
-
+        
 
 class Label(Element):
     def __init__(self, *args, **kwargs):

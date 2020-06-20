@@ -10,6 +10,7 @@ from .xform import Transformer
 from .cables import Coax, Triax
 from .intcircuits import IcPin, Ic, Multiplexer
 from .lines import Line, Dot, Arrowhead, Arrow, LineDot, DotDotDot, Gap, Label, CurrentLabel, CurrentLabelInline, LoopCurrent, Rect
+from .connectors import OrthoLines, RightLines, Header, Jumper, BusConnect, BusLine, DB25, DB9
 from .compound import ElementCompound, Optocoupler, Relay
 
 

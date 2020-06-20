@@ -4,6 +4,7 @@ import numpy as np
 
 from ..segments import Segment, SegmentText, SegmentCircle
 from ..elements import Element
+from .lines import Line
 from ..adddocs import adddocs
 
 
@@ -14,7 +15,7 @@ class IcPin(dict):
         -----------------
         name : string
             Input/output name (inside the box)
-        pinname : string
+        pin : string
             Pin name/number (outside the box)
         side : string
             Side of box for the pin, 'left', 'right', 'top', 'bottom'
@@ -47,32 +48,32 @@ class Ic(Element):
         pins : list
             List of IcPin instances defining the inputs/outputs
         pinspacing : float
-            Spacing between pins
+            Spacing between pins [1.25]
         edgepadH : float
-            Padding between top/bottom and first pin
+            Padding between top/bottom and first pin [.25]
         edgepadW : float
-            Padding between left/right and first pin
+            Padding between left/right and first pin [.25]
         lofst : float
-            Offset between edge and label (inside box)
+            Offset between edge and label (inside box) [.15]
         lsize : float
-            Font size of labels (inside box)
+            Font size of labels (inside box) [14]
         plblofst : float
-            Offset between edge and pin label (outside box)
+            Offset between edge and pin label (outside box) [.05]
         plblsize : float
-            Font size of pin labels (outside box)
+            Font size of pin labels (outside box) [11]
         slant : float
-            Slant angle of top/bottom edges (e.g. for multiplexers)
+            Slant angle of top/bottom edges (e.g. for multiplexers) [0]
     '''
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         pins = kwargs.get('pins', [])  # List of IcPin objects
-        pinspacing = kwargs.get('pinspacing', 1.25)
+        pinspacing = kwargs.get('pinspacing', 0.6)
         edgepadH = kwargs.get('edgepadH', .25)
         edgepadW = kwargs.get('edgepadW', .25)
         lblofst = kwargs.get('lofst', .15)   # lblofst would conflict with main IC label
         lblsize = kwargs.get('lsize', 14)
         leadlen = kwargs.get('leadlen', 0.5)
-        plblofst = kwargs.get('plblofst', .1)
+        plblofst = kwargs.get('plblofst', .05)
         plblsize = kwargs.get('plblsize', 11)
         slant = kwargs.get('slant', 0)
 
@@ -105,6 +106,8 @@ class Ic(Element):
 
             w = max(w, 2)  # Keep a minimum width for cases with 0-1 pins
             h = max(h, 2)
+            w = kwargs.get('w', w)
+            h = kwargs.get('h', h)
         else:
             w, h = kwargs.get('size')
 
@@ -276,3 +279,4 @@ class Multiplexer(Ic):
         demux = kwargs.pop('demux', False)
         slant = -slant if not demux else slant
         super().__init__(*args, slant=slant, **kwargs)
+

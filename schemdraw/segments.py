@@ -10,6 +10,73 @@ from .transform import mirror_point, mirror_array, flip_point
 BBox = namedtuple('BBox', ['xmin', 'ymin', 'xmax', 'ymax'])
 
 
+def roundcorners(verts, radius=.5):
+    ''' Round the corners of polygon defined by verts.
+        Works for convex polygons assuming radius fits inside.
+    
+        Parameters
+        ----------
+        verts : list
+            List of (x,y) pairs defining corners of polygon
+        radius : float
+            Radius of curvature
+    
+        Adapted from:
+        https://stackoverflow.com/questions/24771828/algorithm-for-creating-rounded-corners-in-a-polygon
+    '''
+    poly = []
+    for v in range(len(verts))[::-1]:
+        p1 = verts[v]
+        p2 = verts[v-1]
+        p3 = verts[v-2]
+
+        dx1 = p2[0]-p1[0]
+        dy1 = p2[1]-p1[1]
+        dx2 = p2[0]-p3[0]
+        dy2 = p2[1]-p3[1]
+
+        angle = (np.arctan2(dy1, dx1) - np.arctan2(dy2, dx2))/2
+        tan = abs(np.tan(angle))
+        segment = radius/tan
+
+        def getlength(x, y):
+            return np.sqrt(x*x + y*y)
+
+        def getproportionpoint(point, segment, length, dx, dy):
+            factor = segment/length
+            return np.asarray([point[0]-dx * factor,
+                               point[1]-dy * factor])
+
+        length1 = getlength(dx1, dy1)
+        length2 = getlength(dx2, dy2)
+        length = min(length1, length2)
+
+        if segment > length:
+            segment = length
+            radius = length * tan
+
+        p1cross = getproportionpoint(p2, segment, length1, dx1, dy1)
+        p2cross = getproportionpoint(p2, segment, length2, dx2, dy2)
+
+        dx = p2[0]*2 - p1cross[0] - p2cross[0]
+        dy = p2[1]*2 - p1cross[1] - p2cross[1]
+        L = getlength(dx, dy)
+        d = getlength(segment, radius)
+        circlepoint = getproportionpoint(p2, d, L, dx, dy)
+        startangle = np.arctan2(p1cross[1] - circlepoint[1], p1cross[0]-circlepoint[0])
+        endangle = np.arctan2(p2cross[1] - circlepoint[1], p2cross[0]-circlepoint[0])        
+        startangle, endangle = np.unwrap([startangle, endangle])
+        
+        arc = []
+        for i in np.linspace(startangle, endangle, 100):
+            arc.append([circlepoint[0] + np.cos(i)*radius,
+                        circlepoint[1] + np.sin(i)*radius])
+
+        poly.extend(arc)
+    poly.append(poly[0])  # Close the loop
+    return np.asarray(poly)
+
+
 class Segment(object):
     ''' A segment (path), part of an Element.
 
@@ -242,6 +309,8 @@ class SegmentPoly(object):
         -----------------
         closed : bool
             Draw a closed polygon (default True)
+        cornerradius : float
+            Round the corners to this radius (0 for no rounding)
         color : string
             Color for this segment
         lw : float
@@ -256,6 +325,7 @@ class SegmentPoly(object):
     def __init__(self, verts, **kwargs):
         self.verts = verts
         self.closed = kwargs.get('closed', None)
+        self.cornerradius = kwargs.get('cornerradius', 0)
         self.color = kwargs.get('color', None)
         self.fill = kwargs.get('fill', None)
         self.joinstyle = kwargs.get('joinstyle', None)
@@ -283,6 +353,7 @@ class SegmentPoly(object):
                   'capstyle': self.capstyle,
                   'lw': self.lw,
                   'ls': self.ls,
+                  'cornerradius': self.cornerradius,
                   'zorder': self.zorder}
         params.update(style)
         return SegmentPoly(transform.transform(self.verts), **params)
@@ -324,6 +395,10 @@ class SegmentPoly(object):
 
         fill = color if fill is True else None if fill is False else fill
         verts = transform.transform(self.verts)
+        
+        if self.cornerradius > 0:
+            verts = roundcorners(verts, self.cornerradius)
+        
         fig.poly(verts, closed=closed, color=color, fill=fill, lw=lw, ls=ls,
                  capstyle=capstyle, joinstyle=joinstyle, zorder=zorder)
 

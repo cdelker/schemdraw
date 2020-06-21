@@ -1,5 +1,6 @@
 ''' Connectors and bus lines '''
 
+import warnings
 import numpy as np
 
 from ..segments import Segment, SegmentText, SegmentCircle, SegmentPoly
@@ -131,6 +132,8 @@ class Header(Element):
             Distance between pins [0.6]
         edge : float
             Distance between header edge and first pin row/column [0.3]
+        pinfill : string
+            Color to fill pin circles            
     '''
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -147,6 +150,8 @@ class Header(Element):
         pinfontsizeleft = kwargs.get('pinfontsizeleft', 9)
         pinfontsizeright = kwargs.get('pinfontsizeright', 9)
         edge = kwargs.get('edge', .3)
+        self.params['theta'] = 0
+        pinfill = kwargs.get('pinfill', 'white')
         if cols > 2:
             warnings.warn('Header numbering not supported with cols > 2')
         
@@ -166,16 +171,16 @@ class Header(Element):
                                                      fill='white', zorder=4))
                 elif style == 'screw':
                     x, y = xy                    
-                    self.segments.append(SegmentCircle(xy, pinrad*1.75, fill='white', zorder=4))
+                    self.segments.append(SegmentCircle(xy, pinrad*1.75, fill=pinfill, zorder=4))
                     self.segments.append(Segment([[x+pinrad, y+pinrad], [x-pinrad, y-pinrad]], zorder=5))
                     
                 else:  # style == 'round'
-                    self.segments.append(SegmentCircle(xy, pinrad, fill='white', zorder=4))
+                    self.segments.append(SegmentCircle(xy, pinrad, fill=pinfill, zorder=4))
 
                 if number == 'lr' or number is True:
                     pnumber = str(row*cols + col + 1)
                 elif number == 'ud':
-                    pnumber = str(row*cols + col + 1)
+                    pnumber = str(row + col*rows + 1)
                 else: # number == 'ccw'
                     pnumber = str(rows*col+(rows-row)) if col%2 else str(row+1)
                 self.anchors['p{}'.format(pnumber)] = xy

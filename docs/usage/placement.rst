@@ -66,7 +66,7 @@ Rather than using exact numerical coordinates, the `at` keyword will usually be 
 
 An anchor is simply a predefined position within an element.
 Two-terminal elements have anchors named `start`, `center`, and `end`.
-Three-terminal elements have other named anchors, for example an OPAMP has `in1`, `in2`, and `out` anchors.
+Three-terminal elements have other named anchors, for example an Opamp has `in1`, `in2`, and `out` anchors.
 
 Once an element is added to the drawing, it contains attributes defining the coordinates of all the element's anchors.
 For example, to draw an opamp and place a resistor on the output, store the return from `add` to a variable. Then set the `at` parameter of the new element as the `out` attribute of the existing element. The current Drawing position is ignored, and reset to the endpoint of the resistor.
@@ -79,7 +79,7 @@ For example, to draw an opamp and place a resistor on the output, store the retu
 .. jupyter-execute::
     :hide-output:
 
-    opamp = d.add(elm.OPAMP)
+    opamp = d.add(elm.Opamp)
     d.add(elm.Resistor('right', at=opamp.out))
 
 .. jupyter-execute::

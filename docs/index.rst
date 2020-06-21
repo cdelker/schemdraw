@@ -46,11 +46,12 @@ Display the results using the `draw` method.
    usage/customizing   
    elements/electrical
    elements/intcircuits
+   elements/connectors
    elements/compound
    elements/logic 
    elements/dsp
    elements/flow
-   gallery/gallery
+   gallery/index
 
 
 

@@ -1,29 +1,70 @@
 v0.7.DEV
-    - Added COAX and TRIAX elements and functions for customizing coax and triax
-    - Allow fontsize or size keyword arguments interchangeably in Drawing and add_label
-    - Added ARROW, ARROW_DOUBLE, LINE_DOT, LINE_DOT_DOUBLE for use in flowcharting
-    - Updated flow.decision to use keyword arguments for labeling decision branches
+
+    - Dropped support for Python 2. Now requires 3.7+.
+    - Elements are now subclasses of Element. Previous (dict) element names are translated into
+      new class names. Any user-defined elements will need to be converted to classes.
+      The `group_elements` function is replaced with `ElementDrawing` class.      
+    - Allow `fontsize` or `size` keyword arguments interchangeably in Drawing and add_label
+    - Updated flow.Decision to use keyword arguments for labeling decision branches
+    - The Ic element label offset parameter changed from `lblofst` to `lofst` 
+      to avoid conflict with the main element label.
+    - Direct access to Drawing.fig and Drawing.ax are no longer available. Instead, Drawing.draw()
+      returns a schemdraw.Figure instance with fig and ax attributes.
+    - Implemented Jupyter representation functions for both Drawing and Element classes.
+
+    - New Elements:
+        - Coax
+        - Triax
+        - SwitchDpst
+        - SwitchDpdt
+        - Relay
+        - Optocoupler
+        - Arrow
+        - LineDot
+        - Breaker
+        - OrthoLines
+        - RightLines
+        - BusConnect
+        - BusLine
+        - Tag
+        - Photoresistor
+        - PhotoresistorBox
+        - Thermistor
+        - DiodeShockley
+        - PotBox
+        - RBoxVar
+        - Solar
+        - Neon
+        - SourceSquare
+        - AntennaLoop
+        - AntennaLoop2
+        - AudioJack
+        - Tgate
+        - Schmitt
+        - SchmittNot
+        - SchmittAnd
+        - SchmittNand
+
 
 v0.6.0, 11-Feb-2020
-    - Possibly breaking changes:
-        - Refactored internals to allow more control over individual components of drawing.
-          Should have no effect unless the user is accessing internal attributes of the Element object.
-          This also adds the `segments` list to the Element object, which allows finer control over 
-          individual bits of the drawing.
-        - Updated add_label so that "top" labels should always appear on top, regardless of flip/reverse
-        - Swapped the direction of current sources, so that a current source with direction "up" has the
-          arrow pointing up.
 
-    - Enhancements:
-        - Added "zorder" parameter in the element definition dictionary and `add` method
-        - Added `elements.ic` and `elements.multiplexer` functions as replacements to `blackbox` and `mux`.
-          These include more functionality such as adjusting indiviudal pin rotation, color, and inverter bubbles.
-        - Labels can be placed relative to an anchor position using the `add_label` method. This could be
-          useful, for example, in labeling pin numbers on a logic gate or opamp.
+    - Refactored internals to allow more control over individual components of drawing.
+      Should have no effect unless the user is accessing internal attributes of the Element object.
+      This also adds the `segments` list to the Element object, which allows finer control over 
+      individual bits of the drawing.
+    - Updated add_label so that "top" labels should always appear on top, regardless of flip/reverse
+    - Swapped the direction of current sources, so that a current source with direction "up" has the
+      arrow pointing up.
+    - Added "zorder" parameter in the element definition dictionary and `add` method
+    - Added `elements.ic` and `elements.multiplexer` functions as replacements to `blackbox` and `mux`.
+      These include more functionality such as adjusting indiviudal pin rotation, color, and inverter bubbles.
+    - Labels can be placed relative to an anchor position using the `add_label` method. This could be
+      useful, for example, in labeling pin numbers on a logic gate or opamp.
+    - Added new anchors to OPAMPs for power supply and offset nulls.      
         
-    - Circuit Elements:
-        - Added: MIC, MOTOR
-        - Added new anchors to OPAMPs for power supply and offset nulls.
+    - New Elements:
+        - MIC
+        - MOTOR
 
     - Documentation:
         - Upgraded documentation to Sphinx and moved to readthedocs.org at https://schemdraw.readthedocs.io/en/latest/.
@@ -35,7 +76,15 @@ v0.5.0, 21-Jul-2019
     - Added flowcharting symbol methods to SchemDraw.flow module
     - Added signal processing symbols to SchemDraw.dsp module
     - Implemented fill parameter on Drawing.add to fill shapes and closed paths with a solid color
-    - New elements: fuse, variable capacitor, tunnel diode, JFET, DIAC, TRIAC, SCR
+    - New elements:
+        - Fuse
+        - CapacitorVar,
+        - DiodeTunnel
+        - Jfet
+        - Diac
+        - Triac
+        - SCR
+
 
 v0.4.0, 03-Nov-2018
     - Fixed drawing of NOT and related gates to property extend the path
@@ -43,43 +92,68 @@ v0.4.0, 03-Nov-2018
     - Fixed sidelabels and plabels of blackbox when empty
     - Fixed arc drawing due to change in Matplotlib 2.2 on asymmetric partial arcs
 
+
 v0.3.0, 03-Jul-2017
     - Added function for drawing multiplexers/demultiplexers
     - Updates to labelI() method to allow reversing arrow and changing length
-    - New elements: PHOTODIODE, NFET4, PFET4, VSS, VDD
     - Add CSS to documentation
+    - New elements:
+        - PHOTODIODE
+        - NFET4
+        - PFET4
+        - VSS
+        - VDD
+
 
 v0.2.2, 06-Mar-2016
-    - Added function for drawing transformers
-    - Added JJ Josephson Junction element
     - Documentation updates
-    
+    - New elements:
+        - Transformer
+        - Josephson Junction (JJ)
+
+
 v0.2.1, 03-May-2015
     - Fixed anchor names when element overwrites base anchor, such as BJT_PNP.
     - Added showplot keyword to draw() for non-interactive mode.
     - Added 2-collector BJT.
     - Documentation: added gallery of schematics.
-    
+
+
 v0.2.0, 29-Apr-2015
-    - Added elements: 
-      BATTERY, BAT_CELL, SPEAKER, BUTTON, BUTTON_NC, XTAL, MEMRISTOR,
-      SCHOTTKY, ZENER, LED2
     - Added default line width argument to drawing() class. Default width is now 1.5.
     - Converted documentation to use all vector-based images
     - Added XKCD-mode example
+    - New elements: 
+        - BATTERY
+        - BAT_CELL
+        - SPEAKER
+        - BUTTON
+        - BUTTON_NC
+        - XTAL
+        - MEMRISTOR,
+        - SCHOTTKY
+        - ZENER
+        - LED2
+
 
 v0.1.4, 30-Sep-2014
-    - Added elements: LED, OPAMP_NOSIGN, GAP_LABEL, ELLIPSIS
     - Add function to group several elements into one
     - Add blackbox() function to generate box elements with arbitrary inputs
     - Allow element definition to specify label alignment
     - Added linestyle to element kwargs and definition
+    - New elements:
+        - LED
+        - OPAMP_NOSIGN
+        - GAP_LABEL
+        - ELLIPSIS
+
 
 v0.1.3, 21-Sep-2014
     - Added logic gate elements
     - Added transparent and dpi options to save() function
     - Fixed issues with zooming and rotating elements with arcs
     - LaTeX typesetting uses sans-serif, regular fonts for consistency
-    
+
+
 v0.1.0, 25-Aug-2014
     - Initial Release

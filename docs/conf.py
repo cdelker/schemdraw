@@ -32,7 +32,9 @@ release = pkg_resources.get_distribution(project).version
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'jupyter_sphinx.execute'
+    'jupyter_sphinx',
+    'sphinx.ext.autodoc',
+    'sphinx.ext.napoleon'
 ]
 
 # Add any paths that contain templates here, relative to this directory.

@@ -1,5 +1,5 @@
-from .schemdraw import Element
 from .schemdraw import Drawing
-from .schemdraw import group_elements
+from .segments import Segment, SegmentCircle, SegmentArc, SegmentText, SegmentPoly, SegmentArrow
+from .transform import Transform
 
-__version__ = '0.7a1'
+__version__ = '0.7a2'

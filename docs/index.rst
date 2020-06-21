@@ -29,10 +29,6 @@ Display the results using the `draw` method.
     d.add(elm.Line(d='left'))
     d.add(elm.SourceSin(d='up', label='10V'))
     d.draw()
-    
-
-.. TODO: add a changes page
-
 
 
 
@@ -52,7 +48,7 @@ Display the results using the `draw` method.
    elements/dsp
    elements/flow
    gallery/index
-
+   changes
 
 
 

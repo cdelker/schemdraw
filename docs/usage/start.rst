@@ -16,6 +16,8 @@ or directly by downloading the source and running
 
     python setup.py install
 
+Starting with version 0.7, schemdraw requires Python 3.7+.
+
 
 Jupyter Notebooks
 -----------------

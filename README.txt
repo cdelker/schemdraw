@@ -5,11 +5,11 @@ SchemDraw is a python package for producing high-quality electrical circuit sche
         import SchemDraw
         import SchemDraw.elements as elm
         d = SchemDraw.Drawing()
-        d.add(elm.RES, label='100K$\Omega$')
-        d.add(elm.CAP, d='down', botlabel='0.1$\mu$F')
-        d.add(elm.LINE, d='left')
-        d.add(elm.GND)
-        d.add(elm.SOURCE_V, d='up', label='10V')
+        d.add(elm.Resistor(label='100K$\Omega$'))
+        d.add(elm.Capacitor(d='down', botlabel='0.1$\mu$F'))
+        d.add(elm.Line(d='left'))
+        d.add(elm.Ground)
+        d.add(elm.SourceV(d='up', label='10V'))
         d.draw()
         d.save('schematic.svg')
 

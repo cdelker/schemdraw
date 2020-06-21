@@ -34,7 +34,7 @@ Recreation of `XKCD 1195 <https://xkcd.com/1195/>`_.
     d.add(flow.Line('down', l=d.unit/4))
     d.add(flow.Line('right', l=d.unit*1.1))
     d.add(flow.Line('up', toy=h.E))
-    d.add(flow.Line('left', tox=h.E))
+    d.add(flow.Arrow('left', tox=h.E))
     d.draw()
 
 Flowchart for flowcharts

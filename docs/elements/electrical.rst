@@ -49,7 +49,7 @@ Some elements have optional parameters, shown in parenthesis in the table below.
 .. jupyter-execute::
     :hide-code:
 
-    elmlist = [Resistor, RBox, ResistorVar, Potentiometer, Photoresistor,
+    elmlist = [Resistor, RBox, ResistorVar, RBoxVar, Potentiometer, PotBox, Photoresistor,
                PhotoresistorBox, Thermistor,
                Capacitor, partial(Capacitor, polar=True),
                Capacitor2, partial(Capacitor2, polar=True),
@@ -57,7 +57,8 @@ Some elements have optional parameters, shown in parenthesis in the table below.
                partial(Diode, fill=True), Schottky, DiodeTunnel, DiodeShockley,
                Zener, LED, LED2, Photodiode, Diac, Triac, SCR, Fuse,
                Crystal, Memristor, Memristor2, Josephson,
-               Source, SourceV, SourceI, SourceSin, SourcePulse, SourceControlled,
+               Source, SourceV, SourceI, SourceSin, SourcePulse, SourceSquare, SourceTriangle,
+               SourceRamp, SourceControlled,
                SourceControlledV, SourceControlledI, BatteryCell,
                Battery, MeterV, MeterA, MeterI, MeterOhm, Lamp, Motor,
                Solar, Neon,
@@ -136,11 +137,12 @@ The `Gap` is like an "invisible" element, useful for marking the voltage between
 
     d = schemdraw.Drawing(fontsize=12)
     d.add(elm.Line, d='right', l=1)
-    d.add(elm.Label, xy=[3,-.5], label='Label')
     d.add(elm.Dot, open=True)
-    d.add(elm.Gap, d='down', label=['+','Gap','$-$'])  # Use math mode to make it a minus, not a hyphen.
+    d.add(elm.Gap, d='down', label=['+','Gap','–'])
     d.add(elm.Dot, open=True)
     d.add(elm.Line, d='left', l=1)
+    d.add(elm.Label, xy=[3.5,-.5], label='Label')
+    d.add(elm.Tag('r', at=[3, -2], label='Tag'))
     d.draw()
     
     
@@ -243,9 +245,15 @@ Triax parameters include length, radiusinner, radiusouter, leadlen, and shieldof
     d.add(elm.Line(theta=135, xy=C.guardstart_top, l=.3, lftlabel='guardstart_top', color='blue'))
     d.add(elm.Line(theta=-145, xy=C.guardstart, l=.5, lftlabel='guardstart', color='blue'))
     d
-    
-    
-    
+
+
+.. jupyter-execute::
+    :hide-code:
+
+    elmlist = [CoaxConnect]
+    drawElements(elmlist, dx=1, dy=1)
+
+
 Transformers
 ------------
 

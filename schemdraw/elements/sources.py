@@ -47,6 +47,24 @@ class SourcePulse(Source):
         self.segments.append(Segment([[x, sq*2], [x, sq], [x+sq, sq], [x+sq, -sq], [x, -sq], [x, -sq*2]]))
 
 
+class SourceTriangle(Source):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.segments.append(Segment([[.4, .25], [.7, 0], [.4, -.25]]))
+
+class SourceRamp(Source):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.segments.append(Segment([[.4, .25], [.8, -.2], [.4, -.2]]))
+
+
+class SourceSquare(Source):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.segments.append(Segment([[.5, .25], [.7, .25], [.7, 0],
+                                      [.3, 0], [.3, -.25], [.5, -.25]]))
+
+
 class SourceControlled(Element2Term):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

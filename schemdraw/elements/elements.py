@@ -326,6 +326,8 @@ class Element(object):
         xmin = self.bbox.xmin
         ymax = self.bbox.ymax
         ymin = self.bbox.ymin
+        if not np.isfinite(xmax+xmin+ymax+ymin):
+            xmax = xmin = ymax = ymin = .1
 
         lblparams = dict(ChainMap(kwargs, self.cparams))
         lblparams.pop('label', None)  # Can't pop from nested chainmap, convert to flat dict first

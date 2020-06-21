@@ -1,8 +1,8 @@
 ''' Lines, Arrows, and Labels '''
 
-from ..segments import Segment, SegmentArrow, SegmentCircle, SegmentArc
+from ..segments import Segment, SegmentArrow, SegmentCircle, SegmentArc, SegmentPoly
 from .elements import Element
-from .twoterm import Element2Term, gap
+from .twoterm import Element2Term, gap, resheight
 from ..adddocs import adddocs
 
 
@@ -129,6 +129,28 @@ class Label(Element):
         super().__init__(*args, **kwargs)
         self.params['lblloc'] = 'center'
         self.params['lblofst'] = 0
+
+
+@adddocs(Element)
+class Tag(Element):
+    ''' Tag/flag element for labeling signal names.
+        Because text size is unknown until drawn, must specify width manually.
+
+        Parameters
+        ----------
+        width : float
+            Width of the tag    
+    '''
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        width = kwargs.get('width', 1.5)
+        h = resheight * 1.25
+        self.segments.append(SegmentPoly([[0, 0], [h, h], [width, h],
+                                          [width, -h], [h, -h]]))
+        self.params['lblloc'] = 'center'
+        self.params['fontsize'] = 12
+        self.params['lblofst'] = 0
+        self.anchors['start'] = [0, 0]
 
 
 @adddocs(Element)

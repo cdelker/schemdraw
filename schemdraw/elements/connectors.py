@@ -367,3 +367,31 @@ class DB25(Element):
                 self.segments.append(SegmentText([xy[0], xy[1]+pinrad], 
                                                  str(13-i), fontsize=9,
                                                  align=('center', 'bottom')))
+
+@adddocs(Element)
+class CoaxConnect(Element):
+    ''' Coaxial connector
+        Anchors: `center`, `N`, `S`, `E`, `W`
+
+        Parameters
+        ----------
+        radius : float
+            Radius of outer shell
+        radiusinner : float
+            Radius of inner conductor
+        fillinner : string
+            Color to fill inner conductor
+    '''
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        rad = kwargs.get('radius', .4)
+        radinner = kwargs.get('radiusinner', .12)
+        fillin = kwargs.get('fillinner', 'white')
+
+        self.segments.append(SegmentCircle([0, 0], rad))
+        self.segments.append(SegmentCircle([0, 0], radinner, fill=fillin, zorder=4))
+        self.anchors['center'] = [0, 0]
+        self.anchors['N'] = [0, rad]
+        self.anchors['S'] = [0, -rad]
+        self.anchors['E'] = [rad, 0]
+        self.anchors['W'] = [-rad, 0]

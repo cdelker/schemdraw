@@ -17,7 +17,7 @@ Logic gates can be drawn by importing the :py:mod:`logic` module:
 
 
 Logic gates are shown below. Gates define anchors for `out` and `in1`, `in2`, etc.
-`Buf`, `Not`, and `NotNot` are two-terminal elements that extend leads.
+`Buf`, `Not`, and `NotNot`, and their Schmitt-trigger counterparts, are two-terminal elements that extend leads.
 
 
 .. jupyter-execute::
@@ -34,7 +34,8 @@ Logic gates are shown below. Gates define anchors for `out` and `in1`, `in2`, et
         return d
 
     elms = ['And', 'Nand', 'Or', 'Nor', 'Xor', 'Xnor',
-            'Buf', 'Not', 'NotNot']
+            'Buf', 'Not', 'NotNot', 'Tgate',
+            'Schmitt', 'SchmittNot', 'SchmittAnd', 'SchmittNand']
     drawElements(elms, dx=6)
 
 

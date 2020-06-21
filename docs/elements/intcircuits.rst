@@ -76,9 +76,9 @@ Here, a J-K flip flop, as part of an HC7476 integrated circuit, is drawn with in
                      elm.IcPin(name='$\overline{Q}$', pin='14', side='right', anchorname='QBAR'),
                      elm.IcPin(name='Q', pin='15', side='right')],
                 edgepadW = .5,  # Make it a bit wider
-                label='HC7476',
+                botlabel='HC7476',
                 lblsize=12,
-                lblofst=0.5)
+                pinspacing=1)
     display(JK)
 
 

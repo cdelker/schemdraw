@@ -35,8 +35,14 @@ class ResistorVar(Resistor):
         self.segments.append(SegmentArrow([1.5*reswidth, -resheight*2],
                                           [4.5*reswidth, reswidth*3.5],
                                           headwidth=.12, headlength=.2))
-        self.segments.append(Segment([[1.5*reswidth, -resheight*2],
-                                      [4.5*reswidth, reswidth*3.5]]))
+
+
+class RBoxVar(RBox):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.segments.append(SegmentArrow([1*reswidth, -resheight*2],
+                                          [5*reswidth, reswidth*3.5],
+                                          headwidth=.12, headlength=.2))
 
 
 class Thermistor(RBox):
@@ -61,7 +67,6 @@ class PhotoresistorBox(RBox):
                                           headwidth=.12, headlength=.2))
         self.segments.append(SegmentArrow([1, .75], [.7, .4],
                                           headwidth=.12, headlength=.2))
-
 
 @adddocs(Element2Term)
 class Capacitor(Element2Term):
@@ -248,6 +253,17 @@ class Potentiometer(Resistor):
         self.segments.append(SegmentArrow([reswidth*3, potheight], [reswidth*3, reswidth*1.5],
                                           headwidth=.15, headlength=.25))
 
+
+@adddocs(Element2Term)
+class PotBox(RBox):
+    ''' Potentiometer using box resistor element. Anchors: `tap` '''
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        potheight = .72
+        self.anchors['tap'] = [reswidth*3, potheight]
+        self.params['lblloc'] = 'bot'
+        self.segments.append(SegmentArrow([reswidth*3, potheight], [reswidth*3, reswidth*2],
+                                          headwidth=.15, headlength=.22))
 
 class Diac(Element2Term):
     def __init__(self, *args, **kwargs):

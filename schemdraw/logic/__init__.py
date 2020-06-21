@@ -1,4 +1,4 @@
-from .logic import And, Nand, Or, Nor, Xor, Xnor, Buf, Not, NotNot
+from .logic import And, Nand, Or, Nor, Xor, Xnor, Buf, Not, NotNot, Tgate, Schmitt, SchmittNot, SchmittAnd, SchmittNand
 from ..elements import Arrow, Arrowhead, Dot, Line
 
 

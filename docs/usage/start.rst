@@ -76,15 +76,19 @@ The `d` keyword specifies the drawing direction, either 'right', 'left', 'up', o
 The `at` keyword specifies the exact coordinates for the starting point of the element.
 If `d` is not supplied, the element will be drawn in the same direction as the previous element, and if `at` is not supplied, the element will start at the endpoint of the previously added element.
 
-To display and optionally save the drawing to a file:
+To display the schematic, call `d.draw()`. In Jupyter, this will show the schematic inline as the cell output.
+If run as a script, the schematic will display in the interactive matplotlib window.
 
 .. jupyter-execute::
 
-    display(d.draw())
-    d.save('basic_rc.svg')
-
+    d.draw()
+    
 When saving, the image type is determined from the extension.
 Options include `svg`, `eps`, `png`, `pdf`, and `jpg`.
 A vector format, such as `svg` is recommended for best results.
+
+.. code-block:: python
+
+    d.save('basic_rc.svg')
 
 For full details of placing and stylizing elements, see :ref:`placement`.

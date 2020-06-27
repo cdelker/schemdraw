@@ -3,8 +3,11 @@
 from io import StringIO, BytesIO
 import numpy as np
 
+import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.patches import Arc
+
+inline = 'inline' in matplotlib.get_backend()
 
 
 class Figure(object):
@@ -21,7 +24,7 @@ class Figure(object):
             Show Matplotlib axis frame
     '''
     def __init__(self, **kwargs):
-        self.fig = plt.Figure()
+        self.fig = plt.figure()
         self.fig.subplots_adjust(
             left=0.05,
             bottom=0.05,
@@ -37,6 +40,13 @@ class Figure(object):
         ''' Set bounding box, to override Matplotlib's autoscale '''
         self.bbox = bbox
         
+    def show(self):
+        ''' Display figure in interactive window '''
+        if not inline:
+            self.getfig()
+            plt.show()
+        plt.close()
+
     def plot(self, x, y, color='black', ls='-', lw=2, fill=None,
              capstyle='round', joinstyle='round',  zorder=2):
         ''' Plot a path '''

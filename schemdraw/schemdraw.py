@@ -221,7 +221,8 @@ class Drawing(object):
                      showframe=showframe)
         for element in self.elements:
             element.draw(fig)
-        return fig
+        fig.show()  # Show figure in window if not inline/Jupyter mode
+        return fig  # Otherwise return Figure and let _repr_ display it
 
     def save(self, fname, transparent=True, dpi=72):
         ''' Save figure to a file

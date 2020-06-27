@@ -1,4 +1,9 @@
-v0.7.DEV
+v0.7.1 - 26-Jun-2020
+
+    - Bug fix: restore usage outside of Jupyter, so that Matplotlib window is shown when calling Drawing.draw().
+
+
+v0.7 - 21-Jun-2020
 
     - Dropped support for Python 2. Now requires 3.7+.
     - Elements are now subclasses of Element. Previous (dict) element names are translated into

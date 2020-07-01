@@ -24,7 +24,10 @@ class Figure(object):
             Show Matplotlib axis frame
     '''
     def __init__(self, **kwargs):
-        self.fig = plt.figure()
+        if inline:
+            self.fig = plt.Figure()
+        else:
+            self.fig = plt.figure()
         self.fig.subplots_adjust(
             left=0.05,
             bottom=0.05,

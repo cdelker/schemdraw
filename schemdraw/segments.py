@@ -572,9 +572,9 @@ class SegmentArrow(object):
         '''
         hw = self.headwidth if self.headwidth else .1
         xmin = min(self.tail[0], self.head[0])
-        ymin = min(self.tail[1], self.head[1]-hw)
+        ymin = min(self.tail[1], self.head[1])
         xmax = max(self.tail[0], self.head[0])
-        ymax = max(self.tail[1], self.head[1]+hw)
+        ymax = max(self.tail[1], self.head[1])
         return BBox(xmin, ymin, xmax, ymax)
 
     def end(self):

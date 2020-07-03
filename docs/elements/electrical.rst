@@ -14,7 +14,7 @@ These elements are defined in the `schemdraw.elements` module.
     from schemdraw import elements as elm
     from schemdraw.elements import *
     
-    def drawElements(elmlist, cols=3, dx=8, dy=2):
+    def drawElements(elmlist, cols=3, dx=8, dy=2, lblofst=None):
         d = schemdraw.Drawing(fontsize=12)
         for i, e in enumerate(elmlist):
             y = i//cols*-dy
@@ -25,7 +25,7 @@ These elements are defined in the `schemdraw.elements` module.
                 args = ', '.join(['{}={}'.format(k, v) for k, v in e.keywords.items()])
                 name = '{}({})'.format(name, args)
             eplaced = d.add(e, d='right', xy=[x, y])
-            eplaced.add_label(name, loc='rgt', align=('left', 'center'))
+            eplaced.add_label(name, loc='rgt', align=('left', 'center'), ofst=lblofst)
             anchors = eplaced.absanchors.copy()
             anchors.pop('start', None)
             anchors.pop('end', None)
@@ -114,7 +114,7 @@ Speakers and Microphones
     :hide-code:
     
     elmlist = [Speaker, Mic]
-    drawElements(elmlist, cols=2, dy=5, dx=5)
+    drawElements(elmlist, cols=2, dy=5, dx=5, lblofst=[.5, 0])
     
     
 .. jupyter-execute::
@@ -123,7 +123,7 @@ Speakers and Microphones
     elmlist = [AudioJack, partial(AudioJack, ring=True),
                partial(AudioJack, switch=True),
                partial(AudioJack, switch=True, ring=True, ringswitch=True)]
-    drawElements(elmlist, cols=1, dy=5)
+    drawElements(elmlist, cols=1, dy=5, lblofst=[1.5, 0])
 
     
 Labels
@@ -205,7 +205,7 @@ Field-Effect Transistors
 
     elmlist = [NFet, partial(NFet, bulk=True), partial(PFet, bulk=True),
                JFet, JFetN, JFetP, partial(JFetN, circle=True), partial(JFetP, circle=True)]
-    drawElements(elmlist, dx=6.5, dy=3)
+    drawElements(elmlist, dx=6.5, dy=3, lblofst=[0, -.8])
 
 
 
@@ -251,7 +251,7 @@ Triax parameters include length, radiusinner, radiusouter, leadlen, and shieldof
     :hide-code:
 
     elmlist = [CoaxConnect]
-    drawElements(elmlist, dx=1, dy=1)
+    drawElements(elmlist, dx=1, dy=1, lblofst=[.5, 0])
 
 
 Transformers

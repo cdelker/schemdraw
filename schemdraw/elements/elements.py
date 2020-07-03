@@ -66,9 +66,10 @@ class Element(object):
             Rotate the label text to align with the element,
             for example vertical text with an element having
             `d="up"`.
-        lblloc : ['top', 'bot', 'lft', 'rgt', 'center']
+        lblloc : string
             Location for drawing the label specified by `label`
-            parameter.
+            parameter, either ['top', 'bot', 'lft', 'rgt', 'center']
+            or name of an anchor.
         zorder : int
             Z-order parameter for placing element in front or behind
             others.
@@ -158,7 +159,6 @@ class Element(object):
 
         # Add user-defined labels
         # user-defined labels - allow element def to define label location
-        lblofst = self.cparams.get('lblofst', .1)
         lblloc = self.cparams.get('lblloc', 'top')
         lblsize = self.cparams.get('lblsize', self.cparams.get('fontsize', 14))
         lblrotate = self.cparams.get('lblrotate', False)
@@ -176,7 +176,7 @@ class Element(object):
         for loc, label in userlabels.items():
             if label is not None:
                 rotation = (theta if lblrotate else 0)
-                self.add_label(label, loc, ofst=lblofst, size=lblsize,
+                self.add_label(label, loc,# size=lblsize,
                                rotation=rotation, color=lblcolor)
 
         # Add element-specific anchors
@@ -234,8 +234,9 @@ class Element(object):
             label : string or list
                 Text to add. If list, list items will be evenly spaced
                 along the element.
-            loc : ['top', 'bot', 'lft', 'rgt']
-                Location for text relative to element
+            loc : string
+                Location for text relative to element, either
+                ['top', 'bot', 'lft', 'rgt'] or name of an anchor
             ofst : float or list
                 Offset between text and element. Defaults to Element.lblofst.
                 Can be list of [x, y] offets.
@@ -254,12 +255,6 @@ class Element(object):
             color: string
                 Label text color
         '''
-        if isinstance(ofst, (list, tuple)) and loc in ['top', 'lft', 'bot', 'rgt']:
-            raise TypeError('Offset must not be list for loc={}'.format(loc))
-
-        if ofst is None:
-            ofst = self.cparams.get('lblofst', .1)
-
         rotation = (rotation + 360) % 360
         if rotation > 90 and rotation < 270:
             rotation -= 180  # Keep the label from going upside down
@@ -285,43 +280,58 @@ class Element(object):
                 th = th + 180
             elif loc == 'rgt':
                 th = th + 270
-            th = th % 360  # Normalize angle so it's positive, clockwise
+            th = (th+360) % 360  # Normalize angle so it's positive, clockwise
+
+            rotalign = [('center', 'bottom'),  # label on top
+                        ('right', 'bottom'),
+                        ('right', 'center'),   # label on right
+                        ('right', 'top'),
+                        ('center', 'top'),     # label on bottom
+                        ('left', 'top'),
+                        ('left', 'center'),    # label on left
+                        ('left', 'bottom')]
+
+            # Index into rotalign for a "top" label that's been rotated
+            rotalignidx = int(round((th/360)*8) % 8)
+            
+            if loc in self.anchors:
+                x1, y1, x2, y2 = self.get_bbox()
+                
+                if (np.isclose(self.anchors[loc][0], x1, atol=.15) or
+                    np.isclose(self.anchors[loc][0], x2, atol=.15) or
+                    np.isclose(self.anchors[loc][1], y1, atol=.15) or
+                    np.isclose(self.anchors[loc][1], y2, atol=.15)):
+                    # Anchor is on an edge
+                    dofst = self.cparams.get('lblofst', .1)
+                    
+                    if np.isclose(self.anchors[loc][0], x1, atol=.15):
+                        alignH = 'right'
+                        ofstx = -dofst
+                    elif np.isclose(self.anchors[loc][0], x2, atol=.15):
+                        alignH = 'left'
+                        ofstx = dofst
+                    else:
+                        alignH = 'center'
+                        ofstx = 0
+                    if np.isclose(self.anchors[loc][1], y1, atol=.15):
+                        alignV = 'top'
+                        ofsty = -dofst
+                    elif np.isclose(self.anchors[loc][1], y2, atol=.15):
+                        alignV = 'bottom'
+                        ofsty = dofst
+                    else:
+                        alignV = 'center'
+                        ofsty = 0
+                    align = (alignH, alignV)
+                    rotalignidx = (rotalign.index(align) + round((th/360)*8)) % 8
+                    if ofst is None and not isinstance(label, (tuple, list)):
+                        ofst = [ofstx, ofsty]
 
             if loc == 'center':
                 align = ('center', 'center')
-            elif loc in self.anchors:
-                x1, y1, x2, y2 = self.get_bbox()
-                if self.anchors[loc][1] == 0:
-                    alignV = 'center'
-                elif self.anchors[loc][1] > (y2+y1)/2:
-                    alignV = 'bottom'
-                else:
-                    alignV = 'top'
-                    ofst = -ofst
-                if self.anchors[loc][0] > (x2+x1)/2:
-                    alignH = 'left'
-                else:
-                    alignH = 'right'
-
-                align = (alignH, alignV)
-            elif th < 22.5:       # 0 to +22 deg
-                align = ('center', 'bottom')
-            elif th < 22.5+45:    # 22 to 67
-                align = ('right', 'bottom')
-            elif th < 22.5+45*2:  # 67 to 112
-                align = ('right', 'center')
-            elif th < 22.5+45*3:  # 112 to 157
-                align = ('right', 'top')
-            elif th < 22.5+45*4:  # 157 to 202
-                align = ('center', 'top')
-            elif th < 22.5+45*5:  # 202 to 247
-                align = ('left', 'top')
-            elif th < 22.5+45*6:  # 247 to 292
-                align = ('left', 'center')
-            elif th < 22.5+45*7:  # 292 to 337
-                align = ('left', 'bottom')
-            else:                 # 337 to 0
-                align = ('center', 'bottom')
+            else:
+                align = rotalign[rotalignidx]
+                
         xmax = self.bbox.xmax
         xmin = self.bbox.xmin
         ymax = self.bbox.ymax
@@ -332,58 +342,66 @@ class Element(object):
         lblparams = dict(ChainMap(kwargs, self.cparams))
         lblparams.pop('label', None)  # Can't pop from nested chainmap, convert to flat dict first
         lblparams.update({'align': align, 'rotation': rotation})
+        if ofst is None:
+            ofst = self.cparams.get('lblofst', .1)
 
         if isinstance(label, (list, tuple)):
             # Divide list along length
             if loc == 'top':
                 for i, lbltxt in enumerate(label):
                     xdiv = (xmax-xmin)/(len(label)+1)
-                    xy = [xmin+xdiv*(i+1), ymax+ofst]
-                    self.segments.append(SegmentText(np.asarray(xy), lbltxt, **lblparams))
+                    xy = [xmin+xdiv*(i+1), ymax]
+                    ofst = [0, ofst] if not isinstance(ofst, (list, tuple)) else ofst
+                    self.segments.append(SegmentText(np.asarray(xy)+np.asarray(ofst), lbltxt, **lblparams))
             elif loc == 'bot':
                 for i, lbltxt in enumerate(label):
                     xdiv = (xmax-xmin)/(len(label)+1)
-                    xy = [xmin+xdiv*(i+1), ymin-ofst]
-                    self.segments.append(SegmentText(np.asarray(xy), lbltxt, **lblparams))
+                    xy = [xmin+xdiv*(i+1), ymin]
+                    ofst = [0, -ofst] if not isinstance(ofst, (list, tuple)) else ofst
+                    self.segments.append(SegmentText(np.asarray(xy)+np.asarray(ofst), lbltxt, **lblparams))
             elif loc == 'lft':
                 for i, lbltxt in enumerate(label):
                     ydiv = (ymax-ymin)/(len(label)+1)
-                    xy = [xmin-ofst, ymin+ydiv*(i+1)]
-                    self.segments.append(SegmentText(np.asarray(xy), lbltxt, **lblparams))
+                    xy = [xmin, ymin+ydiv*(i+1)]
+                    ofst = [-ofst, 0] if not isinstance(ofst, (list, tuple)) else ofst
+                    self.segments.append(SegmentText(np.asarray(xy)+np.asarray(ofst), lbltxt, **lblparams))
             elif loc == 'rgt':
                 for i, lbltxt in enumerate(label):
                     ydiv = (ymax-ymin)/(len(label)+1)
-                    xy = [xmax+ofst, ymin+ydiv*(i+1)]
-                    self.segments.append(SegmentText(np.asarray(xy), lbltxt, **lblparams))
+                    xy = [xmax, ymin+ydiv*(i+1)]
+                    ofst = [ofst, 0] if not isinstance(ofst, (list, tuple)) else ofst
+                    self.segments.append(SegmentText(np.asarray(xy)+np.asarray(ofst), lbltxt, **lblparams))
             elif loc == 'center':
                 for i, lbltxt in enumerate(label):
                     xdiv = (xmax-xmin)/(len(label)+1)
-                    xy = [xmin+xdiv*(i+1), ofst]
-                    self.segments.append(SegmentText(np.asarray(xy), lbltxt, **lblparams))
+                    xy = [xmin+xdiv*(i+1), 0]
+                    ofst = [0, ofst] if not isinstance(ofst, (list, tuple)) else ofst
+                    self.segments.append(SegmentText(np.asarray(xy)+np.asarray(ofst), lbltxt, **lblparams))
 
         elif isinstance(label, str):
             # Place in center
             if loc == 'top':
-                xy = [(xmax+xmin)/2, ymax+ofst]
+                ofst = [0, ofst] if not isinstance(ofst, (list, tuple)) else ofst                
+                xy = [(xmax+xmin)/2, ymax]
             elif loc == 'bot':
-                xy = [(xmax+xmin)/2, ymin-ofst]
+                ofst = [0, -ofst] if not isinstance(ofst, (list, tuple)) else ofst                
+                xy = [(xmax+xmin)/2, ymin]
             elif loc == 'lft':
-                xy = [xmin-ofst, (ymax+ymin)/2]
+                ofst = [-ofst, 0] if not isinstance(ofst, (list, tuple)) else ofst                
+                xy = [xmin, (ymax+ymin)/2]
             elif loc == 'rgt':
-                xy = [xmax+ofst, (ymax+ymin)/2]
+                ofst = [ofst, 0] if not isinstance(ofst, (list, tuple)) else ofst
+                xy = [xmax, (ymax+ymin)/2]
             elif loc == 'center':
-                if isinstance(ofst, (list, tuple)):
-                    xy = [(xmax+xmin)/2+ofst[0], (ymax+ymin)/2+ofst[1]]
-                else:
-                    xy = [(xmax+xmin)/2, (ymax+ymin)/2+ofst]
+                ofst = [0, ofst] if not isinstance(ofst, (list, tuple)) else ofst                
+                xy = [(xmax+xmin)/2, (ymax+ymin)/2]
             elif loc in self.anchors:
                 xy = np.asarray(self.anchors[loc])
-                if isinstance(ofst, (list, tuple)):
-                    xy = xy + ofst
-                else:
-                    xy = np.asarray([xy[0], xy[1]+ofst])
+                ofst = [0, ofst] if not isinstance(ofst, (list, tuple)) else ofst
+                xy = np.asarray([xy[0], xy[1]])
             else:
                 raise ValueError('Undefined location {}'.format(loc))
+            xy = np.array(xy) + np.array(ofst)
             self.segments.append(SegmentText(np.asarray(xy), label, **lblparams))
 
     def _draw_on_figure(self):

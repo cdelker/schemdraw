@@ -39,7 +39,7 @@ class Drawing(object):
             Deault fill color for closed elements
     '''
     def __init__(self, *elements, unit=3.0, inches_per_unit=0.5, lblofst=0.1,
-                 fontsize=16, font='sans-serif', color='black',
+                 fontsize=14, font='sans-serif', color='black',
                  lw=2, ls='-', fill=None):
         self.elements = []
         self.inches_per_unit = inches_per_unit

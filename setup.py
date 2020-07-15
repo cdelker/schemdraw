@@ -12,6 +12,9 @@ setuptools.setup(
     url = 'https://schemdraw.readthedocs.io/',
     long_description=long_description,
     long_description_content_type="text/markdown",
+    project_urls={
+        'Source': 'https://bitbucket.org/cdelker/schemdraw',
+    },
     python_requires='>=3.7',
     packages = ['schemdraw', 'SchemDraw',
                 'schemdraw.elements',

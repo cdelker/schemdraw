@@ -37,6 +37,15 @@ class Drawing(object):
             Default line style '-', ':', '--', etc.
         fill : string or tuple
             Deault fill color for closed elements
+            
+        Attributes
+        ----------
+        here : xy tuple
+            Current drawing position. The next element will be added
+            at this position unless specified otherwise.
+        theta : float
+            Current drawing angle, in degrees. The next element will
+            be added with this angle unless specified otherwise.
     '''
     def __init__(self, *elements, unit=3.0, inches_per_unit=0.5, lblofst=0.1,
                  fontsize=14, font='sans-serif', color='black',

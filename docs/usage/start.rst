@@ -17,23 +17,6 @@ or directly by downloading the source and running
     python setup.py install
 
 Starting with version 0.7, schemdraw requires Python 3.7+.
-
-
-Jupyter Notebooks
------------------
-
-Using a Jupyter Notebook in inline mode is recommended for the easy creation of circuit diagrams. 
-If your schematics pop up in an external window, set Matplotlib to inline mode before importing schemdraw:
-
-.. code-block:: python
-
-    %matplotlib inline
-
-For best results when viewing circuits in the notebook, use a vector figure format, such as svg before importing schemdraw:
-
-.. code-block:: python
-
-    %config InlineBackend.figure_format = 'svg'
     
 
 Overview
@@ -91,4 +74,52 @@ A vector format, such as `svg` is recommended for best results.
 
     d.save('basic_rc.svg')
 
+
 For full details of placing and stylizing elements, see :ref:`placement`.
+
+
+Usage Modes
+-----------
+
+Jupyter Notebooks
+*****************
+
+Using a Jupyter Notebook in inline mode is recommended for the easy interactive creation of circuit diagrams. 
+If your schematics pop up in an external window, set Matplotlib to inline mode before importing schemdraw:
+
+.. code-block:: python
+
+    %matplotlib inline
+
+For best results when viewing circuits in the notebook, use a vector figure format, such as svg before importing schemdraw:
+
+.. code-block:: python
+
+    %config InlineBackend.figure_format = 'svg'
+
+
+Python Scripts
+**************
+
+Code in a .py file can be run to generate figures, and by default, calling `d.draw()` will display a GUI window
+for viewing the schematic.
+Add the `show=False` option to `d.draw()` to suppress the window from appearing.
+
+Rather than saving the schematic image to a file, the raw SVG string or PNG bytes data can be obtained
+by calling `d.to_svg()` or `d.to_png()`.
+Thich can be useful for integrating schemdraw into an existing GUI or web application.
+
+
+Server Side
+***********
+
+When running on a server, sometimes there is no display available. The code may attempt to open the GUI preview window and fail.
+In these cases, try setting the Matplotlib backend to a non-gui option.
+Before importing schemdraw, add these lines to use the Agg backend which does not have a GUI.
+Then get the drawing using `d.to_svg()`, `d.to_png()`, or `d.save()` rather than `d.draw()`.
+
+.. code-block:: python
+
+    import matplotlib
+    matplotlib.use('Agg') # Set the backend here
+

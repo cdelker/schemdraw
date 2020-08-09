@@ -236,7 +236,7 @@ The `flip` and `reverse` keywords are useful for changing direction of direction
 Drawing State
 ^^^^^^^^^^^^^
 
-The :py:class:`schemdraw.Drawing` maintains a drawing state that includes the current x, y position and drawing direction.
+The :py:class:`schemdraw.Drawing` maintains a drawing state that includes the current x, y position, stored in the `Drawing.here` attribute as a (x, y) tuple, and drawing direction stored in the `Drawing.theta` attribute.
 A LIFO stack of drawing states can be used, via the :py:meth:`schemdraw.Drawing.push` and :py:meth:`schemdraw.Drawing.pop` method,
 for times when it's useful to save the drawing state and come back to it later.
 
@@ -246,19 +246,17 @@ for times when it's useful to save the drawing state and come back to it later.
     d = schemdraw.Drawing()
 
 .. jupyter-execute::
-    :hide-output:
 
     d.add(elm.Inductor)
     d.add(elm.Dot)
+    print('d.here:', d.here)
     d.push()  # Save this drawing position/direction for later
     
     d.add(elm.Capacitor(d='down'))
+    print('d.here:', d.here)
     d.pop()   # Return to the pushed position/direction
+    print('d.here:', d.here)
     d.add(elm.Diode)
-
-.. jupyter-execute::
-    :hide-code:
-
     d.draw()
 
 
@@ -267,7 +265,10 @@ Labels
 ------
 
 Labels are added to elements using other keyword arguments to the :py:class:`schemdraw.elements.Element` class.
-Each label is a string, but LaTeX math is rendered when enclosed in $..$.
+Some unicode utf-8 characters are allowed, such as :code:`'1μF'` and :code:`'1MΩ'` if the character is included in Matplotlib's font set.
+Alternatively, full LaTeX math expressions can be rendered when enclosed in `$..$`, such as :code:`r'$\tau = \frac{1}{RC}$'`
+For full details on LaTeX math support, see `Matplotlib Mathtext <https://matplotlib.org/3.3.0/tutorials/text/mathtext.html/>`_.
+
 
 - **label**: add a label in the default location for this element
 - **toplabel**: add a label above the top of the element

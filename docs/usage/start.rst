@@ -107,7 +107,7 @@ Add the `show=False` option to `d.draw()` to suppress the window from appearing.
 
 Rather than saving the schematic image to a file, the raw SVG string or PNG bytes data can be obtained
 by calling `d.to_svg()` or `d.to_png()`.
-Thich can be useful for integrating schemdraw into an existing GUI or web application.
+This can be useful for integrating schemdraw into an existing GUI or web application.
 
 
 Server Side

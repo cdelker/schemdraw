@@ -33,7 +33,7 @@ class Element(object):
             abbreviated ['d', 'u', 'l', 'r']
         at : float list [x, y]
             Starting coordinate of element, defaults to current
-            drawing position. OR xy can be tuple of (Element, anchorname)
+            drawing position. OR `at` can be tuple of (Element, anchorname)
             to be resolved after the Element has been placed (see Walrus
             mode in documentation)
         xy : float list [x, y]

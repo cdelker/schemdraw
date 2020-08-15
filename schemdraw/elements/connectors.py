@@ -183,7 +183,7 @@ class Header(Element):
                     pnumber = str(row + col*rows + 1)
                 else: # number == 'ccw'
                     pnumber = str(rows*col+(rows-row)) if col%2 else str(row+1)
-                self.anchors['p{}'.format(pnumber)] = xy
+                self.anchors['pin{}'.format(pnumber)] = xy
                 
                 if shownumber:
                     numxy = [w+.05 if col%2 else -.05, xy[1]]
@@ -252,7 +252,7 @@ class BusConnect(Element):
         for i in range(n):
             y = -i*dy
             self.segments.append(Segment([[0, y], [dx-slantx, y], [dx, y+slanty]], theta=0))
-            self.anchors['p{}'.format(i+1)] = [0, y]
+            self.anchors['pin{}'.format(i+1)] = [0, y]
         self.segments.append(Segment([[dx, slantx], [dx, slanty-n*dy]], lw=lwbus))
         self.params['drop'] = [dx, slantx]
         self.anchors['start'] = [dx, slantx]
@@ -276,7 +276,7 @@ class BusLine(Line):
 @adddocs(Element)
 class DB9(Element):
     ''' DB9 Connector
-        Anchors: `p1` thru `p9`
+        Anchors: `pin1` thru `pin9`
 
         Parameters
         ----------
@@ -306,7 +306,7 @@ class DB9(Element):
         for i in range(4):
             xy = [edge, h1-(i+.5)*pinspacing-edge]
             self.segments.append(SegmentCircle(xy, pinrad, fill=pinfill, zorder=4))
-            self.anchors['p{}'.format(9-i)] = xy  
+            self.anchors['pin{}'.format(9-i)] = xy  
             if number:
                 self.segments.append(SegmentText([xy[0], xy[1]+pinrad], 
                                                  str(9-i), fontsize=9,
@@ -314,7 +314,7 @@ class DB9(Element):
         for i in range(5):
             xy = [edge+pinspacing, h2-(i+.75)*pinspacing-edge]
             self.segments.append(SegmentCircle(xy, pinrad, fill=pinfill, zorder=4))
-            self.anchors['p{}'.format(5-i)] = xy
+            self.anchors['pin{}'.format(5-i)] = xy
             if number:
                 self.segments.append(SegmentText([xy[0], xy[1]+pinrad], 
                                                  str(5-i), fontsize=9,
@@ -324,7 +324,7 @@ class DB9(Element):
 @adddocs(Element)
 class DB25(Element):
     ''' DB25 Connector
-        Anchors: `p1` thru `p25`
+        Anchors: `pin1` thru `pin25`
 
         Parameters
         ----------
@@ -354,7 +354,7 @@ class DB25(Element):
         for i in range(12):
             xy = [edge, h1-(i+.5)*pinspacing-edge]
             self.segments.append(SegmentCircle(xy, pinrad, fill=pinfill, zorder=4))
-            self.anchors['p{}'.format(25-i)] = xy            
+            self.anchors['pin{}'.format(25-i)] = xy            
             if number:
                 self.segments.append(SegmentText([xy[0], xy[1]+pinrad], 
                                                  str(25-i), fontsize=9,
@@ -362,7 +362,7 @@ class DB25(Element):
         for i in range(13):
             xy = [edge+pinspacing, h2-(i+.75)*pinspacing-edge]
             self.segments.append(SegmentCircle(xy, pinrad, fill=pinfill, zorder=4))
-            self.anchors['p{}'.format(13-i)] = xy
+            self.anchors['pin{}'.format(13-i)] = xy
             if number:
                 self.segments.append(SegmentText([xy[0], xy[1]+pinrad], 
                                                  str(13-i), fontsize=9,

@@ -11,4 +11,3 @@ d2.add(elm.Diode(fill=True))
 
 d2.draw()
 d.draw()
-

@@ -94,34 +94,34 @@ Arduino Board
 
     d = schemdraw.Drawing(fontsize=11, inches_per_unit=.4)
     Q1 = d.add(Atmega328())
-    JP4 = d.add(elm.Header(rows=10, shownumber=True, flip=True, at=[Q1.PB5[0]+4, Q1.PB5[1]+1], anchor='p6', label='JP4', fontsize=10,
+    JP4 = d.add(elm.Header(rows=10, shownumber=True, flip=True, at=[Q1.PB5[0]+4, Q1.PB5[1]+1], anchor='pin6', label='JP4', fontsize=10,
                            pinsright=['D8', 'D9', 'D10', 'D11', 'D12', 'D13', '', '', '', ''], pinalignright='center'))
-    JP3 = d.add(elm.Header(rows=6, shownumber=True, flip=True, at=[Q1.PC5[0]+4, Q1.PC5[1]], anchor='p6', label='JP3', fontsize=10,
+    JP3 = d.add(elm.Header(rows=6, shownumber=True, flip=True, at=[Q1.PC5[0]+4, Q1.PC5[1]], anchor='pin6', label='JP3', fontsize=10,
                            pinsright=['A0', 'A1', 'A2', 'A3', 'A4', 'A5'], pinalignright='center'))
 
-    JP2 = d.add(elm.Header(rows=8, shownumber=True, flip=True, at=[Q1.PD7[0]+3, Q1.PD7[1]], anchor='p8', label='JP2', fontsize=10,
+    JP2 = d.add(elm.Header(rows=8, shownumber=True, flip=True, at=[Q1.PD7[0]+3, Q1.PD7[1]], anchor='pin8', label='JP2', fontsize=10,
                            pinsright=['D0', 'D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7'], pinalignright='center'))
 
-    d.add(elm.OrthoLines(at=Q1.PB5, to=JP4.p6, n=6))
-    d.add(elm.OrthoLines(at=Q1.PC5, to=JP3.p6, n=6))
-    d.add(elm.OrthoLines(at=Q1.PD7, to=JP2.p8, n=8))
+    d.add(elm.OrthoLines(at=Q1.PB5, to=JP4.pin6, n=6))
+    d.add(elm.OrthoLines(at=Q1.PC5, to=JP3.pin6, n=6))
+    d.add(elm.OrthoLines(at=Q1.PD7, to=JP2.pin8, n=8))
 
-    d.add(elm.Line('l', at=JP4.p7, l=.9, lftlabel='GND'))
-    d.add(elm.Line('l', at=JP4.p8, l=.9, lftlabel='AREF'))
-    d.add(elm.Line('l', at=JP4.p9, l=.9, lftlabel='AD4/SDA'))
-    d.add(elm.Line('l', at=JP4.p10, l=.9, lftlabel='AD5/SCL'))
+    d.add(elm.Line('l', at=JP4.pin7, l=.9, lftlabel='GND'))
+    d.add(elm.Line('l', at=JP4.pin8, l=.9, lftlabel='AREF'))
+    d.add(elm.Line('l', at=JP4.pin9, l=.9, lftlabel='AD4/SDA'))
+    d.add(elm.Line('l', at=JP4.pin10, l=.9, lftlabel='AD5/SCL'))
 
-    JP1 = d.add(elm.Header('r', at=[Q1.PD0[0]+4, Q1.PD0[1]-2], rows=6, anchor='p1', shownumber=True,
+    JP1 = d.add(elm.Header('r', at=[Q1.PD0[0]+4, Q1.PD0[1]-2], rows=6, anchor='pin1', shownumber=True,
                            pinsright=['VCC', 'RXD', 'TXD', 'DTR', 'RTS', 'GND'], pinalignright='center'))
-    d.add(elm.Line('l', at=JP1.p1, l=d.unit/2))
+    d.add(elm.Line('l', at=JP1.pin1, l=d.unit/2))
     d.add(elm.Vdd(label='+5V'))
-    d.add(elm.Line('l', at=JP1.p2, l=d.unit))
+    d.add(elm.Line('l', at=JP1.pin2, l=d.unit))
     d.add(elm.Line('u', toy=Q1.PD0))
     d.add(elm.Dot)
-    d.add(elm.Line('l', at=JP1.p3, l=d.unit+0.6))
+    d.add(elm.Line('l', at=JP1.pin3, l=d.unit+0.6))
     d.add(elm.Line('u', toy=Q1.PD1))
     d.add(elm.Dot)
-    d.add(elm.Line('l', at=JP1.p6, l=d.unit/2))
+    d.add(elm.Line('l', at=JP1.pin6, l=d.unit/2))
     d.add(elm.Ground)
 
     d.add(elm.Line('l', at=Q1.XTAL2, l=d.unit*2))
@@ -169,7 +169,7 @@ Arduino Board
     d.add(elm.Ground)
     d.pop()
 
-    d.add(elm.Capacitor('l', at=JP1.p4, botlabel='100n'))
+    d.add(elm.Capacitor('l', at=JP1.pin4, botlabel='100n'))
     d.add(elm.Line('l', tox=RST.start[0]-2))
     d.add(elm.Line('u', toy=Q1.RESET))
     d.add(elm.Line('r', tox=RST.start))

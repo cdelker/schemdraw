@@ -105,8 +105,8 @@ Code in a .py file can be run to generate figures, and by default, calling `d.dr
 for viewing the schematic.
 Add the `show=False` option to `d.draw()` to suppress the window from appearing.
 
-Rather than saving the schematic image to a file, the raw SVG string or PNG bytes data can be obtained
-by calling `d.to_svg()` or `d.to_png()`.
+Rather than saving the schematic image to a file, the raw image data as a bytes array can be obtained
+by calling `d.get_imagedata()` with the 
 This can be useful for integrating schemdraw into an existing GUI or web application.
 
 
@@ -116,7 +116,7 @@ Server Side
 When running on a server, sometimes there is no display available. The code may attempt to open the GUI preview window and fail.
 In these cases, try setting the Matplotlib backend to a non-gui option.
 Before importing schemdraw, add these lines to use the Agg backend which does not have a GUI.
-Then get the drawing using `d.to_svg()`, `d.to_png()`, or `d.save()` rather than `d.draw()`.
+Then get the drawing using `d.get_imagedata()`, or `d.save()` rather than `d.draw()`.
 
 .. code-block:: python
 

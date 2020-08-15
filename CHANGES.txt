@@ -1,3 +1,14 @@
+v0.8 - 15-Aug-2020
+
+    - Changed Header anchors to `pinN` for consistency with Ic.
+    - Improved label placement with respect to anchor positions.
+    - Prevent duplicate figures from showing in Jupyter Element representation
+    - Improvements for headless server operation to prevent popup window
+    - Added some undocumented features to documentation
+    - Added `Drawing.get_imagedata` function for returning raw image bytes
+    - Fixed pip installation issue with module capitalization. Must import lowercase `schemdraw`.
+
+
 v0.7.1 - 26-Jun-2020
 
     - Bug fix: restore usage outside of Jupyter, so that Matplotlib window is shown when calling Drawing.draw().

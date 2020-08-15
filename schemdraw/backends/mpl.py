@@ -159,15 +159,10 @@ class Figure(object):
         return self.fig
 
     def getimage(self, ext='svg'):
-        ''' Get the image as SVG or PNG '''
+        ''' Get the image as SVG or PNG bytes array '''
         fig = self.getfig()
-        if ext == 'svg':
-            output = StringIO()
-            fig.savefig(output, format='svg', bbox_inches='tight')
-        else:
-            output = BytesIO()
-            fig.savefig(output, format=ext, bbox_inches='tight')
-
+        output = BytesIO()
+        fig.savefig(output, format=ext, bbox_inches='tight')
         return output.getvalue()
 
     def _repr_png_(self):
@@ -176,4 +171,4 @@ class Figure(object):
 
     def _repr_svg_(self):
         ''' SVG representation for Jupyter '''
-        return self.getimage('svg')
+        return self.getimage('svg').decode()

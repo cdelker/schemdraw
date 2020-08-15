@@ -1,6 +1,7 @@
 ''' Schemdraw Drawing class '''
 
 from collections import namedtuple
+from enum import Enum, unique
 import warnings
 import numpy as np
 
@@ -9,6 +10,21 @@ from .elements.lines import LoopCurrent, CurrentLabel, CurrentLabelInline
 from .backends.mpl import Figure
 
 BBox = namedtuple('BBox', ['xmin', 'ymin', 'xmax', 'ymax'])
+
+
+@unique
+class ImageFormat(str, Enum):
+    ''' Known Matplotlib image formats '''
+    EPS = 'eps'
+    JPG = 'jpg'    
+    PDF = 'pdf'
+    PGF = 'pgf'
+    PNG = 'png'
+    PS = 'ps'
+    RAW = 'raw'
+    RGBA = 'rgba'
+    SVG = 'svg'
+    TIF = 'tif'
 
 
 class Drawing(object):
@@ -93,7 +109,7 @@ class Drawing(object):
 
     def _repr_svg_(self):
         ''' SVG representation for Jupyter '''
-        return self.draw().getimage('svg')
+        return self.draw().getimage('svg').decode()
 
     def _repr_png_(self):
         ''' PNG representation for Jupyter '''
@@ -257,12 +273,18 @@ class Drawing(object):
         fig = self.draw(show=False)
         fig.save(fname, transparent=transparent, dpi=dpi)
 
-    def to_svg(self):
-        ''' Return SVG string of drawing '''
-        fig = self.draw(show=False)
-        return fig.getimage(ext='svg')
+    def get_imagedata(self, fmt: ImageFormat):
+        ''' Get image data as bytes array
 
-    def to_png(self):
-        ''' Return PNG bytes of drawing '''
+            Parameters
+            ----------
+            fmt : ImageFormat
+                Format or file extension of the image type
+
+            Returns
+            -------
+            img : bytes array
+                Image data
+        '''
         fig = self.draw(show=False)
-        return fig.getimage(ext='png')
+        return fig.getimage(ext=fmt)

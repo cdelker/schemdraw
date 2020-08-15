@@ -416,7 +416,7 @@ class Element(object):
     def _repr_svg_(self):
         ''' SVG representation for Jupyter '''
         fig = self._draw_on_figure()
-        return fig.getimage(ext='svg')
+        return fig.getimage(ext='svg').decode()
 
     def _repr_png_(self):
         ''' PNG representation for Jupyter '''

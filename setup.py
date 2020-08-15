@@ -5,7 +5,7 @@ with open('README.txt', 'r') as f:
 
 setuptools.setup(
     name = 'schemdraw',
-    version = '0.7.2.a3',
+    version = '0.8',
     description = 'Electrical circuit schematic drawing',
     author = 'Collin J. Delker',
     author_email = 'developer@collindelker.com',

@@ -2,4 +2,4 @@ from .schemdraw import Drawing, ImageFormat
 from .segments import Segment, SegmentCircle, SegmentArc, SegmentText, SegmentPoly, SegmentArrow
 from .transform import Transform
 
-__version__ = '0.7.2.a3'
+__version__ = '0.8'

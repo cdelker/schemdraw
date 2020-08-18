@@ -106,9 +106,16 @@ for viewing the schematic.
 Add the `show=False` option to `d.draw()` to suppress the window from appearing.
 
 Rather than saving the schematic image to a file, the raw image data as a bytes array can be obtained
-by calling `d.get_imagedata()` with the 
+by calling `d.get_imagedata()` using the desired `ImageFormat`.
 This can be useful for integrating schemdraw into an existing GUI or web application.
 
+.. code-block:: python
+
+    from schemdraw import Drawing, ImageFormat
+    
+    drawing = Drawing()
+    ...
+    image_bytes = drawing.get_imagedata(ImageFormat.SVG)
 
 Server Side
 ***********

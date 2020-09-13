@@ -22,18 +22,26 @@ class Figure(object):
             Scale for the drawing
         showframe : bool
             Show Matplotlib axis frame
+        ax : Matplotlib axis
+            Existing axis to draw on
     '''
     def __init__(self, **kwargs):
-        if inline:
-            self.fig = plt.Figure()
+        if kwargs.get('ax'):
+            self.ax = kwargs.get('ax')
+            self.fig = self.ax.figure
+            self.userfig = True
         else:
-            self.fig = plt.figure()
-        self.fig.subplots_adjust(
-            left=0.05,
-            bottom=0.05,
-            right=0.95,
-            top=0.90)
-        self.ax = self.fig.add_subplot()
+            if inline:
+                self.fig = plt.Figure()
+            else:
+                self.fig = plt.figure()
+            self.fig.subplots_adjust(
+                left=0.05,
+                bottom=0.05,
+                right=0.95,
+                top=0.90)
+            self.ax = self.fig.add_subplot()
+            self.userfig = False
         self.ax.autoscale_view(True)  # This autoscales all the shapes too
         self.showframe = kwargs.get('showframe', False)
         self.bbox = kwargs.get('bbox', None)
@@ -135,27 +143,28 @@ class Figure(object):
 
     def getfig(self):
         ''' Get the Matplotlib figure '''
-        if self.bbox is None:
-            # Use MPL's bbox, which sometimes clips things like arrowheads
-            x1, x2 = self.ax.get_xlim()
-            y1, y2 = self.ax.get_ylim()
-        else:
-            x1, y1, x2, y2 = self.bbox
-        x1 -= .1  # Add a bit to account for line widths getting cut off
-        x2 += .1
-        y1 -= .1
-        y2 += .1
-        self.ax.set_xlim(x1, x2)
-        self.ax.set_ylim(y1, y2)
-        w = x2-x1
-        h = y2-y1
+        if not self.userfig:
+            if self.bbox is None:
+                # Use MPL's bbox, which sometimes clips things like arrowheads
+                x1, x2 = self.ax.get_xlim()
+                y1, y2 = self.ax.get_ylim()
+            else:
+                x1, y1, x2, y2 = self.bbox
+            x1 -= .1  # Add a bit to account for line widths getting cut off
+            x2 += .1
+            y1 -= .1
+            y2 += .1
+            self.ax.set_xlim(x1, x2)
+            self.ax.set_ylim(y1, y2)
+            w = x2-x1
+            h = y2-y1
 
-        if not self.showframe:
-            self.ax.axes.get_xaxis().set_visible(False)
-            self.ax.axes.get_yaxis().set_visible(False)
-            self.ax.set_frame_on(False)
-        self.ax.get_figure().set_size_inches(self.inches_per_unit*w,
-                                             self.inches_per_unit*h)
+            if not self.showframe:
+                self.ax.axes.get_xaxis().set_visible(False)
+                self.ax.axes.get_yaxis().set_visible(False)
+                self.ax.set_frame_on(False)
+            self.ax.get_figure().set_size_inches(self.inches_per_unit*w,
+                                                 self.inches_per_unit*h)
         return self.fig
 
     def getimage(self, ext='svg'):

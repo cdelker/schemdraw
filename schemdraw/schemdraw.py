@@ -233,7 +233,7 @@ class Drawing(object):
         self.add(element)
         return element
 
-    def draw(self, showframe=False, show=True):
+    def draw(self, showframe=False, show=True, ax=None):
         ''' Draw the schematic
 
             Parameters
@@ -243,12 +243,16 @@ class Drawing(object):
             show : bool
                 Show the schematic in a GUI popup window (when
                  outside of a Jupyter inline environment)
+            ax : Matplotlib Axis
+                Existing axis to draw on. Should be set to equal
+                aspect for best results.
 
             Returns
             -------
             schemdraw Figure object
         '''
-        fig = Figure(bbox=self.get_bbox(),
+        fig = Figure(ax=ax,
+                     bbox=self.get_bbox(),
                      inches_per_unit=self.inches_per_unit,
                      showframe=showframe)
         for element in self.elements:

@@ -48,6 +48,7 @@ class And(Element):
                  [gatel+leadlen, -rad]]
         self.segments.append(Segment(path))
         self.anchors['out'] = [gatel+gateh/2+leadlen*2, 0]
+        self.anchors['end'] = self.anchors['out']
 
         if nand:
             self.segments.append(SegmentCircle(
@@ -152,6 +153,7 @@ class Or(Element):
             path += np.transpose(np.vstack((x2[::-1], y2[::-1]))).tolist()
         self.segments.append(Segment(path, **kwargs))
         self.anchors['out'] = [tip+leadlen, 0]
+        self.anchors['end'] = self.anchors['out']
 
         if xor:
             self.segments.append(Segment(np.transpose(np.vstack((x2, y2))).tolist(), **kwargs))
@@ -225,7 +227,7 @@ class Not(Element2Term):
                                       [gatel+leadlen, 0], [leadlen, gateh/2],
                                       [leadlen, 0]]))
         self.segments.append(SegmentCircle([gatel+leadlen+notbubble, 0], notbubble))
-        self.anchors['out'] = [gatel+gateh/2+leadlen*2, 0]
+        self.anchors['out'] = [gatel+leadlen+notbubble*2, 0]
         self.anchors['in'] = [0, 0]
 
 

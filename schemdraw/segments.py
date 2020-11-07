@@ -674,7 +674,7 @@ class SegmentArc(object):
                   'zorder': self.zorder}
         params.update(style)
         return SegmentArc(transform.transform(self.center),
-                          self.width, self.height, angle=angle,
+                          self.width*transform.zoom, self.height*transform.zoom, angle=angle,
                           theta1=self.theta1, theta2=self.theta2, **params)
 
     def end(self):
@@ -719,6 +719,8 @@ class SegmentArc(object):
         ls = self.ls if self.ls else style.get('ls', '-')
         lw = self.lw if self.lw else style.get('lw', 2)
 
-        fig.arc(center, width=self.width, height=self.height,
+        width = self.width * transform.zoom
+        height = self.height * transform.zoom
+        fig.arc(center, width=width, height=height,
                 theta1=self.theta1, theta2=self.theta2, angle=angle,
                 color=color, lw=lw, ls=ls, zorder=zorder, arrow=self.arrow)

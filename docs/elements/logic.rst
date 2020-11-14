@@ -58,3 +58,37 @@ Finally, any input can be pre-inverted (active low) using the `inputnots` keywor
 .. jupyter-execute::
 
     logic.Nand(inputs=3, inputnots=[1])
+
+
+Logic Parser
+------------
+
+Logic trees can also be created from a string logic expression such as "(a and b) or c" using using :py:func:`schemdraw.parsing.logicparse`.
+The logic parser requires the pyparsing module.
+
+.. autofunction:: schemdraw.parsing.logicparse
+
+Examples:
+
+.. jupyter-execute::
+
+    from schemdraw.parsing import logicparse
+    logicparse('not ((w and x) or (y and z))', outlabel='$\overline{Q}$')
+    
+.. jupyter-execute::
+
+    logicparse('((a xor b) and (b or c) and (d or e)) or ((w and x) or (y and z))')
+
+
+Logicparse understands spelled-out logic functions "and", "or", "nand", "nor", "xor", "xnor", "not", but also common symbols such as "+", "&", "⊕" representing "or", "and", and "xor".
+
+.. jupyter-execute::
+
+    logicparse('¬ (a ∨ b) & (c ⊻ d)')  # Using symbols
+  
+
+Use the `gateH` and `gateW` parameters to adjust how gates line up:
+
+.. jupyter-execute::
+
+    logicparse('(not a) and b or c', gateH=.5)

@@ -163,14 +163,14 @@ def logicparse(expr, gateW=2, gateH=.75, outlabel=None):
         Notes
         -----
         Parser recognizes several alternative symbols for logic functions:
-            'and': '&', '∧'
-            'or': '|', '∨', '+'
-            'xor: '⊕', '⊻'
-            'not': '~', '¬'
+            and: '&', '∧'
+            or: '|', '∨', '+'
+            xor: '⊕', '⊻'
+            not: '~', '¬'
 
         Returns
         -------
-        schemdraw.Drawing
+        drawing: schemdraw.Drawing
     '''
     parsed = parse_string(expr)
     tree = to_tree(parsed)

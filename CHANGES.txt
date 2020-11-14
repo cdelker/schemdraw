@@ -1,3 +1,10 @@
+v0.9 - IN PROGRESS
+
+    - Added string parser for logic diagrams
+    - Fixed zooming of arc segments
+    - Added parameter for drawing schematic on existing matplotlib axis
+
+
 v0.8 - 15-Aug-2020
 
     - Changed Header anchors to `pinN` for consistency with Ic.

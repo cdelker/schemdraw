@@ -2,6 +2,8 @@
 import schemdraw
 import schemdraw.elements as elm
 
+schemdraw.use('svg')
+
 d = schemdraw.Drawing()
 d.add(elm.Resistor(label='1K'))
 d.add(elm.Capacitor('d'))

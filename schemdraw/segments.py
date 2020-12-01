@@ -6,6 +6,7 @@ from collections import namedtuple
 import numpy as np
 
 from .transform import mirror_point, mirror_array, flip_point
+from .backends import svgtext
 
 BBox = namedtuple('BBox', ['xmin', 'ymin', 'xmax', 'ymax'])
 
@@ -228,7 +229,7 @@ class SegmentText(object):
         self.text = label
         self.align = kwargs.get('align', None)
         self.font = kwargs.get('font', None)
-        self.fontsize = kwargs.get('fontsize', None)
+        self.fontsize = kwargs.get('fontsize', 14)
         self.color = kwargs.get('color', None)
         self.rotation = kwargs.get('rotation', None)
         self.rotation_mode = kwargs.get('rotation_mode', None)
@@ -269,8 +270,26 @@ class SegmentText(object):
             xmin, ymin, xmax, ymax
                 Bounding box limits
         '''
-        # Matplotlib doesn't know text dimensions until AFTER it is drawn
-        return BBox(np.inf, np.inf, -np.inf, -np.inf)
+        w, h, _ = svgtext.text_approx_size(self.text, 'Arial', self.fontsize)
+        # h, w are in points, convert back to inches (/72)
+        # then convert back to drawing units (*2)
+        # This makes text the same point size regardless of inches_per_unit
+        w = w/72*2
+        h = h/72*2
+        x = self.xy[0]
+        y = self.xy[1]    
+        if self.align is not None:
+            if self.align[0] == 'center':
+                x -= w/2
+            elif self.align[0] == 'right':
+                x -= w
+            if self.align[1] == 'center':
+                y -= h/2
+            elif self.align[1] == 'top':
+                y -= h
+
+        return BBox(x-.1, y-.1, x+w+.2, y+h+.2)
+
 
     def draw(self, fig, transform, **style):
         ''' Draw the segment
@@ -517,7 +536,7 @@ class SegmentArrow(object):
         headwidth : float
             Width of arrowhead
         headlength : float
-            Lenght of arrowhead
+            Length of arrowhead
         color : string
              Color for this segment
         lw : float
@@ -575,7 +594,7 @@ class SegmentArrow(object):
         ymin = min(self.tail[1], self.head[1])
         xmax = max(self.tail[0], self.head[0])
         ymax = max(self.tail[1], self.head[1])
-        return BBox(xmin, ymin, xmax, ymax)
+        return BBox(xmin, ymin-hw, xmax, ymax+hw)
 
     def end(self):
         ''' Get endpoint of this segment, untransformed '''
@@ -690,10 +709,14 @@ class SegmentArc(object):
                 Bounding box limits
         '''
         # Who wants to do trigonometry when we can just brute-force the bounding box?
-        theta1, theta2 = self.theta1, self.theta2
-        while theta2 < theta1:
-            theta2 += 360
-        t = np.deg2rad(np.linspace(theta1, theta2, num=500))
+        theta1, theta2 = np.deg2rad(self.theta1), np.deg2rad(self.theta2)
+        # the phi parameter in parametric form is not the same as the angle along ellipse
+        # (see https://www.petercollingridge.co.uk/tutorials/computational-geometry/finding-angle-around-ellipse/)
+        t1 = np.arctan2(self.width*np.sin(self.theta1), self.height*np.cos(self.theta1))
+        t2 = np.arctan2(self.width*np.sin(self.theta2), self.height*np.cos(self.theta2))
+        while t2 < t1:
+            t2 += 2*np.pi
+        t = np.linspace(t1, t2, num=500)    
         phi = np.deg2rad(self.angle)
         rx = self.width/2
         ry = self.height/2

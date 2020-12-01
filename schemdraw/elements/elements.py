@@ -127,7 +127,7 @@ class Element(object):
             if 'center' in self.anchors:
                 centerx = self.anchors['center'][0]
             else:
-                xmin, _, xmax, _ = self.get_bbox()
+                xmin, _, xmax, _ = self.get_bbox(includetext=False)
                 centerx = (xmin + xmax)/2
             [s.doreverse(centerx) for s in self.segments]
             for name, pt in self.anchors.items():
@@ -144,7 +144,7 @@ class Element(object):
         xy = np.asarray(self.cparams.get('at', dwgxy))
 
         # Get bounds of element, used for positioning user labels
-        self.bbox = self.get_bbox()
+        self.bbox = self.get_bbox(includetext=False)
 
         if 'endpts' in self.cparams:
             theta = dwgtheta
@@ -200,7 +200,7 @@ class Element(object):
         else:
             return self.transform.transform(drop), theta
 
-    def get_bbox(self, transform=False):
+    def get_bbox(self, transform=False, includetext=True):
         ''' Get element bounding box, including path and shapes.
 
             Parameters
@@ -216,6 +216,7 @@ class Element(object):
         xmin = ymin = np.inf
         xmax = ymax = -np.inf
         for segment in self.segments:
+            if not includetext and isinstance(segment, SegmentText): continue
             if transform:
                 segment = segment.xform(self.transform)
             segxmin, segymin, segxmax, segymax = segment.get_bbox()
@@ -251,7 +252,8 @@ class Element(object):
             -----------------
             fontsize : float
                 Font size
-            font:
+            font : string
+                Font family
             color: string
                 Label text color
         '''
@@ -295,7 +297,7 @@ class Element(object):
             rotalignidx = int(round((th/360)*8) % 8)
             
             if loc in self.anchors:
-                x1, y1, x2, y2 = self.get_bbox()
+                x1, y1, x2, y2 = self.get_bbox(includetext=False)
                 
                 if (np.isclose(self.anchors[loc][0], x1, atol=.15) or
                     np.isclose(self.anchors[loc][0], x2, atol=.15) or
@@ -406,7 +408,7 @@ class Element(object):
 
     def _draw_on_figure(self):
         ''' Draw the element on a new figure. Useful for _repr_ functions. '''
-        fig = Figure()
+        fig = Figure()   # TODO: FIX for set backend!
         if self.cparams is None:
             self.place([0, 0], 0)
         fig.set_bbox(self.get_bbox(transform=True))

@@ -7,9 +7,31 @@ import numpy as np
 
 from .elements import Element
 from .elements.lines import LoopCurrent, CurrentLabel, CurrentLabelInline
-from .backends.mpl import Figure
+
+from .backends.svg import Figure as svgFigure
+try:
+    from .backends.mpl import Figure as mplFigure
+except ImportError:
+    mplFigure = None
+
 
 BBox = namedtuple('BBox', ['xmin', 'ymin', 'xmax', 'ymax'])
+
+
+if mplFigure is None:
+    Figure = svgFigure
+else:
+    Figure = mplFigure
+
+
+def use(backend='matplotlib'):
+    global Figure
+    if backend == 'matplotlib':
+        if mplFigure is None:
+            raise ValueError('Could not import Matplotlib.')
+        Figure = mplFigure
+    else:
+        Figure = svgFigure
 
 
 @unique
@@ -113,7 +135,9 @@ class Drawing(object):
 
     def _repr_png_(self):
         ''' PNG representation for Jupyter '''
-        return self.draw().getimage('png')
+        if Figure == mplFigure:
+            return self.draw().getimage('png')
+        return None
 
     def add(self, element, **kwargs):
         ''' Add an element to the drawing.
@@ -170,10 +194,10 @@ class Drawing(object):
             pad : float
                 Distance between elements and arc
         '''
-        bbox1 = elm_list[0].get_bbox(transform=True)
-        bbox2 = elm_list[1].get_bbox(transform=True)
-        bbox3 = elm_list[2].get_bbox(transform=True)
-        bbox4 = elm_list[3].get_bbox(transform=True)
+        bbox1 = elm_list[0].get_bbox(transform=True, includetext=False)
+        bbox2 = elm_list[1].get_bbox(transform=True, includetext=False)
+        bbox3 = elm_list[2].get_bbox(transform=True, includetext=False)
+        bbox4 = elm_list[3].get_bbox(transform=True, includetext=False)
         top = bbox1.ymin - pad
         bot = bbox3.ymax + pad
         left = bbox4.xmax + pad
@@ -233,7 +257,7 @@ class Drawing(object):
         self.add(element)
         return element
 
-    def draw(self, showframe=False, show=True, ax=None):
+    def draw(self, showframe=False, show=True, ax=None, backend=None):
         ''' Draw the schematic
 
             Parameters
@@ -251,10 +275,13 @@ class Drawing(object):
             -------
             schemdraw Figure object
         '''
-        fig = Figure(ax=ax,
-                     bbox=self.get_bbox(),
-                     inches_per_unit=self.inches_per_unit,
-                     showframe=showframe)
+        
+        figclass = {'matplotlib': mplFigure, 'svg': svgFigure}.get(backend, Figure)
+        fig = figclass(ax=ax,
+                       bbox=self.get_bbox(),
+                       inches_per_unit=self.inches_per_unit,
+                       showframe=showframe)
+
         for element in self.elements:
             element.draw(fig)
         if show:
@@ -290,5 +317,7 @@ class Drawing(object):
             img : bytes array
                 Image data
         '''
+        if Figure == svgFigure and fmt.lower() != 'svg':
+            raise ValueError('Format not available in SVG backend.')
         fig = self.draw(show=False)
         return fig.getimage(ext=fmt)

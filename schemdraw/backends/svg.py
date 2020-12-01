@@ -66,14 +66,18 @@ class Figure(object):
     
     def __init__(self, bbox, **kwargs):
         self.svgelements = []  # List of tuples: (zorder, SVG elements text)
-        self.bbox = bbox
         self.showframe = kwargs.get('showframe', False)
         self.scale = 64.8 * kwargs.get('inches_per_unit', .5)  # Magic scale factor that matches what MPL did
+        self.set_bbox(bbox)
+    
+    def set_bbox(self, bbox):
+        ''' Set the bounding box '''
+        self.bbox = bbox
         self.pxwidth = (self.bbox.xmax-self.bbox.xmin) * self.scale
         self.pxheight = (self.bbox.ymax-self.bbox.ymin) * self.scale
         self.pxwidth = max(5, self.pxwidth)
         self.pxheight = max(5, self.pxheight)
-        
+    
     def xform(self, x, y):
         ''' Convert x, y in user coords to svg pixel coords '''
         return x*self.scale, -y*self.scale

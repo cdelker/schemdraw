@@ -11,6 +11,13 @@ from ..transform import Transform, mirror_point, flip_point
 gap = [np.nan, np.nan]  # Put a gap in a path
 
 
+
+
+def _set_elm_backend(figureclass):
+    global Figure
+    Figure = figureclass
+
+
 def angle(a, b):
     ''' Compute angle from coordinate a to b '''
     theta = np.degrees(np.arctan2(b[1] - a[1], (b[0] - a[0])))
@@ -408,7 +415,7 @@ class Element(object):
 
     def _draw_on_figure(self):
         ''' Draw the element on a new figure. Useful for _repr_ functions. '''
-        fig = Figure()   # TODO: FIX for set backend!
+        fig = Figure(bbox=self.get_bbox(transform=True))
         if self.cparams is None:
             self.place([0, 0], 0)
         fig.set_bbox(self.get_bbox(transform=True))

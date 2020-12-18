@@ -435,3 +435,20 @@ class Inductor2(Element2Term):
         super().__init__(*args, **kwargs)
         loops = kwargs.get('loops', 4)
         self.segments.append(Segment(cycloid(loops=loops)))
+
+
+@adddocs(Element2Term)
+class CPE(Element2Term):
+    ''' Constant Phase Element '''
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        capgap = 0.25
+        offset = 0.25
+        self.segments.append(Segment([[0, 0], [-offset, 0], gap, [offset, 0],
+                                      [0, -resheight], gap, [capgap, 0]]))
+        self.segments.append(Segment([[0, 0], [-offset, 0], gap, [offset, 0],
+                                      [0, resheight], gap, [capgap, 0]]))
+        self.segments.append(Segment([[0, 0], [-offset, resheight], gap,
+                                      [0, -resheight], gap, [capgap, 0]]))
+        self.segments.append(Segment([[0, 0], [-offset, -resheight], gap,
+                                      [0, -resheight], gap, [capgap, 0]]))

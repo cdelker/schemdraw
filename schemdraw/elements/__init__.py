@@ -1,4 +1,4 @@
-from .elements import Element, ElementDrawing, Element2Term
+from .elements import Element, ElementDrawing, Element2Term, _set_elm_backend
 from .twoterm import Resistor, RBox, ResistorVar, Thermistor, Photoresistor, PhotoresistorBox, Capacitor, Capacitor2, CapacitorVar, CapacitorTrim, Diode, Schottky, DiodeTunnel, DiodeShockley, Zener, LED, LED2, Photodiode, Potentiometer, Diac, Triac, SCR, Memristor, Memristor2, Josephson, Fuse, Inductor, Inductor2, Crystal, Breaker, PotBox, RBoxVar, CPE
 from .oneterm import Ground, GroundSignal, GroundChassis, Antenna, AntennaLoop, AntennaLoop2, Vss, Vdd
 from .opamp import Opamp

@@ -5,7 +5,7 @@ from enum import Enum, unique
 import warnings
 import numpy as np
 
-from .elements import Element
+from .elements import Element, _set_elm_backend
 from .elements.lines import LoopCurrent, CurrentLabel, CurrentLabelInline
 
 from .backends.svg import Figure as svgFigure
@@ -25,6 +25,7 @@ else:
 
 
 def use(backend='matplotlib'):
+    ''' Change default backend, either 'matplotlib' or 'svg' '''
     global Figure
     if backend == 'matplotlib':
         if mplFigure is None:
@@ -32,6 +33,7 @@ def use(backend='matplotlib'):
         Figure = mplFigure
     else:
         Figure = svgFigure
+    _set_elm_backend(Figure)
 
 
 @unique

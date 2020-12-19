@@ -130,3 +130,31 @@ Then get the drawing using `d.get_imagedata()`, or `d.save()` rather than `d.dra
     import matplotlib
     matplotlib.use('Agg') # Set the backend here
 
+
+Backends
+--------
+
+By default, all schematics are drawn on a Matplotlib axis. Starting in 0.9, schematics can also be drawn on a new experimental
+SVG image backend. Similar to Matplotlib's backend behavior, the SVG backend can be used for all drawings:
+
+.. code-block:: python
+
+    schemdraw.use('svg')
+
+Unlike Matplotlib, the backend can be changed at any time. Alternatively, the backend can be set at the time of drawing:
+
+.. code-block:: 
+
+    drawing.draw(backend='svg')
+    
+Reasons to choose the SVG backend include:
+
+    - No Matplotlib dependency required.
+    - Speed. The SVG backend draws 4-10x faster than Matplotlib, depending on the circuit complexity.
+
+Reasons to use Matplotlib backend:
+
+    - To use complicated math formulas via Matplotlib's Mathtext. SVG backend only supports basic math symbols, superscripts, and subscripts
+    - To customize the schematic after drawing it by using other Matplotlib functionality.
+    - To render in other, non-SVG, image formats
+

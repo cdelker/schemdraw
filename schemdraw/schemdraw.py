@@ -179,7 +179,7 @@ class Drawing(object):
         if len(self._state) > 0:
             self.here, self.theta = self._state.pop()
 
-    def loopI(self, elm_list, label='', d='cw', theta1=35, theta2=-35, pad=.2):
+    def loopI(self, elm_list, label='', d='cw', theta1=35, theta2=-35, pad=.2, color=None):
         ''' Draw an arc to indicate a loop current bordered by elements in list
 
             Parameters
@@ -196,6 +196,8 @@ class Drawing(object):
                 End angle of arrow arc (degrees)
             pad : float
                 Distance between elements and arc
+            color : string
+                Color for loop arrow
         '''
         bbox1 = elm_list[0].get_bbox(transform=True, includetext=False)
         bbox2 = elm_list[1].get_bbox(transform=True, includetext=False)
@@ -208,11 +210,11 @@ class Drawing(object):
         center = [(left+rght)/2, (top+bot)/2]
         element = LoopCurrent(xy=center, label=label, width=rght-left,
                               height=top-bot, direction=d, theta1=theta1,
-                              theta2=theta2)
+                              theta2=theta2, color=color)
         self.add(element)
         return element
 
-    def labelI(self, elm, label='', arrowofst=0.4, arrowlen=2, reverse=False, top=True):
+    def labelI(self, elm, label='', arrowofst=0.4, arrowlen=2, reverse=False, top=True, color=None):
         ''' Add an arrow element along side another element
 
             Parameters
@@ -229,13 +231,17 @@ class Drawing(object):
                 Reverse the arrow direction
             top : bool
                 Draw arrow on top (True) or bottom (False) of element
+            color : string
+                Color for label. Defaults to color of elm.
         '''
+        if color is None:
+            color = elm.cparams.get('color', None)
         element = CurrentLabel(xy=elm.center, theta=elm.transform.theta, label=label,
-                               ofst=arrowofst, length=arrowlen, rev=reverse, top=top)
+                               ofst=arrowofst, length=arrowlen, rev=reverse, top=top, color=color)
         self.add(element)
         return element
 
-    def labelI_inline(self, elm, label='', botlabel='', d='in', start=True, ofst=.8):
+    def labelI_inline(self, elm, label='', botlabel='', d='in', start=True, ofst=.8, color=None):
         ''' Add an arrowhead for labeling current inline with leads.
             Works on Element2Term elements.
 
@@ -253,10 +259,15 @@ class Drawing(object):
                 Place arrowhead near start (True) or end (False) of element
             ofst : float
                 Offset from center of element
+            color : string
+                Color for label. Defaults to color of elm.
         '''
+        if color is None:
+            color = elm.cparams.get('color', None)
         element = CurrentLabelInline(xy=elm.center, label=label, botlabel=botlabel,
                                      direction=d, ofst=ofst, start=start,
-                                     theta=elm.transform.theta)
+                                     theta=elm.transform.theta, color=color,
+                                     zorder=3)
         self.add(element)
         return element
 
@@ -278,7 +289,6 @@ class Drawing(object):
             -------
             schemdraw Figure object
         '''
-
         figclass = {'matplotlib': mplFigure, 'svg': svgFigure}.get(backend, Figure)
         fig = figclass(ax=ax,
                        bbox=self.get_bbox(),

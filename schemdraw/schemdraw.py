@@ -3,7 +3,7 @@
 from collections import namedtuple
 from enum import Enum, unique
 import warnings
-import numpy as np
+import math
 
 from .elements import Element, _set_elm_backend
 from .elements.lines import LoopCurrent, CurrentLabel, CurrentLabelInline
@@ -22,6 +22,7 @@ if mplFigure is None:
     Figure = svgFigure
 else:
     Figure = mplFigure
+_set_elm_backend(Figure)
 
 
 def use(backend='matplotlib'):
@@ -40,7 +41,7 @@ def use(backend='matplotlib'):
 class ImageFormat(str, Enum):
     ''' Known Matplotlib image formats '''
     EPS = 'eps'
-    JPG = 'jpg'    
+    JPG = 'jpg'
     PDF = 'pdf'
     PGF = 'pgf'
     PNG = 'png'
@@ -77,7 +78,7 @@ class Drawing(object):
             Default line style '-', ':', '--', etc.
         fill : string or tuple
             Deault fill color for closed elements
-            
+
         Attributes
         ----------
         here : xy tuple
@@ -111,10 +112,10 @@ class Drawing(object):
 
     def get_bbox(self):
         ''' Get drawing bounding box '''
-        xmin = np.inf
-        xmax = -np.inf
-        ymin = np.inf
-        ymax = -np.inf
+        xmin = math.inf
+        xmax = -math.inf
+        ymin = math.inf
+        ymax = -math.inf
         for element in self.elements:
             bbox = element.get_bbox(transform=True)
             xmin = min(bbox.xmin, xmin)
@@ -277,7 +278,7 @@ class Drawing(object):
             -------
             schemdraw Figure object
         '''
-        
+
         figclass = {'matplotlib': mplFigure, 'svg': svgFigure}.get(backend, Figure)
         fig = figclass(ax=ax,
                        bbox=self.get_bbox(),

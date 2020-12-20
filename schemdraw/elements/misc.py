@@ -61,7 +61,7 @@ class Motor(Element2Term):
 class AudioJack(Element):
     ''' Audio Jack with 2 or 3 connectors and optional switches.
         Anchors: tip, sleeve, ring, ringswitch, tipswitch
-    
+
         Parameters
         ----------
         ring : bool
@@ -74,9 +74,9 @@ class AudioJack(Element):
             Show connector dots
         radius : float
             Radius of connector dots
-    
+
         Anchors
-    
+
     '''
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -90,14 +90,14 @@ class AudioJack(Element):
         length = 2
         ringlen = .75
         tiplen = .55
-        swidth=.2
+        swidth = .2
         sleeveheight = 1
         tipy = 1
         ringy = .1
         sleevey = .35
         swdy = .4
         swlen = .5
-        
+
         if switch:
             tipy += .2
 
@@ -114,7 +114,7 @@ class AudioJack(Element):
             self.anchors['sleeve'] = [0, -sleevey]
 
             if dots:
-                self.segments.append(SegmentCircle([0,  ringy], radius, fill=fill, zorder=4))            
+                self.segments.append(SegmentCircle([0,  ringy], radius, fill=fill, zorder=4))
             self.segments.append(Segment([[-radius, ringy], [-length*.75, ringy],
                                           [-length*ringlen-2*radius, ringy+2*radius],
                                           [-length*ringlen-radius*4, ringy]]))
@@ -126,7 +126,7 @@ class AudioJack(Element):
             self.segments.append(Segment([[-radius, 0], [-length, 0], [-length, sleeveheight],
                                           [-length+swidth, sleeveheight], [-length+swidth, 0]]))
             self.anchors['sleeve'] = [0, 0]
-            
+
         if dots:
             self.segments.append(SegmentCircle([0, tipy], radius, fill=fill, zorder=4))
         self.segments.append(Segment([[-radius, tipy], [-length*.55, tipy],

@@ -1,4 +1,4 @@
-''' Convert strings into SVG <text> elements, including some basic 
+''' Convert strings into SVG <text> elements, including some basic
     Latex-like math markup and formatting.
 
     The math only covers the most common cases in encountered electrical schematics:
@@ -13,7 +13,10 @@
 
 import string
 import re
-import numpy as np
+import math
+
+from ..util import Point
+
 
 # Conversion from Latex codes to unicode characters.
 # Note: keys must include escaping \ for use in regex.
@@ -41,7 +44,7 @@ textable = {
     r'\\vartheta': 'ϑ',
     r'\\iota': 'ι',
     r'\\kappa': 'κ',
-    r'\\lambda': 'λ' ,
+    r'\\lambda': 'λ',
     r'\\mu': 'μ',  # \u03BC - "Greek small letter mu" (not \uB5 micro sign)
     r'\\nu': 'ν',
     r'\\xi': 'ξ',
@@ -182,7 +185,7 @@ def mathtextsvg(text, tag=True):
         t = replacelatex(t)
         
         # Find superscripts within {}
-        sups = re.split('(\^\{.*?\})', t)
+        sups = re.split(r'(\^\{.*?\})', t)
         for sup in sups:
             if sup.startswith('^'):
                 chrs = sup[2:-1]
@@ -194,7 +197,7 @@ def mathtextsvg(text, tag=True):
                 else:
                     t = t.replace(sup, chrs)
         # Find superscripts single char
-        sups = re.split('(\^.)', t)
+        sups = re.split(r'(\^.)', t)
         for sup in sups:
             if sup.startswith('^'):
                 if tag:
@@ -203,7 +206,7 @@ def mathtextsvg(text, tag=True):
                     t = t.replace(sup, sup[1])
 
         # Find subscripts within {}
-        sups = re.split('(\_\{.*?\})', t)
+        sups = re.split(r'(\_\{.*?\})', t)
         for sup in sups:
             if sup.startswith('_'):
                 chrs = sup[2:-1]
@@ -215,11 +218,11 @@ def mathtextsvg(text, tag=True):
                 else:
                     t = t.replace(sup, chrs)
         # Find subscripts single char
-        sups = re.split('(\_.)', t)
+        sups = re.split(r'(\_.)', t)
         for sup in sups:
             if sup.startswith('_'):
                 if tag:
-                    t = t.replace(sup, f'<tspan baseline-shift="sub" font-size="smaller">{sup[1]}</tspan>')
+                    t = t.replace(sup, fr'<tspan baseline-shift="sub" font-size="smaller">{sup[1]}</tspan>')
                 else:
                     t = t.replace(sup, sup[1])
 
@@ -228,10 +231,10 @@ def mathtextsvg(text, tag=True):
         for sup in sups:
             if sup.startswith(r'\sqrt{'):
                 if tag:
-                    t = t.replace(sup, f'√\overline{{{sup[6:-1]}}}')
+                    t = t.replace(sup, fr'√\overline{{{sup[6:-1]}}}')
                 else:
                     t = t.replace(sup, f'√{sup[6:-1]}')
-                
+
         # \overline
         sups = re.split(r'(\\overline{.*})', t)
         for sup in sups:
@@ -240,7 +243,7 @@ def mathtextsvg(text, tag=True):
                     t = t.replace(sup, f'<tspan text-decoration="overline">{sup[10:-1]}</tspan>')
                 else:
                     t = t.replace(sup, sup[10:-1])
-                
+
         svgtext += t
     return svgtext
 
@@ -250,8 +253,8 @@ def string_width(st, fontsize=12, font='Arial'):
     # adapted from https://stackoverflow.com/a/16008023/13826284
     # The only alternative is to draw the string to an actual canvas
 
-    size = 0 # in milinches
-    if 'times' in font.lower() or ('serif' in font.lower() and not 'sans' in font.lower()):
+    size = 0  # in milinches
+    if 'times' in font.lower() or ('serif' in font.lower() and 'sans' not in font.lower()):
         # Estimates based on Times Roman
         for s in st:
             if s in 'lij:.,;t': size += 47
@@ -269,7 +272,7 @@ def string_width(st, fontsize=12, font='Arial'):
             elif s in '%': size += 140
             elif s in 'MW@∠': size += 155
             else: size += 60
-        
+
     else:  # Arial, or other sans fonts
         for s in st:
             if s in 'lij|\' ': size += 37
@@ -295,7 +298,7 @@ def text_approx_size(text, font='Arial', size=16):
             Font family, either Arial or Times
         size : float
             Font point size
-        
+
         Returns
         -------
         w : float
@@ -304,7 +307,7 @@ def text_approx_size(text, font='Arial', size=16):
             Height of text box, in points
         dy : float
             Spacing between lines of text, in points
-            
+
         Note
         ----
         Does not account for descent or ascent of text (for example,
@@ -312,7 +315,6 @@ def text_approx_size(text, font='Arial', size=16):
     '''
     w = 0
     h = 0
-    texttag = ''
     lines = text.splitlines()
     h = 0
     dy = size if len(lines) > 1 else size * 0.8
@@ -322,12 +324,12 @@ def text_approx_size(text, font='Arial', size=16):
     return w, h, dy
 
 
-def text_tosvg(text, x, y, font='Arial', size=16, color='black', 
+def text_tosvg(text, x, y, font='Arial', size=16, color='black',
                halign='center', valign='center',
                rotation=0, rotation_mode='anchor',
                testmode=False):
     ''' Convert text to svg <text> tag.
-    
+
         Parameters
         ----------
         text : string
@@ -353,7 +355,7 @@ def text_tosvg(text, x, y, font='Arial', size=16, color='black',
         testmode : bool
             For testing, draw rectable around text bounding box
             and dot at text anchor
-            
+
         Returns
         -------
         svgtext : string
@@ -379,24 +381,17 @@ def text_tosvg(text, x, y, font='Arial', size=16, color='black',
         ytext += h
     anchor = {'center': 'middle', 'left': 'start', 'right': 'end'}.get(halign)
 
-    rotationrad = np.deg2rad(rotation)
-    rotcos = np.cos(rotationrad)
-    rotsin = np.sin(rotationrad)
-    p1 = np.array([boxx, ytext])
-    p2 = np.array([boxx, ytext-h])
-    p3 = np.array([boxx+w, ytext-h])
-    p4 = np.array([boxx+w, ytext])
-    rotmatrix = np.array([[rotcos, rotsin], [-rotsin, rotcos]])
-    org = np.array([x, y])
-    p1 = np.dot(rotmatrix, p1-org) + org
-    p2 = np.dot(rotmatrix, p2-org) + org
-    p3 = np.dot(rotmatrix, p3-org) + org
-    p4 = np.dot(rotmatrix, p4-org) + org
+    org = Point((x, y))
+    p1 = Point((boxx, ytext)).rotate(rotation, org)
+    p2 = Point((boxx, ytext-h)).rotate(rotation, org)
+    p3 = Point((boxx+w, ytext-h)).rotate(rotation, org)
+    p4 = Point((boxx+w, ytext)).rotate(rotation, org)
+
     pxmin = min(p1[0], p2[0], p3[0], p4[0])  # Bounding box, unshifted for "default" rotation mode
     pxmax = max(p1[0], p2[0], p3[0], p4[0])
     pymin = min(p1[1], p2[1], p3[1], p4[1])
     pymax = max(p1[1], p2[1], p3[1], p4[1])
-    
+
     dx = dy = 0
     if rotation != 0 and rotation_mode == 'default':
         if halign == 'left':
@@ -417,16 +412,16 @@ def text_tosvg(text, x, y, font='Arial', size=16, color='black',
 
     texttag = f'''<text x="{x}" y="{ytext-h}" fill="{color}" font-size="{size}"
 font-family="{font}" text-anchor="{anchor}" {xform}>{texttag}</text>'''
-    
+
     if testmode:
         pxmin += dx   # Final bounding box
         pxmax += dx
         pymin += dy
         pymax += dy
 
-        texttag += f'''<rect x="{boxx}" y="{ytext-h}" width="{w}" height="{h}" 
+        texttag += f'''<rect x="{boxx}" y="{ytext-h}" width="{w}" height="{h}"
 style="stroke:blue;stroke-width:1;fill:none" {xform} />
-<circle cx="{x}" cy="{y}" r="1.5" stroke="red" fill="red"/>    
+<circle cx="{x}" cy="{y}" r="1.5" stroke="red" fill="red"/>
 <rect x="{pxmin}" y="{pymin}" width="{pxmax-pxmin}" height="{pymax-pymin}"
 style="stroke:red;stroke-width:1;fill:none" />'''
     return texttag

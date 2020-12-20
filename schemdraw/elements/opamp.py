@@ -1,6 +1,6 @@
 ''' Operation amplifier '''
 
-import numpy as np
+import math
 
 from .elements import Element, gap
 from ..segments import Segment
@@ -8,7 +8,7 @@ from ..adddocs import adddocs
 
 
 oa_back = 2.5
-oa_xlen = oa_back * np.sqrt(3)/2
+oa_xlen = oa_back * math.sqrt(3)/2
 oa_lblx = oa_xlen/8
 oa_pluslen = .2
 

@@ -1,33 +1,21 @@
 ''' Schemdraw base Element class '''
 
 from collections import ChainMap
-import numpy as np
+import math
 
-from ..backends.mpl import Figure
 from ..adddocs import adddocs
 from ..segments import SegmentText, BBox
-from ..transform import Transform, mirror_point, flip_point
-
-gap = [np.nan, np.nan]  # Put a gap in a path
-
-
+from ..transform import Transform
+from .. import util
+from ..util import Point
 
 
+gap = [math.nan, math.nan]  # Put a gap in a path
+
+Figure = None
 def _set_elm_backend(figureclass):
     global Figure
     Figure = figureclass
-
-
-def angle(a, b):
-    ''' Compute angle from coordinate a to b '''
-    theta = np.degrees(np.arctan2(b[1] - a[1], (b[0] - a[0])))
-    return theta
-
-
-def distance(a, b):
-    ''' Compute distance from A to B '''
-    r = np.sqrt((a[0]-b[0])**2 + (a[1]-b[1])**2)
-    return r
 
 
 class Element(object):
@@ -99,7 +87,7 @@ class Element(object):
         self.dwgparams = {}  # Set by drawing in place() method
         self.params = {}     # Set by element defintion in setup() method
         self.cparams = None  # Combined (ChainMap) of above params
-        self.localshift = 0
+        self.localshift = (0, 0)
         self.anchors = {}     # Untransformed anchors
         self.absanchors = {}  # Transformed, absolute anchors
         self.segments = []
@@ -128,7 +116,7 @@ class Element(object):
         if self.userparams.get('flip', False):
             [s.doflip() for s in self.segments]
             for name, pt in self.anchors.items():
-                self.anchors[name] = flip_point(pt)
+                self.anchors[name] = Point(pt).flip()
 
         if self.userparams.get('reverse', False):
             if 'center' in self.anchors:
@@ -138,7 +126,7 @@ class Element(object):
                 centerx = (xmin + xmax)/2
             [s.doreverse(centerx) for s in self.segments]
             for name, pt in self.anchors.items():
-                self.anchors[name] = mirror_point(pt, centerx)
+                self.anchors[name] = Point(pt).mirrorx(centerx)
 
     def place(self, dwgxy, dwgtheta, **dwgparams):
         ''' Determine position within the drawing '''
@@ -148,7 +136,7 @@ class Element(object):
 
         anchor = self.cparams.get('anchor', None)
         zoom = self.cparams.get('zoom', 1)
-        xy = np.asarray(self.cparams.get('at', dwgxy))
+        xy = self.cparams.get('at', dwgxy)
 
         # Get bounds of element, used for positioning user labels
         self.bbox = self.get_bbox(includetext=False)
@@ -161,7 +149,7 @@ class Element(object):
             theta = self.cparams.get('theta', dwgtheta)
 
         if anchor is not None:
-            self.localshift = -np.asarray(self.anchors[anchor])
+            self.localshift = -Point(self.anchors[anchor])
         self.transform = Transform(theta, xy, self.localshift, zoom)
 
         # Add user-defined labels
@@ -183,13 +171,13 @@ class Element(object):
         for loc, label in userlabels.items():
             if label is not None:
                 rotation = (theta if lblrotate else 0)
-                self.add_label(label, loc,# size=lblsize,
+                self.add_label(label, loc, size=lblsize,
                                rotation=rotation, color=lblcolor)
 
         # Add element-specific anchors
         for name, pos in self.anchors.items():
-            self.absanchors[name] = self.transform.transform(np.array(pos))
-        self.absanchors['xy'] = self.transform.transform([0, 0])
+            self.absanchors[name] = self.transform.transform(pos)
+        self.absanchors['xy'] = self.transform.transform((0, 0))
 
         # Set all anchors as attributes
         for name, pos in self.absanchors.items():
@@ -220,8 +208,8 @@ class Element(object):
             xmin, ymin, xmax, ymax
                 Corners of the bounding box
         '''
-        xmin = ymin = np.inf
-        xmax = ymax = -np.inf
+        xmin = ymin = math.inf
+        xmax = ymax = -math.inf
         for segment in self.segments:
             if not includetext and isinstance(segment, SegmentText): continue
             if transform:
@@ -302,30 +290,30 @@ class Element(object):
 
             # Index into rotalign for a "top" label that's been rotated
             rotalignidx = int(round((th/360)*8) % 8)
-            
+
             if loc in self.anchors:
                 x1, y1, x2, y2 = self.get_bbox(includetext=False)
-                
-                if (np.isclose(self.anchors[loc][0], x1, atol=.15) or
-                    np.isclose(self.anchors[loc][0], x2, atol=.15) or
-                    np.isclose(self.anchors[loc][1], y1, atol=.15) or
-                    np.isclose(self.anchors[loc][1], y2, atol=.15)):
+
+                if (math.isclose(self.anchors[loc][0], x1, abs_tol=.15) or
+                    math.isclose(self.anchors[loc][0], x2, abs_tol=.15) or
+                    math.isclose(self.anchors[loc][1], y1, abs_tol=.15) or
+                    math.isclose(self.anchors[loc][1], y2, abs_tol=.15)):
                     # Anchor is on an edge
                     dofst = self.cparams.get('lblofst', .1)
-                    
-                    if np.isclose(self.anchors[loc][0], x1, atol=.15):
+
+                    if math.isclose(self.anchors[loc][0], x1, abs_tol=.15):
                         alignH = 'right'
                         ofstx = -dofst
-                    elif np.isclose(self.anchors[loc][0], x2, atol=.15):
+                    elif math.isclose(self.anchors[loc][0], x2, abs_tol=.15):
                         alignH = 'left'
                         ofstx = dofst
                     else:
                         alignH = 'center'
                         ofstx = 0
-                    if np.isclose(self.anchors[loc][1], y1, atol=.15):
+                    if math.isclose(self.anchors[loc][1], y1, abs_tol=.15):
                         alignV = 'top'
                         ofsty = -dofst
-                    elif np.isclose(self.anchors[loc][1], y2, atol=.15):
+                    elif math.isclose(self.anchors[loc][1], y2, abs_tol=.15):
                         alignV = 'bottom'
                         ofsty = dofst
                     else:
@@ -340,12 +328,12 @@ class Element(object):
                 align = ('center', 'center')
             else:
                 align = rotalign[rotalignidx]
-                
+
         xmax = self.bbox.xmax
         xmin = self.bbox.xmin
         ymax = self.bbox.ymax
         ymin = self.bbox.ymin
-        if not np.isfinite(xmax+xmin+ymax+ymin):
+        if not math.isfinite(xmax+xmin+ymax+ymin):
             xmax = xmin = ymax = ymin = .1
 
         lblparams = dict(ChainMap(kwargs, self.cparams))
@@ -359,65 +347,65 @@ class Element(object):
             if loc == 'top':
                 for i, lbltxt in enumerate(label):
                     xdiv = (xmax-xmin)/(len(label)+1)
-                    xy = [xmin+xdiv*(i+1), ymax]
-                    ofst = [0, ofst] if not isinstance(ofst, (list, tuple)) else ofst
-                    self.segments.append(SegmentText(np.asarray(xy)+np.asarray(ofst), lbltxt, **lblparams))
+                    xy = Point((xmin+xdiv*(i+1), ymax))
+                    ofst = Point((0, ofst)) if not isinstance(ofst, (list, tuple)) else Point(ofst)
+                    self.segments.append(SegmentText(xy+ofst, lbltxt, **lblparams))
             elif loc == 'bot':
                 for i, lbltxt in enumerate(label):
                     xdiv = (xmax-xmin)/(len(label)+1)
-                    xy = [xmin+xdiv*(i+1), ymin]
-                    ofst = [0, -ofst] if not isinstance(ofst, (list, tuple)) else ofst
-                    self.segments.append(SegmentText(np.asarray(xy)+np.asarray(ofst), lbltxt, **lblparams))
+                    xy = Point((xmin+xdiv*(i+1), ymin))
+                    ofst = Point((0, -ofst)) if not isinstance(ofst, (list, tuple)) else Point(ofst)
+                    self.segments.append(SegmentText(xy+ofst, lbltxt, **lblparams))
             elif loc == 'lft':
                 for i, lbltxt in enumerate(label):
                     ydiv = (ymax-ymin)/(len(label)+1)
-                    xy = [xmin, ymin+ydiv*(i+1)]
-                    ofst = [-ofst, 0] if not isinstance(ofst, (list, tuple)) else ofst
-                    self.segments.append(SegmentText(np.asarray(xy)+np.asarray(ofst), lbltxt, **lblparams))
+                    xy = Point((xmin, ymin+ydiv*(i+1)))
+                    ofst = Point((-ofst, 0)) if not isinstance(ofst, (list, tuple)) else Point(ofst)
+                    self.segments.append(SegmentText(xy+ofst, lbltxt, **lblparams))
             elif loc == 'rgt':
                 for i, lbltxt in enumerate(label):
                     ydiv = (ymax-ymin)/(len(label)+1)
-                    xy = [xmax, ymin+ydiv*(i+1)]
-                    ofst = [ofst, 0] if not isinstance(ofst, (list, tuple)) else ofst
-                    self.segments.append(SegmentText(np.asarray(xy)+np.asarray(ofst), lbltxt, **lblparams))
+                    xy = Point((xmax, ymin+ydiv*(i+1)))
+                    ofst = Point((ofst, 0)) if not isinstance(ofst, (list, tuple)) else Point(ofst)
+                    self.segments.append(SegmentText(xy+ofst, lbltxt, **lblparams))
             elif loc == 'center':
                 for i, lbltxt in enumerate(label):
                     xdiv = (xmax-xmin)/(len(label)+1)
-                    xy = [xmin+xdiv*(i+1), 0]
-                    ofst = [0, ofst] if not isinstance(ofst, (list, tuple)) else ofst
-                    self.segments.append(SegmentText(np.asarray(xy)+np.asarray(ofst), lbltxt, **lblparams))
+                    xy = Point((xmin+xdiv*(i+1), 0))
+                    ofst = Point((0, ofst)) if not isinstance(ofst, (list, tuple)) else Point(ofst)
+                    self.segments.append(SegmentText(xy+ofst, lbltxt, **lblparams))
 
         elif isinstance(label, str):
             # Place in center
             if loc == 'top':
-                ofst = [0, ofst] if not isinstance(ofst, (list, tuple)) else ofst                
-                xy = [(xmax+xmin)/2, ymax]
+                ofst = Point((0, ofst)) if not isinstance(ofst, (list, tuple)) else Point(ofst)
+                xy = Point(((xmax+xmin)/2, ymax))
             elif loc == 'bot':
-                ofst = [0, -ofst] if not isinstance(ofst, (list, tuple)) else ofst                
-                xy = [(xmax+xmin)/2, ymin]
+                ofst = Point((0, -ofst)) if not isinstance(ofst, (list, tuple)) else Point(ofst)
+                xy = Point(((xmax+xmin)/2, ymin))
             elif loc == 'lft':
-                ofst = [-ofst, 0] if not isinstance(ofst, (list, tuple)) else ofst                
-                xy = [xmin, (ymax+ymin)/2]
+                ofst = Point((-ofst, 0)) if not isinstance(ofst, (list, tuple)) else Point(ofst)
+                xy = Point((xmin, (ymax+ymin)/2))
             elif loc == 'rgt':
-                ofst = [ofst, 0] if not isinstance(ofst, (list, tuple)) else ofst
-                xy = [xmax, (ymax+ymin)/2]
+                ofst = Point((ofst, 0)) if not isinstance(ofst, (list, tuple)) else Point(ofst)
+                xy = Point((xmax, (ymax+ymin)/2))
             elif loc == 'center':
-                ofst = [0, ofst] if not isinstance(ofst, (list, tuple)) else ofst                
-                xy = [(xmax+xmin)/2, (ymax+ymin)/2]
+                ofst = Point((0, ofst)) if not isinstance(ofst, (list, tuple)) else Point(ofst)
+                xy = Point(((xmax+xmin)/2, (ymax+ymin)/2))
             elif loc in self.anchors:
-                xy = np.asarray(self.anchors[loc])
-                ofst = [0, ofst] if not isinstance(ofst, (list, tuple)) else ofst
-                xy = np.asarray([xy[0], xy[1]])
+                xy = Point(self.anchors[loc])
+                ofst = Point((0, ofst)) if not isinstance(ofst, (list, tuple)) else Point(ofst)
+                xy = Point(xy)
             else:
                 raise ValueError('Undefined location {}'.format(loc))
-            xy = np.array(xy) + np.array(ofst)
-            self.segments.append(SegmentText(np.asarray(xy), label, **lblparams))
+            xy = xy + ofst
+            self.segments.append(SegmentText(xy, label, **lblparams))
 
     def _draw_on_figure(self):
         ''' Draw the element on a new figure. Useful for _repr_ functions. '''
         fig = Figure(bbox=self.get_bbox(transform=True))
         if self.cparams is None:
-            self.place([0, 0], 0)
+            self.place((0, 0), 0)
         fig.set_bbox(self.get_bbox(transform=True))
         self.draw(fig)
         return fig
@@ -435,7 +423,7 @@ class Element(object):
     def draw(self, fig):
         ''' Draw the element '''
         if len(self.segments) == 0:
-            self.place([0, 0], 0)
+            self.place((0, 0), 0)
         for segment in self.segments:
             segment.draw(fig, self.transform, **self.cparams)
 
@@ -488,26 +476,26 @@ class Element2Term(Element):
         toy = self.cparams.get('toy', None)
         anchor = self.cparams.get('anchor', None)
         zoom = self.cparams.get('zoom', 1)
-        xy = np.asarray(self.cparams.get('at', dwgxy))
+        xy = self.cparams.get('at', dwgxy)
 
         # set up transformation
         theta = self.cparams.get('theta', dwgtheta)
         if endpts is not None:
-            theta = angle(endpts[0], endpts[1])
+            theta = util.angle(endpts[0], endpts[1])
         elif self.cparams.get('d') is not None:
             theta = {'u': 90, 'r': 0, 'l': 180, 'd': 270}[self.cparams.get('d')[0].lower()]
         elif to is not None:
-            theta = angle(xy, np.asarray(to))
+            theta = util.angle(xy, to)
 
         # Get offset to element position within drawing (global shift)
         if endpts is not None:
-            xy = endpts[0]
+            xy = Point(endpts[0])
 
         if endpts is not None:
-            totlen = distance(endpts[0], endpts[1])
+            totlen = math.dist(endpts[0], endpts[1])
         elif to is not None:
             # Move until X or Y position is 'end'. Depends on direction
-            totlen = distance(xy, np.asarray(to))
+            totlen = math.dist(xy, to)
         elif tox is not None:
             # Allow either full coordinate (only keeping x), or just an x value
             if isinstance(tox, float) or isinstance(tox, int):
@@ -515,7 +503,7 @@ class Element2Term(Element):
             else:
                 x = tox[0]
             endpt = [x, xy[1]]
-            totlen = distance(xy, endpt)
+            totlen = math.dist(xy, endpt)
         elif toy is not None:
             # Allow either full coordinate (only keeping y), or just a y value
             if isinstance(toy, float) or isinstance(toy, int):
@@ -523,38 +511,39 @@ class Element2Term(Element):
             else:
                 y = toy[1]
             endpt = [xy[0], y]
-            totlen = distance(xy, endpt)
+            totlen = math.dist(xy, endpt)
 
-        self.localshift = 0
+        self.localshift = (0, 0)
         if self.cparams.get('extend', True):
-            in_path = np.array(self.segments[0].path)
-            dz = in_path[-1]-in_path[0]   # Defined delta of path
-            in_len = np.sqrt(dz[0]*dz[0]+dz[1]*dz[1])   # Defined length of path
+            in_path = self.segments[0].path
+            dz = util.delta(in_path[-1], in_path[0])   # Defined delta of path
+            in_len = math.hypot(*dz)    # Defined length of path
             lead_len = (totlen - in_len)/2
 
             if lead_len > 0:  # Don't make element shorter
-                start = in_path[0] - np.array([lead_len, 0])
-                end = in_path[-1] + np.array([lead_len, 0])
+                start = Point(in_path[0]) - Point((lead_len, 0))
+                end = Point(in_path[-1]) + Point((lead_len, 0))
                 self.localshift = -start
-                self.segments[0].path = np.concatenate(([start], self.segments[0].path, [end]))
-            else:
-                start = in_path[0]
-                end = in_path[-1]
-                self.localshift = 0
+                self.segments[0].path = [start] + self.segments[0].path + [end]
 
-        self.anchors['start'] = start
-        self.anchors['end'] = end
+            else:
+                start = Point(in_path[0])
+                end = Point(in_path[-1])
+                self.localshift = Point((0, 0))
+
+        self.anchors['start'] = Point(start)
+        self.anchors['end'] = Point(end)
         self.anchors['center'] = (start+end)/2
 
         if anchor is not None:
-            self.localshift = -np.asarray(self.anchors[anchor])
+            self.localshift = -self.anchors[anchor]
         transform = Transform(theta, xy, self.localshift, zoom)
 
         self.absanchors = {}
         if len(self.segments) == 0:
-            self.absanchors['start'] = transform.transform(np.array([0, 0]))
-            self.absanchors['end'] = transform.transform(np.array([0, 0]))
-            self.absanchors['center'] = transform.transform(np.array([0, 0]))
+            self.absanchors['start'] = transform.transform((0, 0))
+            self.absanchors['end'] = transform.transform((0, 0))
+            self.absanchors['center'] = transform.transform((0, 0))
         else:
             self.absanchors['start'] = transform.transform(start)
             self.absanchors['end'] = transform.transform(end)

@@ -1,8 +1,9 @@
 ''' Two-terminal element definitions '''
 
-import numpy as np
+import math
 
 from .elements import Element2Term, gap
+from ..util import Point, linspace
 from ..segments import Segment, SegmentArrow, SegmentArc, SegmentText, SegmentCircle, SegmentPoly
 from ..adddocs import adddocs
 
@@ -26,7 +27,7 @@ class RBox(Element2Term):
         self.segments.append(Segment(
             [[0, 0], [0, resheight], [reswidth*6, resheight],
              [reswidth*6, -resheight], [0, -resheight], [0, 0],
-             gap, [reswidth*6, 0]]))
+              gap, [reswidth*6, 0]]))
 
 
 class ResistorVar(Resistor):
@@ -67,6 +68,7 @@ class PhotoresistorBox(RBox):
                                           headwidth=.12, headlength=.2))
         self.segments.append(SegmentArrow([1, .75], [.7, .4],
                                           headwidth=.12, headlength=.2))
+
 
 @adddocs(Element2Term)
 class Capacitor(Element2Term):
@@ -123,7 +125,7 @@ class CapacitorTrim(Capacitor):
         super().__init__(*args, **kwargs)
         capgap = 0.18
         self.segments.append(SegmentArrow([-1.8*reswidth, -resheight], [1.8*reswidth+capgap, resheight],
-                                         headlength=.0001, headwidth=.3))
+                                          headlength=.0001, headwidth=.3))
 
 
 class Crystal(Element2Term):
@@ -202,17 +204,12 @@ class LED(Diode):
 class LED2(Diode):  # LED with squiggly light lines
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        x = np.linspace(-1, 1)
-        y = -x*(x-.7)*(x+.7)/2 + resheight*2.5
-        x = np.linspace(resheight*.75, resheight*1.25)
+        x = linspace(-1, 1)
+        y = [-x0*(x0-.7)*(x0+.7)/2 + resheight*2.5 for x0 in x]
+        x = linspace(resheight*.75, resheight*1.25)
         theta = 20
-        c = np.cos(np.radians(theta))
-        s = np.sin(np.radians(theta))
-        m = np.array([[c, s], [-s, c]])
-        p = np.transpose(np.vstack((x, y)))
-        p = np.dot(p, m)
-        p2 = np.transpose(np.vstack((x-.2, y)))
-        p2 = np.dot(p2, m)
+        p = [Point((x0, y0)).rotate(theta) for x0, y0 in zip(x, y)]
+        p2 = [Point((x0-.2, y0)).rotate(theta) for x0, y0 in zip(x, y)]
         self.segments.append(Segment(p))
         self.segments.append(Segment(p2))
         self.segments.append(SegmentArrow(p[1], p[0], headwidth=.07, headlength=.08))
@@ -223,17 +220,12 @@ class LED2(Diode):  # LED with squiggly light lines
 class Photodiode(Diode):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        x = np.linspace(-1, 1)
-        y = -x*(x-.7)*(x+.7)/2 + resheight*2.5
-        x = np.linspace(resheight*.75, resheight*1.25)
+        x = linspace(-1, 1)
+        y = [-x0*(x0-.7)*(x0+.7)/2 + resheight*2.5 for x0 in x]
+        x = linspace(resheight*.75, resheight*1.25)
         theta = 20
-        c = np.cos(np.radians(theta))
-        s = np.sin(np.radians(theta))
-        m = np.array([[c, s], [-s, c]])
-        p = np.transpose(np.vstack((x, y)))
-        p = np.dot(p, m)
-        p2 = np.transpose(np.vstack((x-.2, y)))
-        p2 = np.dot(p2, m)
+        p = [Point((x0, y0)).rotate(theta) for x0, y0 in zip(x, y)]
+        p2 = [Point((x0-.2, y0)).rotate(theta) for x0, y0 in zip(x, y)]
         self.segments.append(Segment(p))
         self.segments.append(Segment(p2))
         self.segments.append(SegmentArrow(p[-2], p[-1], headwidth=.07, headlength=.08))
@@ -264,6 +256,7 @@ class PotBox(RBox):
         self.params['lblloc'] = 'bot'
         self.segments.append(SegmentArrow([reswidth*3, potheight], [reswidth*3, reswidth*2],
                                           headwidth=.15, headlength=.22))
+
 
 class Diac(Element2Term):
     def __init__(self, *args, **kwargs):
@@ -335,9 +328,9 @@ class Fuse(Element2Term):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         fuser = .12
-        fusex = np.linspace(fuser*2, 1+fuser)
-        fusey = np.sin(np.linspace(0, 1)*2*np.pi) * resheight
-        self.segments.append(Segment(np.transpose(np.vstack((fusex, fusey)))))
+        fusex = linspace(fuser*2, 1+fuser)
+        fusey = [math.sin(x) * resheight for x in linspace(0, 2*math.pi)]
+        self.segments.append(Segment(list(zip(fusex, fusey))))
         self.segments.append(Segment([[0, 0], gap, [1+fuser*3, 0]]))
         if kwargs.get('dots', True):
             fill = kwargs.get('fill', 'white')
@@ -387,27 +380,27 @@ def cycloid(loops=4, ofst=(0, 0), a=.06, b=.19, norm=True, vertical=False, flip=
         path : array
             List of [x, y] coordinates defining the cycloid
     '''
-    yint = np.arccos(a/b)  # y-intercept
-    t = np.linspace(yint, 2*(loops+1)*np.pi-yint, num=loops*50)
-    x = a*t - b*np.sin(t)
-    y = a - b*np.cos(t)
-    x = x - x[0]  # Shift to start at 0,0
+    yint = math.acos(a/b)  # y-intercept
+    t = linspace(yint, 2*(loops+1)*math.pi-yint, num=loops*50)
+    x = [a*t0 - b*math.sin(t0) for t0 in t]
+    y = [a - b*math.cos(t0) for t0 in t]
+    x = [xx - x[0] for xx in x]  # Shift to start at 0,0
 
     if norm:
-        x = x / (x[-1]-x[0])      # Normalize length to 1
+        x = [xx / (x[-1]-x[0]) for xx in x]  # Normalize length to 1
 
     if flip:
-        y = -y
+        y = [-yy for yy in y]
 
-    y = y * (max(y)-min(y))/(resheight)  # Normalize to resistor width
+    y = [yy * (max(y)-min(y))/(resheight) for yy in y]  # Normalize to resistor width
 
     if vertical:
         x, y = y, x
 
-    x = x + ofst[0]
-    y = y + ofst[1]
+    x = [xx + ofst[0] for xx in x]
+    y = [yy + ofst[1] for yy in y]
 
-    path = np.transpose(np.vstack((x, y)))
+    path = list(zip(x, y))
     return path
 
 

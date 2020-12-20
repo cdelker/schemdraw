@@ -122,7 +122,7 @@ class DotDotDot(Element):
         self.segments.append(SegmentCircle([1, 0], radius, fill=fill))
         self.segments.append(SegmentCircle([1.5, 0], radius, fill=fill))
         self.params['drop'] = [2, 0]
-        
+
 
 class Label(Element):
     def __init__(self, *args, **kwargs):
@@ -139,7 +139,7 @@ class Tag(Element):
         Parameters
         ----------
         width : float
-            Width of the tag    
+            Width of the tag
     '''
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

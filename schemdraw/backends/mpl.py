@@ -1,11 +1,13 @@
 ''' Matplotlib drawing backend for schemdraw '''
 
-from io import StringIO, BytesIO
-import numpy as np
+from io import BytesIO
+import math
 
 import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.patches import Arc
+
+from .. import util
 
 inline = 'inline' in matplotlib.get_backend()
 
@@ -50,7 +52,7 @@ class Figure(object):
     def set_bbox(self, bbox):
         ''' Set bounding box, to override Matplotlib's autoscale '''
         self.bbox = bbox
-        
+
     def show(self):
         ''' Display figure in interactive window '''
         if not inline:
@@ -109,28 +111,24 @@ class Figure(object):
         self.ax.add_patch(arc)
 
         if arrow is not None:
-            x, y = np.cos(np.deg2rad(theta2)), np.sin(np.deg2rad(theta2))
-            th2 = np.rad2deg(np.arctan2((width/height)*y, x))
-            x, y = np.cos(np.deg2rad(theta1)), np.sin(np.deg2rad(theta1))
-            th1 = np.rad2deg(np.arctan2((width/height)*y, x))
+            x, y = math.cos(math.radians(theta2)), math.sin(math.radians(theta2))
+            th2 = math.degrees(math.atan2((width/height)*y, x))
+            x, y = math.cos(math.radians(theta1)), math.sin(math.radians(theta1))
+            th1 = math.degrees(math.atan2((width/height)*y, x))
             if arrow == 'ccw':
-                dx = np.cos(np.deg2rad(th2+90)) / 100
-                dy = np.sin(np.deg2rad(theta2+90)) / 100
-                s = [center[0] + width/2*np.cos(np.deg2rad(th2)),
-                     center[1] + height/2*np.sin(np.deg2rad(th2))]
+                dx = math.cos(math.radians(th2+90)) / 100
+                dy = math.sin(math.radians(theta2+90)) / 100
+                s = [center[0] + width/2*math.cos(math.radians(th2)),
+                     center[1] + height/2*math.sin(math.radians(th2))]
             else:
-                dx = -np.cos(np.deg2rad(th1+90)) / 100
-                dy = - np.sin(np.deg2rad(th1+90)) / 100
+                dx = -math.cos(math.radians(th1+90)) / 100
+                dy = -math.sin(math.radians(th1+90)) / 100
 
-                s = [center[0] + width/2*np.cos(np.deg2rad(th1)),
-                     center[1] + height/2*np.sin(np.deg2rad(th1))]
+                s = [center[0] + width/2*math.cos(math.radians(th1)),
+                     center[1] + height/2*math.sin(math.radians(th1))]
 
-            # Rotate the arrow head
-            co = np.cos(np.radians(angle))
-            so = np.sin(np.radians(angle))
-            m = np.array([[co, so], [-so, co]])
-            s = np.dot(s-center, m)+center
-            darrow = np.dot([dx, dy], m)
+            s = util.rotate(s, angle, center)
+            darrow = util.rotate((dx, dy), angle)
 
             self.ax.arrow(s[0], s[1], darrow[0], darrow[1], head_width=.15,
                           head_length=.25, color=color, zorder=zorder)

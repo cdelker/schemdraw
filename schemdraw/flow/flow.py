@@ -1,7 +1,8 @@
 ''' Flowcharting element definitions '''
 
-import numpy as np
+import math
 
+from ..util import linspace
 from ..segments import Segment, SegmentCircle, SegmentText
 from ..elements import Element
 
@@ -117,12 +118,12 @@ class Start(Element):
         h = kwargs.get('h', 2)
 
         # There's no ellipse Segment type, so draw one with a path Segment
-        t = np.linspace(0, np.pi*2, num=50)
-        y = (w/2) * np.cos(t)
-        x = (h/2) * np.sin(t) + h/2
+        t = linspace(0, math.pi*2, num=50)
+        y = [(w/2) * math.cos(t0) for t0 in t]
+        x = [(h/2) * math.sin(t0) + h/2 for t0 in t]
         x[-1] = x[0]
         y[-1] = y[0]  # Ensure the path is actually closed
-        self.segments.append(Segment(np.transpose(np.vstack((x, y)))))
+        self.segments.append(Segment(list(zip(x, y))))
         self.params['lblloc'] = 'center'
         self.params['lblofst'] = 0
         self.params['theta'] = -90

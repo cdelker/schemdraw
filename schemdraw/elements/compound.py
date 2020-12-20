@@ -1,6 +1,5 @@
 ''' Compound elements made from groups of other elements '''
 
-import numpy as np
 import warnings
 
 from ..import elements as elm
@@ -19,14 +18,14 @@ class ElementCompound(elm.Element):
                           'color': kwargs.get('color', 'black'),
                           'lw': kwargs.get('lw', 2),
                           'ls': kwargs.get('ls', '-'),
-                          'fill': kwargs.get('fill', False)}
-        self._here = np.asarray([0, 0])
+                          'fill': kwargs.get('fill', 'none')}
+        self._here = (0, 0)
         self._theta = 0
 
     def add(self, element, **kwargs):
         ''' Add the element to the segments list '''
         if not isinstance(element, elm.Element):
-            # Instantiate it (for support of legacy add method)            
+            # Instantiate it (for support of legacy add method)
             element = element(**kwargs)
         elif len(kwargs) > 0:
             warnings.warn('kwargs to add method are ignored because element is already instantiated')
@@ -56,7 +55,7 @@ class Optocoupler(ElementCompound):
         unit = 1.5
         super().__init__(*args, unit=unit, **kwargs)
         box = kwargs.get('box', True)
-        boxfill = kwargs.get('boxfill', False)
+        boxfill = kwargs.get('boxfill', 'none')
         bpad = kwargs.get('boxpad', .2)
         base = kwargs.get('base', False)
 
@@ -125,7 +124,7 @@ class Relay(ElementCompound):
         switch = kwargs.get('switch', 'spst').lower()
         core = kwargs.get('core', True)
         box = kwargs.get('box', True)
-        boxfill = kwargs.get('boxfill', False)
+        boxfill = kwargs.get('boxfill', 'none')
         bpad = kwargs.get('boxpad', .25)
         swrev = kwargs.get('swreverse', False)
         swflip = kwargs.get('swflip', False)

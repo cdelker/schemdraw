@@ -1,0 +1,104 @@
+''' Utility functions for point geometry '''
+
+import math
+from operator import mul
+from itertools import starmap
+
+
+def dot(a, b):
+    ''' Dot product of iterables a and b (can be 2D list of lists)'''
+    return Point([sum(starmap(mul, zip(a, col))) for col in zip(*b)])
+
+
+def linspace(start, stop, num=50):
+    ''' List of evenly spaced numbers '''
+    step = (stop - start) / (num - 1)
+    return [start+step*i for i in range(num)]
+
+
+def rotate(xy, angle, center=(0, 0)):
+    ''' Rotate the xy point by angle degrees '''
+    co = math.cos(math.radians(angle))
+    so = math.sin(math.radians(angle))
+    center = Point(center)
+    m = [[co, so], [-so, co]]  # rotation matrix
+    b = Point(xy) - center
+    b = dot(b, m)
+    b = b + center
+    return b
+
+
+def mirrorx(xy, centerx=0):
+    ''' Mirror the point horizontally '''
+    return -(xy[0]-centerx)+centerx, xy[1]
+
+
+def flip(xy):
+    ''' Flip the point vertically '''
+    return xy[0], -xy[1]
+
+
+def delta(a, b):
+    ''' Delta between points a and b '''
+    return b[0] - a[0], b[1] - a[1]
+
+
+def angle(a, b):
+    ''' Compute angle from point a to b '''
+    theta = math.degrees(math.atan2(b[1] - a[1], b[0] - a[0]))
+    return theta
+
+
+class Point(tuple):
+    @property
+    def x(self):
+        return self[0]
+
+    @property
+    def y(self):
+        return self[1]
+
+    def __repr__(self):
+        return f'Point({self.x},{self.y})'
+
+    def __add__(self, a):
+        try:
+            return Point((self.x+a.x, self.y+a.y))
+        except AttributeError:
+            return Point((self.x+a, self.y+a))
+
+    def __sub__(self, a):
+        try:
+            return Point((self.x-a.x, self.y-a.y))
+        except AttributeError:
+            return Point((self.x-a, self.y-a))
+
+    def __rsub__(self, a):
+        try:
+            return Point((a.x-self.x, a.y-self.y))
+        except AttributeError:
+            return Point((a-self.x, a-self.y))
+
+    def __mul__(self, a):
+        return Point((a*self.x, a*self.y))
+
+    def __truediv__(self, a):
+        return Point((self.x/a, self.y/a))
+
+    def __neg__(self):
+        return Point((-self.x, -self.y))
+
+    __radd__ = __add__
+    __rmul__ = __mul__
+
+    def rotate(self, angle, center=(0, 0)):
+        ''' Rotate the point by angle degrees about the center '''
+        return Point(rotate(self, angle, center=Point(center)))
+
+    def mirrorx(self, centerx=0):
+        ''' Mirror in x direction about the centerx point '''
+        return Point(mirrorx(self, centerx))
+
+    def flip(self):
+        ''' Flip the point vertically '''
+        return Point(flip(self))

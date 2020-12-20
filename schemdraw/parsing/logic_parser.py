@@ -41,23 +41,23 @@ def parse_string(logicstr):
     false_ = pyparsing.Keyword('false')
 
     not_op = not_ | '~' | '¬'
-    and_op = and_ | nand_ | '&' | '∧' 
+    and_op = and_ | nand_ | '&' | '∧'
     xor_op = xor_ | xnor_ | '⊕' | '⊻'
     or_op = or_ | nor_ | '|' | '∨' | '+'
 
     expr = pyparsing.Forward()
 
     identifier = ~(and_ | or_ | nand_ | nor_ | not_ | true_ | false_) + \
-                  pyparsing.Word('$' + pyparsing.alphas + '_', pyparsing.alphanums +'_'+'$')
-    
+                  pyparsing.Word('$' + pyparsing.alphas + '_', pyparsing.alphanums + '_' + '$')
+
     atom = identifier | pyparsing.Group('(' + expr + ')')
     factor = pyparsing.Group(pyparsing.ZeroOrMore(not_op) + atom)
     term = pyparsing.Group(factor + pyparsing.ZeroOrMore(and_op + factor))
     expr = pyparsing.infixNotation(true_ | false_ | identifier,
-        [(not_op, 1, pyparsing.opAssoc.RIGHT),
-         (and_op, 2, pyparsing.opAssoc.LEFT),
-         (or_op, 2, pyparsing.opAssoc.LEFT),
-         (xor_op, 2, pyparsing.opAssoc.LEFT)])
+                                   [(not_op, 1, pyparsing.opAssoc.RIGHT),
+                                    (and_op, 2, pyparsing.opAssoc.LEFT),
+                                    (or_op, 2, pyparsing.opAssoc.LEFT),
+                                    (xor_op, 2, pyparsing.opAssoc.LEFT)])
 
     return expr.parseString(logicstr)[0]
 
@@ -75,7 +75,7 @@ def to_tree(pres):
 
     if type(pres) == str:
         return LogicTree(pres)
-    
+
     func = pres[1]
     inputs = pres[::2]
 

@@ -149,7 +149,7 @@ Unlike Matplotlib, the backend can be changed at any time. Alternatively, the ba
     
 Reasons to choose the SVG backend include:
 
-    - No Matplotlib dependency required.
+    - No Matplotlib or Numpy dependency required.
     - Speed. The SVG backend draws 4-10x faster than Matplotlib, depending on the circuit complexity.
 
 Reasons to use Matplotlib backend:

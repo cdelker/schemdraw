@@ -1,7 +1,6 @@
 ''' Connectors and bus lines '''
 
 import warnings
-import numpy as np
 
 from ..segments import Segment, SegmentText, SegmentCircle, SegmentPoly
 from ..elements import Element, Line
@@ -11,7 +10,7 @@ from ..adddocs import adddocs
 @adddocs(Element)
 class OrthoLines(Element):
     ''' Orthogonal connection line
-        
+
         Parameters
         ----------
         at : xy tuple
@@ -29,8 +28,8 @@ class OrthoLines(Element):
             self.buildparams()
 
         self.params['theta'] = 0
-        xy = np.asarray(self.cparams.get('at', dwgxy))
-        to = np.asarray(self.cparams.get('to'))
+        xy = self.cparams.get('at', dwgxy)
+        to = self.cparams.get('to')
         n = self.cparams.get('n', 1)
         ndy = self.cparams.get('dy', .6)
         xstart = self.cparams.get('xstart', None)
@@ -63,7 +62,7 @@ class OrthoLines(Element):
 @adddocs(Element)
 class RightLines(Element):
     ''' Right-angle line
-        
+
         Parameters
         ----------
         at : xy tuple
@@ -81,8 +80,8 @@ class RightLines(Element):
             self.buildparams()
 
         self.params['theta'] = 0
-        xy = np.asarray(self.cparams.get('at', dwgxy))
-        to = np.asarray(self.cparams.get('to'))
+        xy = self.cparams.get('at', dwgxy)
+        to = self.cparams.get('to')
         n = self.cparams.get('n', 1)
         ndy = self.cparams.get('dy', .6)
         dx = to[0] - xy[0]
@@ -133,7 +132,7 @@ class Header(Element):
         edge : float
             Distance between header edge and first pin row/column [0.3]
         pinfill : string
-            Color to fill pin circles            
+            Color to fill pin circles
     '''
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -154,26 +153,26 @@ class Header(Element):
         pinfill = kwargs.get('pinfill', 'white')
         if cols > 2:
             warnings.warn('Header numbering not supported with cols > 2')
-        
+
         w = (cols-1) * pinspacing + edge*2
         h = (rows-1) * pinspacing + edge*2
         pinrad = .1
-        
+
         self.segments.append(SegmentPoly([[0, 0], [0, h], [w, h], [w, 0]]))
         for row in range(rows):
             for col in range(cols):
                 xy = [col*pinspacing+edge, h-row*pinspacing-edge]
-                
+
                 if style == 'square':
                     x, y = xy
                     self.segments.append(SegmentPoly([[x-pinrad, y-pinrad], [x+pinrad, y-pinrad],
                                                       [x+pinrad, y+pinrad], [x-pinrad, y+pinrad]],
                                                      fill='white', zorder=4))
                 elif style == 'screw':
-                    x, y = xy                    
+                    x, y = xy
                     self.segments.append(SegmentCircle(xy, pinrad*1.75, fill=pinfill, zorder=4))
                     self.segments.append(Segment([[x+pinrad, y+pinrad], [x-pinrad, y-pinrad]], zorder=5))
-                    
+
                 else:  # style == 'round'
                     self.segments.append(SegmentCircle(xy, pinrad, fill=pinfill, zorder=4))
 
@@ -181,26 +180,26 @@ class Header(Element):
                     pnumber = str(row*cols + col + 1)
                 elif number == 'ud':
                     pnumber = str(row + col*rows + 1)
-                else: # number == 'ccw'
-                    pnumber = str(rows*col+(rows-row)) if col%2 else str(row+1)
+                else:  # number == 'ccw'
+                    pnumber = str(rows*col+(rows-row)) if col % 2 else str(row+1)
                 self.anchors['pin{}'.format(pnumber)] = xy
-                
+
                 if shownumber:
-                    numxy = [w+.05 if col%2 else -.05, xy[1]]
-                    align = ('left' if col%2 else 'right', 'bottom')
+                    numxy = [w+.05 if col % 2 else -.05, xy[1]]
+                    align = ('left' if col % 2 else 'right', 'bottom')
                     self.segments.append(SegmentText(numxy, pnumber, fontsize=pinfontsizeleft, align=align))
-                
-                if lpinlabels and (cols == 1 or not col%2):
+
+                if lpinlabels and (cols == 1 or not col % 2):
                     lblxy = [-.05, xy[1]]
                     self.segments.append(SegmentText(lblxy, lpinlabels[row], fontsize=pinfontsizeleft,
                                                      align=('right', lpinlabelalign)))
 
-                if rpinlabels and (cols == 1 or col%2):
+                if rpinlabels and (cols == 1 or col % 2):
                     lblxy = [w+.05, xy[1]]
                     self.segments.append(SegmentText(lblxy, rpinlabels[row], fontsize=pinfontsizeright,
                                                      align=('left', rpinlabelalign)))
-                        
-        
+
+
 class Jumper(Element):
     ''' Jumper for use on a Header element
 
@@ -212,7 +211,7 @@ class Jumper(Element):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         pinspacing = kwargs.get('pinspacing', .6)
-        self.params['theta'] = 0        
+        self.params['theta'] = 0
         pinrad = .1
         x = pinrad*2.5
         self.segments.append(SegmentPoly([[-x, -x], [pinspacing+x, -x],
@@ -223,7 +222,7 @@ class Jumper(Element):
 class BusConnect(Element):
     ''' Data bus connection.
         Anchors: `start`, `end`, `pX` for each data line X
-    
+
         Parameters
         ----------
         n : int
@@ -243,12 +242,12 @@ class BusConnect(Element):
         dy = kwargs.get('dy', .6)
         up = kwargs.get('up', True)  # Slant up or down
         lwbus = kwargs.get('lwbus', 4)
-        
+
         self.params['theta'] = 0
         dx = kwargs.get('l', 3)
         slantx = .5
         slanty = slantx if up else -slantx
-        
+
         for i in range(n):
             y = -i*dy
             self.segments.append(Segment([[0, y], [dx-slantx, y], [dx, y+slanty]], theta=0))
@@ -258,7 +257,7 @@ class BusConnect(Element):
         self.anchors['start'] = [dx, slantx]
         self.anchors['end'] = [dx, slantx-n*dy]
 
-    
+
 @adddocs(Element)
 class BusLine(Line):
     ''' Data bus line. Just a wide line.
@@ -293,9 +292,9 @@ class DB9(Element):
         super().__init__(*args, **kwargs)
         pinspacing = kwargs.get('pinspacing', .6)
         edge = kwargs.get('edge', .3)
-        number = kwargs.get('number', False)    
+        number = kwargs.get('number', False)
         pinfill = kwargs.get('pinfill', 'white')
-        self.params['theta'] = 0        
+        self.params['theta'] = 0
         w = pinspacing + edge*2
         h1 = 4 * pinspacing + edge*2
         h2 = h1 + .5
@@ -306,19 +305,19 @@ class DB9(Element):
         for i in range(4):
             xy = [edge, h1-(i+.5)*pinspacing-edge]
             self.segments.append(SegmentCircle(xy, pinrad, fill=pinfill, zorder=4))
-            self.anchors['pin{}'.format(9-i)] = xy  
+            self.anchors['pin{}'.format(9-i)] = xy
             if number:
-                self.segments.append(SegmentText([xy[0], xy[1]+pinrad], 
+                self.segments.append(SegmentText([xy[0], xy[1]+pinrad],
                                                  str(9-i), fontsize=9,
-                                                 align=('center', 'bottom')))            
+                                                 align=('center', 'bottom')))
         for i in range(5):
             xy = [edge+pinspacing, h2-(i+.75)*pinspacing-edge]
             self.segments.append(SegmentCircle(xy, pinrad, fill=pinfill, zorder=4))
             self.anchors['pin{}'.format(5-i)] = xy
             if number:
-                self.segments.append(SegmentText([xy[0], xy[1]+pinrad], 
+                self.segments.append(SegmentText([xy[0], xy[1]+pinrad],
                                                  str(5-i), fontsize=9,
-                                                 align=('center', 'bottom')))            
+                                                 align=('center', 'bottom')))
 
 
 @adddocs(Element)
@@ -336,7 +335,7 @@ class DB25(Element):
             Draw pin numbers
         pinfill : string
             Color to fill pin circles
-    '''    
+    '''
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         pinspacing = kwargs.get('pinspacing', .6)
@@ -354,19 +353,20 @@ class DB25(Element):
         for i in range(12):
             xy = [edge, h1-(i+.5)*pinspacing-edge]
             self.segments.append(SegmentCircle(xy, pinrad, fill=pinfill, zorder=4))
-            self.anchors['pin{}'.format(25-i)] = xy            
+            self.anchors['pin{}'.format(25-i)] = xy
             if number:
-                self.segments.append(SegmentText([xy[0], xy[1]+pinrad], 
+                self.segments.append(SegmentText([xy[0], xy[1]+pinrad],
                                                  str(25-i), fontsize=9,
-                                                 align=('center', 'bottom')))            
+                                                 align=('center', 'bottom')))
         for i in range(13):
             xy = [edge+pinspacing, h2-(i+.75)*pinspacing-edge]
             self.segments.append(SegmentCircle(xy, pinrad, fill=pinfill, zorder=4))
             self.anchors['pin{}'.format(13-i)] = xy
             if number:
-                self.segments.append(SegmentText([xy[0], xy[1]+pinrad], 
+                self.segments.append(SegmentText([xy[0], xy[1]+pinrad],
                                                  str(13-i), fontsize=9,
                                                  align=('center', 'bottom')))
+
 
 @adddocs(Element)
 class CoaxConnect(Element):

@@ -1,10 +1,10 @@
 ''' Integrated Circuit Element '''
 
-import numpy as np
+import math
 
 from ..segments import Segment, SegmentText, SegmentCircle
 from ..elements import Element
-from .lines import Line
+from ..util import linspace, Point
 from ..adddocs import adddocs
 
 
@@ -80,7 +80,7 @@ class Ic(Element):
         # Sort pins by side
         pins = [p.copy() for p in pins]  # Make copy so user's dicts don't change
         for pin in pins:
-            # Convert pin designations to uppercase, single letter            
+            # Convert pin designations to uppercase, single letter
             pin['side'] = pin.get('side', 'L')[:1].upper()
         sidepins = {}
         pincount = {}
@@ -88,7 +88,7 @@ class Ic(Element):
         for side in ['L', 'R', 'T', 'B']:
             sidepins[side] = [p for p in pins if p['side'] == side]
             slots = [p.get('slot', None) for p in sidepins[side]]
-            # Add a 0 - can't max an empty list            
+            # Add a 0 - can't max an empty list
             slots = [int(p.split('/')[1]) for p in slots if p is not None] + [0]
             pincount[side] = max(len(sidepins[side]), max(slots))
 
@@ -113,12 +113,12 @@ class Ic(Element):
 
         # Main box, adjusted for slant
         if slant > 0:
-            y1 = 0 - w * np.tan(np.deg2rad(slant))
-            y2 = h + w * np.tan(np.deg2rad(slant))
+            y1 = 0 - w * math.tan(math.radians(slant))
+            y2 = h + w * math.tan(math.radians(slant))
             paths = [[[0, 0], [w, y1], [w, y2], [0, h], [0, 0]]]
         elif slant < 0:
-            y1 = 0 + w * np.tan(np.deg2rad(slant))
-            y2 = h - w * np.tan(np.deg2rad(slant))
+            y1 = 0 + w * math.tan(math.radians(slant))
+            y2 = h - w * math.tan(math.radians(slant))
             paths = [[[0, y1], [w, 0], [w, h], [0, y2], [0, y1]]]
         else:
             y1 = 0
@@ -132,10 +132,10 @@ class Ic(Element):
             else:
                 sidelen = w-edgepadW*2
 
-            leadext = {'L': np.array([-leadlen, 0]),
-                       'R': np.array([leadlen, 0]),
-                       'T': np.array([0, leadlen]),
-                       'B': np.array([0, -leadlen])}.get(side)
+            leadext = {'L': Point((-leadlen, 0)),
+                       'R': Point((leadlen, 0)),
+                       'T': Point((0, leadlen)),
+                       'B': Point((0, -leadlen))}.get(side)
 
             for i, pin in enumerate(sidepins[side]):
                 # Determine pin position
@@ -152,34 +152,34 @@ class Ic(Element):
                         z = sidelen/2  # Single pin, center it
                     else:
                         # Evenly spaced along side
-                        z = np.linspace(1/(tot+2), 1-1/(tot+2), num=tot)[num-1] * sidelen
+                        z = linspace(1/(tot+2), 1-1/(tot+2), num=tot)[num-1] * sidelen
 
-                pin['pos'] = np.asarray({'L': [0, z+edgepadH],
-                                         'R': [w, z+edgepadH],
-                                         'T': [z+edgepadW, h],
-                                         'B': [z+edgepadW, 0]}.get(side))
+                pin['pos'] = {'L': Point((0, z+edgepadH)),
+                              'R': Point((w, z+edgepadH)),
+                              'T': Point((z+edgepadW, h)),
+                              'B': Point((z+edgepadW, 0))}.get(side)
 
                 # Adjust pin position for slant
                 if side == 'T' and slant > 0:
-                    pin['pos'] = [pin['pos'][0], pin['pos'][1] - pin['pos'][0] * np.tan(-np.deg2rad(slant))]
+                    pin['pos'] = Point((pin['pos'][0], pin['pos'][1] - pin['pos'][0] * math.tan(-math.radians(slant))))
                 elif side == 'T' and slant < 0:
-                    pin['pos'] = [pin['pos'][0], pin['pos'][1] + (y2-h) - pin['pos'][0] * np.tan(-np.deg2rad(slant))]
+                    pin['pos'] = Point(((pin['pos'][0], pin['pos'][1] + (y2-h) - pin['pos'][0] * math.tan(-math.radians(slant)))))
                 elif side == 'B' and slant < 0:
-                    pin['pos'] = [pin['pos'][0], pin['pos'][1] - (y2-h) - pin['pos'][0] * np.tan(np.deg2rad(slant))]
+                    pin['pos'] = Point((pin['pos'][0], pin['pos'][1] - (y2-h) - pin['pos'][0] * math.tan(math.radians(slant))))
                 elif side == 'B' and slant > 0:
-                    pin['pos'] = [pin['pos'][0], pin['pos'][1] - pin['pos'][0] * np.tan(np.deg2rad(slant))]
+                    pin['pos'] = Point((pin['pos'][0], pin['pos'][1] - pin['pos'][0] * math.tan(math.radians(slant))))
 
                 if pin.get('name', '') == '>':
                     # Draw clock pin
-                    clkxy = np.array(pin['pos'])
+                    clkxy = pin['pos']
                     clkw, clkh = 0.4 * lblsize/16, 0.2 * lblsize/16
                     if side in ['T', 'B']:
-                        clkh = clkh * np.sign(leadext[1]) if leadext[1] != 0 else clkh
+                        clkh = math.copysign(clkh, leadext[1]) if leadext[1] != 0 else clkh
                         clkpath = [[clkxy[0]-clkw, clkxy[1]],
                                    [clkxy[0], clkxy[1]-clkh],
                                    [clkxy[0]+clkw, clkxy[1]]]
                     else:
-                        clkw = clkw * -np.sign(leadext[0]) if leadext[0] != 0 else clkw
+                        clkw = math.copysign(clkw, -leadext[0]) if leadext[0] != 0 else clkw
                         clkpath = [[clkxy[0], clkxy[1]+clkh],
                                    [clkxy[0]+clkw, clkxy[1]],
                                    [clkxy[0], clkxy[1]-clkh]]
@@ -187,10 +187,10 @@ class Ic(Element):
 
                 elif pin.get('name', '') != '':
                     # Add pin label
-                    pofst = np.asarray({'L': [lblofst, 0],
-                                        'R': [-lblofst, 0],
-                                        'T': [0, -lblofst],
-                                        'B': [0, lblofst]}.get(side))
+                    pofst = {'L': Point((lblofst, 0)),
+                             'R': Point((-lblofst, 0)),
+                             'T': Point((0, -lblofst)),
+                             'B': Point((0, lblofst))}.get(side)
 
                     align = {'L': ('left', 'center'),
                              'R': ('right', 'center'),
@@ -214,11 +214,11 @@ class Ic(Element):
                 if pin.get('pin', '') != '':
                     # Account for any invert-bubbles
                     invertradius = pin.get('invertradius', .15) * pin.get('invert', 0)
-                    pofst = np.asarray({'L': [-plblofst-invertradius*2, plblofst],
-                                        'R': [plblofst+invertradius*2, plblofst],
-                                        'T': [plblofst, plblofst+invertradius*2],
-                                        'B': [plblofst, -plblofst-invertradius*2]
-                                        }.get(side))
+                    pofst = {'L': Point((-plblofst-invertradius*2, plblofst)),
+                             'R': Point((plblofst+invertradius*2, plblofst)),
+                             'T': Point((plblofst, plblofst+invertradius*2)),
+                             'B': Point((plblofst, -plblofst-invertradius*2))
+                             }.get(side)
 
                     align = {'L': ('right', 'bottom'),
                              'R': ('left', 'bottom'),
@@ -230,21 +230,21 @@ class Ic(Element):
                              'fontsize': pin.get('psize', plblsize)}
                     self.segments.append(SegmentText(**label))
 
-                # Draw leads 
+                # Draw leads
                 if leadlen > 0:
                     if pin.get('invert', False):
                         # Add invert-bubble
                         invertradius = pin.get('invertradius', .15)
-                        invertofst = {'L': np.array([-invertradius, 0]),
-                                      'R': np.array([invertradius, 0]),
-                                      'T': np.array([0, invertradius]),
-                                      'B': np.array([0, -invertradius])}.get(side)
+                        invertofst = {'L': Point((-invertradius, 0)),
+                                      'R': Point((invertradius, 0)),
+                                      'T': Point((0, invertradius)),
+                                      'B': Point((0, -invertradius))}.get(side)
 
                         self.segments.append(SegmentCircle(
-                            np.asarray(pin['pos'])+invertofst, invertradius))
-                        paths.append([pin['pos']+invertofst*2, pin['pos']+leadext])
+                            pin['pos']+invertofst, invertradius))
+                        paths.append((pin['pos']+invertofst*2, pin['pos']+leadext))
                     else:
-                        paths.append([pin['pos'], pin['pos']+leadext])
+                        paths.append((pin['pos'], pin['pos']+leadext))
 
                 # Define anchors
                 anchorpos = pin['pos']+leadext
@@ -279,4 +279,3 @@ class Multiplexer(Ic):
         demux = kwargs.pop('demux', False)
         slant = -slant if not demux else slant
         super().__init__(*args, slant=slant, **kwargs)
-

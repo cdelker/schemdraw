@@ -1,7 +1,8 @@
 ''' Signal processing elements '''
 
-import numpy as np
+import math
 
+from ..util import linspace
 from ..segments import Segment, SegmentCircle, SegmentText
 from ..elements import Element
 
@@ -24,7 +25,7 @@ class Circle(Element):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         rad = .5
-        k = rad*np.sqrt(2)/2  # Diagonal distance
+        k = rad*math.sqrt(2)/2  # Diagonal distance
         self.segments.append(SegmentCircle([rad, 0], rad))
         self.params['lblloc'] = 'center'
         self.params['lblofst'] = 0
@@ -59,7 +60,7 @@ class Mixer(Circle):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         rad = .5
-        k = rad*np.sqrt(2)/2  # Diagonal distance
+        k = rad*math.sqrt(2)/2  # Diagonal distance
         self.segments.append(Segment([[rad+k, k], [rad-k, -k]]))
         self.segments.append(Segment([[rad+k, -k], [rad-k, k]]))
         self.params['lblloc'] = 'top'
@@ -89,10 +90,9 @@ class Amp(Element):
 
 
 def _makesine():
-    sinx = np.linspace(-np.pi, np.pi, num=20)
-    siny = -np.sin(sinx)
-    sinx = sinx / np.pi * .3 + .5
-    siny = siny / 10
+    sinx = linspace(-math.pi, math.pi, num=20)
+    siny = [-math.sin(x)/10 for x in sinx]
+    sinx = [x / math.pi * .3 + .5 for x in sinx]
     path = list(zip(sinx, siny))
     return path
 

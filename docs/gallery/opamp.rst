@@ -23,7 +23,7 @@ Inverting Opamp
     d.add(elm.Line('left', xy=op.in1, l=d.unit/6))
     d.add(elm.Dot)
     d.push()
-    Rin = d.add(elm.Resistor('left', xy=op.in1-[d.unit/5,0], botlabel='$R_{in}$', lftlabel='$v_{in}$'))
+    Rin = d.add(elm.Resistor('left', xy=(op.in1[0]-d.unit/5, op.in1[1]), botlabel='$R_{in}$', lftlabel='$v_{in}$'))
     d.pop()
     d.add(elm.Line('up', l=d.unit/2))
     Rf = d.add(elm.Resistor('right', l=d.unit*1, label='$R_f$'))

@@ -1,6 +1,6 @@
 ''' Cable elements, coaxial and triaxial '''
 
-import numpy as np
+import math
 import warnings
 
 from ..segments import Segment, SegmentArc
@@ -88,9 +88,9 @@ class Triax(Element2Term):
         if radiusouter < radiusinner:
             raise ValueError('Triax inner radius > outer radius')
 
-        xshield = radiusouter/2 * np.sqrt(1 - radiusinner**2/radiusouter**2)
+        xshield = radiusouter/2 * math.sqrt(1 - radiusinner**2/radiusouter**2)
         if shieldofststart - xshield > -radiusinner/2:
-            thetashield = 180 - np.rad2deg(np.arctan2(radiusinner, xshield))
+            thetashield = 180 - math.degrees(math.atan2(radiusinner, xshield))
         else:
             thetashield = 180
 

@@ -4,9 +4,11 @@ import os
 import sys
 import subprocess
 import tempfile
-import numpy as np
+import math
 
+from ..util import Point
 from . import svgtext
+
 
 def isnotebook():
     ''' Determine whether code is running in Jupyter/interactive mode '''
@@ -15,6 +17,7 @@ def isnotebook():
         return shell == 'ZMQInteractiveShell'
     except NameError:
         return False
+
 
 inline = isnotebook()
 
@@ -27,22 +30,22 @@ def getstyle(color=None, ls=None, lw=None, capstyle=None, joinstyle=None, fill=N
     if color:
         s += f'stroke:{color};'
     s += f'fill:{str(fill).lower()};'
-    if lw:# and lw != 2.0:
+    if lw:
         s += f'stroke-width:{lw};'
     dash = {'--': '7.4,3.2',
-            'dashed': '7.4,3.2',                
+            'dashed': '7.4,3.2',
             ':': '2,3.3',
-            'dotted': '2,3.3',            
+            'dotted': '2,3.3',
             '-.': '12.8,3.2,2,3.2',
             'dashdot': '12.8,3.2,2,3.2',
             }.get(ls, None)
     if dash is not None:
         s += f'stroke-dasharray:{dash};'
-    if capstyle:# and capstyle != 'round':
+    if capstyle:
         s += f'stroke-linecap:{capstyle};'
-    if joinstyle:# and joinstyle != 'round':
+    if joinstyle:
         s += f'stroke-linejoin:{joinstyle};'
-    
+
     if s:
         s = f'style="{s}"'
     return s
@@ -63,13 +66,13 @@ class Figure(object):
     # Each arrowhead gets its own id in svg <defs>
     # Make at the class level since multiple SVGs on a page
     # will reuse defs from an earlier drawing
-    
+
     def __init__(self, bbox, **kwargs):
         self.svgelements = []  # List of tuples: (zorder, SVG elements text)
         self.showframe = kwargs.get('showframe', False)
         self.scale = 64.8 * kwargs.get('inches_per_unit', .5)  # Magic scale factor that matches what MPL did
         self.set_bbox(bbox)
-    
+
     def set_bbox(self, bbox):
         ''' Set the bounding box '''
         self.bbox = bbox
@@ -77,16 +80,15 @@ class Figure(object):
         self.pxheight = (self.bbox.ymax-self.bbox.ymin) * self.scale
         self.pxwidth = max(5, self.pxwidth)
         self.pxheight = max(5, self.pxheight)
-    
+
     def xform(self, x, y):
         ''' Convert x, y in user coords to svg pixel coords '''
         return x*self.scale, -y*self.scale
-    
+
     def plot(self, x, y, color='black', ls='-', lw=2, fill='none',
              capstyle='round', joinstyle='round', zorder=2):
         ''' Plot a path '''
         s = '<path d="M {},{} '.format(*self.xform(x[0], y[0]))
-        lastm = False
         for xx, yy in zip(x[1:], y[1:]):
             if str(xx) == 'nan' or str(yy) == 'nan':
                 s += 'M '
@@ -96,11 +98,11 @@ class Figure(object):
             xx, yy = self.xform(xx, yy)
             s += '{},{} '.format(xx, yy)
 
-        s = s.strip() + '" ' # End path points
+        s = s.strip() + '" '  # End path points
         s += getstyle(color=color, ls=ls, lw=lw, capstyle=capstyle, joinstyle=joinstyle, fill=fill)
         s += ' />'
         self.svgelements.append((zorder, s))
-        
+
     def text(self, s, x, y, color='black', fontsize=14, fontfamily='sans-serif',
              rotation=0, halign='center', valign='center', rotation_mode='anchor', zorder=3):
         ''' Add text to the figure '''
@@ -144,22 +146,16 @@ class Figure(object):
         dx, dy = dx*self.scale, dy*self.scale
         headwidth = headwidth*self.scale
         headlength = headlength*self.scale
-        
+
         # Draw arrow as path
-        # start at head
-        head = np.array((x+dx, y-dy))
-        tail = np.array((x, y))
-        fullen = np.sqrt(dx**2 + dy**2)
-        theta = np.arctan2(dy, dx)
-        m = np.array([[np.cos(theta), np.sin(theta)],   # Rotation matrix
-                      [-np.sin(theta), np.cos(theta)]])
-        
-        finc = np.array([fullen - headlength, 0])
-        fin1 = np.array([fullen - headlength, headwidth/2])
-        fin2 = np.array([fullen - headlength, -headwidth/2])
-        finc = np.dot(m, finc) + tail
-        fin1 = np.dot(m, fin1) + tail
-        fin2 = np.dot(m, fin2) + tail
+        head = Point((x+dx, y-dy))
+        tail = Point((x, y))
+        fullen = math.sqrt(dx**2 + dy**2)
+        theta = -math.degrees(math.atan2(dy, dx))
+
+        finc = Point((fullen - headlength, 0)).rotate(theta) + tail
+        fin1 = Point((fullen - headlength, headwidth/2)).rotate(theta) + tail
+        fin2 = Point((fullen - headlength, -headwidth/2)).rotate(theta) + tail
 
         s = f'<path d="M {head[0]} {head[1]} '
         s += f'L {fin1[0]} {fin1[1]} '
@@ -171,7 +167,7 @@ class Figure(object):
         s += ' />'
         self.svgelements.append((zorder, s))
         return
-        
+
     def arc(self, center, width, height, theta1=0, theta2=90, angle=0,
             color='black', lw=2, ls='-', zorder=1, arrow=None):
         ''' Draw an arc or ellipse, with optional arrowhead '''
@@ -180,19 +176,19 @@ class Figure(object):
         angle = -angle
         theta1 = -theta1
         theta2 = -theta2
-        anglerad = np.deg2rad(angle)        
+        anglerad = math.radians(angle)
 
-        theta1 = np.deg2rad(theta1)
-        theta2 = np.deg2rad(theta2)
-        t1 = np.arctan2(width*np.sin(theta1), height*np.cos(theta1))
-        t2 = np.arctan2(width*np.sin(theta2), height*np.cos(theta2))
+        theta1 = math.radians(theta1)
+        theta2 = math.radians(theta2)
+        t1 = math.atan2(width*math.sin(theta1), height*math.cos(theta1))
+        t2 = math.atan2(width*math.sin(theta2), height*math.cos(theta2))
         while t1 < t2:
-            t1 += 2*np.pi
+            t1 += 2*math.pi
 
-        startx = centerx + width/2 * np.cos(t2)*np.cos(anglerad) - height/2 * np.sin(t2)*np.sin(anglerad)
-        starty = centery + width/2 * np.cos(t2)*np.sin(anglerad) + height/2 * np.sin(t2)*np.cos(anglerad)
-        endx = centerx + width/2 * np.cos(t1)*np.cos(anglerad) - height/2 * np.sin(t1)*np.sin(anglerad)
-        endy = centery + width/2 * np.cos(t1)*np.sin(anglerad) + height/2 * np.sin(t1)*np.cos(anglerad)
+        startx = centerx + width/2 * math.cos(t2)*math.cos(anglerad) - height/2 * math.sin(t2)*math.sin(anglerad)
+        starty = centery + width/2 * math.cos(t2)*math.sin(anglerad) + height/2 * math.sin(t2)*math.cos(anglerad)
+        endx = centerx + width/2 * math.cos(t1)*math.cos(anglerad) - height/2 * math.sin(t1)*math.sin(anglerad)
+        endy = centery + width/2 * math.cos(t1)*math.sin(anglerad) + height/2 * math.sin(t1)*math.cos(anglerad)
 
         startx, starty = round(startx, 2), round(starty, 2)
         endx, endy = round(endx, 2), round(endy, 2)
@@ -209,7 +205,7 @@ class Figure(object):
             self.svgelements.append((zorder, s))
 
         else:
-            flags = '1 1' if abs(t2-t1) >= np.pi else '0 1'
+            flags = '1 1' if abs(t2-t1) >= math.pi else '0 1'
             s += f'<path d="M {startx} {starty}'
             s += f' a {width/2} {height/2} {angle} {flags} {dx} {dy}"'
             s += f' stroke="{color}" stroke-width="{lw}" fill="none"'
@@ -220,33 +216,29 @@ class Figure(object):
             # Back to user coordinates
             width, height = width/self.scale, height/self.scale
             angle = -angle
-            theta1 = -np.rad2deg(theta1)
-            theta2 = -np.rad2deg(theta2)
+            theta1 = -math.degrees(theta1)
+            theta2 = -math.degrees(theta2)
 
             headlength = .25
             headwidth = .15
-            
-            x, y = np.cos(np.deg2rad(theta2)), np.sin(np.deg2rad(theta2))
-            th2 = np.rad2deg(np.arctan2((width/height)*y, x))
-            x, y = np.cos(np.deg2rad(theta1)), np.sin(np.deg2rad(theta1))
-            th1 = np.rad2deg(np.arctan2((width/height)*y, x))
+
+            x, y = math.cos(math.radians(theta2)), math.sin(math.radians(theta2))
+            th2 = math.degrees(math.atan2((width/height)*y, x))
+            x, y = math.cos(math.radians(theta1)), math.sin(math.radians(theta1))
+            th1 = math.degrees(math.atan2((width/height)*y, x))
             if arrow == 'ccw':
-                dx = np.cos(np.deg2rad(th2+90)) * headlength
-                dy = np.sin(np.deg2rad(theta2+90)) * headlength
-                s = [center[0] + width/2*np.cos(np.deg2rad(th2)),
-                     center[1] + height/2*np.sin(np.deg2rad(th2))]
+                dx = math.cos(math.radians(th2+90)) * headlength
+                dy = math.sin(math.radians(theta2+90)) * headlength
+                s = [center[0] + width/2*math.cos(math.radians(th2)),
+                     center[1] + height/2*math.sin(math.radians(th2))]
             else:
-                dx = -np.cos(np.deg2rad(th1+90)) * headlength
-                dy = - np.sin(np.deg2rad(th1+90)) * headlength
-                s = [center[0] + width/2*np.cos(np.deg2rad(th1)),
-                     center[1] + height/2*np.sin(np.deg2rad(th1))]
-    
-            # Rotate the arrow head
-            co = np.cos(np.radians(angle))
-            so = np.sin(np.radians(angle))
-            m = np.array([[co, so], [-so, co]])
-            s = np.dot(s-center, m)+center
-            darrow = np.dot([dx, dy], m)
+                dx = -math.cos(math.radians(th1+90)) * headlength
+                dy = -math.sin(math.radians(th1+90)) * headlength
+                s = [center[0] + width/2*math.cos(math.radians(th1)),
+                     center[1] + height/2*math.sin(math.radians(th1))]
+
+            s = Point(s).rotate(angle, center)
+            darrow = Point((dx, dy)).rotate(angle)
 
             self.arrow(s[0], s[1], darrow[0], darrow[1], headwidth=headwidth,
                        headlength=headlength, color=color, lw=1, zorder=zorder)
@@ -280,7 +272,7 @@ class Figure(object):
 
     def __repr__(self):
         return self.getimage().decode()
-    
+
     def show(self):
         ''' Show drawing in default program, if not inline in Jupyter '''
         if not inline:

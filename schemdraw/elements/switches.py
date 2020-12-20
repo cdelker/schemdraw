@@ -19,7 +19,7 @@ class Switch(Element2Term):
     '''
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        action = kwargs.get('action', None)        
+        action = kwargs.get('action', None)
         self.segments.append(Segment(
             [[0, 0], gap, [sw_dot_r*2, .1], [.8, .45], gap, [1, 0]]))
         self.segments.append(SegmentCircle([sw_dot_r, 0], sw_dot_r))

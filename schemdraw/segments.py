@@ -3,9 +3,9 @@
 '''
 
 from collections import namedtuple
-import numpy as np
+import math
 
-from .transform import mirror_point, mirror_array, flip_point
+from . import util
 from .backends import svgtext
 
 BBox = namedtuple('BBox', ['xmin', 'ymin', 'xmax', 'ymax'])
@@ -14,14 +14,14 @@ BBox = namedtuple('BBox', ['xmin', 'ymin', 'xmax', 'ymax'])
 def roundcorners(verts, radius=.5):
     ''' Round the corners of polygon defined by verts.
         Works for convex polygons assuming radius fits inside.
-    
+
         Parameters
         ----------
         verts : list
             List of (x,y) pairs defining corners of polygon
         radius : float
             Radius of curvature
-    
+
         Adapted from:
         https://stackoverflow.com/questions/24771828/algorithm-for-creating-rounded-corners-in-a-polygon
     '''
@@ -36,17 +36,16 @@ def roundcorners(verts, radius=.5):
         dx2 = p2[0]-p3[0]
         dy2 = p2[1]-p3[1]
 
-        angle = (np.arctan2(dy1, dx1) - np.arctan2(dy2, dx2))/2
-        tan = abs(np.tan(angle))
+        angle = (math.atan2(dy1, dx1) - math.atan2(dy2, dx2))/2
+        tan = abs(math.tan(angle))
         segment = radius/tan
 
         def getlength(x, y):
-            return np.sqrt(x*x + y*y)
+            return math.sqrt(x*x + y*y)
 
         def getproportionpoint(point, segment, length, dx, dy):
             factor = segment/length
-            return np.asarray([point[0]-dx * factor,
-                               point[1]-dy * factor])
+            return point[0]-dx * factor, point[1]-dy * factor
 
         length1 = getlength(dx1, dy1)
         length2 = getlength(dx2, dy2)
@@ -64,18 +63,18 @@ def roundcorners(verts, radius=.5):
         L = getlength(dx, dy)
         d = getlength(segment, radius)
         circlepoint = getproportionpoint(p2, d, L, dx, dy)
-        startangle = np.arctan2(p1cross[1] - circlepoint[1], p1cross[0]-circlepoint[0])
-        endangle = np.arctan2(p2cross[1] - circlepoint[1], p2cross[0]-circlepoint[0])        
-        startangle, endangle = np.unwrap([startangle, endangle])
-        
-        arc = []
-        for i in np.linspace(startangle, endangle, 100):
-            arc.append([circlepoint[0] + np.cos(i)*radius,
-                        circlepoint[1] + np.sin(i)*radius])
+        startangle = math.atan2(p1cross[1] - circlepoint[1], p1cross[0]-circlepoint[0])
+        endangle = math.atan2(p2cross[1] - circlepoint[1], p2cross[0]-circlepoint[0])
+
+        while endangle < startangle:
+            endangle += 2*math.pi
+
+        ph = util.linspace(startangle, endangle, 100)
+        arc = [[circlepoint[0] + math.cos(i)*radius, circlepoint[1] + math.sin(i)*radius] for i in ph]
 
         poly.extend(arc)
     poly.append(poly[0])  # Close the loop
-    return np.asarray(poly)
+    return poly
 
 
 class Segment(object):
@@ -104,7 +103,7 @@ class Segment(object):
             Z-order for segment
     '''
     def __init__(self, path, **kwargs):
-        self.path = np.asarray(path)  # Untranformed path
+        self.path = path  # Untranformed path
         self.zorder = kwargs.get('zorder', None)
         self.color = kwargs.get('color', None)
         self.fill = kwargs.get('fill', None)
@@ -135,7 +134,7 @@ class Segment(object):
                   'capstyle': self.capstyle,
                   'joinstyle': self.joinstyle}
         params.update(style)
-        return Segment(transform.transform(self.path), **params)
+        return Segment(transform.transform_array(self.path), **params)
 
     def get_bbox(self):
         ''' Get bounding box (untransformed)
@@ -151,14 +150,15 @@ class Segment(object):
 
     def doreverse(self, centerx):
         ''' Reverse the path (flip horizontal about the center of the path) '''
-        self.path = mirror_array(self.path, centerx)[::-1]
+        self.path = [util.mirrorx(p, centerx) for p in self.path[::-1]]
 
     def doflip(self):
         ''' Vertically flip the element '''
-        flipped = []
-        for p in self.path:
-            flipped.append(flip_point(p))
-        self.path = flipped
+#        flipped = []
+#        for p in self.path:
+#            flipped.append(flip_point(p))
+#       self.path = flipped
+        self.path = [util.flip(p) for p in self.path]
 
     def draw(self, fig, transform, **style):
         ''' Draw the segment
@@ -190,7 +190,9 @@ class Segment(object):
             elif fill is False:
                 fill = None
 
-        fig.plot(path[:, 0], path[:, 1], color=color, fill=fill,
+        x = [p[0] for p in path]
+        y = [p[1] for p in path]
+        fig.plot(x, y, color=color, fill=fill,
                  ls=ls, lw=lw, capstyle=capstyle, joinstyle=joinstyle,
                  zorder=zorder)
 
@@ -237,11 +239,11 @@ class SegmentText(object):
 
     def doreverse(self, centerx):
         ''' Reverse the path (flip horizontal about the centerx point) '''
-        self.xy = mirror_point(self.xy, centerx)
+        self.xy = util.mirrorx(self.xy, centerx)
 
     def doflip(self):
         ''' Vertically flip the element '''
-        self.xy = flip_point(self.xy)
+        self.xy = util.flip(self.xy)
 
     def xform(self, transform, **style):
         ''' Return a new Segment that has been transformed with all
@@ -277,7 +279,7 @@ class SegmentText(object):
         w = w/72*2
         h = h/72*2
         x = self.xy[0]
-        y = self.xy[1]    
+        y = self.xy[1]
         if self.align is not None:
             if self.align[0] == 'center':
                 x -= w/2
@@ -289,7 +291,6 @@ class SegmentText(object):
                 y -= h
 
         return BBox(x-.1, y-.1, x+w+.2, y+h+.2)
-
 
     def draw(self, fig, transform, **style):
         ''' Draw the segment
@@ -355,14 +356,11 @@ class SegmentPoly(object):
 
     def doreverse(self, centerx):
         ''' Reverse the path (flip horizontal about the centerx point) '''
-        self.verts = mirror_array(self.verts, centerx)[::-1]
+        self.verts = [util.mirrorx(v, centerx) for v in self.verts[::-1]]
 
     def doflip(self):
         ''' Vertically flip the element '''
-        flipped = []
-        for p in self.verts:
-            flipped.append(flip_point(p))
-        self.verts = flipped
+        self.verts = [util.flip(p) for p in self.verts]
 
     def xform(self, transform, **style):
         ''' Return a new Segment that has been transformed '''
@@ -375,7 +373,7 @@ class SegmentPoly(object):
                   'cornerradius': self.cornerradius,
                   'zorder': self.zorder}
         params.update(style)
-        return SegmentPoly(transform.transform(self.verts), **params)
+        return SegmentPoly(transform.transform_array(self.verts), **params)
 
     def end(self):
         ''' Get endpoint of this segment, untransformed '''
@@ -413,11 +411,11 @@ class SegmentPoly(object):
         ls = self.ls if self.ls else style.get('ls', '-')
 
         fill = color if fill is True else None if fill is False else fill
-        verts = transform.transform(self.verts)
-        
+        verts = transform.transform_array(self.verts)
+
         if self.cornerradius > 0:
             verts = roundcorners(verts, self.cornerradius)
-        
+
         fig.poly(verts, closed=closed, color=color, fill=fill, lw=lw, ls=ls,
                  capstyle=capstyle, joinstyle=joinstyle, zorder=zorder)
 
@@ -448,7 +446,7 @@ class SegmentCircle(object):
             Flip reference ['start', 'end', None].
     '''
     def __init__(self, center, radius, **kwargs):
-        self.center = np.asarray(center)
+        self.center = center
         self.radius = radius
         self.zorder = kwargs.pop('zorder', None)
         self.color = kwargs.get('color', None)
@@ -465,12 +463,12 @@ class SegmentCircle(object):
 
     def doreverse(self, centerx):
         ''' Reverse the path (flip horizontal about the centerx point) '''
-        self.center = mirror_point(self.center, centerx)
+        self.center = util.mirrorx(self.center, centerx)
         self.endref = {None: None, 'start': 'end', 'end': 'start'}.get(self.endref)
 
     def doflip(self):
         ''' Flip the segment up/down '''
-        self.center = flip_point(self.center)
+        self.center = util.flip(self.center)
 
     def xform(self, transform, **style):
         ''' Return a new Segment that has been transformed '''
@@ -554,24 +552,22 @@ class SegmentArrow(object):
         self.headlength = kwargs.get('headlength', None)
         self.color = kwargs.get('color', None)
         self.lw = kwargs.get('lw', None)
-        self.ls = kwargs.get('ls', None)
         self.endref = kwargs.get('ref', None)
 
     def doreverse(self, centerx):
         ''' Reverse the path (flip horizontal about the centerx point) '''
-        self.tail = mirror_point(self.tail, centerx)
-        self.head = mirror_point(self.head, centerx)
+        self.tail = util.mirrorx(self.tail, centerx)
+        self.head = util.mirrorx(self.head, centerx)
         self.endref = {None: None, 'start': 'end', 'end': 'start'}.get(self.endref)
 
     def doflip(self):
-        self.tail = flip_point(self.tail)
-        self.head = flip_point(self.head)
+        self.tail = util.flip(self.tail)
+        self.head = util.flip(self.head)
 
     def xform(self, transform, **style):
         ''' Return a new Segment that has been transformed '''
         params = {'zorder': self.zorder,
                   'color': self.color,
-                  'ls': self.ls,
                   'lw': self.lw,
                   'headwidth': self.headwidth,
                   'headlength': self.headlength,
@@ -614,7 +610,6 @@ class SegmentArrow(object):
         head = transform.transform(self.head, ref=self.endref)
         zorder = self.zorder if self.zorder is not None else style.get('zorder', 1)
         color = self.color if self.color else style.get('color', 'black')
-        ls = self.ls if self.ls else style.get('ls', '-')
         lw = self.lw if self.lw else style.get('lw', 2)
         headwidth = self.headwidth if self.headwidth else style.get('headwidth', .2)
         headlength = self.headlength if self.headlength else style.get('headlength', .2)
@@ -674,13 +669,13 @@ class SegmentArc(object):
 
     def doreverse(self, centerx):
         ''' Reverse the path (flip horizontal about the centerx point) '''
-        self.center = mirror_point(self.center, centerx)
+        self.center = util.mirrorx(self.center, centerx)
         self.theta1, self.theta2 = 180-self.theta2, 180-self.theta1
         self.arrow = {'cw': 'ccw', 'ccw': 'cw'}.get(self.arrow, None)
 
     def doflip(self):
         ''' Vertically flip the element '''
-        self.center = flip_point(self.center)
+        self.center = util.flip(self.center)
         self.theta1, self.theta2 = -self.theta2, -self.theta1
         self.arrow = {'cw': 'ccw', 'ccw': 'cw'}.get(self.arrow, None)
 
@@ -709,20 +704,24 @@ class SegmentArc(object):
                 Bounding box limits
         '''
         # Who wants to do trigonometry when we can just brute-force the bounding box?
-        theta1, theta2 = np.deg2rad(self.theta1), np.deg2rad(self.theta2)
+        theta1, theta2 = math.radians(self.theta1), math.radians(self.theta2)
         # the phi parameter in parametric form is not the same as the angle along ellipse
         # (see https://www.petercollingridge.co.uk/tutorials/computational-geometry/finding-angle-around-ellipse/)
-        t1 = np.arctan2(self.width*np.sin(self.theta1), self.height*np.cos(self.theta1))
-        t2 = np.arctan2(self.width*np.sin(self.theta2), self.height*np.cos(self.theta2))
+        t1 = math.atan2(self.width*math.sin(theta1), self.height*math.cos(theta1))
+        t2 = math.atan2(self.width*math.sin(theta2), self.height*math.cos(theta2))
         while t2 < t1:
-            t2 += 2*np.pi
-        t = np.linspace(t1, t2, num=500)    
-        phi = np.deg2rad(self.angle)
+            t2 += 2*math.pi
+        t = util.linspace(t1, t2, num=500)
+        sint = list(map(math.sin, t))
+        cost = list(map(math.cos, t))
+        phi = math.radians(self.angle)
+        cosphi = math.cos(phi)
+        sinphi = math.sin(phi)
         rx = self.width/2
         ry = self.height/2
-        xx = self.center[0] + rx * np.cos(t)*np.cos(phi) - ry * np.sin(t)*np.sin(phi)
-        yy = self.center[1] + rx * np.cos(t)*np.sin(phi) + ry * np.sin(t)*np.cos(phi)
-        return BBox(xx.min(), yy.min(), xx.max(), yy.max())
+        xx = [self.center[0] + rx * ct*cosphi - ry * st*sinphi for st, ct in zip(sint, cost)]
+        yy = [self.center[1] + rx * ct*sinphi + ry * st*cosphi for st, ct in zip(sint, cost)]
+        return BBox(min(xx), min(yy), max(xx), max(yy))
 
     def draw(self, fig, transform, **style):
         ''' Draw the segment

@@ -1,14 +1,14 @@
 ''' Logic gate definitions '''
 
 from functools import partial
-import numpy as np
+import math
 
 from ..segments import Segment, SegmentCircle
 from ..elements import Element, Element2Term
 from ..adddocs import adddocs
+from ..util import linspace
 
-
-gap = [np.nan, np.nan]
+gap = [math.nan, math.nan]
 leadlen = .35
 gateh = 1.
 gatel = .65
@@ -38,11 +38,11 @@ class And(Element):
         inputnots = kwargs.get('inputnots', [])
 
         rad = gateh/2
-        theta = np.linspace(np.radians(-90), np.radians(90), num=50)
-        arcpoints = np.vstack((rad*np.cos(theta) + gatel+leadlen,
-                               rad*np.sin(theta)))
+        theta = linspace(math.radians(-90), math.radians(90), num=50)
+        x = [rad*math.cos(t) + gatel+leadlen for t in theta]
+        y = [rad*math.sin(t) for t in theta]
 
-        path = np.transpose(arcpoints).tolist()
+        path = list(zip(x, y))
         path += [[gatel+leadlen, rad], [leadlen, rad],
                  [leadlen, 0], [leadlen, -rad],
                  [gatel+leadlen, -rad]]
@@ -121,42 +121,46 @@ class Or(Element):
         xor = kwargs.get('xor', False)
         inputnots = kwargs.get('inputnots', [])
 
-        # Define OR path as a numpy array
+        # Define OR path
         orflat = .5
         xorgap = .15
-        x = np.linspace(0, gatel+.05)
-        y = x**2
-        y = y - max(y)
-        y = np.concatenate(([min(y)], y))   # Combine the flat + parabolic parts
-        x = np.concatenate(([0], x+orflat))
+        x = linspace(0, gatel+.05)
+        y = [x0**2 for x0 in x]
+        y = [y0 - max(y) for y0 in y]
+        y = [min(y)] + y   # Combine the flat + parabolic parts
+        x = [0] + [x0+orflat for x0 in x]
 
         # Back/input side
-        y2 = np.linspace(min(y), -min(y))
-        x2 = -y2**2
+        y2 = linspace(min(y), -min(y))
+        x2 = [-y0**2 for y0 in y2]
         back = min(x2)
-        x2 = x2 - back
+        x2 = [x0 - back for x0 in x2]
 
         # Offset for inputs
-        x = x + leadlen
-        x2 = x2 + leadlen
+        x = [x0 + leadlen for x0 in x]
+        x2 = [x0 + leadlen for x0 in x2]
 
         if xor:
-            x = x + xorgap
+            x = [x0 + xorgap for x0 in x]
 
         tip = max(x)
         orheight = abs(min(y))
 
-        path = np.transpose(np.vstack((x, y))).tolist() + np.transpose(np.vstack((x[::-1], -y[::-1]))).tolist()
+        negy = [-y0 for y0 in y]
+        path = list(zip(x, y)) + list(zip(x[::-1], negy[::-1]))
+
         if xor:
-            path += np.transpose(np.vstack((x2[::-1]+xorgap, y2[::-1]))).tolist()
+            x2xor = [x0+xorgap for x0 in x2[::-1]]
+            y2xor = y2[::-1]
+            path += list(zip(x2xor, y2xor))
         else:
-            path += np.transpose(np.vstack((x2[::-1], y2[::-1]))).tolist()
+            path += list(zip(x2[::-1], y2[::-1]))
         self.segments.append(Segment(path, **kwargs))
         self.anchors['out'] = [tip+leadlen, 0]
         self.anchors['end'] = self.anchors['out']
 
         if xor:
-            self.segments.append(Segment(np.transpose(np.vstack((x2, y2))).tolist(), **kwargs))
+            self.segments.append(Segment(list(zip(x2, y2)), **kwargs))
 
         if nor:
             self.segments.append(SegmentCircle([tip+notbubble, 0], notbubble, **kwargs))
@@ -270,23 +274,30 @@ class Schmitt(Buf):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         xofst = leadlen
-        self.segments.append(Segment([[xofst+.07, -.15], [xofst+.25, -.15], [xofst+.25, .15],
-                                      gap, [xofst+.33, .15], [xofst+.15, .15], [xofst+.15, -.15]], lw=1))    
+        self.segments.append(Segment([[xofst+.07, -.15], [xofst+.25, -.15],
+                                      [xofst+.25, .15], gap,
+                                      [xofst+.33, .15], [xofst+.15, .15],
+                                      [xofst+.15, -.15]], lw=1))
 
 
 class SchmittNot(Not):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         xofst = leadlen
-        self.segments.append(Segment([[xofst+.07, -.15], [xofst+.25, -.15], [xofst+.25, .15],
-                                      gap, [xofst+.33, .15], [xofst+.15, .15], [xofst+.15, -.15]], lw=1))    
+        self.segments.append(Segment([[xofst+.07, -.15], [xofst+.25, -.15],
+                                      [xofst+.25, .15], gap,
+                                      [xofst+.33, .15], [xofst+.15, .15],
+                                      [xofst+.15, -.15]], lw=1))
 
 
 class SchmittAnd(And):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         xofst = .65
-        self.segments.append(Segment([[xofst+.07, -.15], [xofst+.25, -.15], [xofst+.25, .15],
-                                      gap, [xofst+.33, .15], [xofst+.15, .15], [xofst+.15, -.15]], lw=1))    
+        self.segments.append(Segment([[xofst+.07, -.15], [xofst+.25, -.15],
+                                      [xofst+.25, .15], gap,
+                                      [xofst+.33, .15], [xofst+.15, .15],
+                                      [xofst+.15, -.15]], lw=1))
+
 
 SchmittNand = partial(SchmittAnd, nand=True)

@@ -1,10 +1,11 @@
 ''' Sources, meters, and lamp elements '''
 
-import numpy as np
+import math
 
 from .elements import Element2Term, gap
 from .twoterm import resheight
 from ..segments import Segment, SegmentCircle, SegmentArrow, SegmentText
+from .. import util
 
 
 class Source(Element2Term):
@@ -19,9 +20,9 @@ class SourceV(Source):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         plus_len = .2
-        self.segments.append(Segment([[.25, -plus_len/2], [.25, plus_len/2]])),   # '-' sign
-        self.segments.append(Segment([[.75-plus_len/2, 0], [.75+plus_len/2, 0]])) # '+' sign
-        self.segments.append(Segment([[.75, -plus_len/2], [.75, plus_len/2]]))    # '+' sign
+        self.segments.append(Segment([[.25, -plus_len/2], [.25, plus_len/2]])),    # '-' sign
+        self.segments.append(Segment([[.75-plus_len/2, 0], [.75+plus_len/2, 0]]))  # '+' sign
+        self.segments.append(Segment([[.75, -plus_len/2], [.75, plus_len/2]]))     # '+' sign
 
 
 class SourceI(Source):
@@ -33,10 +34,9 @@ class SourceI(Source):
 class SourceSin(Source):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        sin_y = np.linspace(.25, .75, num=25) - 0.5
-        sin_x = .2 * np.sin((sin_y-.25)*np.pi*2/.5) + 0.5
-        sin_path = np.transpose(np.vstack((sin_x, sin_y)))
-        self.segments.append(Segment(sin_path))
+        sin_y = util.linspace(-.25, .25, num=25)
+        sin_x = [.2 * math.sin((sy-.25)*math.pi*2/.5) + 0.5 for sy in sin_y]
+        self.segments.append(Segment(list(zip(sin_x, sin_y))))
 
 
 class SourcePulse(Source):
@@ -51,6 +51,7 @@ class SourceTriangle(Source):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.segments.append(Segment([[.4, .25], [.7, 0], [.4, -.25]]))
+
 
 class SourceRamp(Source):
     def __init__(self, *args, **kwargs):
@@ -154,14 +155,13 @@ class Lamp(Source):
         super().__init__(*args, **kwargs)
         a = .25
         b = .7
-        t = np.linspace(1.4, 3.6*np.pi, 100)
-        x = a*t - b*np.sin(t)
-        y = a - b * np.cos(t)
-        x = (x - x[0])  # Scale to about the right size
-        x = x / x[-1]
-        y = (y - y[0]) * .25
-        lamp_path = np.transpose(np.vstack((x, y)))
-        self.segments.append(Segment(lamp_path))
+        t = util.linspace(1.4, 3.6*math.pi, 100)
+        x = [a*t0 - b*math.sin(t0) for t0 in t]
+        y = [a - b * math.cos(t0) for t0 in t]
+        x = [xx - x[0] for xx in x]  # Scale to about the right size
+        x = [xx / x[-1] for xx in x]
+        y = [(yy - y[0]) * .25 for yy in y]
+        self.segments.append(Segment(list(zip(x, y))))
 
 
 class Neon(Source):

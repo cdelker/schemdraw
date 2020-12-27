@@ -1,4 +1,5 @@
 ''' SVG drawing backend for schemdraw '''
+from typing import Optional, Tuple, List, Literal, Sequence
 
 import os
 import sys
@@ -6,6 +7,7 @@ import subprocess
 import tempfile
 import math
 
+from ..types import Capstyle, Joinstyle, Linestyle, BBox
 from ..util import Point
 from . import svgtext
 
@@ -22,7 +24,7 @@ def isnotebook():
 inline = isnotebook()
 
 
-def getstyle(color=None, ls=None, lw=None, capstyle=None, joinstyle=None, fill=None):
+def getstyle(color: str=None, ls: Linestyle=None, lw: float=None, capstyle: Capstyle=None, joinstyle: Joinstyle=None, fill: str=None) -> str:
     ''' Get style for svg element. Leave empty if property matches default '''
     # Note: styles are added to every SVG element, rather than in a global <style>
     # tag, since multiple images in one HTML page may share <styles>.
@@ -38,7 +40,7 @@ def getstyle(color=None, ls=None, lw=None, capstyle=None, joinstyle=None, fill=N
             'dotted': '2,3.3',
             '-.': '12.8,3.2,2,3.2',
             'dashdot': '12.8,3.2,2,3.2',
-            }.get(ls, None)
+            }.get(ls, None)  # type: ignore
     if dash is not None:
         s += f'stroke-dasharray:{dash};'
     if capstyle:
@@ -67,13 +69,13 @@ class Figure(object):
     # Make at the class level since multiple SVGs on a page
     # will reuse defs from an earlier drawing
 
-    def __init__(self, bbox, **kwargs):
-        self.svgelements = []  # List of tuples: (zorder, SVG elements text)
+    def __init__(self, bbox: BBox, **kwargs):
+        self.svgelements: List[Tuple[int, str]] = []  # List of tuples: (zorder, SVG elements text)
         self.showframe = kwargs.get('showframe', False)
         self.scale = 64.8 * kwargs.get('inches_per_unit', .5)  # Magic scale factor that matches what MPL did
         self.set_bbox(bbox)
 
-    def set_bbox(self, bbox):
+    def set_bbox(self, bbox: BBox) -> None:
         ''' Set the bounding box '''
         self.bbox = bbox
         self.pxwidth = (self.bbox.xmax-self.bbox.xmin) * self.scale
@@ -81,12 +83,12 @@ class Figure(object):
         self.pxwidth = max(5, self.pxwidth)
         self.pxheight = max(5, self.pxheight)
 
-    def xform(self, x, y):
+    def xform(self, x: float, y: float) -> Tuple[float, float]:
         ''' Convert x, y in user coords to svg pixel coords '''
         return x*self.scale, -y*self.scale
 
-    def plot(self, x, y, color='black', ls='-', lw=2, fill='none',
-             capstyle='round', joinstyle='round', zorder=2):
+    def plot(self, x: Sequence[float], y: Sequence[float], color: str='black', ls: Linestyle='-', lw: float=2, fill: str='none',
+             capstyle: Capstyle='round', joinstyle: Joinstyle='round', zorder: int=2) -> None:
         ''' Plot a path '''
         s = '<path d="M {},{} '.format(*self.xform(x[0], y[0]))
         for xx, yy in zip(x[1:], y[1:]):
@@ -103,8 +105,8 @@ class Figure(object):
         s += ' />'
         self.svgelements.append((zorder, s))
 
-    def text(self, s, x, y, color='black', fontsize=14, fontfamily='sans-serif',
-             rotation=0, halign='center', valign='center', rotation_mode='anchor', zorder=3):
+    def text(self, s: str, x: float, y: float, color: str='black', fontsize: float=14, fontfamily: str='sans-serif',
+             rotation: float=0, halign: Literal['left', 'center', 'right']='center', valign: Literal['top', 'center', 'bottom']='center', rotation_mode: Literal['anchor', 'default']='anchor', zorder: int=3) -> None:
         ''' Add text to the figure '''
         x, y = self.xform(x, y)
         texttag = svgtext.text_tosvg(s, x, y, font=fontfamily, size=fontsize,
@@ -112,8 +114,8 @@ class Figure(object):
                                      rotation=rotation, rotation_mode=rotation_mode, testmode=False)
         self.svgelements.append((zorder, texttag))
 
-    def poly(self, verts, closed=True, color='black', fill='none', lw=2, ls='-',
-             capstyle='round', joinstyle='round', zorder=1):
+    def poly(self, verts: Sequence[Sequence[float]], closed: bool=True, color: str='black', fill: str='none', lw: float=2, ls: Linestyle='-',
+             capstyle: Capstyle='round', joinstyle: Joinstyle='round', zorder: int=1) -> None:
         ''' Draw a polygon '''
         if not closed:
             x = [v[0] for v in verts]
@@ -130,7 +132,7 @@ class Figure(object):
             s += '/>'
             self.svgelements.append((zorder, s))
 
-    def circle(self, center, radius, color='black', fill='none', lw=2, ls='-', zorder=1):
+    def circle(self, center: Sequence[float], radius: float, color: str='black', fill: str='none', lw: float=2, ls: Linestyle='-', zorder: int=1) -> None:
         ''' Draw a circle '''
         x, y = self.xform(*center)
         radius = radius * self.scale
@@ -139,8 +141,8 @@ class Figure(object):
         s += '/>'
         self.svgelements.append((zorder, s))
 
-    def arrow(self, x, y, dx, dy, headwidth=.2, headlength=.2,
-              color='black', lw=2, zorder=1):
+    def arrow(self, x: float, y: float, dx: float, dy: float, headwidth: float=.2, headlength: float=.2,
+              color: str='black', lw: float=2, zorder: int=1) -> None:
         ''' Draw an arrow '''
         x, y = self.xform(x, y)
         dx, dy = dx*self.scale, dy*self.scale
@@ -163,13 +165,13 @@ class Figure(object):
         s += f'L {tail[0]} {tail[1]} '
         s += f'L {finc[0]} {finc[1]} '
         s += f'L {fin2[0]} {fin2[1]} Z" '
-        s += getstyle(color=color, lw=lw, capstyle='miter', joinstyle='miter', fill=color)
+        s += getstyle(color=color, lw=lw, capstyle='butt', joinstyle='miter', fill=color)
         s += ' />'
         self.svgelements.append((zorder, s))
         return
 
-    def arc(self, center, width, height, theta1=0, theta2=90, angle=0,
-            color='black', lw=2, ls='-', zorder=1, arrow=None):
+    def arc(self, center: Sequence[float], width: float, height: float, theta1: float=0, theta2: float=90, angle: float=0,
+            color: str='black', lw: float=2, ls: Linestyle='-', zorder: int=1, arrow: bool=None) -> None:
         ''' Draw an arc or ellipse, with optional arrowhead '''
         centerx, centery = self.xform(*center)
         width, height = width*self.scale, height*self.scale
@@ -229,27 +231,27 @@ class Figure(object):
             if arrow == 'ccw':
                 dx = math.cos(math.radians(th2+90)) * headlength
                 dy = math.sin(math.radians(theta2+90)) * headlength
-                s = [center[0] + width/2*math.cos(math.radians(th2)),
-                     center[1] + height/2*math.sin(math.radians(th2))]
+                xy = Point((center[0] + width/2*math.cos(math.radians(th2)),
+                     center[1] + height/2*math.sin(math.radians(th2))))
             else:
                 dx = -math.cos(math.radians(th1+90)) * headlength
                 dy = -math.sin(math.radians(th1+90)) * headlength
-                s = [center[0] + width/2*math.cos(math.radians(th1)),
-                     center[1] + height/2*math.sin(math.radians(th1))]
+                xy = Point((center[0] + width/2*math.cos(math.radians(th1)),
+                     center[1] + height/2*math.sin(math.radians(th1))))
 
-            s = Point(s).rotate(angle, center)
+            xy = Point(xy).rotate(angle, center)
             darrow = Point((dx, dy)).rotate(angle)
 
-            self.arrow(s[0], s[1], darrow[0], darrow[1], headwidth=headwidth,
+            self.arrow(xy[0], xy[1], darrow[0], darrow[1], headwidth=headwidth,
                        headlength=headlength, color=color, lw=1, zorder=zorder)
 
-    def save(self, fname, **kwargs):
+    def save(self, fname: str, **kwargs) -> None:
         ''' Save the figure to a file '''
         svg = self.getimage().decode()
         with open(fname, 'w') as f:
             f.write(svg)
 
-    def getimage(self, ext='svg'):
+    def getimage(self, ext: str='svg') -> bytes:
         ''' Get the image as SVG or PNG bytes array '''
         pad = 2
         x0 = self.bbox.xmin * self.scale - pad
@@ -260,8 +262,7 @@ class Figure(object):
         if self.showframe:
             s += f'<rect x="{x0}" y="{y0}" width="{self.pxwidth}" height="{self.pxheight}" style="fill:none; stroke-width:1; stroke:black;" />'
 
-        elements = sorted(self.svgelements, key=lambda x: x[0])  # sort by zorder
-        elements = [x[1] for x in elements]        
+        elements = [k[1] for k in sorted(self.svgelements, key=lambda x: x[0])]  # sort by zorder
         s += '\n'.join(elements)
         s += '</svg>'
         return s.encode('utf-8')
@@ -273,7 +274,7 @@ class Figure(object):
     def __repr__(self):
         return self.getimage().decode()
 
-    def show(self):
+    def show(self) -> None:
         ''' Show drawing in default program, if not inline in Jupyter '''
         if not inline:
             handle, path = tempfile.mkstemp(suffix='.svg')

@@ -2,16 +2,17 @@
     Each element is made up of one or more segments.
 '''
 
+from typing import Sequence, List
 from collections import namedtuple
 import math
 
+from .types import BBox, XY
 from . import util
+from .util import Point
 from .backends import svgtext
 
-BBox = namedtuple('BBox', ['xmin', 'ymin', 'xmax', 'ymax'])
 
-
-def roundcorners(verts, radius=.5):
+def roundcorners(verts: Sequence[XY], radius: float=.5) -> Sequence[XY]:
     ''' Round the corners of polygon defined by verts.
         Works for convex polygons assuming radius fits inside.
 
@@ -25,7 +26,7 @@ def roundcorners(verts, radius=.5):
         Adapted from:
         https://stackoverflow.com/questions/24771828/algorithm-for-creating-rounded-corners-in-a-polygon
     '''
-    poly = []
+    poly: List[Point] = []
     for v in range(len(verts))[::-1]:
         p1 = verts[v]
         p2 = verts[v-1]
@@ -70,7 +71,7 @@ def roundcorners(verts, radius=.5):
             endangle += 2*math.pi
 
         ph = util.linspace(startangle, endangle, 100)
-        arc = [[circlepoint[0] + math.cos(i)*radius, circlepoint[1] + math.sin(i)*radius] for i in ph]
+        arc = [Point((circlepoint[0] + math.cos(i)*radius, circlepoint[1] + math.sin(i)*radius)) for i in ph]
 
         poly.extend(arc)
     poly.append(poly[0])  # Close the loop
@@ -102,8 +103,8 @@ class Segment(object):
         zorder : int
             Z-order for segment
     '''
-    def __init__(self, path, **kwargs):
-        self.path = path  # Untranformed path
+    def __init__(self, path: List[XY], **kwargs):
+        self.path: List[XY] = path  # Untranformed path
         self.zorder = kwargs.get('zorder', None)
         self.color = kwargs.get('color', None)
         self.fill = kwargs.get('fill', None)
@@ -112,11 +113,11 @@ class Segment(object):
         self.capstyle = kwargs.get('capstyle', None)
         self.joinstyle = kwargs.get('joinstyle', None)
 
-    def end(self):
+    def end(self) -> XY:
         ''' Get endpoint of this segment, untransformed '''
         return self.path[-1]
 
-    def xform(self, transform, **style):
+    def xform(self, transform, **style) -> 'Segment':
         ''' Return a new Segment that has been transformed
             to its global position
 
@@ -136,7 +137,7 @@ class Segment(object):
         params.update(style)
         return Segment(transform.transform_array(self.path), **params)
 
-    def get_bbox(self):
+    def get_bbox(self) -> BBox:
         ''' Get bounding box (untransformed)
 
             Returns
@@ -148,19 +149,15 @@ class Segment(object):
         y = [p[1] for p in self.path]
         return BBox(min(x), min(y), max(x), max(y))
 
-    def doreverse(self, centerx):
+    def doreverse(self, centerx: float) -> None:
         ''' Reverse the path (flip horizontal about the center of the path) '''
         self.path = [util.mirrorx(p, centerx) for p in self.path[::-1]]
 
-    def doflip(self):
+    def doflip(self) -> None:
         ''' Vertically flip the element '''
-#        flipped = []
-#        for p in self.path:
-#            flipped.append(flip_point(p))
-#       self.path = flipped
         self.path = [util.flip(p) for p in self.path]
 
-    def draw(self, fig, transform, **style):
+    def draw(self, fig, transform, **style) -> None:
         ''' Draw the segment
 
             Parameters
@@ -226,7 +223,7 @@ class SegmentText(object):
         zorder : int
             Z-order for segment
     '''
-    def __init__(self, pos, label, **kwargs):
+    def __init__(self, pos: Sequence[float], label: str, **kwargs):
         self.xy = pos
         self.text = label
         self.align = kwargs.get('align', None)
@@ -237,15 +234,15 @@ class SegmentText(object):
         self.rotation_mode = kwargs.get('rotation_mode', None)
         self.zorder = kwargs.get('zorder', None)
 
-    def doreverse(self, centerx):
+    def doreverse(self, centerx: float) -> None:
         ''' Reverse the path (flip horizontal about the centerx point) '''
         self.xy = util.mirrorx(self.xy, centerx)
 
-    def doflip(self):
+    def doflip(self) -> None:
         ''' Vertically flip the element '''
         self.xy = util.flip(self.xy)
 
-    def xform(self, transform, **style):
+    def xform(self, transform, **style) -> 'SegmentText':
         ''' Return a new Segment that has been transformed with all
             styling applied
         '''
@@ -260,11 +257,11 @@ class SegmentText(object):
         return SegmentText(transform.transform(self.xy),
                            self.text, **params)
 
-    def end(self):
+    def end(self) -> Sequence[float]:
         ''' Get endpoint of this segment, untransformed '''
         return self.xy
 
-    def get_bbox(self):
+    def get_bbox(self) -> BBox:
         ''' Get bounding box (untransformed)
 
             Returns
@@ -292,7 +289,7 @@ class SegmentText(object):
 
         return BBox(x-.1, y-.1, x+w+.2, y+h+.2)
 
-    def draw(self, fig, transform, **style):
+    def draw(self, fig, transform, **style) -> None:
         ''' Draw the segment
 
             Parameters
@@ -342,7 +339,7 @@ class SegmentPoly(object):
         zorder : int
             Z-order for segment
     '''
-    def __init__(self, verts, **kwargs):
+    def __init__(self, verts: Sequence[Sequence[float]], **kwargs):
         self.verts = verts
         self.closed = kwargs.get('closed', None)
         self.cornerradius = kwargs.get('cornerradius', 0)
@@ -354,15 +351,15 @@ class SegmentPoly(object):
         self.lw = kwargs.get('lw', None)
         self.ls = kwargs.get('ls', None)
 
-    def doreverse(self, centerx):
+    def doreverse(self, centerx: float) -> None:
         ''' Reverse the path (flip horizontal about the centerx point) '''
         self.verts = [util.mirrorx(v, centerx) for v in self.verts[::-1]]
 
-    def doflip(self):
+    def doflip(self) -> None:
         ''' Vertically flip the element '''
         self.verts = [util.flip(p) for p in self.verts]
 
-    def xform(self, transform, **style):
+    def xform(self, transform, **style) -> 'SegmentPoly':
         ''' Return a new Segment that has been transformed '''
         params = {'color': self.color,
                   'fill': self.fill,
@@ -375,11 +372,11 @@ class SegmentPoly(object):
         params.update(style)
         return SegmentPoly(transform.transform_array(self.verts), **params)
 
-    def end(self):
+    def end(self) -> Sequence[float]:
         ''' Get endpoint of this segment, untransformed '''
         return self.verts[-1]
 
-    def get_bbox(self):
+    def get_bbox(self) -> BBox:
         ''' Get bounding box (untransformed)
 
             Returns
@@ -391,7 +388,7 @@ class SegmentPoly(object):
         y = [p[1] for p in self.verts]
         return BBox(min(x), min(y), max(x), max(y))
 
-    def draw(self, fig, transform, **style):
+    def draw(self, fig, transform, **style) -> None:
         ''' Draw the segment
 
             Parameters
@@ -445,7 +442,7 @@ class SegmentCircle(object):
         ref: string
             Flip reference ['start', 'end', None].
     '''
-    def __init__(self, center, radius, **kwargs):
+    def __init__(self, center: Sequence[float], radius: float, **kwargs):
         self.center = center
         self.radius = radius
         self.zorder = kwargs.pop('zorder', None)
@@ -457,20 +454,20 @@ class SegmentCircle(object):
         # Reference for adding things AFTER lead extensions
         self.endref = kwargs.get('ref', None)
 
-    def end(self):
+    def end(self) -> Sequence[float]:
         ''' Get endpoint of this segment, untransformed '''
         return self.center
 
-    def doreverse(self, centerx):
+    def doreverse(self, centerx: float) -> None:
         ''' Reverse the path (flip horizontal about the centerx point) '''
         self.center = util.mirrorx(self.center, centerx)
         self.endref = {None: None, 'start': 'end', 'end': 'start'}.get(self.endref)
 
-    def doflip(self):
+    def doflip(self) -> None:
         ''' Flip the segment up/down '''
         self.center = util.flip(self.center)
 
-    def xform(self, transform, **style):
+    def xform(self, transform, **style) -> 'SegmentCircle':
         ''' Return a new Segment that has been transformed '''
         params = {'zorder': self.zorder,
                   'color': self.color,
@@ -482,7 +479,7 @@ class SegmentCircle(object):
         return SegmentCircle(transform.transform(self.center, self.endref),
                              self.radius, **params)
 
-    def get_bbox(self):
+    def get_bbox(self) -> BBox:
         ''' Get bounding box (untransformed)
 
             Returns
@@ -496,7 +493,7 @@ class SegmentCircle(object):
         ymax = self.center[1] + self.radius
         return BBox(xmin, ymin, xmax, ymax)
 
-    def draw(self, fig, transform, **style):
+    def draw(self, fig, transform, **style) -> None:
         ''' Draw the segment
 
             Parameters
@@ -524,10 +521,10 @@ class SegmentArrow(object):
 
         Parameters
         ----------
-        start : [x, y] array
+        tail : [x, y] array
             Start coordinate of arrow
-        end : [x, y] array
-            End (head) coordinate of arrow
+        head : [x, y] array
+            End coordinate of arrow
 
         Keyword Arguments
         -----------------
@@ -544,7 +541,7 @@ class SegmentArrow(object):
         zorder : int
             Z-order for segment
     '''
-    def __init__(self, tail, head, **kwargs):
+    def __init__(self, tail: Sequence[float], head: Sequence[float], **kwargs):
         self.tail = tail
         self.head = head
         self.zorder = kwargs.pop('zorder', None)
@@ -554,17 +551,17 @@ class SegmentArrow(object):
         self.lw = kwargs.get('lw', None)
         self.endref = kwargs.get('ref', None)
 
-    def doreverse(self, centerx):
+    def doreverse(self, centerx: float) -> None:
         ''' Reverse the path (flip horizontal about the centerx point) '''
         self.tail = util.mirrorx(self.tail, centerx)
         self.head = util.mirrorx(self.head, centerx)
         self.endref = {None: None, 'start': 'end', 'end': 'start'}.get(self.endref)
 
-    def doflip(self):
+    def doflip(self) -> None:
         self.tail = util.flip(self.tail)
         self.head = util.flip(self.head)
 
-    def xform(self, transform, **style):
+    def xform(self, transform, **style) -> 'SegmentArrow':
         ''' Return a new Segment that has been transformed '''
         params = {'zorder': self.zorder,
                   'color': self.color,
@@ -577,7 +574,7 @@ class SegmentArrow(object):
                             transform.transform(self.head, ref=self.endref),
                             **params)
 
-    def get_bbox(self):
+    def get_bbox(self) -> BBox:
         ''' Get bounding box (untransformed)
 
             Returns
@@ -592,11 +589,11 @@ class SegmentArrow(object):
         ymax = max(self.tail[1], self.head[1])
         return BBox(xmin, ymin-hw, xmax, ymax+hw)
 
-    def end(self):
+    def end(self) -> Sequence[float]:
         ''' Get endpoint of this segment, untransformed '''
         return self.head
 
-    def draw(self, fig, transform, **style):
+    def draw(self, fig, transform, **style) -> None:
         ''' Draw the segment
 
             Parameters
@@ -654,7 +651,7 @@ class SegmentArc(object):
         zorder : int
             Z-order for segment
     '''
-    def __init__(self, center, width, height, **kwargs):
+    def __init__(self, center: Sequence[float], width: float, height: float, **kwargs):
         self.center = center
         self.width = width
         self.height = height
@@ -667,19 +664,19 @@ class SegmentArc(object):
         self.ls = kwargs.get('ls', None)
         self.zorder = kwargs.get('zorder', None)
 
-    def doreverse(self, centerx):
+    def doreverse(self, centerx: float) -> None:
         ''' Reverse the path (flip horizontal about the centerx point) '''
         self.center = util.mirrorx(self.center, centerx)
         self.theta1, self.theta2 = 180-self.theta2, 180-self.theta1
         self.arrow = {'cw': 'ccw', 'ccw': 'cw'}.get(self.arrow, None)
 
-    def doflip(self):
+    def doflip(self) -> None:
         ''' Vertically flip the element '''
         self.center = util.flip(self.center)
         self.theta1, self.theta2 = -self.theta2, -self.theta1
         self.arrow = {'cw': 'ccw', 'ccw': 'cw'}.get(self.arrow, None)
 
-    def xform(self, transform, **style):
+    def xform(self, transform, **style) -> 'SegmentArc':
         ''' Return a new Segment that has been transformed '''
         angle = self.angle + transform.theta
         params = {'color': self.color,
@@ -691,11 +688,11 @@ class SegmentArc(object):
                           self.width*transform.zoom, self.height*transform.zoom, angle=angle,
                           theta1=self.theta1, theta2=self.theta2, **params)
 
-    def end(self):
+    def end(self) -> Sequence[float]:
         ''' Get endpoint of this segment, untransformed '''
         return self.center
 
-    def get_bbox(self):
+    def get_bbox(self) -> BBox:
         ''' Get bounding box (untransformed)
 
             Returns
@@ -723,7 +720,7 @@ class SegmentArc(object):
         yy = [self.center[1] + rx * ct*sinphi + ry * st*cosphi for st, ct in zip(sint, cost)]
         return BBox(min(xx), min(yy), max(xx), max(yy))
 
-    def draw(self, fig, transform, **style):
+    def draw(self, fig, transform, **style) -> None:
         ''' Draw the segment
 
             Parameters

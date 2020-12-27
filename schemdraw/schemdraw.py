@@ -1,23 +1,24 @@
 ''' Schemdraw Drawing class '''
 
+from typing import Literal, Union, Type, List, Tuple
 from collections import namedtuple
-from enum import Enum, unique
 import warnings
 import math
 
+from .types import BBox, Backends, ImageFormat, Linestyle, Arcdirection, XY
 from .elements import Element, _set_elm_backend
 from .elements.lines import LoopCurrent, CurrentLabel, CurrentLabelInline
+from .segments import Segment
+from .util import Point
 
 from .backends.svg import Figure as svgFigure
 try:
     from .backends.mpl import Figure as mplFigure
 except ImportError:
-    mplFigure = None
+    mplFigure = None  # type: ignore
 
 
-BBox = namedtuple('BBox', ['xmin', 'ymin', 'xmax', 'ymax'])
-
-
+Figure: Union[Type[svgFigure], Type[mplFigure]]
 if mplFigure is None:
     Figure = svgFigure
 else:
@@ -25,7 +26,7 @@ else:
 _set_elm_backend(Figure)
 
 
-def use(backend='matplotlib'):
+def use(backend: Backends='matplotlib') -> None:
     ''' Change default backend, either 'matplotlib' or 'svg' '''
     global Figure
     if backend == 'matplotlib':
@@ -35,21 +36,6 @@ def use(backend='matplotlib'):
     else:
         Figure = svgFigure
     _set_elm_backend(Figure)
-
-
-@unique
-class ImageFormat(str, Enum):
-    ''' Known Matplotlib image formats '''
-    EPS = 'eps'
-    JPG = 'jpg'
-    PDF = 'pdf'
-    PGF = 'pgf'
-    PNG = 'png'
-    PS = 'ps'
-    RAW = 'raw'
-    RGBA = 'rgba'
-    SVG = 'svg'
-    TIF = 'tif'
 
 
 class Drawing(object):
@@ -88,10 +74,10 @@ class Drawing(object):
             Current drawing angle, in degrees. The next element will
             be added with this angle unless specified otherwise.
     '''
-    def __init__(self, *elements, unit=3.0, inches_per_unit=0.5, lblofst=0.1,
-                 fontsize=14, font='sans-serif', color='black',
-                 lw=2, ls='-', fill=None):
-        self.elements = []
+    def __init__(self, *elements: Element, unit: float=3.0, inches_per_unit: float=0.5, lblofst: float=0.1,
+                 fontsize: float=14, font: str='sans-serif', color: str='black',
+                 lw: float=2, ls: Linestyle='-', fill: str=None):
+        self.elements: List[Element] = []
         self.inches_per_unit = inches_per_unit
         self.unit = unit
         self.dwgparams = {'unit': unit,
@@ -103,14 +89,14 @@ class Drawing(object):
                           'ls': ls,
                           'fill': fill}
 
-        self.here = [0, 0]
-        self.theta = 0
-        self._state = []  # Push/Pop stack
+        self.here: Union[Point, Tuple[float, float]] = (0, 0)
+        self.theta: float = 0
+        self._state: List[Tuple[XY, float]] = []  # Push/Pop stack
 
         for element in elements:
             self.add(element)
 
-    def get_bbox(self):
+    def get_bbox(self) -> BBox:
         ''' Get drawing bounding box '''
         xmin = math.inf
         xmax = -math.inf
@@ -124,7 +110,7 @@ class Drawing(object):
             ymax = max(bbox.ymax, ymax)
         return BBox(xmin, ymin, xmax, ymax)
 
-    def get_segments(self):
+    def get_segments(self) -> List[Segment]:
         ''' Get flattened list of all segments in the drawing '''
         segments = []
         for element in self.elements:
@@ -142,7 +128,7 @@ class Drawing(object):
             return self.draw().getimage('png')
         return None
 
-    def add(self, element, **kwargs):
+    def add(self, element: Element, **kwargs) -> Element:
         ''' Add an element to the drawing.
 
             Parameters
@@ -161,25 +147,25 @@ class Drawing(object):
         self.elements.append(element)
         return element
 
-    def add_elements(self, *elements):
+    def add_elements(self, *elements: Element) -> None:
         ''' Add multiple elements to the drawing '''
         for element in elements:
             self.add(element)
 
-    def push(self):
+    def push(self) -> None:
         ''' Push/save the drawing state.
             Drawing.here and Drawing.theta are saved.
         '''
         self._state.append((self.here, self.theta))
 
-    def pop(self):
+    def pop(self) -> None:
         ''' Pop/load the drawing state. Location and angle are returned to
             previously pushed state.
         '''
         if len(self._state) > 0:
             self.here, self.theta = self._state.pop()
 
-    def loopI(self, elm_list, label='', d='cw', theta1=35, theta2=-35, pad=.2, color=None):
+    def loopI(self, elm_list: List[Element], label: str='', d: Arcdirection='cw', theta1: float=35, theta2: float=-35, pad: float=.2, color: str=None) -> Element:
         ''' Draw an arc to indicate a loop current bordered by elements in list
 
             Parameters
@@ -214,7 +200,7 @@ class Drawing(object):
         self.add(element)
         return element
 
-    def labelI(self, elm, label='', arrowofst=0.4, arrowlen=2, reverse=False, top=True, color=None):
+    def labelI(self, elm: Element, label: str='', arrowofst: float=0.4, arrowlen: float=2, reverse: bool=False, top: bool=True, color: str=None) -> Element:
         ''' Add an arrow element along side another element
 
             Parameters
@@ -241,7 +227,7 @@ class Drawing(object):
         self.add(element)
         return element
 
-    def labelI_inline(self, elm, label='', botlabel='', d='in', start=True, ofst=.8, color=None):
+    def labelI_inline(self, elm: Element, label: str='', botlabel: str='', d: Literal['in', 'out']='in', start: bool=True, ofst: float=.8, color: str=None) -> Element:
         ''' Add an arrowhead for labeling current inline with leads.
             Works on Element2Term elements.
 
@@ -271,7 +257,7 @@ class Drawing(object):
         self.add(element)
         return element
 
-    def draw(self, showframe=False, show=True, ax=None, backend=None):
+    def draw(self, showframe: bool=False, show: bool=True, ax=None, backend: Backends=None):
         ''' Draw the schematic
 
             Parameters
@@ -289,7 +275,8 @@ class Drawing(object):
             -------
             schemdraw Figure object
         '''
-        figclass = {'matplotlib': mplFigure, 'svg': svgFigure}.get(backend, Figure)
+        figclass = {'matplotlib': mplFigure,
+                    'svg': svgFigure}.get(backend, Figure)  # type: ignore
         fig = figclass(ax=ax,
                        bbox=self.get_bbox(),
                        inches_per_unit=self.inches_per_unit,
@@ -301,7 +288,7 @@ class Drawing(object):
             fig.show()  # Show figure in window if not inline/Jupyter mode
         return fig  # Otherwise return Figure and let _repr_ display it
 
-    def save(self, fname, transparent=True, dpi=72):
+    def save(self, fname: str, transparent: bool=True, dpi: float=72) -> None:
         ''' Save figure to a file
 
             Parameters
@@ -317,7 +304,7 @@ class Drawing(object):
         fig = self.draw(show=False)
         fig.save(fname, transparent=transparent, dpi=dpi)
 
-    def get_imagedata(self, fmt: ImageFormat):
+    def get_imagedata(self, fmt: Union[ImageFormat, str]) -> bytes:
         ''' Get image data as bytes array
 
             Parameters

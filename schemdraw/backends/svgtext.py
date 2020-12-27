@@ -11,6 +11,8 @@
     and rotation centers.
 '''
 
+from typing import Literal, Tuple
+
 import string
 import re
 import math
@@ -156,14 +158,14 @@ numsuperscripts = {
     '9': '⁹'}
 
 
-def replacelatex(text):
+def replacelatex(text: str) -> str:
     ''' Replace latex math codes with unicode equivalents '''
     for k, v in textable.items():
         text = re.sub(k, v, text)
     return text
 
 
-def mathtextsvg(text, tag=True):
+def mathtextsvg(text: str, tag: bool=True) -> str:
     ''' Convert any math string delimited by $..$ into a string
         that can be used in svg <text>
         
@@ -248,7 +250,7 @@ def mathtextsvg(text, tag=True):
     return svgtext
 
 
-def string_width(st, fontsize=12, font='Arial'):
+def string_width(st: str, fontsize: float=12, font: str='Arial') -> float:
     ''' Estimate string width based on individual characters '''
     # adapted from https://stackoverflow.com/a/16008023/13826284
     # The only alternative is to draw the string to an actual canvas
@@ -287,7 +289,7 @@ def string_width(st, fontsize=12, font='Arial'):
     return size * 72 / 1000.0 * (fontsize/12)  # to points
 
 
-def text_approx_size(text, font='Arial', size=16):
+def text_approx_size(text: str, font: str='Arial', size: float=16) -> Tuple[float, float, float]:
     ''' Get approximate width, height and line spacing of multiline text
 
         Parameters
@@ -313,10 +315,9 @@ def text_approx_size(text, font='Arial', size=16):
         Does not account for descent or ascent of text (for example,
         a "g" going below the baseline), or for superscripts/subscripts.
     '''
-    w = 0
-    h = 0
+    w = 0.
+    h = 0.
     lines = text.splitlines()
-    h = 0
     dy = size if len(lines) > 1 else size * 0.8
     for line in lines:
         w = max(w, string_width(mathtextsvg(line, tag=False), fontsize=size, font=font))
@@ -324,10 +325,10 @@ def text_approx_size(text, font='Arial', size=16):
     return w, h, dy
 
 
-def text_tosvg(text, x, y, font='Arial', size=16, color='black',
-               halign='center', valign='center',
-               rotation=0, rotation_mode='anchor',
-               testmode=False):
+def text_tosvg(text: str, x: float, y: float, font: str='Arial', size: float=16, color: str='black',
+               halign: Literal['left', 'center', 'right']='center', valign: Literal['top', 'center', 'bottom']='center',
+               rotation: float=0, rotation_mode: Literal['anchor', 'default']='anchor',
+               testmode: bool=False) -> str:
     ''' Convert text to svg <text> tag.
 
         Parameters

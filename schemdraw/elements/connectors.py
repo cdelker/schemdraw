@@ -24,7 +24,7 @@ class OrthoLines(Element):
     '''
     def place(self, dwgxy, dwgtheta, **dwgparams):
         self.dwgparams = dwgparams
-        if self.cparams is None:
+        if not self.cparams:
             self.buildparams()
 
         self.params['theta'] = 0
@@ -76,7 +76,7 @@ class RightLines(Element):
     '''
     def place(self, dwgxy, dwgtheta, **dwgparams):
         self.dwgparams = dwgparams
-        if self.cparams is None:
+        if not self.cparams:
             self.buildparams()
 
         self.params['theta'] = 0

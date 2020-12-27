@@ -1,23 +1,24 @@
 ''' Schemdraw base Element class '''
 
+from typing import Tuple, Sequence, List, MutableMapping, Any, Optional
 from collections import ChainMap
 import math
 
 from ..adddocs import adddocs
-from ..segments import SegmentText, BBox
+from ..segments import Segment, SegmentText, BBox
 from ..transform import Transform
 from .. import util
 from ..util import Point
+from ..types import Direction, XY, Linestyle
 
-
-gap = [math.nan, math.nan]  # Put a gap in a path
+gap = (math.nan, math.nan)  # Put a gap in a path
 
 Figure = None
 def _set_elm_backend(figureclass):
     global Figure
     Figure = figureclass
-
-
+    
+    
 class Element(object):
     ''' Parent class for a single circuit element.
 
@@ -79,24 +80,25 @@ class Element(object):
         move_cur : bool
             Move the Drawing cursor to the endpoint of the element
     '''
-    def __init__(self, d=None, **kwargs):
+    def __init__(self, d: Direction=None, **kwargs):
         self.userparams = kwargs
         if d is not None:  # Allow direction to be specified as first param without name
             self.userparams['d'] = d
-
-        self.dwgparams = {}  # Set by drawing in place() method
-        self.params = {}     # Set by element defintion in setup() method
-        self.cparams = None  # Combined (ChainMap) of above params
-        self.localshift = (0, 0)
-        self.anchors = {}     # Untransformed anchors
-        self.absanchors = {}  # Transformed, absolute anchors
-        self.segments = []
+            
+        self.dwgparams: MutableMapping[str, Any] = {}  # Set by drawing in place() method
+        self.params: MutableMapping[str, Any] = {}     # Set by element defintion in setup() method
+        self.cparams: MutableMapping[str, Any] = {}  # Combined (ChainMap) of above params
+        self.localshift: XY = Point((0, 0))
+        self.anchors: MutableMapping[str, Any] = {}     # Untransformed anchors
+        self.absanchors: MutableMapping[str, Any] = {}  # Transformed, absolute anchors
+        self.segments: List[Segment] = []
         self.transform = Transform(0, [0, 0])
-
+        self.center: Optional[XY] = None
+        
         if 'xy' in self.userparams:  # Allow legacy 'xy' parameter
             self.userparams.setdefault('at', self.userparams.pop('xy'))
 
-    def buildparams(self):
+    def buildparams(self) -> None:
         ''' Combine parameters from user, setup, and drawing '''
         # Accomodate xy positions based on OTHER elements before they are fully set up.
         if 'at' in self.userparams and isinstance(self.userparams['at'][1], str):
@@ -111,10 +113,10 @@ class Element(object):
         self.cparams = ChainMap(self.userparams, self.params, self.dwgparams)
         self.flipreverse()
 
-    def flipreverse(self):
+    def flipreverse(self) -> None:
         ''' Flip and/or reverse segments if necessary '''
         if self.userparams.get('flip', False):
-            [s.doflip() for s in self.segments]
+            [s.doflip() for s in self.segments]  # type: ignore
             for name, pt in self.anchors.items():
                 self.anchors[name] = Point(pt).flip()
 
@@ -124,14 +126,14 @@ class Element(object):
             else:
                 xmin, _, xmax, _ = self.get_bbox(includetext=False)
                 centerx = (xmin + xmax)/2
-            [s.doreverse(centerx) for s in self.segments]
+            [s.doreverse(centerx) for s in self.segments]  # type: ignore
             for name, pt in self.anchors.items():
                 self.anchors[name] = Point(pt).mirrorx(centerx)
 
-    def place(self, dwgxy, dwgtheta, **dwgparams):
+    def place(self, dwgxy: XY, dwgtheta: float, **dwgparams) -> Tuple[Point, float]:
         ''' Determine position within the drawing '''
         self.dwgparams = dwgparams
-        if self.cparams is None:
+        if not self.cparams:
             self.buildparams()
 
         anchor = self.cparams.get('anchor', None)
@@ -144,7 +146,7 @@ class Element(object):
         if 'endpts' in self.cparams:
             theta = dwgtheta
         elif self.cparams.get('d') is not None:
-            theta = {'u': 90, 'r': 0, 'l': 180, 'd': 270}[self.cparams.get('d')[0].lower()]
+            theta = {'u': 90, 'r': 0, 'l': 180, 'd': 270}[self.cparams.get('d')[0].lower()]  # type: ignore
         else:
             theta = self.cparams.get('theta', dwgtheta)
 
@@ -188,7 +190,7 @@ class Element(object):
 
         drop = self.cparams.get('drop', None)
         if drop is None or not self.cparams.get('move_cur', True):
-            return dwgxy, dwgtheta
+            return Point(dwgxy), dwgtheta
         elif self.params.get('theta', None) == 0:
             # Element def specified theta = 0, don't change
             return self.transform.transform(drop), dwgtheta
@@ -404,7 +406,7 @@ class Element(object):
     def _draw_on_figure(self):
         ''' Draw the element on a new figure. Useful for _repr_ functions. '''
         fig = Figure(bbox=self.get_bbox(transform=True))
-        if self.cparams is None:
+        if not self.cparams:
             self.place((0, 0), 0)
         fig.set_bbox(self.get_bbox(transform=True))
         self.draw(fig)
@@ -420,7 +422,7 @@ class Element(object):
         fig = self._draw_on_figure()
         return fig.getimage(ext='png')
 
-    def draw(self, fig):
+    def draw(self, fig) -> None:
         ''' Draw the element '''
         if len(self.segments) == 0:
             self.place((0, 0), 0)
@@ -463,10 +465,10 @@ class Element2Term(Element):
             The start and end points of the element. Overrides other
             2-terminal placement parameters.
     '''
-    def place(self, dwgxy, dwgtheta, **dwgparams):
+    def place(self, dwgxy: XY, dwgtheta: float, **dwgparams) -> Tuple[Point, float]:
         ''' Place the element, adding lead extensions '''
         self.dwgparams = dwgparams
-        if self.cparams is None:
+        if not self.cparams:
             self.buildparams()
 
         totlen = self.cparams.get('l', self.cparams.get('unit', 3))
@@ -483,7 +485,7 @@ class Element2Term(Element):
         if endpts is not None:
             theta = util.angle(endpts[0], endpts[1])
         elif self.cparams.get('d') is not None:
-            theta = {'u': 90, 'r': 0, 'l': 180, 'd': 270}[self.cparams.get('d')[0].lower()]
+            theta = {'u': 90, 'r': 0, 'l': 180, 'd': 270}[self.cparams.get('d')[0].lower()]  # type: ignore
         elif to is not None:
             theta = util.angle(xy, to)
 
@@ -513,7 +515,7 @@ class Element2Term(Element):
             endpt = [xy[0], y]
             totlen = math.dist(xy, endpt)
 
-        self.localshift = (0, 0)
+        self.localshift = Point((0, 0))
         if self.cparams.get('extend', True):
             in_path = self.segments[0].path
             dz = util.delta(in_path[-1], in_path[0])   # Defined delta of path

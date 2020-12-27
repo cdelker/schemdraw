@@ -5,7 +5,7 @@ Example:
 >>> logicparse("a and (b or c)")
 
 '''
-import pyparsing
+import pyparsing  # type: ignore
 
 from .. import schemdraw
 from .. import logic
@@ -145,7 +145,7 @@ def drawlogic(tree, gateH=.7, gateW=2, outlabel=None):
     return drawing
 
 
-def logicparse(expr, gateW=2, gateH=.75, outlabel=None):
+def logicparse(expr: str, gateW: float=2, gateH: float=.75, outlabel: str=None) -> schemdraw.Drawing:
     ''' Parse a logic string expression and draw the gates in a schemdraw Drawing
 
         Parameters

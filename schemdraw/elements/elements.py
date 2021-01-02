@@ -38,6 +38,9 @@ class Element:
 
         Keyword Arguments are equivalent to calling
         setter methods.
+        
+        Args:
+            d: Drawing direction ('up', 'down', 'left', 'right')
 
         Attributes:
             anchors: Dictionary of anchor positions in element
@@ -68,7 +71,8 @@ class Element:
             self._userparams.setdefault('at', self._userparams.pop('xy'))
         if d:
             self._userparams['d'] = d[0]
-            warnings.warn('Passing `d` as positional is deprecated.', DeprecationWarning)
+            if len(d) > 1:
+                warnings.warn('Unused positional arguments in Element.')
 
     def __getattr__(self, name: str) -> Any:
         ''' Allow getting anchor position as attribute '''
@@ -78,31 +82,47 @@ class Element:
 
     def up(self) -> 'Element':
         ''' Set the direction to up '''
+        if 'd' in self._userparams:
+            warnings.warn(f"Duplicated direction parameter in element. `{self._userparams['d']}` changed to `up`.")
         self._userparams['d'] = 'up'
         return self
 
     def down(self) -> 'Element':
         ''' Set the direction to down '''
+        if 'd' in self._userparams:
+            warnings.warn(f"Duplicated direction parameter in element. `{self._userparams['d']}` changed to `down`.")
         self._userparams['d'] = 'down'
         return self
 
     def left(self) -> 'Element':
         ''' Set the direction to left '''
+        if 'd' in self._userparams:
+            warnings.warn(f"Duplicated direction parameter in element. `{self._userparams['d']}` changed to `left`.")        
         self._userparams['d'] = 'left'
         return self
 
     def right(self) -> 'Element':
         ''' Set the direction to right '''
+        if 'd' in self._userparams:
+            warnings.warn(f"Duplicated direction parameter in element. `{self._userparams['d']}` changed to `right`.")        
         self._userparams['d'] = 'right'
         return self
 
     def theta(self, theta: float) -> 'Element':
         ''' Set the drawing direction angle in degrees '''
+        if 'd' in self._userparams:
+            warnings.warn(f"Duplicate direciton parameter in element: `{self._userparams['d']}` replaced with `theta={theta}`")
         self._userparams['theta'] = theta
         return self
 
-    def at(self, xy: XY) -> 'Element':
-        ''' Set the element xy position '''
+    def at(self, xy: Union[XY, Tuple['Element', str]]) -> 'Element':
+        ''' Set the element xy position
+
+            Args:
+                xy: (x,y) position or tuple of (Element, anchorname)
+        '''
+        if 'at' in self._userparams:
+            warnings.warn(f"Duplicate `at` parameter in element: `{self._userparams['at']}` changed to `{xy}`.")
         self._userparams['at'] = xy
         return self
 
@@ -125,6 +145,9 @@ class Element:
         ''' Specify anchor for placement. The anchor will be
             aligned with the position specified by `at()` method.
         '''
+        if 'anchor' in self._userparams:
+            warnings.warn(f"Duplicate anchor parameter in element: `{self._userparams['anchor']}` changed to `{anchor}`.")
+
         self._userparams['anchor'] = anchor
         return self
 
@@ -171,6 +194,42 @@ class Element:
     def hold(self) -> 'Element':
         ''' Do not move the Drawing `here` position after placing this element '''
         self._userparams['move_cur'] = False
+        return self
+
+    def label(self, label: Union[str, Sequence[str]],
+              loc: LabelLoc=None,
+              ofst: Union[XY, float]=None,
+              halign: Halign=None,
+              valign: Valign=None,
+              rotate: Union[bool, float]=False,
+              fontsize: float=None,
+              font: str=None,
+              color: str=None):
+        ''' Add a label to the Element.
+
+            Args:
+                label: The text string or list of strings. If list, each string will
+                    be evenly spaced along the element (e.g. ['-', 'V', '+'])
+                loc: Label position within the Element. Either ('top', 'bottom', 'left',
+                    'right'), or the name of an anchor within the Element.
+                ofst: Offset from default label position
+                halign: Horizontal text alignment ('center', 'left', 'right')
+                valign: Vertical text alignment ('center', 'top', 'bottom')
+                rotate: True to rotate label with element, or specify rotation
+                    angle in degrees
+                fontsize: Size of label font
+                font: Name/font-family of label
+                color: Color of label
+        '''
+        if halign is None and valign is None:
+            align = None
+        else:
+            align = (halign, valign)
+        if not rotate:
+            rotate = 0
+        elif isinstance(rotate, bool):
+            rotate = True
+        self._userlabels.append(Label(label, loc, ofst, align, rotate, fontsize, font, color))
         return self
 
     def _buildparams(self) -> None:
@@ -308,42 +367,6 @@ class Element:
             ymax = max(ymax, segymax)
 
         return BBox(xmin, ymin, xmax, ymax)
-
-    def label(self, label: Union[str, Sequence[str]],
-              loc: LabelLoc=None,
-              ofst: Union[XY, float]=None,
-              halign: Halign=None,
-              valign: Valign=None,
-              rotate: Union[bool, float]=False,
-              fontsize: float=None,
-              font: str=None,
-              color: str=None):
-        ''' Add a label to the Element.
-
-            Args:
-                label: The text string or list of strings. If list, each string will
-                    be evenly spaced along the element (e.g. ['-', 'V', '+'])
-                loc: Label position within the Element. Either ('top', 'bottom', 'left',
-                    'right'), or the name of an anchor within the Element.
-                ofst: Offset from default label position
-                halign: Horizontal text alignment ('center', 'left', 'right')
-                valign: Vertical text alignment ('center', 'top', 'bottom')
-                rotate: True to rotate label with element, or specify rotation
-                    angle in degrees
-                fontsize: Size of label font
-                font: Name/font-family of label
-                color: Color of label
-        '''
-        if halign is None and valign is None:
-            align = None
-        else:
-            align = (halign, valign)
-        if not rotate:
-            rotate = 0
-        elif isinstance(rotate, bool):
-            rotate = True
-        self._userlabels.append(Label(label, loc, ofst, align, rotate, fontsize, font, color))
-        return self
 
     def add_label(self, label, loc='top', ofst=None, align=None,
                   rotation=0, fontsize=None, size=None, font=None, color=None):

@@ -527,7 +527,7 @@ class SegmentArrow:
         ''' Reverse the path (flip horizontal about the centerx point) '''
         self.tail = util.mirrorx(self.tail, centerx)
         self.head = util.mirrorx(self.head, centerx)
-        self.ref = {None: None, 'start': 'end', 'end': 'start'}.get(self.endref)
+        self.endref = {'start': 'end', 'end': 'start'}.get(self.endref)  # type: ignore
 
     def doflip(self) -> None:
         self.tail = util.flip(self.tail)

@@ -18,8 +18,8 @@ class Square(Element):
             E
             W
     '''
-    def __init__(self, d=None, **kwargs):
-        super().__init__(d, **kwargs)
+    def __init__(self, *d, **kwargs):
+        super().__init__(*d, **kwargs)
         self.segments.append(Segment([[0, 0], [0, .5], [1, .5],
                                       [1, -.5], [0, -0.5], [0, 0]]))
         self.params['lblloc'] = 'center'
@@ -39,9 +39,13 @@ class Circle(Element):
             S
             E
             W
+            NW
+            NE
+            SW
+            SE
     '''
-    def __init__(self, d=None, **kwargs):
-        super().__init__(d, **kwargs)
+    def __init__(self, *d, **kwargs):
+        super().__init__(*d, **kwargs)
         rad = .5
         k = rad*math.sqrt(2)/2  # Diagonal distance
         self.segments.append(SegmentCircle([rad, 0], rad))
@@ -67,9 +71,13 @@ class Sum(Circle):
             S
             E
             W
+            NW
+            NE
+            SW
+            SE
     '''
-    def __init__(self, d=None, **kwargs):
-        super().__init__(d, **kwargs)
+    def __init__(self, *d, **kwargs):
+        super().__init__(*d, **kwargs)
         self.segments.append(Segment([[.5, .2], [.5, -.2]]))
         self.segments.append(Segment([[.3, 0], [.7, 0]]))
 
@@ -82,9 +90,13 @@ class SumSigma(Circle):
             S
             E
             W
+            NW
+            NE
+            SW
+            SE
     '''
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, *d, **kwargs):
+        super().__init__(*d, **kwargs)
         self.segments.append(SegmentText(label=r'$\Sigma$',
                                          pos=[0.45, 0],
                                          align=('center', 'center')))
@@ -98,9 +110,13 @@ class Mixer(Circle):
             S
             E
             W
+            NW
+            NE
+            SW
+            SE
     '''
-    def __init__(self, d=None, **kwargs):
-        super().__init__(d, **kwargs)
+    def __init__(self, *d, **kwargs):
+        super().__init__(*d, **kwargs)
         rad = .5
         k = rad*math.sqrt(2)/2  # Diagonal distance
         self.segments.append(Segment([[rad+k, k], [rad-k, -k]]))
@@ -126,8 +142,8 @@ class Amp(Element):
             in
             out
     '''
-    def __init__(self, d=None, **kwargs):
-        super().__init__(d, **kwargs)
+    def __init__(self, *d, **kwargs):
+        super().__init__(*d, **kwargs)
         amph = 1.
         ampl = .75
         self.segments.append(Segment([[0, 0], [0, -amph/2], [ampl, 0],
@@ -154,8 +170,8 @@ class OscillatorBox(Square):
             E
             W
     '''
-    def __init__(self, d=None, **kwargs):
-        super().__init__(d, **kwargs)
+    def __init__(self, *d, **kwargs):
+        super().__init__(*d, **kwargs)
         path = _makesine()
         self.segments.append(Segment(path))
 
@@ -168,9 +184,13 @@ class Oscillator(Circle):
             S
             E
             W
+            NW
+            NE
+            SW
+            SE
     '''
-    def __init__(self, d=None, **kwargs):
-        super().__init__(d, **kwargs)
+    def __init__(self, *d, **kwargs):
+        super().__init__(*d, **kwargs)
         path = _makesine()
         self.segments.append(Segment(path))
 
@@ -188,8 +208,8 @@ class Filter(Square):
             E
             W
     '''
-    def __init__(self, d=None, response: Literal['lp', 'bp', 'hp', 'notch']=None, **kwargs):
-        super().__init__(d, **kwargs)
+    def __init__(self, *d, response: Literal['lp', 'bp', 'hp', 'notch']=None, **kwargs):
+        super().__init__(*d, **kwargs)
         path = _makesine()
         path1 = [[p[0], p[1]+.25] for p in path]
         path2 = [[p[0], p[1]-.25] for p in path]
@@ -218,8 +238,8 @@ class Adc(Element):
             E (same as in)
             W (same as out)
     '''
-    def __init__(self, d=None, **kwargs):
-        super().__init__(d, **kwargs)
+    def __init__(self, *d, **kwargs):
+        super().__init__(*d, **kwargs)
         self.segments.append(Segment([[0, 0], [.22, .5], [1.4, .5], [1.4, -.5],
                                       [.22, -.5], [0, 0]]))
         self.params['lblloc'] = 'center'
@@ -240,8 +260,8 @@ class Dac(Element):
             E (same as in)
             W (same as out)
     '''
-    def __init__(self, d=None, **kwargs):
-        super().__init__(d, **kwargs)
+    def __init__(self, *d, **kwargs):
+        super().__init__(*d, **kwargs)
         self.segments.append(Segment([[0, 0], [0, .5], [1.18, .5], [1.4, 0],
                                       [1.18, -.5], [0, -.5], [0, 0]]))
         self.params['lblloc'] = 'center'
@@ -262,8 +282,8 @@ class Demod(Square):
             E
             W
     '''
-    def __init__(self, d=None, **kwargs):
-        super().__init__(d, **kwargs)
+    def __init__(self, *d, **kwargs):
+        super().__init__(*d, **kwargs)
         self.segments.append(Segment([[.15, 0], [.3, 0]]))
         self.segments.append(Segment([[.3, .25], [.7, 0], [.3, -.25], [.3, .25]]))
         self.segments.append(Segment([[.7, .25], [.7, -.25]]))

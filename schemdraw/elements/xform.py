@@ -60,8 +60,8 @@ class Transformer(Element):
             rtapx = max([i[0] for i in c2])
             ltop = c1[-1][1]
             rtop = c2[-1][1]
-            self.segments.append(Segment(c1, **kwargs))
-            self.segments.append(Segment(c2, **kwargs))
+            self.segments.append(Segment(c1))
+            self.segments.append(Segment(c2))
         else:
             for i in range(t1):
                 self.segments.append(SegmentArc(

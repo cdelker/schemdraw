@@ -150,6 +150,9 @@ class Header(Element):
             pinspacing: Distance between pins
             edge: Distance between header edge and first pin row/column
             pinfill: Color to fill pin circles
+
+        Anchors:
+            pin[X] for each pin
     '''
     def __init__(self, *d,
                  rows: int=4, cols: int=1,
@@ -171,10 +174,10 @@ class Header(Element):
             pinsleft = []
         if pinsright is None:
             pinsright = []
-        pinfill = kwargs.get('pinfill', 'white')
         if cols > 2:
             warnings.warn('Header numbering not supported with cols > 2')
 
+        self.params['d'] = 'right'
         w = (cols-1) * pinspacing + edge*2
         h = (rows-1) * pinspacing + edge*2
         pinrad = .1

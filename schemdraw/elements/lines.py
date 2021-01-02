@@ -29,7 +29,8 @@ class Arrow(Line):
                  **kwargs):
         super().__init__(*d, **kwargs)
         self.segments.append(SegmentArrow((-.3, 0), (0, 0),
-                                          ref='end', headwidth=headwidth,
+                                          ref='end',
+                                          headwidth=headwidth,
                                           headlength=headlength))
         if double:
             self.segments.append(SegmentArrow((0, 0), (-.3, 0),
@@ -198,8 +199,12 @@ class CurrentLabel(Element):
         self.segments.append(SegmentArrow(
             a, b, headwidth=.2, headlength=.3))
 
-    def at(self, xy: Union[XY, Element]) -> 'Element':
+    def at(self, xy: Union[XY, Element]) -> 'Element':  # type: ignore[override]
         ''' Specify CurrentLabel position.
+        
+            If xy is an Element, arrow will be centered
+            along element and its color will also be
+            inherited.
 
             Args:
                 xy: The absolute (x, y) position or an
@@ -207,7 +212,9 @@ class CurrentLabel(Element):
         '''
         if isinstance(xy, Element):
             super().at(xy.center)
-            super().theta(xy.transform.theta)
+            self.theta(xy.transform.theta)
+            if 'color' in xy._userparams:
+                self.color(xy._userparams.get('color'))
         else:
             super().at(xy)
         return self
@@ -247,8 +254,12 @@ class CurrentLabelInline(Element):
         self.segments.append(SegmentArrow(
             (x, 0), (x+dx, 0), headwidth=headwidth, headlength=headlength))
 
-    def at(self, xy: Union[XY, Element]) -> 'Element':
+    def at(self, xy: Union[XY, Element]) -> 'Element':  # type: ignore[override]
         ''' Specify CurrentLabelInline position.
+
+            If xy is an Element, arrow will be placed
+            along the element's leads and the arrow color will
+            be inherited.
 
             Args:
                 xy: The absolute (x, y) position or an
@@ -256,7 +267,9 @@ class CurrentLabelInline(Element):
         '''
         if isinstance(xy, Element):
             super().at(xy.center)
-            super().theta(xy.transform.theta)
+            self.theta(xy.transform.theta)
+            if 'color' in xy._userparams:
+                self.color(xy._userparams.get('color'))            
         else:
             super().at(xy)
         return self

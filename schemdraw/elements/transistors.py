@@ -3,7 +3,7 @@
 from .elements import Element
 from .twoterm import reswidth
 from ..segments import Segment, SegmentArrow, SegmentCircle
-from ..adddocs import adddocs
+from ..types import Point
 
 
 fetw = reswidth*4
@@ -13,19 +13,19 @@ fetgap = reswidth*1.5
 fetr = reswidth*.7  # Radius of "not" bubble
 
 
-@adddocs(Element)
 class NFet(Element):
     ''' N-type Field Effect Transistor
-        Anchors: `source`, `drain`, `gate`.
 
-        Parameters
-        ----------
-        bulk : bool
-            Draw bulk contact
+        Args:
+            bulk: Draw bulk contact
+
+        Anchors:
+            source
+            drain
+            gate
     '''
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        bulk = kwargs.pop('bulk', False)
+    def __init__(self, *d, bulk: bool=False, **kwargs):
+        super().__init__(*d, **kwargs)
         self.segments.append(Segment([[0, 0], [0, -fetl], [fetw, -fetl],
                                       [fetw, -fetl-fetw], [0, -fetl-fetw],
                                       [0, -2*fetl-fetw]]))
@@ -45,19 +45,19 @@ class NFet(Element):
             self.anchors['bulk'] = [0, -fetl-fetw/2]
 
 
-@adddocs(Element)
 class PFet(Element):
     ''' P-type Field Effect Transistor
-        Anchors: `source`, `drain`, `gate`.
 
-        Parameters
-        ----------
-        bulk : bool
-            Draw bulk contact
+        Args:
+            bulk: Draw bulk contact
+
+        Anchors:
+            source
+            drain
+            gate
     '''
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        bulk = kwargs.pop('bulk', False)
+    def __init__(self, *d, bulk: bool=False, **kwargs):
+        super().__init__(*d, **kwargs)
         self.segments.append(Segment([[0, 0], [0, -fetl], [fetw, -fetl],
                                       [fetw, -fetl-fetw], [0, -fetl-fetw],
                                       [0, -2*fetl-fetw]]))
@@ -84,13 +84,16 @@ fete = fetw*.2  # JFET extension
 jfetw = reswidth*3
 
 
-@adddocs(Element)
 class JFet(Element):
-    ''' Junction Field Effect Transistor
-        Anchors: `source`, `drain`, `gate`.
+    ''' Junction Field Effect Transistor (untyped)
+
+        Anchors:
+            source
+            drain
+            gate
     '''
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, *d, **kwargs):
+        super().__init__(*d, **kwargs)
         self.segments.append(Segment(
             [[0, 0], [0, -fetl], [jfetw, -fetl], [jfetw, -fetl+fete],
              [jfetw, -fetl-jfetw-fete], [jfetw, -fetl-jfetw],
@@ -103,19 +106,19 @@ class JFet(Element):
         self.params['lblloc'] = 'lft'
 
 
-@adddocs(Element)
 class JFetN(JFet):
     ''' N-type Junction Field Effect Transistor
-        Anchors: `source`, `drain`, `gate`.
 
-        Parameters
-        ----------
-        circle : bool
-            Draw circle around the transistor
+        Args:
+            circle: Draw circle around the transistor
+
+        Anchors:
+            source
+            drain
+            gate
     '''
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        circle = kwargs.get('circle', False)
+    def __init__(self, *d, circle: bool=False, **kwargs):
+        super().__init__(*d, **kwargs)
         self.segments.append(SegmentArrow([jfetw+.1, -fetl-jfetw],
                                           [jfetw+.3, -fetl-jfetw],
                                           headwidth=.3, headlength=.2))
@@ -123,19 +126,19 @@ class JFetN(JFet):
             self.segments.append(SegmentCircle([jfetw/2, -fetw], fetw*1.1))
 
 
-@adddocs(Element)
 class JFetP(JFet):
     ''' P-type Junction Field Effect Transistor
-        Anchors: `source`, `drain`, `gate`.
 
-        Parameters
-        ----------
-        circle : bool
-            Draw circle around the transistor
+        Args:
+            circle: Draw circle around the transistor
+
+        Anchors:
+            source
+            drain
+            gate
     '''
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        circle = kwargs.get('circle', False)
+    def __init__(self, *d, circle: bool=False, **kwargs):
+        super().__init__(*d, **kwargs)
         self.segments.append(SegmentArrow([jfetw+.25, -fetl-jfetw],
                                           [jfetw, -fetl-jfetw],
                                           headwidth=.3, headlength=.2))
@@ -152,19 +155,19 @@ bjt_emx = bjt_v + bjt_r*.7  # x-coord of emitter exiting circle
 bjt_emy = bjt_v_len*.7    # y-coord of emitter exiting circle
 
 
-@adddocs(Element)
 class Bjt(Element):
-    ''' Bipolar Junction Transistor
-        Anchors: `collector`, `emitter`, `base`.
+    ''' Bipolar Junction Transistor (untyped)
 
-        Parameters
-        ----------
-        circle : bool
-            Draw circle around the transistor
+        Args:
+            circle: Draw circle around the transistor
+
+        Anchors:
+            collector
+            emitter
+            base
     '''
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        circle = kwargs.get('circle', False)
+    def __init__(self, *d, circle: bool=False, **kwargs):
+        super().__init__(*d, **kwargs)
         self.segments.append(Segment([[0, 0], [bjt_v, 0]]))
         self.segments.append(Segment([[bjt_v, bjt_v_len/2], [bjt_v, -bjt_v_len/2]]))
         self.segments.append(Segment([[bjt_v, bjt_a], [bjt_emx, bjt_emy],
@@ -178,18 +181,41 @@ class Bjt(Element):
         self.anchors['base'] = [0, 0]
         self.anchors['collector'] = [bjt_emx, bjt_emy+bjt_a]
         self.anchors['emitter'] = [bjt_emx, -bjt_emy-bjt_a]
+        self.base: Point
+        self.collector: Point
+        self.emitter: Point
 
 
 class BjtNpn(Bjt):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    ''' NPN Bipolar Junction Transistor
+
+        Args:
+            circle: Draw circle around the transistor
+
+        Anchors:
+            collector
+            emitter
+            base
+    '''
+    def __init__(self, *d, circle: bool=False, **kwargs):
+        super().__init__(*d, **kwargs)
         self.segments.append(SegmentArrow(
             [bjt_v, -bjt_a], [bjt_emx, -bjt_emy], headwidth=.2))
 
 
 class BjtPnp(Bjt):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    ''' PNP Bipolar Junction Transistor
+
+        Args:
+            circle: Draw circle around the transistor
+
+        Anchors:
+            collector
+            emitter
+            base
+    '''
+    def __init__(self, *d, circle: bool=False, **kwargs):
+        super().__init__(*d, **kwargs)
         self.segments.append(SegmentArrow([bjt_emx, bjt_emy],
                                           [bjt_v, bjt_a], headwidth=.2))
         self.anchors['base'] = [0, 0]
@@ -197,14 +223,22 @@ class BjtPnp(Bjt):
         self.anchors['emitter'] = [bjt_emx, bjt_emy+bjt_a]
 
 
-@adddocs(Element)
 class BjtPnp2c(BjtPnp):
     ''' PNP Bipolar Junction Transistor with 2 collectors
-        Anchors: `collector`, `C2`, `emitter`, `base`.
+
+        Args:
+            circle: Draw circle around the transistor
+
+        Anchors:
+            collector
+            emitter
+            base
+            C2
     '''
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, *d, circle: bool=False, **kwargs):
+        super().__init__(*d, **kwargs)
         bjt_2c_dy = -.25
         self.segments.append(Segment([[bjt_v, -bjt_a-bjt_2c_dy],
                                       [bjt_emx, -bjt_emy-bjt_2c_dy]]))
         self.anchors['C2'] = [bjt_emx, -bjt_emy-bjt_2c_dy]
+        self.C2: Point

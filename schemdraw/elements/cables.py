@@ -5,33 +5,30 @@ import warnings
 
 from ..segments import Segment, SegmentArc
 from .elements import Element2Term, gap
-from ..adddocs import adddocs
 
 
-@adddocs(Element2Term)
 class Coax(Element2Term):
-    ''' Coaxial cable element. Anchors: `shieldstart`, `shieldstart_top`,
-        `shieldend`, `shieldend_top`, `shieldcenter`, `shieldcenter_top`.
+    ''' Coaxial cable element.
 
-        Parameters
-        ----------
-        length: float
-            Total length of the cable
-        radius: float
-            Radius of shield
-        leadlen: float
-            Distance (x) from start of center conductor to
-            start of shield.
+        Args:
+            length: Total length of the cable, excluding lead extensions.
+            radius: Radius of shield
+            leadlen: Distance (x) from start of center conductor to
+                start of shield.
+
+        Anchors:
+            shieldstart
+            shieldstart_top
+            shieldend
+            shieldend_top
+            shieldcenter
+            shieldcenter_top
     '''
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        length = kwargs.get('length', 3)
-        radius = kwargs.get('radius', 0.3)
-        leadlen = kwargs.get('leadlen', 0.6)
-
+    def __init__(self, *d, length: float=3, radius: float=0.3, leadlen: float=0.6, **kwargs):
+        super().__init__(*d, **kwargs)
         self.segments.append(Segment(    # Center conductor
                 [[0, 0], [leadlen, 0], gap, [length-leadlen+radius/2, 0],
-                 [length, 0]], **kwargs))
+                 [length, 0]]))
         self.segments.append(Segment(
             [[leadlen, radius], [length-leadlen, radius]]))   # Top
         self.segments.append(Segment([
@@ -54,37 +51,41 @@ class Coax(Element2Term):
             warnings.warn('Coax length < 2*leadlen. Coax may be malformed.')
 
 
-@adddocs(Element2Term)
 class Triax(Element2Term):
-    ''' Triaxial cable element. Anchors: `shieldstart`, `shieldstart_top`,
-        `shieldend`, `shieldend_top`, `shieldcenter`, `shieldcenter_top`,
-        `guardstart`, `guardstart_top`, `guardend`, `guardend_top`.
+    ''' Triaxial cable element.
 
-        Parameters
-        ----------
-        length: float
-            Total length of the cable
-        radiusinner: float
-            Radius of inner guard
-        radiusouter: float
-            Radius of outer shield
-        leadlen: float
-            Distance (x) from start of center conductor to
-            start of guard.
-        shieldofststart: float
-            Distance from start of inner guard to start of outer shield
-        shieldofstend: float
-            Distance from end of outer shield to end of inner guard
+        Args:
+            length: Total length of the cable
+            radiusinner: Radius of inner guard
+            radiusouter: Radius of outer shield
+            leadlen: Distance (x) from start of center conductor to
+                start of guard.
+            shieldofststart: Distance from start of inner guard to start
+                of outer shield
+            shieldofstend: Distance from end of outer shield to end
+                of inner guard
+
+        Anchors:
+            shieldstart
+            shieldstart_top
+            shieldend
+            shieldend_top
+            shieldcenter
+            shieldcenter_top
+            guardstart
+            guardstart_top
+            guardend
+            guardend_top
     '''
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        length = kwargs.get('length', 3)
-        leadlen = kwargs.get('leadlen', 0.6)
-        radiusinner = kwargs.get('radiusinner', 0.3)
-        radiusouter = kwargs.get('radiusouter', 0.6)
-        shieldofststart = kwargs.get('shieldofststart', 0.3)
-        shieldofstend = kwargs.get('shieldofstend', 0.45)
-
+    def __init__(self, *d,
+                 length: float=3,
+                 leadlen: float=0.6,
+                 radiusinner: float=0.3,
+                 radiusouter: float=0.6,
+                 shieldofststart: float=0.3,
+                 shieldofstend: float=0.3,
+                 **kwargs):
+        super().__init__(*d, **kwargs)
         if radiusouter < radiusinner:
             raise ValueError('Triax inner radius > outer radius')
 

@@ -20,7 +20,7 @@ class LogicTree():
         self.children = children if children else []
 
     def __getitem__(self, key):
-        if isinstance(key, int) or isinstance(key, slice):
+        if isinstance(key, (int, slice)):
             return self.children[key]
 
     def __iter__(self): return self.children.__iter__()
@@ -67,13 +67,13 @@ def to_tree(pres):
     invertfunc = False
 
     if pres[0] in ['not', '~', '¬']:
-        if type(pres[1]) == str:
+        if isinstance(pres[1], str):
             return LogicTree('not', to_tree(pres[1]))
         else:
             pres = pres[1]
             invertfunc = True
 
-    if type(pres) == str:
+    if isinstance(pres, str):
         return LogicTree(pres)
 
     func = pres[1]
@@ -128,7 +128,8 @@ def drawlogic(tree, gateH=.7, gateW=2, outlabel=None):
         x = root.y * -gateW   # buchheim draws vertical trees, so flip x-y.
         y = -root.x * gateH
 
-        g = drawing.add(elm('r', at=(x, y), anchor='end', l=gateW, inputs=len(root.children)))
+        g = drawing.add(elm(d='r', at=(x, y), anchor='end',
+                            l=gateW, inputs=len(root.children)))
         if outlabel:
             g.add_label(outlabel, loc='end')
 
@@ -145,32 +146,26 @@ def drawlogic(tree, gateH=.7, gateW=2, outlabel=None):
     return drawing
 
 
-def logicparse(expr: str, gateW: float=2, gateH: float=.75, outlabel: str=None) -> schemdraw.Drawing:
+def logicparse(expr: str, gateW: float=2, gateH: float=.75,
+               outlabel: str=None) -> schemdraw.Drawing:
     ''' Parse a logic string expression and draw the gates in a schemdraw Drawing
 
-        Parameters
-        ----------
-        expr: string
-            Logic expression using `and`, `or`, `not`, `nor`, `xor`, `xnor`,
-            for example, "a or (b and c)"
-        gateH: float
-            Height of one gate
-        gateW: float
-            Width of one gate
-        outlabel: string
-            Label for logic output
+        Logic expression is defined by string using 'and', 'or', 'not', etc.
+        for example, "a or (b and c)". Parser recognizes several symbols and
+        names for logic functions:
+            and, '&', '∧'
+            or, '|', '∨', '+'
+            xor, '⊕', '⊻'
+            not, '~', '¬'
 
-        Notes
-        -----
-        Parser recognizes several alternative symbols for logic functions:
-            and: '&', '∧'
-            or: '|', '∨', '+'
-            xor: '⊕', '⊻'
-            not: '~', '¬'
+        Args:
+            expr: Logic expression
+            gateH: Height of one gate
+            gateW: Width of one gate
+            outlabel: Label for logic output
 
-        Returns
-        -------
-        drawing: schemdraw.Drawing
+        Returns:
+            schemdraw.Drawing with logic tree
     '''
     parsed = parse_string(expr)
     tree = to_tree(parsed)

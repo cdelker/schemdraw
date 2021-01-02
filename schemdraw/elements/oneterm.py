@@ -4,14 +4,14 @@ from ..segments import Segment
 from .elements import Element
 from .twoterm import resheight, gap
 
-
 gndgap = 0.12
 gnd_lead = 0.4
 
 
 class Ground(Element):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    ''' Ground connection '''
+    def __init__(self, *d, **kwargs):
+        super().__init__(*d, **kwargs)
         self.segments.append(Segment(
             [[0, 0], [0, -gnd_lead], [-resheight, -gnd_lead],
              [resheight, -gnd_lead], gap, [-resheight*.7, -gndgap-gnd_lead],
@@ -26,8 +26,9 @@ class Ground(Element):
 
 
 class GroundSignal(Element):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    ''' Signal ground '''
+    def __init__(self, *d, **kwargs):
+        super().__init__(*d, **kwargs)
         self.segments.append(Segment(
             [[0, 0], [0, -gnd_lead], [-resheight, -gnd_lead], [0, -gnd_lead*2],
              [resheight, -gnd_lead], [0, -gnd_lead]]))
@@ -39,8 +40,9 @@ class GroundSignal(Element):
 
 
 class GroundChassis(Element):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    ''' Chassis ground '''
+    def __init__(self, *d, **kwargs):
+        super().__init__(*d, **kwargs)
         dx = resheight*.75
         dy = resheight
         self.segments.append(Segment(
@@ -57,8 +59,9 @@ class GroundChassis(Element):
 
 
 class Antenna(Element):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    ''' Antenna '''
+    def __init__(self, *d, **kwargs):
+        super().__init__(*d, **kwargs)
         lead = 0.6
         h = 0.6
         w = 0.38
@@ -72,8 +75,9 @@ class Antenna(Element):
 
 
 class AntennaLoop(Element):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    ''' Loop antenna (diamond style) '''
+    def __init__(self, *d, **kwargs):
+        super().__init__(*d, **kwargs)
         lead = 0.2
         h = 0.5
         self.segments.append(Segment(
@@ -86,8 +90,9 @@ class AntennaLoop(Element):
 
 
 class AntennaLoop2(Element):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    ''' Loop antenna (square style) '''
+    def __init__(self, *d, **kwargs):
+        super().__init__(*d, **kwargs)
         lead = .25
         h = 1
         x1 = -h/2-lead/2
@@ -108,13 +113,13 @@ class AntennaLoop2(Element):
 
 
 class Vss(Element):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    ''' Vss connection '''
+    def __init__(self, *d, **kwargs):
+        super().__init__(*d, **kwargs)
         dx = resheight*.75
         self.segments.append(Segment([[0, 0], [0, -gnd_lead]]))
         self.segments.append(Segment([[0, -gnd_lead], [-dx, -gnd_lead]]))
         self.segments.append(Segment([[0, -gnd_lead], [dx, -gnd_lead]]))
-        self.theta = 0
         self.params['drop'] = [0, 0]
         self.params['theta'] = 0
         self.anchors['start'] = [0, 0]
@@ -123,13 +128,13 @@ class Vss(Element):
 
 
 class Vdd(Element):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    ''' Vdd connection '''
+    def __init__(self, *d, **kwargs):
+        super().__init__(*d, **kwargs)
         dx = resheight*.75
         self.segments.append(Segment([[0, 0], [0, gnd_lead]]))
         self.segments.append(Segment([[0, gnd_lead], [-dx, gnd_lead]]))
         self.segments.append(Segment([[0, gnd_lead], [dx, gnd_lead]]))
-        self.theta = 0
         self.params['drop'] = [0, 0]
         self.params['theta'] = 0
         self.anchors['start'] = [0, 0]

@@ -1,6 +1,6 @@
 ''' Utility functions for point geometry '''
 
-from typing import Sequence, List, Tuple, Union
+from typing import Sequence, List, Tuple
 
 import math
 from operator import mul
@@ -18,7 +18,9 @@ def linspace(start: float, stop: float, num: int=50) -> List[float]:
     return [start+step*i for i in range(num)]
 
 
-def rotate(xy: Sequence[float], angle: float, center: Sequence[float]=(0, 0)) -> 'Point':
+def rotate(xy: Sequence[float],
+           angle: float,
+           center: Sequence[float]=(0, 0)) -> 'Point':
     ''' Rotate the xy point by angle degrees '''
     co = math.cos(math.radians(angle))
     so = math.sin(math.radians(angle))
@@ -52,12 +54,15 @@ def angle(a: Sequence[float], b: Sequence[float]) -> float:
 
 
 class Point(tuple):
+    ''' An (x, y) tuple that can do math operations '''
     @property
     def x(self) -> float:
+        ''' X value of point '''
         return self[0]
 
     @property
     def y(self) -> float:
+        ''' Y value of point '''
         return self[1]
 
     def __repr__(self):

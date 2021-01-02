@@ -1,49 +1,69 @@
 ''' Connectors and bus lines '''
 
 import warnings
+from typing import Tuple, Literal, Sequence
 
 from ..segments import Segment, SegmentText, SegmentCircle, SegmentPoly
 from ..elements import Element, Line
-from ..adddocs import adddocs
+from ..types import Point, XY, Valign
 
 
-@adddocs(Element)
 class OrthoLines(Element):
-    ''' Orthogonal connection line
+    ''' Orthogonal connection lines
 
-        Parameters
-        ----------
-        at : xy tuple
-            Starting position
-        to : xy tuple
-            Ending position
-        n : int
-            Number of parallel lines
-        dy : float
-            Distance between parallel lines
+        Use `at()` and `to()` methods to specify starting and
+        ending location of OrthoLines.
+
+        The default lines are spaced to provide connection to
+        pins with default spacing on Ic element or connector
+        such as a Header.
+
+        Args:
+            n: Number of parallel lines
+            dy: Distance between parallel lines
+            xstart: Fractional distance (0-1) to start vertical
+                portion of first ortholine
     '''
-    def place(self, dwgxy, dwgtheta, **dwgparams):
-        self.dwgparams = dwgparams
-        if not self.cparams:
-            self.buildparams()
+    def __init__(self, *d, n: int=1, dy: float=0.6,
+                 xstart: float=None, **kwargs):
+        super().__init__(*d, **kwargs)
+        self._userparams['n'] = n
+        self._userparams['dy'] = dy
+        self._userparams['xstart'] = xstart
+        self._userparams.setdefault('to', (1, 1))
+
+    def to(self, xy: XY) -> 'Element':
+        ''' Specify ending position of OrthoLines '''
+        self._userparams['to'] = xy
+        return self
+
+    def _place(self, dwgxy: XY, dwgtheta: float, **dwgparams) -> Tuple[Point, float]:
+        ''' Calculate absolute placement of Element '''
+        self._dwgparams = dwgparams
+        if not self._cparams:
+            self._buildparams()
 
         self.params['theta'] = 0
-        xy = self.cparams.get('at', dwgxy)
-        to = self.cparams.get('to')
-        n = self.cparams.get('n', 1)
-        ndy = self.cparams.get('dy', .6)
-        xstart = self.cparams.get('xstart', None)
+        xy: XY = self._cparams.get('at', dwgxy)
+        to: XY = self._cparams.get('to', dwgxy)
+        n = self._cparams.get('n', 1)
+        ndy = self._cparams.get('dy', .6)
+        xstart = self._cparams.get('xstart', None)
         dx = to[0] - xy[0]
         dy = to[1] - xy[1]
 
         if dy == 0:
             for i in range(n):
                 y = -i*ndy
-                self.segments.append(Segment([[0, y], [dx, y+dy]], theta=0))
+                self.segments.append(Segment([[0, y], [dx, y+dy]]))
         else:
             # x0 is first line to go up
             if xstart is not None:
-                x0 = dx*xstart
+                if dy > 0:
+                    x0 = dx*xstart
+                else:
+                    x0 = dx*xstart - ndy - ndy*(n-1)*xstart
+                    # xstart=0 --> -ndy; xstart=1 --> dx-ndy*n
             elif dx > 0:
                 x0 = dx/2 - (ndy*(n-1)/2)
             else:
@@ -55,35 +75,46 @@ class OrthoLines(Element):
                     x = x0 + ndy*i if dx > 0 else x0 - ndy*i
                 else:
                     x = x0 + (n-i)*ndy if dx > 0 else x0 - (n-i)*ndy
-                self.segments.append(Segment([[0, y], [x, y], [x, y+dy], [dx, y+dy]], theta=0))
-        return super().place(dwgxy, dwgtheta, **dwgparams)
+                self.segments.append(Segment([[0, y], [x, y], [x, y+dy], [dx, y+dy]]))
+        return super()._place(dwgxy, dwgtheta, **dwgparams)
 
 
-@adddocs(Element)
 class RightLines(Element):
-    ''' Right-angle line
+    ''' Right-angle line connector
 
-        Parameters
-        ----------
-        at : xy tuple
-            Starting position for horizontal segment of line
-        to : xy tuple
-            Ending position, vertical segment
-        n : int
-            Number of parallel lines
-        dy : float
-            Distance between parallel lines
+        Use `at()` and `to()` methods to specify starting and ending
+        location.
+
+        The default lines are spaced to provide connection to
+        pins with default spacing on Ic element or connector
+        such as a Header.
+
+        Args:
+            n: Number of parallel lines
+            dy: Distance between parallel lines
     '''
-    def place(self, dwgxy, dwgtheta, **dwgparams):
-        self.dwgparams = dwgparams
-        if not self.cparams:
-            self.buildparams()
+    def __init__(self, *d, n: int=1, dy: float=0.6, **kwargs):
+        super().__init__(*d, **kwargs)
+        self._userparams['n'] = n
+        self._userparams['dy'] = dy
+        self._userparams.setdefault('to', (1, 1))
+
+    def to(self, xy: XY) -> 'Element':
+        ''' Specify ending position of OrthoLines '''
+        self._userparams['to'] = xy
+        return self
+
+    def _place(self, dwgxy: XY, dwgtheta: float, **dwgparams) -> Tuple[Point, float]:
+        ''' Calculate absolute placement of Element '''
+        self._dwgparams = dwgparams
+        if not self._cparams:
+            self._buildparams()
 
         self.params['theta'] = 0
-        xy = self.cparams.get('at', dwgxy)
-        to = self.cparams.get('to')
-        n = self.cparams.get('n', 1)
-        ndy = self.cparams.get('dy', .6)
+        xy = self._cparams.get('at', dwgxy)
+        to = self._cparams.get('to', (1,1))
+        n = self._cparams.get('n', 1)
+        ndy = self._cparams.get('dy', .6)
         dx = to[0] - xy[0]
         dy = to[1] - xy[1]
         for i in range(n):
@@ -92,64 +123,54 @@ class RightLines(Element):
                 x = dx - i*ndy if dx < 0 else dx + i*ndy
             else:
                 x = dx + (n-i-1)*ndy if dx > 0 else dx - (n-i-1)*ndy
-            self.segments.append(Segment([[0, y], [x, y], [x, dy]], theta=0))
-        return super().place(dwgxy, dwgtheta, **dwgparams)
+            self.segments.append(Segment([[0, y], [x, y], [x, dy]]))
+        return super()._place(dwgxy, dwgtheta, **dwgparams)
 
 
-@adddocs(Element)
 class Header(Element):
     ''' Header connector element
 
-        Parameters
-        ----------
-        rows : int
-            Number of rows [4]
-        cols : int
-            Number of columns. Pin numbering requires 1 or 2 columns. [1]
-        style : string
-            Connector style, 'round', 'square', or 'screw'
-        numbering : string
-            Pin numbering order. 'lr' for left-to-right numbering,
-            'ud' for up-down numbering, or 'ccw' for counter-clockwise
-            integrated-circuit style numbering. Pin 1 is always at the
-            top-left corner, unless `flip` parameter is also set.
-        shownumber : bool
-            Draw pin numbers outside the header [False]
-        pinsleft : list of string
-            List of pin labels for left side
-        pinsright : list of string
-            List of pin labels for right side
-        pinalignleft : string
-            Vertical alignment for pins on left side ('center', 'top', 'bottom')
-        pinalignright : string
-            Vertical alignment for pins on right side ('center', 'top', 'bottom')
-        pinfontsizeleft : float
-            Font size for pin labels on left
-        pinfontsizeright : float
-            Font size for pin labels on right
-        pinspacing : float
-            Distance between pins [0.6]
-        edge : float
-            Distance between header edge and first pin row/column [0.3]
-        pinfill : string
-            Color to fill pin circles
+        Args:
+            rows: Number of rows
+            cols: Number of columns. Pin numbering requires 1 or 2 columns
+            style: Connector style, 'round', 'square', or 'screw'
+            numbering: Pin numbering order. 'lr' for left-to-right numbering,
+                'ud' for up-down numbering, or 'ccw' for counter-clockwise
+                (integrated-circuit style) numbering. Pin 1 is always at the
+                top-left corner, unless `flip` method is also called.
+            shownumber: Draw pin numbers outside the header
+            pinsleft: List of pin labels for left side
+            pinsright: List of pin labels for right side
+            pinalignleft: Vertical alignment for pins on left side
+                ('center', 'top', 'bottom')
+            pinalignright: Vertical alignment for pins on right side
+                ('center', 'top', 'bottom')
+            pinfontsizeleft: Font size for pin labels on left
+            pinfontsizeright: Font size for pin labels on right
+            pinspacing: Distance between pins
+            edge: Distance between header edge and first pin row/column
+            pinfill: Color to fill pin circles
     '''
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        rows = kwargs.get('rows', 4)
-        cols = kwargs.get('cols', 1)
-        style = kwargs.get('style', 'round')
-        number = kwargs.get('numbering', 'lr')
-        shownumber = kwargs.get('shownumber', False)
-        pinspacing = kwargs.get('pinspacing', .6)
-        lpinlabels = kwargs.get('pinsleft', [])
-        rpinlabels = kwargs.get('pinsright', [])
-        lpinlabelalign = kwargs.get('pinalignleft', 'bottom')
-        rpinlabelalign = kwargs.get('pinalignright', 'bottom')
-        pinfontsizeleft = kwargs.get('pinfontsizeleft', 9)
-        pinfontsizeright = kwargs.get('pinfontsizeright', 9)
-        edge = kwargs.get('edge', .3)
-        self.params['theta'] = 0
+    def __init__(self, *d,
+                 rows: int=4, cols: int=1,
+                 style: Literal['round', 'square', 'screw']='round',
+                 numbering: Literal['lr', 'ud', 'ccw']='lr',
+                 shownumber: bool=False,
+                 pinsleft: Sequence[str] = None,
+                 pinsright: Sequence[str] = None,
+                 pinalignleft: Valign='bottom',
+                 pinalignright: Valign='bottom',
+                 pinfontsizeright: float=9,
+                 pinfontsizeleft: float=9,
+                 pinspacing: float=0.6,
+                 edge: float=0.3,
+                 pinfill: str='white',
+                 **kwargs):
+        super().__init__(*d, **kwargs)
+        if pinsleft is None:
+            pinsleft = []
+        if pinsright is None:
+            pinsright = []
         pinfill = kwargs.get('pinfill', 'white')
         if cols > 2:
             warnings.warn('Header numbering not supported with cols > 2')
@@ -176,9 +197,9 @@ class Header(Element):
                 else:  # style == 'round'
                     self.segments.append(SegmentCircle(xy, pinrad, fill=pinfill, zorder=4))
 
-                if number == 'lr' or number is True:
+                if numbering == 'lr' or numbering is True:
                     pnumber = str(row*cols + col + 1)
-                elif number == 'ud':
+                elif numbering == 'ud':
                     pnumber = str(row + col*rows + 1)
                 else:  # number == 'ccw'
                     pnumber = str(rows*col+(rows-row)) if col % 2 else str(row+1)
@@ -187,30 +208,30 @@ class Header(Element):
                 if shownumber:
                     numxy = [w+.05 if col % 2 else -.05, xy[1]]
                     align = ('left' if col % 2 else 'right', 'bottom')
-                    self.segments.append(SegmentText(numxy, pnumber, fontsize=pinfontsizeleft, align=align))
+                    self.segments.append(SegmentText(numxy, pnumber, fontsize=pinfontsizeleft, align=align))  # type: ignore
 
-                if lpinlabels and (cols == 1 or not col % 2):
+                if pinsleft and (cols == 1 or not col % 2):
                     lblxy = [-.05, xy[1]]
-                    self.segments.append(SegmentText(lblxy, lpinlabels[row], fontsize=pinfontsizeleft,
-                                                     align=('right', lpinlabelalign)))
+                    self.segments.append(SegmentText(lblxy, pinsleft[row], fontsize=pinfontsizeleft,
+                                                     align=('right', pinalignleft)))
 
-                if rpinlabels and (cols == 1 or col % 2):
+                if pinsright and (cols == 1 or col % 2):
                     lblxy = [w+.05, xy[1]]
-                    self.segments.append(SegmentText(lblxy, rpinlabels[row], fontsize=pinfontsizeright,
-                                                     align=('left', rpinlabelalign)))
+                    self.segments.append(SegmentText(lblxy, pinsright[row], fontsize=pinfontsizeright,
+                                                     align=('left', pinalignright)))
 
 
 class Jumper(Element):
     ''' Jumper for use on a Header element
 
-        Parameters
-        ----------
-        pinspacing : float
-            Spacing between pins
+        Set position using `at()` method with a Header
+        pin location, e.g. `Jumper().at(H.in1)`
+
+        Args:
+            pinspacing: Spacing between pins
     '''
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        pinspacing = kwargs.get('pinspacing', .6)
+    def __init__(self, *d, pinspacing: float=0.6, **kwargs):
+        super().__init__(*d, **kwargs)
         self.params['theta'] = 0
         pinrad = .1
         x = pinrad*2.5
@@ -218,39 +239,34 @@ class Jumper(Element):
                                          [pinspacing+x, x], [-x, x]]))
 
 
-@adddocs(Element)
 class BusConnect(Element):
     ''' Data bus connection.
-        Anchors: `start`, `end`, `pX` for each data line X
 
-        Parameters
-        ----------
-        n : int
-            Number of parallel lines
-        dy : float
-            Distance between parallel lines
-        up : bool
-            Slant up or down
-        lwbus : float
-            Line width of bus line
-        l : float
-            length of connection lines
+        Adds the short diagonal lines that break out a bus (wide line)
+        to connect to an Ic or Header element.
+
+        Args:
+            n: Number of parallel lines
+            dy: Distance between parallel lines
+            up: Slant up or down
+            lwbus: Line width of bus line
+            l: length of connection lines
+
+        Anchors:
+            start
+            end
+            p[X] where X is int for each data line
     '''
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        n = kwargs.get('n', 1)
-        dy = kwargs.get('dy', .6)
-        up = kwargs.get('up', True)  # Slant up or down
-        lwbus = kwargs.get('lwbus', 4)
-
+    def __init__(self, *d, n: int=1, dy: float=0.6, up: bool=True, lwbus: float=4, l: float=3, **kwargs):
+        super().__init__(*d, **kwargs)
         self.params['theta'] = 0
-        dx = kwargs.get('l', 3)
+        dx = l
         slantx = .5
         slanty = slantx if up else -slantx
 
         for i in range(n):
             y = -i*dy
-            self.segments.append(Segment([[0, y], [dx-slantx, y], [dx, y+slanty]], theta=0))
+            self.segments.append(Segment([[0, y], [dx-slantx, y], [dx, y+slanty]]))
             self.anchors['pin{}'.format(i+1)] = [0, y]
         self.segments.append(Segment([[dx, slantx], [dx, slanty-n*dy]], lw=lwbus))
         self.params['drop'] = [dx, slantx]
@@ -258,42 +274,35 @@ class BusConnect(Element):
         self.anchors['end'] = [dx, slantx-n*dy]
 
 
-@adddocs(Element)
 class BusLine(Line):
     ''' Data bus line. Just a wide line.
 
-        Parameters
-        ----------
-        lw : float
-            Line width
+        Use BusConnect to break out connections to the BusLine.
+
+        Args:
+            lw: Line width
     '''
-    def __init__(self, *args, **kwargs):
-        kwargs.setdefault('lw', 4)
-        super().__init__(*args, **kwargs)
+    def __init__(self, *d, lw: float=4, **kwargs):
+        super().__init__(*d, **kwargs)
+        self.params['lw'] = lw
 
 
-@adddocs(Element)
 class DB9(Element):
     ''' DB9 Connector
-        Anchors: `pin1` thru `pin9`
 
-        Parameters
-        ----------
-        pinspacing : float
-            Distance between pins [.6]
-        edge : float
-            Distance between edge and pins [.3]
-        number : bool
-            Draw pin numbers
-        pinfill : string
-            Color to fill pin circles
+        Args:
+            pinspacing: Distance between pins
+            edge: Distance between edge and pins
+            number: Draw pin numbers
+            pinfill: Color to fill pin circles
+
+        Anchors:
+            pin1 thru pin9
     '''
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        pinspacing = kwargs.get('pinspacing', .6)
-        edge = kwargs.get('edge', .3)
-        number = kwargs.get('number', False)
-        pinfill = kwargs.get('pinfill', 'white')
+    def __init__(self, *d, pinspacing: float=0.6, edge: float=0.3, number: bool=False,
+                 pinfill: str='white',
+                 **kwargs):
+        super().__init__(*d, **kwargs)
         self.params['theta'] = 0
         w = pinspacing + edge*2
         h1 = 4 * pinspacing + edge*2
@@ -320,28 +329,22 @@ class DB9(Element):
                                                  align=('center', 'bottom')))
 
 
-@adddocs(Element)
 class DB25(Element):
     ''' DB25 Connector
-        Anchors: `pin1` thru `pin25`
 
-        Parameters
-        ----------
-        pinspacing : float
-            Distance between pins [.6]
-        edge : float
-            Distance between edge and pins [.3]
-        number : bool
-            Draw pin numbers
-        pinfill : string
-            Color to fill pin circles
+        Args:
+            pinspacing: Distance between pins
+            edge: Distance between edge and pins
+            number: Draw pin numbers
+            pinfill: Color to fill pin circles
+
+        Anchors:
+            pin1 thru pin25
     '''
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        pinspacing = kwargs.get('pinspacing', .6)
-        edge = kwargs.get('edge', .3)
-        number = kwargs.get('number', False)
-        pinfill = kwargs.get('pinfill', 'white')
+    def __init__(self, *d, pinspacing: float=0.6, edge: float=0.3, number: bool=False,
+                 pinfill: str='white',
+                 **kwargs):
+        super().__init__(*d, **kwargs)
         self.params['theta'] = 0
         w = pinspacing + edge*2
         h1 = 12 * pinspacing + edge*2
@@ -368,30 +371,27 @@ class DB25(Element):
                                                  align=('center', 'bottom')))
 
 
-@adddocs(Element)
 class CoaxConnect(Element):
     ''' Coaxial connector
-        Anchors: `center`, `N`, `S`, `E`, `W`
 
-        Parameters
-        ----------
-        radius : float
-            Radius of outer shell
-        radiusinner : float
-            Radius of inner conductor
-        fillinner : string
-            Color to fill inner conductor
+        Args:
+            radius: Radius of outer shell
+            radiusinner: Radius of inner conductor
+            fillinner: Color to fill inner conductor
+
+        Anchors:
+            center
+            N
+            S
+            E
+            W
     '''
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        rad = kwargs.get('radius', .4)
-        radinner = kwargs.get('radiusinner', .12)
-        fillin = kwargs.get('fillinner', 'white')
-
-        self.segments.append(SegmentCircle([0, 0], rad))
-        self.segments.append(SegmentCircle([0, 0], radinner, fill=fillin, zorder=4))
+    def __init__(self, *d, radius: float=0.4, radiusinner: float=0.12, fillinner: str='white', **kwargs):
+        super().__init__(*d, **kwargs)
+        self.segments.append(SegmentCircle([0, 0], radius))
+        self.segments.append(SegmentCircle([0, 0], radiusinner, fill=fillinner, zorder=4))
         self.anchors['center'] = [0, 0]
-        self.anchors['N'] = [0, rad]
-        self.anchors['S'] = [0, -rad]
-        self.anchors['E'] = [rad, 0]
-        self.anchors['W'] = [-rad, 0]
+        self.anchors['N'] = [0, radius]
+        self.anchors['S'] = [0, -radius]
+        self.anchors['E'] = [radius, 0]
+        self.anchors['W'] = [-radius, 0]

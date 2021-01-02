@@ -4,7 +4,6 @@ import math
 
 from .elements import Element, gap
 from ..segments import Segment
-from ..adddocs import adddocs
 
 
 oa_back = 2.5
@@ -13,23 +12,30 @@ oa_lblx = oa_xlen/8
 oa_pluslen = .2
 
 
-@adddocs(Element)
 class Opamp(Element):
-    ''' Operational Amplifier. Anchors: `in1`, `in2`, `out`, `vd`,
-        `vs`, `n1`, `n2`, `n1a`, `n2a`.
+    ''' Operational Amplifier.
 
-        Parameters
-        ----------
-        sign : bool
-            Draw +/- sign labels at each input
+        Args:
+            sign: Draw +/- labels at each input
+
+        Anchors:
+            in1
+            in2
+            out
+            vd
+            vs
+            n1
+            n2
+            n1a
+            n2a
     '''
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, *d, sign: bool=True, **kwargs):
+        super().__init__(*d, **kwargs)
         self.segments.append(Segment(
             [[0, 0], [0, oa_back/2], [oa_xlen, 0], [0, -oa_back/2], [0, 0],
              gap, [oa_xlen, 0]]))
 
-        if kwargs.get('sign', True):
+        if sign:
             self.segments.append(Segment(
                 [[oa_lblx-oa_pluslen/2, oa_back/4],
                  [oa_lblx+oa_pluslen/2, oa_back/4]]))

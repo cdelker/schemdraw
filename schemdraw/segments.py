@@ -1,12 +1,13 @@
 ''' Schemdraw drawing segments.
-    Each element is made up of one or more segments.
+
+    Each element is made up of one or more segments
+    that define drawing primitives.
 '''
 
-from typing import Sequence, List
-from collections import namedtuple
+from typing import Sequence, List, Literal, Dict, Any, Union
 import math
 
-from .types import BBox, XY
+from .types import BBox, XY, Linestyle, Capstyle, Joinstyle, Align
 from . import util
 from .util import Point
 from .backends import svgtext
@@ -16,12 +17,9 @@ def roundcorners(verts: Sequence[XY], radius: float=.5) -> Sequence[XY]:
     ''' Round the corners of polygon defined by verts.
         Works for convex polygons assuming radius fits inside.
 
-        Parameters
-        ----------
-        verts : list
-            List of (x,y) pairs defining corners of polygon
-        radius : float
-            Radius of curvature
+        Args:
+            verts: List of (x,y) pairs defining corners of polygon
+            radius: Radius of curvature
 
         Adapted from:
         https://stackoverflow.com/questions/24771828/algorithm-for-creating-rounded-corners-in-a-polygon
@@ -78,40 +76,35 @@ def roundcorners(verts: Sequence[XY], radius: float=.5) -> Sequence[XY]:
     return poly
 
 
-class Segment(object):
-    ''' A segment (path), part of an Element.
+class Segment:
+    ''' A segment path
 
-        Parameters
-        ----------
-        path : array-like
-            List of [x,y] coordinates making the path
-
-        Keyword Arguments
-        -----------------
-        color : string
-             Color for this segment
-        lw : float
-            Line width for the segment
-        ls : string
-            Line style for the segment '-', '--', ':', etc.
-        capstyle : string
-            Capstyle for the segment: 'round', 'miter', or 'bevel'
-        joinstyle : string
-            Joinstyle for the segment: 'round', 'miter', or 'bevel'
-        fill : string
-            Color to fill if path is closed
-        zorder : int
-            Z-order for segment
+        Args:
+            path: List of [x,y] coordinates making the path
+            color: Color for this segment
+            lw: Line width for the segment
+            ls: Line style for the segment '-', '--', ':', etc.
+            capstyle: Capstyle for the segment: 'butt', 'round', 'square', ('projecting')
+            joinstyle: Joinstyle for the segment: 'round', 'miter', or 'bevel'
+            fill: Color to fill if path is closed
+            zorder: Z-order for segment
     '''
-    def __init__(self, path: List[XY], **kwargs):
-        self.path: List[XY] = path  # Untranformed path
-        self.zorder = kwargs.get('zorder', None)
-        self.color = kwargs.get('color', None)
-        self.fill = kwargs.get('fill', None)
-        self.lw = kwargs.get('lw', None)
-        self.ls = kwargs.get('ls', None)
-        self.capstyle = kwargs.get('capstyle', None)
-        self.joinstyle = kwargs.get('joinstyle', None)
+    def __init__(self, path: Sequence[XY],
+                 color: str=None,
+                 lw: float=None,
+                 ls: Linestyle=None,
+                 capstyle: Capstyle=None,
+                 joinstyle: Joinstyle=None,
+                 fill: str=None,
+                 zorder: int=None):
+        self.path: Sequence[XY] = path  # Untranformed path
+        self.zorder = zorder
+        self.color = color
+        self.fill = fill
+        self.lw = lw
+        self.ls = ls
+        self.capstyle = capstyle
+        self.joinstyle = joinstyle
 
     def end(self) -> XY:
         ''' Get endpoint of this segment, untransformed '''
@@ -121,29 +114,26 @@ class Segment(object):
         ''' Return a new Segment that has been transformed
             to its global position
 
-            Parameters
-            ----------
-            transform : schemdraw.Transform
-                Transformation to apply
-            style : Style keyword arguments from Element to apply as default
+            Args:
+                transform: Transformation to apply
+                style: Style parameters from Element to apply as default
         '''
-        params = {'zorder': self.zorder,
-                  'color': self.color,
-                  'fill': self.fill,
-                  'lw': self.lw,
-                  'ls': self.ls,
-                  'capstyle': self.capstyle,
-                  'joinstyle': self.joinstyle}
+        params: Dict[str, Any] = {'zorder': self.zorder,
+                                  'color': self.color,
+                                  'fill': self.fill,
+                                  'lw': self.lw,
+                                  'ls': self.ls,
+                                  'capstyle': self.capstyle,
+                                  'joinstyle': self.joinstyle}
+        style = {k: v for k, v in style.items() if k in params.keys()}
         params.update(style)
         return Segment(transform.transform_array(self.path), **params)
 
     def get_bbox(self) -> BBox:
         ''' Get bounding box (untransformed)
 
-            Returns
-            -------
-            xmin, ymin, xmax, ymax
-                Bounding box limits
+            Returns:
+                Bounding box limits: (xmin, ymin, xmax, ymax)
         '''
         x = [p[0] for p in self.path]
         y = [p[1] for p in self.path]
@@ -160,12 +150,10 @@ class Segment(object):
     def draw(self, fig, transform, **style) -> None:
         ''' Draw the segment
 
-            Parameters
-            ----------
-            fig : schemdraw.Figure
-                Figure to draw on
-            transform : Transform
-                Transform to apply before drawing
+            Args:
+                fig: schemdraw.Figure to draw on
+                transform: Transform to apply before drawing
+                style: Default style parameters
         '''
         path = transform.transform_array(self.path)
 
@@ -194,45 +182,39 @@ class Segment(object):
                  zorder=zorder)
 
 
-class SegmentText(object):
+class SegmentText:
     ''' A text drawing segment
 
-        Parameters
-        ----------
-        pos : [x, y] array
-            Coordinates for text
-        label : string
-            Text to draw
-
-        Keyword Arguments
-        -----------------
-        align : tuple
-            Tuple of (horizontal, vertical) alignment where horizontal
-            is ['center', 'left', 'right'] and vertical is ['center',
-            'top', 'bottom']
-        rotation : float
-            Rotation angle (degrees)
-        rotation_mode : string
-            See Matplotlib documentation. 'anchor' or 'default'.
-        color : string
-             Color for this segment
-        fontsize : float
-            Font size
-        font : string
-            Font name/family
-        zorder : int
-            Z-order for segment
+        Args:
+            pos: (x, y) coordinates for text
+            label: Text to draw
+            align: Tuple of (horizontal, vertical) alignment where horizontal
+                is ('center', 'left', 'right') and vertical is ('center',
+                'top', 'bottom')
+            rotation: Rotation angle in degrees
+            rotation_mode: See Matplotlib documentation. 'anchor' or 'default'.
+            color: Color for this segment
+            fontsize: Font size
+            font: Font name/family
+            zorder: Z-order for segment
     '''
-    def __init__(self, pos: Sequence[float], label: str, **kwargs):
+    def __init__(self, pos: Sequence[float], label: str,
+                 align: Align=None,
+                 rotation: float=None,
+                 rotation_mode: Literal['anchor', 'default']=None,
+                 color: str=None,
+                 fontsize: float=14,
+                 font: str=None,
+                 zorder: int=None):
         self.xy = pos
         self.text = label
-        self.align = kwargs.get('align', None)
-        self.font = kwargs.get('font', None)
-        self.fontsize = kwargs.get('fontsize', 14)
-        self.color = kwargs.get('color', None)
-        self.rotation = kwargs.get('rotation', None)
-        self.rotation_mode = kwargs.get('rotation_mode', None)
-        self.zorder = kwargs.get('zorder', None)
+        self.align = align
+        self.font = font
+        self.fontsize = fontsize
+        self.color = color
+        self.rotation = rotation
+        self.rotation_mode = rotation_mode
+        self.zorder = zorder
 
     def doreverse(self, centerx: float) -> None:
         ''' Reverse the path (flip horizontal about the centerx point) '''
@@ -243,16 +225,22 @@ class SegmentText(object):
         self.xy = util.flip(self.xy)
 
     def xform(self, transform, **style) -> 'SegmentText':
-        ''' Return a new Segment that has been transformed with all
-            styling applied
+        ''' Return a new Segment that has been transformed
+            to its global position
+
+            Args:
+                transform: Transformation to apply
+                style: Style parameters from Element to apply as default
         '''
-        params = {'align': self.align,
-                  'font': self.font,
-                  'fontsize': self.fontsize,
-                  'color': self.color,
-                  'rotation': self.rotation,
-                  'rotation_mode': self.rotation_mode,
-                  'zorder': self.zorder}
+        params: Dict[str, Any] = {'align': self.align,
+                                  'font': self.font,
+                                  'fontsize': self.fontsize,
+                                  'color': self.color,
+                                  'rotation': self.rotation,
+                                  'rotation_mode': self.rotation_mode,
+                                  'zorder': self.zorder}
+
+        style = {k: v for k, v in style.items() if k in params.keys()}
         params.update(style)
         return SegmentText(transform.transform(self.xy),
                            self.text, **params)
@@ -264,10 +252,8 @@ class SegmentText(object):
     def get_bbox(self) -> BBox:
         ''' Get bounding box (untransformed)
 
-            Returns
-            -------
-            xmin, ymin, xmax, ymax
-                Bounding box limits
+            Returns:
+                Bounding box limits (xmin, ymin, xmax, ymax)
         '''
         w, h, _ = svgtext.text_approx_size(self.text, 'Arial', self.fontsize)
         # h, w are in points, convert back to inches (/72)
@@ -292,12 +278,10 @@ class SegmentText(object):
     def draw(self, fig, transform, **style) -> None:
         ''' Draw the segment
 
-            Parameters
-            ----------
-            fig : schemdraw.Figure
-                Axis to draw on
-            transform : Transform
-                Transform to apply before drawing
+            Args:
+                fig: schemdraw.Figure to draw on
+                transform: Transform to apply before drawing
+                style: Default style parameters
         '''
         xy = transform.transform(self.xy)
         color = self.color if self.color else style.get('color', 'black')
@@ -314,42 +298,39 @@ class SegmentText(object):
                  halign=align[0], valign=align[1], zorder=zorder)
 
 
-class SegmentPoly(object):
+class SegmentPoly:
     ''' A polygon segment
 
-        Parameters
-        ----------
-        xy : array-like
-            List of [x,y] coordinates making the polygon
-
-        Keyword Arguments
-        -----------------
-        closed : bool
-            Draw a closed polygon (default True)
-        cornerradius : float
-            Round the corners to this radius (0 for no rounding)
-        color : string
-            Color for this segment
-        lw : float
-            Line width for the segment
-        ls : string
-            Line style for the segment
-        fill : string
-            Color to fill if path is closed
-        zorder : int
-            Z-order for segment
+        Args:
+            xy: List of [x,y] coordinates making the polygon
+            closed: Draw a closed polygon (default True)
+            cornerradius: Round the corners to this radius (0 for no rounding)
+            color: Color for this segment
+            lw: Line width for the segment
+            ls: Line style for the segment
+            fill: Color to fill if path is closed
+            zorder: Z-order for segment
     '''
-    def __init__(self, verts: Sequence[Sequence[float]], **kwargs):
+    def __init__(self, verts: Sequence[Sequence[float]],
+                 closed: bool=True,
+                 cornerradius: float=0,
+                 color: str=None,
+                 fill: str=None,
+                 lw: float=None,
+                 ls: Linestyle=None,
+                 joinstyle: Joinstyle=None,
+                 capstyle: Capstyle=None,
+                 zorder: int=None):
         self.verts = verts
-        self.closed = kwargs.get('closed', None)
-        self.cornerradius = kwargs.get('cornerradius', 0)
-        self.color = kwargs.get('color', None)
-        self.fill = kwargs.get('fill', None)
-        self.joinstyle = kwargs.get('joinstyle', None)
-        self.capstyle = kwargs.get('capstyle', None)
-        self.zorder = kwargs.pop('zorder', None)
-        self.lw = kwargs.get('lw', None)
-        self.ls = kwargs.get('ls', None)
+        self.closed = closed
+        self.cornerradius = cornerradius
+        self.color = color
+        self.fill = fill
+        self.joinstyle = joinstyle
+        self.capstyle = capstyle
+        self.zorder = zorder
+        self.lw = lw
+        self.ls = ls
 
     def doreverse(self, centerx: float) -> None:
         ''' Reverse the path (flip horizontal about the centerx point) '''
@@ -360,15 +341,22 @@ class SegmentPoly(object):
         self.verts = [util.flip(p) for p in self.verts]
 
     def xform(self, transform, **style) -> 'SegmentPoly':
-        ''' Return a new Segment that has been transformed '''
-        params = {'color': self.color,
-                  'fill': self.fill,
-                  'joinstyle': self.joinstyle,
-                  'capstyle': self.capstyle,
-                  'lw': self.lw,
-                  'ls': self.ls,
-                  'cornerradius': self.cornerradius,
-                  'zorder': self.zorder}
+        ''' Return a new Segment that has been transformed
+            to its global position
+
+            Args:
+                transform: Transformation to apply
+                style: Style parameters from Element to apply as default
+        '''
+        params: Dict[str, Any] = {'color': self.color,
+                                  'fill': self.fill,
+                                  'joinstyle': self.joinstyle,
+                                  'capstyle': self.capstyle,
+                                  'lw': self.lw,
+                                  'ls': self.ls,
+                                  'cornerradius': self.cornerradius,
+                                  'zorder': self.zorder}
+        style = {k: v for k, v in style.items() if k in params.keys()}
         params.update(style)
         return SegmentPoly(transform.transform_array(self.verts), **params)
 
@@ -379,10 +367,8 @@ class SegmentPoly(object):
     def get_bbox(self) -> BBox:
         ''' Get bounding box (untransformed)
 
-            Returns
-            -------
-            xmin, ymin, xmax, ymax
-                Bounding box limits
+            Returns:
+                Bounding box limits (xmin, ymin, xmax, ymax)
         '''
         x = [p[0] for p in self.verts]
         y = [p[1] for p in self.verts]
@@ -391,14 +377,11 @@ class SegmentPoly(object):
     def draw(self, fig, transform, **style) -> None:
         ''' Draw the segment
 
-            Parameters
-            ----------
-            fig : schemdraw.Figure
-                Axis to draw on
-            transform : Transform
-                Transform to apply before drawing
+            Args:
+                fig: schemdraw.Figure to draw on
+                transform: Transform to apply before drawing
+                style: Default style parameters
         '''
-        closed = self.closed if self.closed is not None else style.get('closed', True)
         fill = self.fill if self.fill is not None else style.get('fill', None)
         color = self.color if self.color else style.get('color', 'black')
         joinstyle = self.joinstyle if self.joinstyle else style.get('joinstyle', 'round')
@@ -413,46 +396,40 @@ class SegmentPoly(object):
         if self.cornerradius > 0:
             verts = roundcorners(verts, self.cornerradius)
 
-        fig.poly(verts, closed=closed, color=color, fill=fill, lw=lw, ls=ls,
+        fig.poly(verts, closed=self.closed, color=color, fill=fill, lw=lw, ls=ls,
                  capstyle=capstyle, joinstyle=joinstyle, zorder=zorder)
 
 
-class SegmentCircle(object):
+class SegmentCircle:
     ''' A circle drawing segment
 
-        Parameters
-        ----------
-        center : [x, y] array
-            Center of the circle
-        radius : float
-            Radius of the circle
-
-        Keyword Arguments
-        -----------------
-        color : string
-             Color for this segment
-        lw : float
-            Line width for the segment
-        ls : string
-            Line style for the segment
-        fill : string
-            Color to fill if path is closed
-        zorder : int
-            Z-order for segment
-        ref: string
-            Flip reference ['start', 'end', None].
+        Args:
+            center: (x, y) center of the circle
+            radius: Radius of the circle
+            color: Color for this segment
+            lw: Line width for the segment
+            ls: Line style for the segment
+            fill: Color to fill if path is closed. True -> fill with element color.
+            zorder: Z-order for segment
+            ref: Flip reference ['start', 'end', None].
     '''
-    def __init__(self, center: Sequence[float], radius: float, **kwargs):
+    def __init__(self, center: Sequence[float], radius: float,
+                 color: str=None,
+                 lw: float=None,
+                 ls: Linestyle=None,
+                 fill: Union[bool, str]=None,
+                 zorder: int=None,
+                 ref: Literal['start', 'end']=None):
         self.center = center
         self.radius = radius
-        self.zorder = kwargs.pop('zorder', None)
-        self.color = kwargs.get('color', None)
-        self.fill = kwargs.get('fill', None)
-        self.lw = kwargs.get('lw', None)
-        self.ls = kwargs.get('ls', None)
+        self.zorder = zorder
+        self.color = color
+        self.fill = fill
+        self.lw = lw
+        self.ls = ls
 
         # Reference for adding things AFTER lead extensions
-        self.endref = kwargs.get('ref', None)
+        self.endref = ref
 
     def end(self) -> Sequence[float]:
         ''' Get endpoint of this segment, untransformed '''
@@ -461,20 +438,27 @@ class SegmentCircle(object):
     def doreverse(self, centerx: float) -> None:
         ''' Reverse the path (flip horizontal about the centerx point) '''
         self.center = util.mirrorx(self.center, centerx)
-        self.endref = {None: None, 'start': 'end', 'end': 'start'}.get(self.endref)
+        self.endref = {'start': 'end', 'end': 'start'}.get(self.endref)  # type: ignore
 
     def doflip(self) -> None:
         ''' Flip the segment up/down '''
         self.center = util.flip(self.center)
 
     def xform(self, transform, **style) -> 'SegmentCircle':
-        ''' Return a new Segment that has been transformed '''
-        params = {'zorder': self.zorder,
-                  'color': self.color,
-                  'fill': self.fill,
-                  'lw': self.lw,
-                  'ls': self.ls,
-                  'ref': self.endref}
+        ''' Return a new Segment that has been transformed
+            to its global position
+
+            Args:
+                transform: Transformation to apply
+                style: Style parameters from Element to apply as default
+        '''
+        params: Dict[str, Any] = {'zorder': self.zorder,
+                                  'color': self.color,
+                                  'fill': self.fill,
+                                  'lw': self.lw,
+                                  'ls': self.ls,
+                                  'ref': self.endref}
+        style = {k: v for k, v in style.items() if k in params.keys()}
         params.update(style)
         return SegmentCircle(transform.transform(self.center, self.endref),
                              self.radius, **params)
@@ -482,10 +466,8 @@ class SegmentCircle(object):
     def get_bbox(self) -> BBox:
         ''' Get bounding box (untransformed)
 
-            Returns
-            -------
-            xmin, ymin, xmax, ymax
-                Bounding box limits
+            Returns:
+                Bounding box limits (xmin, ymin, xmax, ymax)
         '''
         xmin = self.center[0] - self.radius
         xmax = self.center[0] + self.radius
@@ -496,12 +478,10 @@ class SegmentCircle(object):
     def draw(self, fig, transform, **style) -> None:
         ''' Draw the segment
 
-            Parameters
-            ----------
-            fig : schemdraw.Figure
-                Axis to draw on
-            transform : Transform
-                Transform to apply before drawing
+            Args:
+                fig: schemdraw.Figure to draw on
+                transform: Transform to apply before drawing
+                style: Default style parameters
         '''
         center = transform.transform(self.center, self.endref)
         radius = transform.zoom * self.radius
@@ -516,59 +496,60 @@ class SegmentCircle(object):
                    lw=lw, ls=ls, zorder=zorder)
 
 
-class SegmentArrow(object):
+class SegmentArrow:
     ''' An arrow drawing segment
 
-        Parameters
-        ----------
-        tail : [x, y] array
-            Start coordinate of arrow
-        head : [x, y] array
-            End coordinate of arrow
-
-        Keyword Arguments
-        -----------------
-        headwidth : float
-            Width of arrowhead
-        headlength : float
-            Length of arrowhead
-        color : string
-             Color for this segment
-        lw : float
-            Line width for the segment
-        ls : string
-            Line style for the segment
-        zorder : int
-            Z-order for segment
+        Args:
+            tail: Start coordinate of arrow
+            head: End coordinate of arrow
+            headwidth: Width of arrowhead
+            headlength: Length of arrowhead
+            color: Color for this segment
+            lw: Line width for the segment
+            ls: Line style for the segment
+            zorder: Z-order for segment
     '''
-    def __init__(self, tail: Sequence[float], head: Sequence[float], **kwargs):
+    def __init__(self, tail: Sequence[float], head: Sequence[float],
+                 headwidth: float=None, headlength: float=None,
+                 color: str=None, lw: float=None,
+                 ref: Literal['start', 'end']=None,
+                 zorder: int=None):
         self.tail = tail
         self.head = head
-        self.zorder = kwargs.pop('zorder', None)
-        self.headwidth = kwargs.get('headwidth', None)
-        self.headlength = kwargs.get('headlength', None)
-        self.color = kwargs.get('color', None)
-        self.lw = kwargs.get('lw', None)
-        self.endref = kwargs.get('ref', None)
+        self.zorder = zorder
+        self.headwidth = headwidth
+        self.headlength = headlength
+        self.color = color
+        self.lw = lw
+        self.endref = ref
 
     def doreverse(self, centerx: float) -> None:
         ''' Reverse the path (flip horizontal about the centerx point) '''
         self.tail = util.mirrorx(self.tail, centerx)
         self.head = util.mirrorx(self.head, centerx)
-        self.endref = {None: None, 'start': 'end', 'end': 'start'}.get(self.endref)
+        self.ref = {None: None, 'start': 'end', 'end': 'start'}.get(self.endref)
 
     def doflip(self) -> None:
         self.tail = util.flip(self.tail)
         self.head = util.flip(self.head)
 
     def xform(self, transform, **style) -> 'SegmentArrow':
-        ''' Return a new Segment that has been transformed '''
-        params = {'zorder': self.zorder,
-                  'color': self.color,
-                  'lw': self.lw,
-                  'headwidth': self.headwidth,
-                  'headlength': self.headlength,
-                  'ref': self.endref}
+        ''' Return a new Segment that has been transformed
+            to its global position
+
+            Args:
+                transform: Transformation to apply
+                style: Style parameters from Element to apply as default
+        '''
+        # See https://github.com/python/mypy/issues/5382
+        # for this weird type annotation
+        params: Dict[str, Any] = {'zorder': self.zorder,
+                                  'color': self.color,
+                                  'lw': self.lw,
+                                  'headwidth': self.headwidth,
+                                  'headlength': self.headlength,
+                                  'ref': self.endref}
+        style = {k: v for k, v in style.items() if k in params.keys()}
         params.update(style)
         return SegmentArrow(transform.transform(self.tail, ref=self.endref),
                             transform.transform(self.head, ref=self.endref),
@@ -577,10 +558,8 @@ class SegmentArrow(object):
     def get_bbox(self) -> BBox:
         ''' Get bounding box (untransformed)
 
-            Returns
-            -------
-            xmin, ymin, xmax, ymax
-                Bounding box limits
+            Returns:
+                Bounding box limits (xmin, ymin, xmax, ymax)
         '''
         hw = self.headwidth if self.headwidth else .1
         xmin = min(self.tail[0], self.head[0])
@@ -596,12 +575,10 @@ class SegmentArrow(object):
     def draw(self, fig, transform, **style) -> None:
         ''' Draw the segment
 
-            Parameters
-            ----------
-            fig : schemdraw.Figure
-                Axis to draw on
-            transform : Transform
-                Transform to apply before drawing
+            Args:
+                fig: schemdraw.Figure to draw on
+                transform: Transform to apply before drawing
+                style: Default style parameters
         '''
         tail = transform.transform(self.tail, ref=self.endref)
         head = transform.transform(self.head, ref=self.endref)
@@ -616,73 +593,70 @@ class SegmentArrow(object):
                   color=color, lw=lw, zorder=zorder)
 
 
-class SegmentArc(object):
+class SegmentArc:
     ''' An arc drawing segment
 
-        Parameters
-        ----------
-        center : [x, y] array
-            Center of the circle
-        width : float
-            Width of the arc ellipse
-        height : float
-            Height of the arc ellipse
-        reverse : bool
-            Element has been reversed
-
-        Keyword Arguments
-        -----------------
-        theta1 : float
-            Starting angle (degrees)
-        theta2 : float
-            Ending angle (degrees)
-        angle : float
-            Rotation of the ellipse defining the arc
-        arrow : [None, 'cw', 'ccw']
-            Direction of arrowhead
-        color : string
-             Color for this segment
-        lw : float
-            Line width for the segment
-        ls : string
-            Line style for the segment
-        fill : string
-            Color to fill if path is closed
-        zorder : int
-            Z-order for segment
+        Args:
+            center: Center of the arc ellipse
+            width: Width of the arc ellipse
+            height: Height of the arc ellipse
+            theta1: Starting angle in degrees
+            theta2: Ending angle in degrees
+            angle: Rotation of the ellipse defining the arc
+            arrow: Direction of arrowhead ('cw' or 'ccw')
+            color: Color for this segment
+            lw: Line width for the segment
+            ls: Line style for the segment
+            fill: Color to fill if path is closed
+            zorder: Z-order for segment
     '''
-    def __init__(self, center: Sequence[float], width: float, height: float, **kwargs):
+    def __init__(self, center: Sequence[float],
+                 width: float, height: float,
+                 theta1: float=35, theta2: float=-35,
+                 arrow: Literal['cw', 'ccw']=None,
+                 angle: float=0,
+                 color: str=None,
+                 lw: float=None,
+                 ls: Linestyle=None,
+                 zorder: int=None):
         self.center = center
         self.width = width
         self.height = height
-        self.theta1 = kwargs.get('theta1', 35)
-        self.theta2 = kwargs.get('theta2', -35)
-        self.arrow = kwargs.get('arrow', None)  # cw or ccw
-        self.angle = kwargs.get('angle', 0)
-        self.color = kwargs.get('color', None)
-        self.lw = kwargs.get('lw', None)
-        self.ls = kwargs.get('ls', None)
-        self.zorder = kwargs.get('zorder', None)
+        self.theta1 = theta1
+        self.theta2 = theta2
+        self.arrow = arrow
+        self.angle = angle
+        self.color = color
+        self.lw = lw
+        self.ls = ls
+        self.zorder = zorder
 
     def doreverse(self, centerx: float) -> None:
         ''' Reverse the path (flip horizontal about the centerx point) '''
         self.center = util.mirrorx(self.center, centerx)
         self.theta1, self.theta2 = 180-self.theta2, 180-self.theta1
-        self.arrow = {'cw': 'ccw', 'ccw': 'cw'}.get(self.arrow, None)
+        self.arrow = {'cw': 'ccw', 'ccw': 'cw'}.get(self.arrow, None)  # type: ignore
 
     def doflip(self) -> None:
         ''' Vertically flip the element '''
         self.center = util.flip(self.center)
         self.theta1, self.theta2 = -self.theta2, -self.theta1
-        self.arrow = {'cw': 'ccw', 'ccw': 'cw'}.get(self.arrow, None)
+        self.arrow = {'cw': 'ccw', 'ccw': 'cw'}.get(self.arrow, None)  # type: ignore
 
     def xform(self, transform, **style) -> 'SegmentArc':
-        ''' Return a new Segment that has been transformed '''
+        ''' Return a new Segment that has been transformed
+            to its global position
+
+            Args:
+                transform: Transformation to apply
+                style: Style parameters from Element to apply as default
+        '''
         angle = self.angle + transform.theta
-        params = {'color': self.color,
-                  'lw': self.lw,
-                  'ls': self.ls,
-                  'zorder': self.zorder}
+        params: Dict[str, Any] = {'color': self.color,
+                                  'lw': self.lw,
+                                  'ls': self.ls,
+                                  'zorder': self.zorder}
+        style = {k: v for k, v in style.items() if k in params.keys()}
         params.update(style)
         return SegmentArc(transform.transform(self.center),
                           self.width*transform.zoom, self.height*transform.zoom, angle=angle,
@@ -695,10 +669,8 @@ class SegmentArc(object):
     def get_bbox(self) -> BBox:
         ''' Get bounding box (untransformed)
 
-            Returns
-            -------
-            xmin, ymin, xmax, ymax
-                Bounding box limits
+            Returns:
+                Bounding box limits (xmin, ymin, xmax, ymax)
         '''
         # Who wants to do trigonometry when we can just brute-force the bounding box?
         theta1, theta2 = math.radians(self.theta1), math.radians(self.theta2)
@@ -723,12 +695,10 @@ class SegmentArc(object):
     def draw(self, fig, transform, **style) -> None:
         ''' Draw the segment
 
-            Parameters
-            ----------
-            fig : schemdraw.Figure
-                Axis to draw on
-            transform : Transform
-                Transform to apply before drawing
+            Args:
+                fig: schemdraw.Figure to draw on
+                transform: Transform to apply before drawing
+                style: Default style parameters
         '''
         center = transform.transform(self.center)
         angle = self.angle + transform.theta

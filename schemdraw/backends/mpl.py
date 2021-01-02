@@ -14,20 +14,22 @@ from ..types import Capstyle, Joinstyle, Linestyle, BBox
 inline = 'inline' in matplotlib.get_backend()
 
 
-class Figure(object):
+def fix_capstyle(capstyle):
+    ''' Matplotlib uses 'projecting' rather than 'square' for some reason '''
+    if capstyle == 'square':
+        return 'projecting'
+    return capstyle
+
+
+class Figure:
     ''' Schemdraw figure on Matplotlib figure
 
-        Parameters
-        ----------
-        bbox : schemdraw.segments.BBox
-            Coordinate bounding box for drawing, used to
-            override Matplotlib's autoscale
-        inches_per_unit : float
-            Scale for the drawing
-        showframe : bool
-            Show Matplotlib axis frame
-        ax : Matplotlib axis
-            Existing axis to draw on
+        Args:
+            bbox: Coordinate bounding box for drawing, used to
+                override Matplotlib's autoscale
+            inches_per_unit: Scale for the drawing
+            showframe: Show Matplotlib axis frame
+            ax: Existing Matplotlib axis to draw on
     '''
     def __init__(self, **kwargs):
         if kwargs.get('ax'):
@@ -62,11 +64,13 @@ class Figure(object):
             plt.show()
         plt.close()
 
-    def plot(self, x: float, y: float, color: str='black', ls: Linestyle='-', lw: float=2, fill: str=None,
-             capstyle: Capstyle='round', joinstyle: Joinstyle='round',  zorder: int=2) -> None:
+    def plot(self, x: float, y: float, color: str='black', ls: Linestyle='-',
+             lw: float=2, fill: str=None, capstyle: Capstyle='round',
+             joinstyle: Joinstyle='round',  zorder: int=2) -> None:
         ''' Plot a path '''
         self.ax.plot(x, y, zorder=zorder, color=color, ls=ls, lw=lw,
-                     solid_capstyle=capstyle, solid_joinstyle=joinstyle)
+                     solid_capstyle=fix_capstyle(capstyle),
+                     solid_joinstyle=joinstyle)
         if fill:
             self.ax.fill(x, y, color=fill, zorder=zorder)
 
@@ -80,12 +84,13 @@ class Figure(object):
                      horizontalalignment=halign, verticalalignment=valign,
                      zorder=zorder)
 
-    def poly(self, verts: Sequence[Sequence[float]], closed: bool=True, color: str='black', fill: str=None, lw: float=2, ls: Linestyle='-',
+    def poly(self, verts: Sequence[Sequence[float]], closed: bool=True,
+             color: str='black', fill: str=None, lw: float=2, ls: Linestyle='-',
              capstyle: Capstyle='round', joinstyle: Joinstyle='round', zorder: int=1) -> None:
         ''' Draw a polynomial '''
         p = plt.Polygon(verts, closed=closed, ec=color,
                         fc=fill, fill=fill is not None,
-                        lw=lw, ls=ls, capstyle=capstyle,
+                        lw=lw, ls=ls, capstyle=fix_capstyle(capstyle),
                         joinstyle=joinstyle, zorder=zorder)
         self.ax.add_patch(p)
 
@@ -96,17 +101,18 @@ class Figure(object):
                           fill=fill is not None, lw=lw, ls=ls, zorder=zorder)
         self.ax.add_patch(circ)
 
-    def arrow(self, x: float, y: float, dx: float, dy: float, headwidth: float=.2, headlength: float=.2,
+    def arrow(self, x: float, y: float, dx: float, dy: float,
+              headwidth: float=.2, headlength: float=.2,
               color: str='black', lw: float=2, zorder: int=1) -> None:
         ''' Draw an arrow '''
-
         self.ax.arrow(x, y, dx, dy, head_width=headwidth, head_length=headlength,
                       length_includes_head=True, color=color, lw=lw, zorder=zorder)
 
-    def arc(self, center: Sequence[float], width: float, height: float, theta1: float=0, theta2: float=90, angle: float=0,
-            color: str='black', lw: float=2, ls: Linestyle='-', zorder: int=1, arrow: bool=None) -> None:
+    def arc(self, center: Sequence[float], width: float, height: float,
+            theta1: float=0, theta2: float=90, angle: float=0,
+            color: str='black', lw: float=2, ls: Linestyle='-',
+            zorder: int=1, arrow: bool=None) -> None:
         ''' Draw an arc or ellipse, with optional arrowhead '''
-
         arc = Arc(center, width=width, height=height, theta1=theta1,
                   theta2=theta2, angle=angle, color=color,
                   lw=lw, ls=ls, zorder=zorder)
@@ -121,13 +127,13 @@ class Figure(object):
                 dx = math.cos(math.radians(th2+90)) / 100
                 dy = math.sin(math.radians(theta2+90)) / 100
                 s = util.Point((center[0] + width/2*math.cos(math.radians(th2)),
-                     center[1] + height/2*math.sin(math.radians(th2))))
+                                center[1] + height/2*math.sin(math.radians(th2))))
             else:
                 dx = -math.cos(math.radians(th1+90)) / 100
                 dy = -math.sin(math.radians(th1+90)) / 100
 
                 s = util.Point((center[0] + width/2*math.cos(math.radians(th1)),
-                     center[1] + height/2*math.sin(math.radians(th1))))
+                                center[1] + height/2*math.sin(math.radians(th1))))
 
             s = util.rotate(s, angle, center)
             darrow = util.rotate((dx, dy), angle)

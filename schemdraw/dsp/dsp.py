@@ -13,10 +13,10 @@ class Square(Element):
     ''' Empty square element
 
         Anchors:
-            N
-            S
-            E
-            W
+            * N
+            * S
+            * E
+            * W
     '''
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
@@ -35,14 +35,14 @@ class Circle(Element):
     ''' Empty circle element
 
         Anchors:
-            N
-            S
-            E
-            W
-            NW
-            NE
-            SW
-            SE
+            * N
+            * S
+            * E
+            * W
+            * NW
+            * NE
+            * SW
+            * SE
     '''
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
@@ -67,14 +67,14 @@ class Sum(Circle):
     ''' Summation element (+ symbol)
 
         Anchors:
-            N
-            S
-            E
-            W
-            NW
-            NE
-            SW
-            SE
+            * N
+            * S
+            * E
+            * W
+            * NW
+            * NE
+            * SW
+            * SE
     '''
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
@@ -86,14 +86,14 @@ class SumSigma(Circle):
     ''' Summation element (Greek Sigma symbol)
 
         Anchors:
-            N
-            S
-            E
-            W
-            NW
-            NE
-            SW
-            SE
+            * N
+            * S
+            * E
+            * W
+            * NW
+            * NE
+            * SW
+            * SE
     '''
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
@@ -106,14 +106,14 @@ class Mixer(Circle):
     ''' Mixer
 
         Anchors:
-            N
-            S
-            E
-            W
-            NW
-            NE
-            SW
-            SE
+            * N
+            * S
+            * E
+            * W
+            * NW
+            * NE
+            * SW
+            * SE
     '''
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
@@ -139,8 +139,8 @@ class Amp(Element):
     ''' Amplifier
 
         Anchors:
-            in
-            out
+            * in
+            * out
     '''
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
@@ -165,10 +165,10 @@ class OscillatorBox(Square):
     ''' Oscillator in a square
 
         Anchors:
-            N
-            S
-            E
-            W
+            * N
+            * S
+            * E
+            * W
     '''
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
@@ -180,14 +180,14 @@ class Oscillator(Circle):
     ''' Oscillator in a circle
 
         Anchors:
-            N
-            S
-            E
-            W
-            NW
-            NE
-            SW
-            SE
+            * N
+            * S
+            * E
+            * W
+            * NW
+            * NE
+            * SW
+            * SE
     '''
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
@@ -203,10 +203,10 @@ class Filter(Square):
                 low-pass, band-pass, high-pass, and notch/band-stop filters
 
         Anchors:
-            N
-            S
-            E
-            W
+            * N
+            * S
+            * E
+            * W
     '''
     def __init__(self, *d, response: Literal['lp', 'bp', 'hp', 'notch']=None, **kwargs):
         super().__init__(*d, **kwargs)
@@ -233,10 +233,10 @@ class Adc(Element):
     ''' Analog to digital converter
 
         Anchors:
-            in
-            out
-            E (same as in)
-            W (same as out)
+            * in
+            * out
+            * E (same as in)
+            * W (same as out)
     '''
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
@@ -255,10 +255,10 @@ class Dac(Element):
     ''' Digital to analog converter
 
         Anchors:
-            in
-            out
-            E (same as in)
-            W (same as out)
+            * in
+            * out
+            * E (same as in)
+            * W (same as out)
     '''
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
@@ -277,10 +277,10 @@ class Demod(Square):
     ''' Demodulator (box with a diode in it)
 
         Anchors:
-            N
-            S
-            E
-            W
+            * N
+            * S
+            * E
+            * W
     '''
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)

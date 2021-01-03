@@ -46,11 +46,11 @@ class Optocoupler(ElementCompound):
             base: Add a base contact to the phototransistor
 
         Anchors:
-            anode
-            cathode
-            emitter
-            collector
-            base (if base==True)
+            * anode
+            * cathode
+            * emitter
+            * collector
+            * base (if base==True)
     '''
     def __init__(self, *d, box: bool=True, boxfill: str='none',
                  boxpad: float=0.2, base: bool=False, **kwargs):

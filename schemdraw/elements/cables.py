@@ -17,12 +17,12 @@ class Coax(Element2Term):
                 start of shield.
 
         Anchors:
-            shieldstart
-            shieldstart_top
-            shieldend
-            shieldend_top
-            shieldcenter
-            shieldcenter_top
+            * shieldstart
+            * shieldstart_top
+            * shieldend
+            * shieldend_top
+            * shieldcenter
+            * shieldcenter_top
     '''
     def __init__(self, *d, length: float=3, radius: float=0.3, leadlen: float=0.6, **kwargs):
         super().__init__(*d, **kwargs)
@@ -66,16 +66,16 @@ class Triax(Element2Term):
                 of inner guard
 
         Anchors:
-            shieldstart
-            shieldstart_top
-            shieldend
-            shieldend_top
-            shieldcenter
-            shieldcenter_top
-            guardstart
-            guardstart_top
-            guardend
-            guardend_top
+            * shieldstart
+            * shieldstart_top
+            * shieldend
+            * shieldend_top
+            * shieldcenter
+            * shieldcenter_top
+            * guardstart
+            * guardstart_top
+            * guardend
+            * guardend_top
     '''
     def __init__(self, *d,
                  length: float=3,

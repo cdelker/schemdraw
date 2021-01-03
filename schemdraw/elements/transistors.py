@@ -20,9 +20,9 @@ class NFet(Element):
             bulk: Draw bulk contact
 
         Anchors:
-            source
-            drain
-            gate
+            * source
+            * drain
+            * gate
     '''
     def __init__(self, *d, bulk: bool=False, **kwargs):
         super().__init__(*d, **kwargs)
@@ -88,9 +88,9 @@ class JFet(Element):
     ''' Junction Field Effect Transistor (untyped)
 
         Anchors:
-            source
-            drain
-            gate
+            * source
+            * drain
+            * gate
     '''
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
@@ -113,9 +113,9 @@ class JFetN(JFet):
             circle: Draw circle around the transistor
 
         Anchors:
-            source
-            drain
-            gate
+            * source
+            * drain
+            * gate
     '''
     def __init__(self, *d, circle: bool=False, **kwargs):
         super().__init__(*d, **kwargs)
@@ -133,9 +133,9 @@ class JFetP(JFet):
             circle: Draw circle around the transistor
 
         Anchors:
-            source
-            drain
-            gate
+            * source
+            * drain
+            * gate
     '''
     def __init__(self, *d, circle: bool=False, **kwargs):
         super().__init__(*d, **kwargs)
@@ -162,9 +162,9 @@ class Bjt(Element):
             circle: Draw circle around the transistor
 
         Anchors:
-            collector
-            emitter
-            base
+            * collector
+            * emitter
+            * base
     '''
     def __init__(self, *d, circle: bool=False, **kwargs):
         super().__init__(*d, **kwargs)
@@ -193,9 +193,9 @@ class BjtNpn(Bjt):
             circle: Draw circle around the transistor
 
         Anchors:
-            collector
-            emitter
-            base
+            * collector
+            * emitter
+            * base
     '''
     def __init__(self, *d, circle: bool=False, **kwargs):
         super().__init__(*d, **kwargs)
@@ -210,9 +210,9 @@ class BjtPnp(Bjt):
             circle: Draw circle around the transistor
 
         Anchors:
-            collector
-            emitter
-            base
+            * collector
+            * emitter
+            * base
     '''
     def __init__(self, *d, circle: bool=False, **kwargs):
         super().__init__(*d, **kwargs)
@@ -230,10 +230,10 @@ class BjtPnp2c(BjtPnp):
             circle: Draw circle around the transistor
 
         Anchors:
-            collector
-            emitter
-            base
-            C2
+            * collector
+            * emitter
+            * base
+            * C2
     '''
     def __init__(self, *d, circle: bool=False, **kwargs):
         super().__init__(*d, **kwargs)

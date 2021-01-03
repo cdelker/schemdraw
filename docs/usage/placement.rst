@@ -12,8 +12,8 @@
 Adding circuit elements
 =======================
 
-There are two general categories of circuit elements. Two-terminal elements, such as Resistors and Capacitors, are subclasses of :py:class:`schemdraw.elements.Element2Term` and have additional positioning arguments for automatically extending the leads of the two terminals to fit the desired length.
-The standard :py:class:`schemdraw.elements.Element` class applies to all elements regardless of the number of terminals, but the leads will not extend. These include, for example, transistors, opamps, and grounds.
+There are two general categories of circuit elements. Two-terminal elements, such as Resistors and Capacitors, are subclasses of :py:class:`schemdraw.elements.Element2Term` and have additional positioning methods that automatically extending the leads of the two terminals to fit a desired length.
+The standard :py:class:`schemdraw.elements.Element` class applies to all elements regardless of the number of terminals, but the leads will not extend. These include, for example, Transistors, Opamps, and Grounds.
 
 Placement
 ---------
@@ -24,22 +24,23 @@ If no position is given, the next element will start at the current drawing posi
 .. jupyter-execute::
 
     d = schemdraw.Drawing()
-    d.add(elm.Capacitor())
-    d.add(elm.Resistor())
-    d.add(elm.Diode())
+    d += elm.Capacitor()
+    d += elm.Resistor()
+    d += elm.Diode()
     d.draw()  
 
-If a direction parameter is provided, the element is rotated in that direction, and future elements take the same direction:
+Remember that `+=` is equivalent to calling `d.add()`.
+If a direction method is added, the element is rotated in that direction, and future elements take the same direction:
 
 .. jupyter-execute::
 
     d = schemdraw.Drawing()
-    d.add(elm.Capacitor())
-    d.add(elm.Resistor('up'))
-    d.add(elm.Diode())
+    d += elm.Capacitor()
+    d += elm.Resistor().up()
+    d += elm.Diode()
     d.draw()  
 
-The `theta` parameter can be used to specify any rotation angle in degrees.
+The `theta` method can be used to specify any rotation angle in degrees.
 
 .. jupyter-execute::
     :hide-code:
@@ -49,8 +50,8 @@ The `theta` parameter can be used to specify any rotation angle in degrees.
 .. jupyter-execute::
     :hide-output:
 
-    d.add(elm.Resistor(theta=20, label='R1'))
-    d.add(elm.Resistor(label='R2'))  # Takes position and direction from R1
+    d += elm.Resistor().theta(20).label('R1')
+    d += elm.Resistor().label('R2')  # Takes position and direction from R1
 
 .. jupyter-execute::
     :hide-code:
@@ -61,15 +62,16 @@ The `theta` parameter can be used to specify any rotation angle in degrees.
 Using anchors
 ^^^^^^^^^^^^^
 
-The (x, y) position can also be specified using the `at` keyword.
-Rather than using exact numerical coordinates, the `at` keyword will usually be set to an "anchor" of another element.
+The (x, y) position can also be specified using the `at` method.
+Rather than using exact numerical coordinates, the `at` parameter will usually be set to an "anchor" of another element.
 
 An anchor is simply a predefined position within an element.
 Two-terminal elements have anchors named `start`, `center`, and `end`.
 Three-terminal elements have other named anchors, for example an Opamp has `in1`, `in2`, and `out` anchors.
+Each element's docstring lists the available anchors.
 
 Once an element is added to the drawing, it contains attributes defining the coordinates of all the element's anchors.
-For example, to draw an opamp and place a resistor on the output, store the return from `add` to a variable. Then set the `at` parameter of the new element as the `out` attribute of the existing element. The current Drawing position is ignored, and reset to the endpoint of the resistor.
+For example, to draw an opamp and place a resistor on the output, store the Opamp instance to a variable. Then call the `at` method of the new element passing the `out` attribute of the Opamp. The current Drawing position is ignored, and reset to the endpoint of the resistor.
 
 .. jupyter-execute::
     :hide-code:
@@ -79,15 +81,25 @@ For example, to draw an opamp and place a resistor on the output, store the retu
 .. jupyter-execute::
     :hide-output:
 
-    opamp = d.add(elm.Opamp)
-    d.add(elm.Resistor('right', at=opamp.out))
+    opamp = d.add(elm.Opamp())
+    d.add(elm.Resistor().right().at(opamp.out))
 
 .. jupyter-execute::
     :hide-code:
 
     d.draw()
 
-Additionally, a new element can be placed with its anchor set to the current Drawing position using the `anchor` keyword. Here, an Opamp is placed at the end of a resistor, connected to its `in1` anchor (the inverting input).
+Python's walrus operator provides a convenient shorthand notation for adding an element using `+=` and storing it at the same time.
+The above code can be written equivalently as:
+
+.. code-block:: python
+
+    d += (opamp := elm.Opamp())
+    d += elm.Resistor().right().at(opamp.out)
+
+
+Additionally, a new element can be placed with its anchor set to the current Drawing position using the `anchor` method. Here, an Opamp is placed at the end of a resistor, connected to its `in1` anchor (the inverting input).
+
 
 .. jupyter-execute::
     :hide-code:
@@ -97,8 +109,8 @@ Additionally, a new element can be placed with its anchor set to the current Dra
 .. jupyter-execute::
     :hide-output:
 
-    d.add(elm.Resistor(label='R1'))
-    d.add(elm.Opamp(anchor='in1'))
+    d += elm.Resistor().label('R1')
+    d += elm.Opamp().anchor('in1')
     
 .. jupyter-execute::
     :hide-code:
@@ -115,8 +127,8 @@ Compared to anchoring the opamp at `in2` (the noninverting input):
 .. jupyter-execute::
     :hide-output:
 
-    d.add(elm.Resistor(label='R2'))
-    d.add(elm.Opamp(anchor='in2'))
+    d += elm.Resistor().label('R2')
+    d += elm.Opamp().anchor('in2')
     
 .. jupyter-execute::
     :hide-code:
@@ -129,34 +141,35 @@ Placing 2-Terminal Elements
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Two-terminal elements hae some other placement options because their length can grow to fit a predetermined space.
-The `l` parameter sets an exact length for an element.
+The `length` method sets an exact length for an element.
 
 .. jupyter-execute::
 
     d = schemdraw.Drawing()
-    d.add(elm.Dot())
-    d.add(elm.Resistor())
-    d.add(elm.Dot())
-    d.add(elm.Diode(l=6))
-    d.add(elm.Dot())
+    d += elm.Dot()
+    d += elm.Resistor()
+    d += elm.Dot()
+    d += elm.Diode().length(6)
+    d += elm.Dot()
     d.draw()
 
 The inner zig-zag portion of a resistor has length of 1 unit, while the default lead extensions are 1 unit on each side,
 making the default total resistor length 3 units.
 This default size can be changed using the `unit` parameter to the :py:class:`schemdraw.Drawing` class.
 
-The `to` parameter will set an exact endpoint for a 2-terminal element.
+The `to` method will set an exact endpoint for a 2-terminal element.
+The starting point is still the ending location of the previous element.
 Notice the Diode is longer than the standard element length in order to fill the diagonal distance.
 
 .. jupyter-execute::
 
     d = schemdraw.Drawing()
     R = d.add(elm.Resistor())
-    C = d.add(elm.Capacitor('up'))
-    Q = d.add(elm.Diode(to=R.start))
+    C = d.add(elm.Capacitor().up())
+    Q = d.add(elm.Diode().to(R.start))
     d.draw()
 
-The `tox` and `toy` parameters are useful for placing 2-terminal elements to "close the loop", without requiring an exact length.
+The `tox` and `toy` methods are useful for placing 2-terminal elements to "close the loop", without requiring an exact length.
 Here, the Line element does not need to specify an exact length to fill the space and connect back with the Source.
 
 .. jupyter-execute::
@@ -167,17 +180,17 @@ Here, the Line element does not need to specify an exact length to fill the spac
 .. jupyter-execute::
     :hide-output:
 
-    C = d.add(elm.Capacitor)
-    d.add(elm.Diode)
-    d.add(elm.Line('down'))
+    C = d.add(elm.Capacitor())
+    d.add(elm.Diode())
+    d.add(elm.Line().down())
 
     # Now we want to close the loop, but can use `tox` 
     # to avoid having to know exactly how far to go.
     # Note we passed the [x, y] position of capacitor C,
     # but only the x value will be used.
-    d.add(elm.Line('left', tox=C.start))
+    d.add(elm.Line().left().tox(C.start))
     
-    d.add(elm.Source('up'))
+    d.add(elm.Source().up())
 
 .. jupyter-execute::
     :hide-code:
@@ -185,7 +198,7 @@ Here, the Line element does not need to specify an exact length to fill the spac
     d.draw()
 
 
-Finally, exact endpoints can also be specified using the `endpts` parameter.
+Finally, exact endpoints can also be specified using the `endpoints` method.
 
 
 .. jupyter-execute::
@@ -197,10 +210,10 @@ Finally, exact endpoints can also be specified using the `endpts` parameter.
     :hide-output:
 
     R = d.add(elm.Resistor())
-    Q = d.add(elm.Diode('down', l=6))
-    d.add(elm.Line('left', tox=R.start))
-    d.add(elm.Capacitor('up', toy=R.start))
-    d.add(elm.SourceV(endpts=[Q.end, R.start]))
+    Q = d.add(elm.Diode().down().length(6))
+    d.add(elm.Line().left().tox(R.start))
+    d.add(elm.Capacitor().up().toy(R.start))
+    d.add(elm.SourceV().endpoints(Q.end, R.start))
     
 .. jupyter-execute::
     :hide-code:
@@ -211,8 +224,8 @@ Finally, exact endpoints can also be specified using the `endpts` parameter.
 Orientation
 ^^^^^^^^^^^
 
-The `flip` and `reverse` keywords are useful for changing direction of directional elements such as Diodes, but they do not affect the 
-`d` or `theta` parameters.
+The `flip` and `reverse` methods are useful for changing direction of directional elements such as Diodes,
+but they do not affect the drawing direction.
 
 
 .. jupyter-execute::
@@ -223,9 +236,9 @@ The `flip` and `reverse` keywords are useful for changing direction of direction
 .. jupyter-execute::
     :hide-output:
 
-    d.add(elm.Zener(label='Normal'))
-    d.add(elm.Zener(label='Flip', flip=True))
-    d.add(elm.Zener(label='Reverse', reverse=True))
+    d += elm.Zener().label('Normal')
+    d += elm.Zener().flip().label('Flip')
+    d += elm.Zener().reverse().label('Reverse')
 
 .. jupyter-execute::
     :hide-code:
@@ -247,36 +260,40 @@ for times when it's useful to save the drawing state and come back to it later.
 
 .. jupyter-execute::
 
-    d.add(elm.Inductor)
-    d.add(elm.Dot)
+    d += elm.Inductor()
+    d += elm.Dot()
     print('d.here:', d.here)
     d.push()  # Save this drawing position/direction for later
     
-    d.add(elm.Capacitor(d='down'))
+    d += elm.Capacitor().down()
     print('d.here:', d.here)
     d.pop()   # Return to the pushed position/direction
     print('d.here:', d.here)
-    d.add(elm.Diode)
+    d += elm.Diode()
     d.draw()
 
+Changing the drawing position can be accomplished by calling :py:meth:`schemdraw.Drawing.move`.
 
 
 Labels
 ------
 
-Labels are added to elements using other keyword arguments to the :py:class:`schemdraw.elements.Element` class.
-Some unicode utf-8 characters are allowed, such as :code:`'1μF'` and :code:`'1MΩ'` if the character is included in Matplotlib's font set.
-Alternatively, full LaTeX math expressions can be rendered when enclosed in `$..$`, such as :code:`r'$\tau = \frac{1}{RC}$'`
-For full details on LaTeX math support, see `Matplotlib Mathtext <https://matplotlib.org/3.3.0/tutorials/text/mathtext.html/>`_.
+Labels are added to elements using the :py:meth:`schemdraw.elements.Element.label` method.
+Some unicode utf-8 characters are allowed, such as :code:`'1μF'` and :code:`'1MΩ'` if the character is included in your font set.
+Alternatively, in the Matplotlib backend, full LaTeX math expressions can be rendered when enclosed in `$..$`, such as :code:`r'$\tau = \frac{1}{RC}$'`
+For full details on LaTeX math support, see `Matplotlib Mathtext <https://matplotlib.org/3.3.0/tutorials/text/mathtext.html/>`_
+
+Subscripts and superscripts are also added using LaTeX math mode, for example:
+
+.. code-block:: python
+
+    .label('$V_0$')  # subscript 0
+    .label('$x^2$')  # superscript 2
 
 
-- **label**: add a label in the default location for this element
-- **toplabel**: add a label above the top of the element
-- **botlabel**: add a label below the bottom of the element
-- **rgtlabel**: add a label to the right of the element
-- **lftlabel**: add a label to the left of the element
-
-These directions do not depend on rotation. A `lftlabel` is always on the left side of the element.
+The label location is specified with the `loc` parameter to the `label` method.
+It can be `left`, `right`, `up`, `down`, or the name of a defined anchor within the element.
+These directions do not depend on rotation. A label with `loc='left'` is always on the left side of the element.
 
 .. jupyter-execute::
     :hide-code:
@@ -286,15 +303,19 @@ These directions do not depend on rotation. A `lftlabel` is always on the left s
 .. jupyter-execute::
     :hide-output:
 
-    d.add(elm.Resistor(label='Label', botlabel='Bottom', rgtlabel='Right', lftlabel='Left'))
+    d.add(elm.Resistor()
+          .label('Label')
+          .label('Bottom', loc='bottom')
+          .label('Right', loc='right')
+          .label('Left', loc='left'))
 
 .. jupyter-execute::
     :hide-code:
 
     d.draw()
 
-Alternatively, a label may be a list of strings, which will be evenly-spaced along the length of the element.
-This allows for labeling positive and negative anlong with a component name, for example:
+Alternatively, a label may be a list/tuple of strings, which will be evenly-spaced along the length of the element.
+This allows for labeling positive and negative along with a component name, for example:
 
 .. jupyter-execute::
     :hide-code:
@@ -304,14 +325,14 @@ This allows for labeling positive and negative anlong with a component name, for
 .. jupyter-execute::
     :hide-output:
 
-    d.add(elm.Resistor(label=['–','$R_1$','+']))  # Note: using endash U+2013 character
+    d += elm.Resistor().label(('–','$R_1$','+'))  # Note: using endash U+2013 character
 
 .. jupyter-execute::
     :hide-code:
 
     d.draw()
     
-See the :py:class:`schemdraw.elements.Element` definition for parameters that control label offest, locaiton, rotation and size.
+The :py:meth:`schemdraw.elements.Element.label` method also takes parameters that control the label's rotation, offset, and color.
 
 .. jupyter-execute::
     :hide-code:
@@ -321,10 +342,11 @@ See the :py:class:`schemdraw.elements.Element` definition for parameters that co
 .. jupyter-execute::
     :hide-output:
 
-    d.add(elm.Resistor(label='no offset'))
-    d.add(elm.Resistor(label='offset', lblofst=1))
-    d.add(elm.Resistor(theta=-45, label='no rotate'))
-    d.add(elm.Resistor(theta=-45, label='rotate', lblrotate=True))
+    d += elm.Resistor().label('no offset')
+    d += elm.Resistor().label('offset', ofst=1)
+    d += elm.Resistor().theta(-45).label('no rotate')
+    d += elm.Resistor().theta(-45).label('rotate', rotate=True)
+    d += elm.Resistor().theta(45).label('90°', rotate=90)
 
 .. jupyter-execute::
     :hide-code:
@@ -332,15 +354,12 @@ See the :py:class:`schemdraw.elements.Element` definition for parameters that co
     d.draw()
 
 
-For more control over label behavior, use the :py:meth:`schemdraw.elements.Element.add_label` method.
-Using this method, labels can be added at arbitrary positions with any alignment.
+Current Arrow Labels
+^^^^^^^^^^^^^^^^^^^^
 
-
-Current Labels
-^^^^^^^^^^^^^^
-
-To label the current through an element, the `CurrentLabel` element is defined.
-Typically, it is easier to add this element alongside an existing element using the :py:meth:`schemdraw.Drawing.labelI` method.
+To label the current through an element, the :py:class:`schemdraw.elements.lines.CurrentLabel` element can be added.
+The `at` method of this element can take an Element instance to label, and the
+arrow will be placed over the center of that Element.
 
 .. jupyter-execute::
     :hide-code:
@@ -348,19 +367,14 @@ Typically, it is easier to add this element alongside an existing element using 
     d = schemdraw.Drawing()
 
 .. jupyter-execute::
-    :hide-output:
 
-    R1 = d.add(elm.Resistor)
-    d.labelI(R1, '10 mA')
-
-.. jupyter-execute::
-    :hide-code:
-
-    d.add(elm.GAP_LABEL, d='up', l=.5)  # To bump the margins...
+    R1 = d.add(elm.Resistor())
+    d.add(elm.CurrentLabel().at(R1).label('10 mA'))
     d.draw()
 
 
-Alternatively, current labels can be drawn inline as arrowheads on the leads of 2-terminal elements using :py:meth:`schemdraw.Drawing.labelI_inline`.
+Alternatively, current labels can be drawn inline as arrowheads on the leads of 2-terminal elements using :py:class:`schemdraw.elements.lines.CurrentLabelInline`. Parameters `direction` and `start` control whether the arrow
+is shown pointing into or out of the element, and which end to place the arrowhead on.
 
 .. jupyter-execute::
     :hide-code:
@@ -370,8 +384,8 @@ Alternatively, current labels can be drawn inline as arrowheads on the leads of 
 .. jupyter-execute::
     :hide-output:
 
-    R1 = d.add(elm.Resistor)
-    d.labelI_inline(R1, '$i_1$', d='in')
+    R1 = d.add(elm.Resistor())
+    d.add(elm.CurrentLabelInline(direction='in').at(R1).label('10 mA'))
 
 .. jupyter-execute::
     :hide-code:
@@ -379,7 +393,8 @@ Alternatively, current labels can be drawn inline as arrowheads on the leads of 
     d.draw()
 
 
-Loop currents can be added using :py:meth:`schemdraw.Drawing.loopI()`.
+Loop currents can be added using :py:class:`schemdraw.elements.lines.LoopCurrent`.
+The class requires a list of 4 existing elements surrounding the loop.
 
 .. jupyter-execute::
     :hide-code:
@@ -389,11 +404,11 @@ Loop currents can be added using :py:meth:`schemdraw.Drawing.loopI()`.
 .. jupyter-execute::
     :hide-output:
 
-    R1 = d.add(elm.Resistor)
-    C1 = d.add(elm.Capacitor('down'))
-    D1 = d.add(elm.Diode('left', fill=True))
-    L1 = d.add(elm.Inductor('up'))
-    d.loopI([R1, C1, D1, L1], d='cw', label='$I_1$')
+    R1 = d.add(elm.Resistor())
+    C1 = d.add(elm.Capacitor().down())
+    D1 = d.add(elm.Diode().fill(True).left())
+    L1 = d.add(elm.Inductor().up())
+    d.add(elm.LoopCurrent([R1, C1, D1, L1], direction='cw').label('$I_1$'))
 
 .. jupyter-execute::
     :hide-code:
@@ -406,17 +421,19 @@ Loop currents can be added using :py:meth:`schemdraw.Drawing.loopI()`.
 Styling
 -------
 
-Styling parameters include `color`, `fill`, `lw` (linewidth), `ls` (linestyle), `fontsize` and `font`. If a style parameter is not provided when creating an Element, its value is obtained from the element class definition or from the drawing defaults, in that order.
+Element styling methods include `color`, `fill`, `linewidth`, and `linestyle`. If a style method is not called when creating an Element, its value is obtained from from the drawing defaults.
 
 .. jupyter-execute::
     :hide-output:
     
-    d = schemdraw.Drawing(color='blue', fill='lightgray')  # All elements are blue with lightgray fill unless specified otherwise
-    d.add(elm.Diode())
-    d.add(elm.Diode(fill='red'))   # Fill overrides drawing value here
-    d.add(elm.Resistor(fill='purple'))  # Fill has no effect on this non-closed element
-    d.add(elm.RBox(color='orange', ls='--'))
-    d.add(elm.Resistor(lw=5))
+    # All elements are blue with lightgray fill unless specified otherwise    
+    d = schemdraw.Drawing(color='blue', fill='lightgray')
+
+    d += elm.Diode()
+    d += elm.Diode().fill('red')        # Fill overrides drawing color here
+    d += elm.Resistor().fill('purple')  # Fill has no effect on non-closed elements
+    d += elm.RBox().linestyle('--').color('orange')
+    d += elm.Resistor().linewidth(5)
 
 .. jupyter-execute::
     :hide-code:
@@ -436,25 +453,71 @@ This mode allows creating an entire schematic in a single call to Drawing.
 
 .. jupyter-execute::
 
-    # R1 can't set at=Q1.base, because base position is not defined until Drawing is created
+    # R1 can't set .at(Q1.base), because base position is not defined until Drawing is created
+    # But it can set .at((Q1, 'base')).
     schemdraw.Drawing(
-        Q1 := elm.BjtNpn(label='$Q_1$'), 
-        elm.Resistor('left', at=(Q1, 'base'), label='$R_1$', lftlabel='$V_{in}$'),
-        elm.Resistor('up', at=(Q1, 'collector'), label='$R_2$', rgtlabel='$V_{cc}$'),
-        elm.Ground(at=(Q1, 'emitter'))
+        Q1 := elm.BjtNpn().label('$Q_1$'), 
+        elm.Resistor().left().at((Q1, 'base')).label('$R_1$').label('$V_{in}$', 'left'),
+        elm.Resistor().up().at((Q1, 'collector')).label('$R_2$').label('$V_{cc}$', 'right'),
+        elm.Ground().at((Q1, 'emitter'))
         )
-        
 
-Legacy Mode
------------
 
-Before version 0.7, schemdraw defined elements using dictionaries. In 0.7 elements were upgraded to classes, but a translation lookup still exists so that most old-style schematics are still supported.
+Keyword Arguments
+-----------------
 
-.. jupyter-execute::
+All :py:class:`schemdraw.elements.Element` types take keyword arguments that can also be used to set
+element properties, partly for historical reasons but also for easy element setup via dictionary unpacking. 
+The keyword arguments are equivalent to calling the Element setup methods.
+The keyword arguments are not validated or type checked, so the chained method interface
+described above is recommended for configuring elements.
 
-    d = schemdraw.Drawing()
-    d.add(elm.RES, d='right', label='1$\Omega$')
-    d.add(elm.CAP, d='down', label='10$\mu$F')
-    d.add(elm.LINE, d='left')
-    d.add(elm.SOURCE_SIN, d='up', label='10V')
-    d.draw()
+
++--------------------+-------------------------------+
+| Keyword Argument   | Method Equivalent             |
++====================+===============================+
+| `d='up'`           | `.up()`                       |
++--------------------+-------------------------------+
+| `d='down'`         | `.down()`                     |
++--------------------+-------------------------------+
+| `d='left'`         | `.left()`                     |
++--------------------+-------------------------------+
+| `d='right'`        | `.right()`                    |
++--------------------+-------------------------------+
+| `theta=X`          | `.theta(X)`                   |
++--------------------+-------------------------------+
+| `at=X` or `xy=X`   | `.at(X)`                      |
++--------------------+-------------------------------+
+| `flip=True`        | `.flip()`                     |
++--------------------+-------------------------------+
+| `reverse=True`     | `.reverse()`                  |
++--------------------+-------------------------------+
+| `anchor=X`         | `.anchor(X)`                  | 
++--------------------+-------------------------------+
+| `zoom=X`           | `.scale(X)`                   |
++--------------------+-------------------------------+
+| `color=X`          | `.color(X)`                   |
++--------------------+-------------------------------+
+| `fill=X`           | `.fill(X)`                    |
++--------------------+-------------------------------+
+| `ls=X`             | `.linestyle(X)`               |
++--------------------+-------------------------------+
+| `lw=X`             | `.linewidth(X)`               |
++--------------------+-------------------------------+
+| `zorder=X`         | `.zorder(X)`                  |
++--------------------+-------------------------------+
+| `move_cur=False`   | `.hold()`                     |
++--------------------+-------------------------------+
+| `label=X`          | `.label(X)`                   |
++--------------------+-------------------------------+
+| `botlabel=X`       | `.label(X, loc='bottom')`     |
++--------------------+-------------------------------+
+| `lftlabel=X`       | `.label(X, loc='left')`       |
++--------------------+-------------------------------+
+| `rgtlabel=X`       | `.label(X, loc='right')`      |
++--------------------+-------------------------------+
+| `toplabel=X`       | `.label(X, loc='top')`        |
++--------------------+-------------------------------+
+| `lblloc=X`         | `.label(..., loc=X)`          |
++--------------------+-------------------------------+
+

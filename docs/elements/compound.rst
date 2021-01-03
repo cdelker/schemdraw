@@ -38,18 +38,7 @@ Several compound elements defined based on other basic elements.
 Optocoupler
 -----------
 
-.. class:: schemdraw.elements.compound.Optocoupler(**kwargs)
-
-    An optocoupler/optoisolator element
-    
-    :param box: Draw a box around the optocoupler
-    :type box: bool
-    :param boxfill: Color to fill the box
-    :type boxfill: string
-    :param boxpad: Padding between phototransistor and box
-    :type boxpad: float
-    :param base: Add a base contact to the phototransistor
-    :type base: bool
+:py:class:`schemdraw.elements.compound.Optocoupler` can be drawn with or without a base contact.
 
 
 .. jupyter-execute::
@@ -61,30 +50,7 @@ Optocoupler
 Relay
 -----
 
-.. class:: schemdraw.elements.compound.Relay(**kwargs)
-
-    A relay with inductor and switch
-    
-    :param unit: Unit length of the inductor
-    :type unit: float
-    :param cylcoid: Use cycloid style inductor
-    :type cycloid: bool
-    :param switch: Switch style; 'spst', 'spdt', 'dpst', or 'dpdt'
-    :type switch: bool
-    :param swreverse: Reverse the switch direction
-    :type swreverse: bool
-    :param swflip: Flip the switch
-    :type swflip: bool
-    :param core: Show inductor core bar
-    :type core: bool
-    :param link: Show dotted line linking inductor and switch
-    :type link: bool
-    :param box: Draw a box around the relay
-    :type box: bool
-    :param boxfill: Color to fill the box
-    :type boxfill: string
-    :param boxpad: Spacing between components and box
-    :type boxpad: float
+:py:class:`schemdraw.elements.compound.Relay` can be drawn with different options for switches and inductor solenoids.
 
 .. jupyter-execute::
     :hide-code:

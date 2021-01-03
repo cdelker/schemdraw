@@ -19,15 +19,15 @@ class Opamp(Element):
             sign: Draw +/- labels at each input
 
         Anchors:
-            in1
-            in2
-            out
-            vd
-            vs
-            n1
-            n2
-            n1a
-            n2a
+            * in1
+            * in2
+            * out
+            * vd
+            * vs
+            * n1
+            * n2
+            * n1a
+            * n2a
     '''
     def __init__(self, *d, sign: bool=True, **kwargs):
         super().__init__(*d, **kwargs)

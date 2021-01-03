@@ -23,10 +23,10 @@ class Transformer(Element):
             loop: Use spiral/cycloid (loopy) style
 
         Anchors:
-            p1: primary side 1
-            p2: primary side 2
-            s1: secondary side 1
-            s2: secondary side 2
+            * p1: primary side 1
+            * p2: primary side 2
+            * s1: secondary side 1
+            * s2: secondary side 2
 
         Other anchors defined by `ltaps` and `rtaps`
     '''

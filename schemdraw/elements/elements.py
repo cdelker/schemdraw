@@ -152,28 +152,52 @@ class Element:
         return self
 
     def color(self, color: str) -> 'Element':
-        ''' Override the element color '''
+        ''' Sets the element color
+
+            Args:
+                color: color name or hex value (ie '#FFFFFF')
+        '''
         self._userparams['color'] = color
         return self
 
     def linestyle(self, ls: Linestyle) -> 'Element':
-        ''' Override the element line style '''
+        ''' Sets the element line style
+
+            Args:
+                ls: Line style ('-', ':', '--', '-.').
+        '''
         self._userparams['ls'] = ls
         return self
 
     def linewidth(self, lw: float) -> 'Element':
-        ''' Override the element line width '''
+        ''' Sets the element line width
+
+            Args:
+                lw: Line width
+        '''
         self._userparams['lw'] = lw
         return self
 
     def fill(self, color: Union[bool, str]=True) -> 'Element':
-        ''' Override the element fill color '''
+        ''' Sets the element fill color.
+
+            Args:
+                color: Color string name or hex value, or
+                `True` to fill with the element line color.
+        '''
         self._userparams['fill'] = color
         return self
 
     def style(self, color: str=None, fill: str=None,
               ls: Linestyle=None, lw: float=None) -> 'Element':
-        ''' Apply all style parameters '''
+        ''' Apply all style parameters
+
+            Args:
+                color: Color string or hex value
+                fill: Color string or hex
+                ls: Line style ('-', ':', '--', '-.')
+                lw: Line width
+        '''
         if color is not None:
             self.color(color)
         if fill is not None:
@@ -185,7 +209,7 @@ class Element:
         return self
 
     def zorder(self, zorder: int) -> 'Element':
-        ''' Override the element zorder. Higher zorders will be drawn above
+        ''' Sets the element zorder. Higher zorders will be drawn above
             lower zorder elements.
         '''
         self._userparams['zorder'] = zorder
@@ -630,9 +654,9 @@ class Element2Term(Element):
         extended to the start and ending positions.
 
         Anchors:
-            start
-            center
-            end
+            * start
+            * center
+            * end
     '''
     def to(self, xy: XY) -> 'Element2Term':
         ''' Sets ending position of element '''

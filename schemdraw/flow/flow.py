@@ -15,10 +15,10 @@ class Box(Element):
             h: Height of box
 
         Anchors:
-            N
-            S
-            E
-            W
+            * N
+            * S
+            * E
+            * W
     '''
     def __init__(self, w: float=3, h: float=2, **kwargs):
         super().__init__(**kwargs)
@@ -44,10 +44,10 @@ class Subroutine(Element):
             s: spacing of side lines
 
         Anchors:
-            N
-            S
-            E
-            W
+            * N
+            * S
+            * E
+            * W
     '''
     def __init__(self, w: float=3.5, h: float=2, s: float=0.3, **kwargs):
         super().__init__(**kwargs)
@@ -74,10 +74,10 @@ class Data(Element):
             s: slant of sides
 
         Anchors:
-            N
-            S
-            E
-            W
+            * N
+            * S
+            * E
+            * W
     '''
     def __init__(self, w: float=3, h: float=2, s: float=0.5, **kwargs):
         super().__init__(**kwargs)
@@ -102,10 +102,10 @@ class Start(Element):
             h: Height of ellipse
 
         Anchors:
-            N
-            S
-            E
-            W    '''
+            * N
+            * S
+            * E
+            * W    '''
     def __init__(self, w: float=3, h: float=2, **kwargs):
         super().__init__(**kwargs)
         # There's no ellipse Segment type, so draw one with a path Segment
@@ -140,10 +140,10 @@ class Decision(Element):
             fontsize: Point size of label font
 
         Anchors:
-            N
-            S
-            E
-            W
+            * N
+            * S
+            * E
+            * W
     '''
     def __init__(self, w: float=4, h: float=2,
                  N: str=None, E: str=None, S: str=None, W: str=None,
@@ -187,10 +187,10 @@ class Connect(Element):
             r: Radius of box
 
         Anchors:
-            N
-            S
-            E
-            W
+            * N
+            * S
+            * E
+            * W
     '''
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

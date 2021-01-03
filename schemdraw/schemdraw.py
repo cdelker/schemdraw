@@ -128,8 +128,6 @@ class Drawing:
 
             Args:
                 element: The element to add.
-                **kwargs: passed to element instantiation if element is
-                    a class and not an instance (for backwards combatibility)
         '''
         # TODO: remove kwargs when deprecated dictionary elements are removed
         if not isinstance(element, Element):

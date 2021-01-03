@@ -256,9 +256,9 @@ class BusConnect(Element):
             l: length of connection lines
 
         Anchors:
-            start
-            end
-            p[X] where X is int for each data line
+            * start
+            * end
+            * p[X] where X is int for each data line
     '''
     def __init__(self, *d, n: int=1, dy: float=0.6, up: bool=True, lwbus: float=4, l: float=3, **kwargs):
         super().__init__(*d, **kwargs)
@@ -300,7 +300,7 @@ class DB9(Element):
             pinfill: Color to fill pin circles
 
         Anchors:
-            pin1 thru pin9
+            * pin1 thru pin9
     '''
     def __init__(self, *d, pinspacing: float=0.6, edge: float=0.3, number: bool=False,
                  pinfill: str='white',
@@ -342,7 +342,7 @@ class DB25(Element):
             pinfill: Color to fill pin circles
 
         Anchors:
-            pin1 thru pin25
+            * pin1 thru pin25
     '''
     def __init__(self, *d, pinspacing: float=0.6, edge: float=0.3, number: bool=False,
                  pinfill: str='white',
@@ -383,11 +383,11 @@ class CoaxConnect(Element):
             fillinner: Color to fill inner conductor
 
         Anchors:
-            center
-            N
-            S
-            E
-            W
+            * center
+            * N
+            * S
+            * E
+            * W
     '''
     def __init__(self, *d, radius: float=0.4, radiusinner: float=0.12, fillinner: str='white', **kwargs):
         super().__init__(*d, **kwargs)

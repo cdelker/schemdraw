@@ -60,12 +60,12 @@ class Ic(Element):
         If a pin is named '>', it will be drawn as a proper clock signal input.
 
         Anchors:
-            inL[X] - Each pin on left side
-            inR[X] - Each pin on right side
-            inT[X] - Each pin on top side
-            inB[X] - Each pin on bottom side
-            pinX - Each pin with a number
-            CLK (if clock pin is defined with '>' name)
+            * inL[X] - Each pin on left side
+            * inR[X] - Each pin on right side
+            * inT[X] - Each pin on top side
+            * inB[X] - Each pin on bottom side
+            * pin[X] - Each pin with a number
+            * CLK (if clock pin is defined with '>' name)
 
         Pins with names are also defined as anchors (if the name
         does not conflict with other attributes).
@@ -289,12 +289,12 @@ class Multiplexer(Ic):
         If a pin is named '>', it will be drawn as a proper clock signal input.
 
         Anchors:
-            inL[X] - Each pin on left side
-            inR[X] - Each pin on right side
-            inT[X] - Each pin on top side
-            inB[X] - Each pin on bottom side
-            pinX - Each pin with a number
-            CLK (if clock pin is defined with '>' name)
+            * inL[X] - Each pin on left side
+            * inR[X] - Each pin on right side
+            * inT[X] - Each pin on top side
+            * inB[X] - Each pin on bottom side
+            * pin[X] - Each pin with a number
+            * CLK (if clock pin is defined with '>' name)
 
         Pins with names are also defined as anchors (if the name does
         not conflict with other attributes).

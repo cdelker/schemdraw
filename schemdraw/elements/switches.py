@@ -39,9 +39,9 @@ class SwitchSpdt(Switch):
             action: action arrow ('open' or 'close')
 
         Anchors:
-            a
-            b
-            c
+            * a
+            * b
+            * c
     '''
     def __init__(self, *d, action: ActionType=None, **kwargs):
         super().__init__(*d, action=action, **kwargs)
@@ -58,9 +58,9 @@ class SwitchSpdt2(Element):
             action: action arrow ('open' or 'close')
 
         Anchors:
-            a
-            b
-            c
+            * a
+            * b
+            * c
     '''
     def __init__(self, *d, action: ActionType=None, **kwargs):
         super().__init__(*d, action=action, **kwargs)

@@ -124,7 +124,7 @@ class DotDotDot(Element):
     '''
     def __init__(self, *d, radius: float=0.075, open: bool=False, **kwargs):
         super().__init__(*d, **kwargs)
-        fill = 'white' if open else None
+        fill = 'white' if open else True
         self.params['fill'] = fill
         self.segments.append(SegmentCircle((.5, 0), radius))
         self.segments.append(SegmentCircle((1, 0), radius))
@@ -135,13 +135,17 @@ class DotDotDot(Element):
 class Label(Element):
     ''' Label element.
 
-        By itself, the element does nothing, but provides a
-        place to attach a label: `elm.Label().label('Hi')`
+        For more options, use `Label().label()` method.
+
+        Args:
+            label: text to display.
     '''
-    def __init__(self, *d, **kwargs):
+    def __init__(self, *d, label: str=None, **kwargs):
         super().__init__(*d, **kwargs)
         self.params['lblloc'] = 'center'
         self.params['lblofst'] = 0
+        if label:
+            self.label(label)
 
 
 class Tag(Element):

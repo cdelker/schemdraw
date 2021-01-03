@@ -12,12 +12,12 @@ Integrated Circuits
 555 LED Blinker Circuit
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-Using the `Ic` class to define a custom integrated circuit.
+Using the :py:class:`schemdraw.elements.intcircuits.Ic` class to define a custom integrated circuit.
 
 .. jupyter-execute::
     :code-below:
     
-    d = schemdraw.Drawing()
+    d = schemdraw.Drawing(fontsize=12)
     IC555def = elm.Ic(pins=[elm.IcPin(name='TRG', side='left', pin='2'),
                             elm.IcPin(name='THR', side='left', pin='6'),
                             elm.IcPin(name='DIS', side='left', pin='7'),
@@ -28,32 +28,34 @@ Using the `Ic` class to define a custom integrated circuit.
                             elm.IcPin(name='GND', side='bot', pin='1'),],
                        edgepadW=.5,
                        edgepadH=1,
-                       pinspacing=2,
+                       pinspacing=1.5,
                        leadlen=1,
                        label='555')
-    T = d.add(IC555def)
-    BOT = d.add(elm.Ground(xy=T.GND))
-    d.add(elm.Dot)
-    d.add(elm.Resistor(endpts=[T.DIS, T.THR], label='Rb'))
-    d.add(elm.Resistor('u', xy=T.DIS, label='Ra', rgtlabel='+Vcc'))
-    d.add(elm.Line(endpts=[T.THR, T.TRG]))
-    d.add(elm.Capacitor('d', xy=T.TRG, toy=BOT.start, label='C', l=d.unit/2))
-    d.add(elm.Line('r', tox=BOT.start))
-    d.add(elm.Capacitor('d', xy=T.CTL, toy=BOT.start, botlabel='.01$\mu$F'))
-    d.add(elm.Dot(xy=T.DIS))
-    d.add(elm.Dot(xy=T.THR))
-    d.add(elm.Dot(xy=T.TRG))
-    d.add(elm.Line(endpts=[T.RST,T.Vcc]))
-    d.add(elm.Dot)
-    d.add(elm.Line('u', l=d.unit/4, rgtlabel='+Vcc'))
-    d.add(elm.Resistor('r', xy=T.OUT, label='330'))
-    d.add(elm.LED(flip=True, d='down', toy=BOT.start))
-    d.add(elm.Line('l', tox=BOT.start))
+    d += (T := IC555def)
+    d += (BOT := elm.Ground(xy=T.GND))
+    d += elm.Dot()
+    d += elm.Resistor().endpoints(T.DIS, T.THR).label('Rb')
+    d += elm.Resistor().up().at(T.DIS).label('Ra').label('+Vcc', 'right')
+    d += elm.Line().endpoints(T.THR, T.TRG)
+    d += elm.Capacitor().down().at(T.TRG).toy(BOT.start).label('C')
+    d += elm.Line().right().tox(BOT.start)
+    d += elm.Capacitor().down().at(T.CTL).toy(BOT.start).label('.01$\mu$F', 'bottom')
+    d += elm.Dot().at(T.DIS)
+    d += elm.Dot().at(T.THR)
+    d += elm.Dot().at(T.TRG)
+    d += elm.Line().endpoints(T.RST,T.Vcc)
+    d += elm.Dot()
+    d += elm.Line().up().length(d.unit/4).label('+Vcc', 'right')
+    d += elm.Resistor().right().at(T.OUT).label('330')
+    d += elm.LED().down().flip().toy(BOT.start)
+    d += elm.Line().left().tox(BOT.start)
     d.draw()
 
 
 Arduino Board
 ^^^^^^^^^^^^^
+
+The Arduino board uses :py:class:`schemdraw.elements.connectors.OrthoLines` to easily add all connections between data bus and headers.
 
 .. jupyter-execute::
     :code-below:
@@ -93,86 +95,85 @@ Arduino Board
 
 
     d = schemdraw.Drawing(fontsize=11, inches_per_unit=.4)
-    Q1 = d.add(Atmega328())
-    JP4 = d.add(elm.Header(rows=10, shownumber=True, flip=True, at=[Q1.PB5[0]+4, Q1.PB5[1]+1], anchor='pin6', label='JP4', fontsize=10,
-                           pinsright=['D8', 'D9', 'D10', 'D11', 'D12', 'D13', '', '', '', ''], pinalignright='center'))
-    JP3 = d.add(elm.Header(rows=6, shownumber=True, flip=True, at=[Q1.PC5[0]+4, Q1.PC5[1]], anchor='pin6', label='JP3', fontsize=10,
-                           pinsright=['A0', 'A1', 'A2', 'A3', 'A4', 'A5'], pinalignright='center'))
+    d += (Q1 := Atmega328())
+    d += (JP4 := elm.Header(rows=10, shownumber=True, pinsright=['D8', 'D9', 'D10', 'D11', 'D12', 'D13', '', '', '', ''], pinalignright='center')
+                            .flip().at((Q1.PB5[0]+4, Q1.PB5[1]+1)).anchor('pin6').label('JP4', fontsize=10))
 
-    JP2 = d.add(elm.Header(rows=8, shownumber=True, flip=True, at=[Q1.PD7[0]+3, Q1.PD7[1]], anchor='pin8', label='JP2', fontsize=10,
-                           pinsright=['D0', 'D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7'], pinalignright='center'))
+    d += (JP3 := elm.Header(rows=6, shownumber=True, pinsright=['A0', 'A1', 'A2', 'A3', 'A4', 'A5'], pinalignright='center')
+                        .flip().at((Q1.PC5[0]+4, Q1.PC5[1])).anchor('pin6').label('JP3', fontsize=10))
 
-    d.add(elm.OrthoLines(at=Q1.PB5, to=JP4.pin6, n=6))
-    d.add(elm.OrthoLines(at=Q1.PC5, to=JP3.pin6, n=6))
-    d.add(elm.OrthoLines(at=Q1.PD7, to=JP2.pin8, n=8))
+    d += (JP2 := elm.Header(rows=8, shownumber=True, pinsright=['D0', 'D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7'],
+                            pinalignright='center')).flip().at((Q1.PD7[0]+3, Q1.PD7[1])).anchor('pin8').label('JP2', fontsize=10)
 
-    d.add(elm.Line('l', at=JP4.pin7, l=.9, lftlabel='GND'))
-    d.add(elm.Line('l', at=JP4.pin8, l=.9, lftlabel='AREF'))
-    d.add(elm.Line('l', at=JP4.pin9, l=.9, lftlabel='AD4/SDA'))
-    d.add(elm.Line('l', at=JP4.pin10, l=.9, lftlabel='AD5/SCL'))
+    d += elm.OrthoLines(n=6).at(Q1.PB5).to(JP4.pin6)
+    d += elm.OrthoLines(n=6).at(Q1.PC5).to(JP3.pin6)
+    d += elm.OrthoLines(n=8).at(Q1.PD7).to(JP2.pin8)
 
-    JP1 = d.add(elm.Header('r', at=[Q1.PD0[0]+4, Q1.PD0[1]-2], rows=6, anchor='pin1', shownumber=True,
-                           pinsright=['VCC', 'RXD', 'TXD', 'DTR', 'RTS', 'GND'], pinalignright='center'))
-    d.add(elm.Line('l', at=JP1.pin1, l=d.unit/2))
-    d.add(elm.Vdd(label='+5V'))
-    d.add(elm.Line('l', at=JP1.pin2, l=d.unit))
-    d.add(elm.Line('u', toy=Q1.PD0))
-    d.add(elm.Dot)
-    d.add(elm.Line('l', at=JP1.pin3, l=d.unit+0.6))
-    d.add(elm.Line('u', toy=Q1.PD1))
-    d.add(elm.Dot)
-    d.add(elm.Line('l', at=JP1.pin6, l=d.unit/2))
-    d.add(elm.Ground)
+    d += elm.Line().left().at(JP4.pin7).length(.9).label('GND', 'left')
+    d += elm.Line().left().at(JP4.pin8).length(.9).label('AREF', 'left')
+    d += elm.Line().left().at(JP4.pin9).length(.9).label('AD4/SDA', 'left')
+    d += elm.Line().left().at(JP4.pin10).length(.9).label('AD5/SCL', 'left')
 
-    d.add(elm.Line('l', at=Q1.XTAL2, l=d.unit*2))
-    d.add(elm.Dot)
+    d += (JP1 := elm.Header(rows=6, shownumber=True, pinsright=['VCC', 'RXD', 'TXD', 'DTR', 'RTS', 'GND'],
+                            pinalignright='center').right().at((Q1.PD0[0]+4, Q1.PD0[1]-2)).anchor('pin1'))
+    d += elm.Line().left().at(JP1.pin1).length(d.unit/2)
+    d += elm.Vdd().label('+5V')
+    d += elm.Line().left().at(JP1.pin2).length(d.unit)
+    d += elm.Line().up().toy(Q1.PD0)
+    d += elm.Dot()
+    d += elm.Line().left().at(JP1.pin3).length(d.unit+0.6)
+    d += elm.Line().up().toy(Q1.PD1)
+    d += elm.Dot()
+    d += elm.Line().left().at(JP1.pin6).length(d.unit/2)
+    d += elm.Ground()
+
+    d += elm.Line().left().at(Q1.XTAL2).length(d.unit*2)
+    d += elm.Dot()
     d.push()
-    d.add(elm.Capacitor('l', zoom=.75, l=d.unit/2))
-    d.add(elm.Line('d', toy=Q1.XTAL1))
-    d.add(elm.Dot)
-    d.add(elm.Ground)
-    d.add(elm.Capacitor('r', zoom=.75, l=d.unit/2))
-    d.add(elm.Dot)
+    d += elm.Capacitor().left().scale(.75).length(d.unit/2)
+    d += elm.Line().down().toy(Q1.XTAL1)
+    d += elm.Dot()
+    d += elm.Ground()
+    d += elm.Capacitor().right().scale(.75).length(d.unit/2)
+    d += elm.Dot()
     d.pop()
-    d.add(elm.Crystal('d', botlabel='16MHz', toy=Q1.XTAL1))
-    d.add(elm.Line('r', tox=Q1.XTAL1))
+    d += elm.Crystal().down().toy(Q1.XTAL1).label('16MHz', 'bottom')
+    d += elm.Line().right().tox(Q1.XTAL1)
 
-    d.add(elm.Line('l', at=Q1.AREF, l=d.unit/3, lftlabel='AREF'))
-    d.add(elm.Line('l', at=Q1.AVCC, l=1.5*d.unit))
-    d.add(elm.Vdd(label='+5V'))
-    d.add(elm.Dot)
-    d.add(elm.Line('d', toy=Q1.VCC))
-    d.add(elm.Dot)
-    d.add(elm.Line('r', tox=Q1.VCC, move_cur=False))
-    d.add(elm.Capacitor('d', label='100n'))
-    GND = d.add(elm.Ground)
+    d += elm.Line().left().at(Q1.AREF).length(d.unit/3).label('AREF', 'left')
+    d += elm.Line().left().at(Q1.AVCC).length(1.5*d.unit)
+    d += elm.Vdd().label('+5V')
+    d += elm.Dot()
+    d += elm.Line().down().toy(Q1.VCC)
+    d += elm.Dot()
+    d += elm.Line().right().tox(Q1.VCC).hold()
+    d += elm.Capacitor().down().label('100n')
+    d += (GND := elm.Ground())
 
-    d.add(elm.Line('l', at=Q1.AGND))
-    d.add(elm.Line('d', toy=Q1.GND))
-    d.add(elm.Dot)
-    d.add(elm.Line('r', tox=Q1.GND, move_cur=False))
-    d.add(elm.Line('d', toy=GND.xy))
-    d.add(elm.Line('l', tox=GND.xy))
-    d.add(elm.Dot)
+    d += elm.Line().left().at(Q1.AGND)
+    d += elm.Line().down().toy(Q1.GND)
+    d += elm.Dot()
+    d += elm.Line().right().tox(Q1.GND).hold()
+    d += elm.Line().down().toy(GND.xy)
+    d += elm.Line().left().tox(GND.xy)
+    d += elm.Dot()
 
-    d.add(elm.Line('l', at=Q1.RESET))
-    d.add(elm.Dot)
+    d += elm.Line().left().at(Q1.RESET)
+    d += elm.Dot()
     d.push()
-    d.add(elm.RBox('u', label='10K'))
-    d.add(elm.Vdd(label='+5V'))
+    d += elm.RBox().up().label('10K')
+    d += elm.Vdd().label('+5V')
     d.pop()
-    d.add(elm.Line('l'))
+    d += elm.Line().left()
     d.push()
-    d.add(elm.Dot)
-    RST = d.add(elm.Button('up', label='Reset'))
-    d.add(elm.Line('l', l=d.unit/2))
-    d.add(elm.Ground)
+    d += elm.Dot()
+    d += (RST := elm.Button().up().label('Reset'))
+    d += elm.Line().left().length(d.unit/2)
+    d += elm.Ground()
     d.pop()
 
-    d.add(elm.Capacitor('l', at=JP1.pin4, botlabel='100n'))
-    d.add(elm.Line('l', tox=RST.start[0]-2))
-    d.add(elm.Line('u', toy=Q1.RESET))
-    d.add(elm.Line('r', tox=RST.start))
-
+    d += elm.Capacitor().left().at(JP1.pin4).label('100n', 'bottom')
+    d += elm.Line().left().tox(RST.start[0]-2)
+    d += elm.Line().up().toy(Q1.RESET)
+    d += elm.Line().right().tox(RST.start)
     d.draw()
-

@@ -9,8 +9,8 @@ class Speaker(Element):
     ''' Speaker element with two inputs.
 
         Anchors:
-            in1
-            in2
+            * in1
+            * in2
     '''
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
@@ -33,8 +33,8 @@ class Mic(Element):
     ''' Microphone element with two inputs.
 
         Anchors:
-            in1
-            in2
+            * in1
+            * in2
     '''
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
@@ -78,11 +78,11 @@ class AudioJack(Element):
             radius: Radius of connector dots
 
         Anchors:
-            tip
-            sleeve
-            ring
-            ringswitch
-            tipswitch
+            * tip
+            * sleeve
+            * ring
+            * ringswitch
+            * tipswitch
     '''
     def __init__(self, *d,
                  radius: float=0.075,

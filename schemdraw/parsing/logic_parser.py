@@ -153,10 +153,10 @@ def logicparse(expr: str, gateW: float=2, gateH: float=.75,
         Logic expression is defined by string using 'and', 'or', 'not', etc.
         for example, "a or (b and c)". Parser recognizes several symbols and
         names for logic functions:
-            and, '&', '∧'
-            or, '|', '∨', '+'
-            xor, '⊕', '⊻'
-            not, '~', '¬'
+        [and, '&', '∧']
+        [or, '|', '∨', '+']
+        [xor, '⊕', '⊻']
+        [not, '~', '¬']
 
         Args:
             expr: Logic expression

@@ -9,7 +9,7 @@ Signal Processing
     import schemdraw
     from schemdraw import dsp
 
-Signal processing elements can be drawn by importing the :py:mod:`dsp` module:
+Signal processing elements can be drawn by importing the :py:mod:`schemdraw.dsp.dsp` module:
 
 .. code-block:: python
 
@@ -52,4 +52,4 @@ may be created using:
 
 .. jupyter-execute::
 
-    dsp.Square(label='$\int$')
+    dsp.Square().label('$\int$')

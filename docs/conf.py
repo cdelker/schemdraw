@@ -34,6 +34,7 @@ release = pkg_resources.get_distribution(project).version
 extensions = [
     'jupyter_sphinx',
     'sphinx.ext.autodoc',
+    'sphinx.ext.autodoc.typehints',
     'sphinx.ext.napoleon'
 ]
 

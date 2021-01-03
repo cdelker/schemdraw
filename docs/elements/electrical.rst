@@ -371,7 +371,9 @@ Transformers
 ------------
 
 The :py:class:`schemdraw.elements.xform.Transformer` element is used to create various transformers.
-Anchors `p1`, `p2`, `s1`, and `s2` are defined for all transformers, with other anchors defined based on the `rtaps` and `ltaps` parameters.
+Anchors `p1`, `p2`, `s1`, and `s2` are defined for all transformers.
+Other anchors can be created using the `taps` method to add tap locations to
+either side.
 
 
 .. jupyter-execute::
@@ -387,7 +389,8 @@ Anchors, including a custom tap on the right side:
 
 .. jupyter-execute::
 
-    x = d.add(elm.Transformer(t1=4, t2=8, rtaps={'B':3}))
+    x = d.add(elm.Transformer(t1=4, t2=8)#, rtaps={'B':3}))
+              .tap(name='B', pos=3, side='secondary'))
     d.add(elm.Line().at(x.s1).length(d.unit/4).label('s1', 'rgt').color('blue'))
     d.add(elm.Line().at(x.s2).length(d.unit/4).label('s2', 'rgt').color('blue'))
     d.add(elm.Line().at(x.p1).length(d.unit/4).left().label('p1', 'lft').color('blue'))

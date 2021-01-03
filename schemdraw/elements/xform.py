@@ -1,25 +1,22 @@
 ''' Transformer element definitions '''
 
-from typing import MutableMapping
+from typing import Literal
 
 from ..segments import Segment, SegmentArc
 from .elements import Element
 from .twoterm import cycloid
 
-TapType = MutableMapping[str, int]
-
 
 class Transformer(Element):
     ''' Transformer
 
+        Add taps to the windings on either side using
+        the `.taps` method.
+        
         Args:
             t1: Turns on primary (left) side
             t2: Turns on secondary (right) side
             core: Draw the core (parallel lines)
-            ltaps: Dictionary of name:position pairs, position is the
-                turn number from the top to tap. Each tap defines an
-                anchor point but does not draw anything.
-            rtaps: Same as ltaps, on right side
             loop: Use spiral/cycloid (loopy) style
 
         Anchors:
@@ -27,12 +24,10 @@ class Transformer(Element):
             * p2: primary side 2
             * s1: secondary side 1
             * s2: secondary side 2
-
-        Other anchors defined by `ltaps` and `rtaps`
+            * Other anchors defined by `taps` method
     '''
     def __init__(self, *d,
                  t1: int=4, t2: int=4, core: bool=True,
-                 ltaps: TapType=None, rtaps: TapType=None,
                  loop: bool=False, **kwargs):
         super().__init__(*d, **kwargs)
         ind_w = .4
@@ -87,9 +82,34 @@ class Transformer(Element):
         self.anchors['s1'] = [ind_gap, rtop]
         self.anchors['s2'] = [ind_gap, rbot]
 
-        if ltaps:
-            for name, pos in ltaps.items():
-                self.anchors[name] = [ltapx, ltop - pos * ind_w]
-        if rtaps:
-            for name, pos in rtaps.items():
-                self.anchors[name] = [rtapx, rtop - pos * ind_w]
+        self._ltapx = ltapx  # Save these for adding taps
+        self._rtapx = rtapx
+        self._ltop = ltop
+        self._rtop = rtop
+        self._ind_w = ind_w
+
+        if 'ltaps' in kwargs:
+            for name, pos in kwargs.get('ltaps').items():
+                self.tap(name, pos, 'primary')
+        if 'rtaps' in kwargs:
+            for name, pos in kwargs.get('rtaps').items():
+                self.tap(name, pos, 'secondary')
+
+    def tap(self, name: str, pos: int, side: Literal['primary', 'secondary', 'left', 'right']='primary'):
+        ''' Add a tap
+
+            A tap is simply a named anchor definition along one side
+            of the transformer.
+
+            Args:
+                name: Name of the tap/anchor
+                pos: Turn number from the top of the tap
+                side: Primary (left) or Secondary (right) side
+        '''
+        if side in ['left', 'primary']:
+            self.anchors[name] = [self._ltapx, self._ltop - pos * self._ind_w]
+        elif side in ['right', 'secondary']:
+            self.anchors[name] = [self._rtapx, self._rtop - pos * self._ind_w]
+        else:
+            raise ValueError(f'Undefined tap side {side}')
+        return self

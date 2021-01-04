@@ -269,7 +269,7 @@ class Figure:
         pad = 2
         x0 = self.bbox.xmin * self.scale - pad
         y0 = -self.bbox.ymax * self.scale - pad
-        s = '<svg height="{}pt" width="{}pt" viewBox="{} {} {} {}">'.format(self.pxheight+2*pad, self.pxwidth+2*pad, x0, y0, self.pxwidth+2*pad, self.pxheight+2*pad)
+        s = '<svg xmlns="http://www.w3.org/2000/svg" xml:lang="en" height="{}pt" width="{}pt" viewBox="{} {} {} {}">'.format(self.pxheight+2*pad, self.pxwidth+2*pad, x0, y0, self.pxwidth+2*pad, self.pxheight+2*pad)
 
         if self.showframe:
             s += f'<rect x="{x0}" y="{y0}" width="{self.pxwidth}" height="{self.pxheight}" style="fill:none; stroke-width:1; stroke:black;" />'

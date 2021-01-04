@@ -20,7 +20,11 @@ See :ref:`elecelements` for complete class definitions for these elements.
             y = i//cols*-dy
             x = (i%cols) * dx
 
-            name = type(e()).__name__
+            if isinstance(e, str):
+                name = e
+                e = getattr(elm, e)
+            else:
+                name = type(e()).__name__
             if hasattr(e, 'keywords'):  # partials have keywords attribute
                 args = ', '.join(['{}={}'.format(k, v) for k, v in e.keywords.items()])
                 name = '{}({})'.format(name, args)
@@ -46,17 +50,60 @@ All two-terminal elements define `start`, `end`, and `center` anchors for placin
 Some elements have optional parameters, shown in parenthesis in the table below.
 
 
-Resistors
-^^^^^^^^^
+Styled Elements
+^^^^^^^^^^^^^^^
+
+These elements change based on U.S. vs European/IEC style configured by :py:meth:`schemdraw.elements.style`.
+Selectable elements, such as `Resistor`, point to either `ResistorUS` or `ResistorIEC`, for example.
+
+U.S Style
+*********
+
+U.S. style is the default, or it can be configured using
+
+.. code-block:: python
+
+    elm.style(elm.STYLE_US)
+
 
 .. jupyter-execute::
     :hide-code:
 
-    elmlist = [Resistor, RBox, ResistorVar, RBoxVar, Potentiometer,
-               PotBox,
-               Photoresistor, PhotoresistorBox, Thermistor, Memristor,
-               Memristor2]
+    elm.style(elm.STYLE_US)
+    elmlist = ['Resistor', 'ResistorVar', 'ResistorVar', 'Potentiometer', 'Photoresistor', 'Fuse']
     drawElements(elmlist, cols=2)
+
+
+European/IEC Style
+******************
+
+European style can be enabled using
+
+.. code-block:: python
+
+    elm.style(elm.STYLE_IEC)
+
+.. jupyter-execute::
+    :hide-code:
+
+    elm.style(elm.STYLE_IEC)
+    elmlist = ['Resistor', 'ResistorVar', 'ResistorVar', 'Potentiometer', 'Photoresistor', 'Fuse']
+    drawElements(elmlist, cols=2)
+
+
+Resistors
+^^^^^^^^^
+
+Both U.S. and European styles of resistors are always available using these classes.
+
+.. jupyter-execute::
+    :hide-code:
+
+    elmlist = [ResistorUS, ResistorIEC, ResistorVarUS, ResistorVarIEC, PotentiometerUS,
+               PotentiometerIEC, FuseUS, FuseIEEE, FuseIEC]
+    drawElements(elmlist, cols=2)
+
+
 
 Capacitors and Inductors
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -79,16 +126,17 @@ Diodes
     
     elmlist = [Diode,
                partial(Diode, fill=True), Schottky, DiodeTunnel, DiodeShockley,
-               Zener, LED, LED2, Photodiode, Diac, Triac, SCR]
+               Zener, Varactor, LED, LED2, Photodiode, Diac, Triac, SCR]
     drawElements(elmlist, cols=2)
 
-Misc
-^^^^
+
+Miscmiscellaneous
+^^^^^^^^^^^^^^^^^
 
 .. jupyter-execute::
     :hide-code:
     
-    elmlist = [Fuse, partial(Fuse, dots=False), Breaker, Crystal, CPE, Josephson, Motor, Lamp, Neon]
+    elmlist = [Fuse, partial(Fuse, dots=False), Breaker, Crystal, CPE, Josephson, Motor, Lamp, Neon, Thermistor, Memristor, Memristor2]
     drawElements(elmlist, cols=2)
 
 
@@ -105,7 +153,8 @@ Sources and Meters
                Battery, MeterV, MeterA, MeterI, MeterOhm,
                Solar]
     drawElements(elmlist, cols=2)
-    
+
+
 Switches
 ^^^^^^^^
 
@@ -127,7 +176,6 @@ Lines and Arrows
     elmlist = [Line, Arrow, partial(Arrow, double=True), LineDot,
                partial(LineDot, double=True)]
     drawElements(elmlist, cols=2)
-
 
 
 Single-Terminal Elements
@@ -187,9 +235,9 @@ adding `action='open'` or `action='close'` parameters.
 
     elmlist = [SwitchSpdt, SwitchSpdt2,
               partial(SwitchSpdt, action='open'), partial(SwitchSpdt2, action='open'),
-              partial(SwitchSpdt, action='close'), partial(SwitchSpdt2, action='close'),    
-    ]
+              partial(SwitchSpdt, action='close'), partial(SwitchSpdt2, action='close')]
     drawElements(elmlist, cols=2, dx=9, dy=3, lblofst=(.5, 0))
+
 
 Double-pole
 ^^^^^^^^^^^
@@ -247,18 +295,6 @@ The `Gap` is like an "invisible" element, useful for marking the voltage between
     d.draw()
 
 
-:py:class:`schemdraw.elements.lines.CurrentLabel` and :py:class:`schemdraw.elements.lines.CurrentLabelInline` elements are added on other 2-terminal elements to indicate the current.
-
-.. jupyter-execute::
-    
-    d = schemdraw.Drawing()
-    d += (R1 := elm.Resistor().length(5))
-    d += (L1 := elm.Inductor().length(5))
-    d += elm.CurrentLabel().at(R1).label('CurrentLabel')
-    d += elm.CurrentLabelInline().at(L1).label('CurrentLabelInline')
-    d.draw()
-
-    
 Operational Amplifiers
 ----------------------
 
@@ -267,7 +303,7 @@ The :py:class:`schemdraw.elements.opamp.Opamp` element defines several anchors f
 
 .. jupyter-execute::
     :hide-code:
-    
+
     d = schemdraw.Drawing(fontsize=12)
     op = d.add(elm.Opamp, label='Opamp', lblofst=.6)
     d.add(elm.LINE, xy=op.in1, d='left', l=.5, lftlabel='in1', color='blue')
@@ -279,7 +315,7 @@ The :py:class:`schemdraw.elements.opamp.Opamp` element defines several anchors f
     d.add(elm.LINE, xy=op.n1, d='down', l=.25, lftlabel='n1', color='blue')
     d.add(elm.LINE, xy=op.n2a, d='up', l=.22, rgtlabel='n2a', lblofst=0, color='blue')
     d.add(elm.LINE, xy=op.n1a, d='down', l=.22, lftlabel='n1a', lblofst=0, color='blue')    
-    
+
     op2 = d.add(elm.Opamp, sign=False, xy=[5, 0], d='right', label='Opamp(sign=False)', lblofst=.6)
     d.add(elm.LINE, xy=op2.in1, d='left', l=.5, lftlabel='in1', color='blue')
     d.add(elm.LINE, xy=op2.in2, d='left', l=.5, lftlabel='in2', color='blue')
@@ -290,7 +326,7 @@ The :py:class:`schemdraw.elements.opamp.Opamp` element defines several anchors f
     d.add(elm.LINE, xy=op2.n1, d='down', l=.25, lftlabel='n1', color='blue')
     d.add(elm.LINE, xy=op2.n2a, d='up', l=.22, rgtlabel='n2a', lblofst=0, color='blue')
     d.add(elm.LINE, xy=op2.n1a, d='down', l=.22, lftlabel='n1a', lblofst=0, color='blue')
-    d
+    d.draw()
 
 
 Transistors

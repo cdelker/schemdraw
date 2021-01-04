@@ -81,6 +81,7 @@ the previous element ended.
 
 For full details of placing and stylizing elements, see :ref:`placement`.
 and the :py:class:`schemdraw.elements.Element`.
+In general, parameters that control **what** is drawn are passed to the element itself, and parameters that control **how** things are drawn are set using chained Element methods. For example, to make a polarized Capacitor, pass `polar=True` as an argument to `Capacitor`, but to change the Capacitor's color, use the `.color()` method: `elm.Capacitor(polar=True).color('red')`.
 
 Calling `d.draw()` assembles the drawing. In Jupyter, this will show the schematic inline as the cell output.
 If run as a script, the schematic will display in the interactive matplotlib window.

@@ -12,7 +12,7 @@ resheight = 0.25      # Resistor height
 reswidth = 1.0 / 6   # Full (inner) length of resistor is 1.0 data unit
 
 
-class Resistor(Element2Term):
+class ResistorUS(Element2Term):
     ''' Resistor (U.S. style) '''
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
@@ -22,8 +22,8 @@ class Resistor(Element2Term):
              [4.5*reswidth, resheight], [5.5*reswidth, -resheight], [6*reswidth, 0]]))
 
 
-class RBox(Element2Term):
-    ''' Resistor as box (European style) '''
+class ResistorIEC(Element2Term):
+    ''' Resistor as box (IEC/European style) '''
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
         self.segments.append(Segment(
@@ -32,7 +32,8 @@ class RBox(Element2Term):
              gap, [reswidth*6, 0]]))
 
 
-class ResistorVar(Resistor):
+
+class ResistorVarUS(ResistorUS):
     ''' Variable resistor (U.S. style) '''
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
@@ -42,7 +43,7 @@ class ResistorVar(Resistor):
                                           headwidth=.12, headlength=.2))
 
 
-class RBoxVar(RBox):
+class ResistorVarIEC(ResistorIEC):
     ''' Variable resistor (European style) '''
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
@@ -51,14 +52,14 @@ class RBoxVar(RBox):
                                           headwidth=.12, headlength=.2))
 
 
-class Thermistor(RBox):
+class Thermistor(ResistorIEC):
     ''' Thermistor '''
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
         self.segments.append(Segment([[0, -resheight-.2], [.2, -resheight-.2], [1, resheight+.2]]))
 
 
-class Photoresistor(Resistor):
+class PhotoresistorUS(ResistorUS):
     ''' Photo-resistor (U.S. style) '''
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
@@ -68,7 +69,7 @@ class Photoresistor(Resistor):
                                           headwidth=.12, headlength=.2))
 
 
-class PhotoresistorBox(RBox):
+class PhotoresistorIEC(ResistorIEC):
     ''' Photo-resistor (European style) '''
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
@@ -198,6 +199,20 @@ class Zener(Diode):
                                       [resheight*1.4-zener_width, -resheight-zener_width]]))
 
 
+class Varactor(Element2Term):
+    ''' Varactor Diode/Varicap/Variable Capacitance Diode '''
+    def __init__(self, *d, **kwargs):
+        super().__init__(*d, **kwargs)
+        capgap = .13
+        self.segments = [Segment([(0, 0), gap, 
+                                  (resheight*1.4, resheight), (resheight*1.4, -resheight),
+                                  gap,
+                                  (resheight*1.4+capgap, resheight), (resheight*1.4+capgap, -resheight),
+                                  gap,
+                                  (resheight*1.4+capgap, 0)]),
+                         SegmentPoly([[0, resheight], [resheight*1.4, 0], [0, -resheight]])]
+
+
 class LED(Diode):
     ''' Light emitting diode '''
     def __init__(self, *d, **kwargs):
@@ -245,7 +260,7 @@ class Photodiode(Diode):
         self.params['lblloc'] = 'bot'
 
 
-class Potentiometer(Resistor):
+class PotentiometerUS(ResistorUS):
     ''' Potentiometer (U.S. style)
 
         Anchors:
@@ -261,7 +276,7 @@ class Potentiometer(Resistor):
                                           headwidth=.15, headlength=.25))
 
 
-class PotBox(RBox):
+class PotentiometerIEC(ResistorIEC):
     ''' Potentiometer (European style)
 
         Anchors:
@@ -355,8 +370,8 @@ class Josephson(Element2Term):
              gap, [0, 0]]))
 
 
-class Fuse(Element2Term):
-    ''' Fuse
+class FuseUS(Element2Term):
+    ''' Fuse (U.S. Style)
 
         Args:
             dots: Show dots on connections to fuse
@@ -380,6 +395,23 @@ class Fuse(Element2Term):
             [fuser*2+1, 0], fuser, zorder=4, fill=color))
         super().fill(color)
         return self
+
+
+class FuseIEEE(ResistorIEC):
+    ''' Fuse (IEEE Style) '''
+    def __init__(self, *d, **kwargs):
+        super().__init__(*d, **kwargs)
+        self.segments.append(Segment([(0, 0), (reswidth*6, 0)]))
+
+
+class FuseIEC(ResistorIEC):
+    ''' Fuse (IEC Style) '''    
+    def __init__(self, *d, **kwargs):
+        super().__init__(*d, **kwargs)
+        dx = resheight*.66
+        self.segments.append(Segment([(dx, resheight), (dx, -resheight)]))
+        self.segments.append(Segment([(6*reswidth-dx, resheight),
+                                      (6*reswidth-dx, -resheight)]))            
 
 
 class Breaker(Element2Term):
@@ -486,3 +518,18 @@ class CPE(Element2Term):
                                       [0, -resheight], gap, [capgap, 0]]))
         self.segments.append(Segment([[0, 0], [-offset, -resheight], gap,
                                       [0, -resheight], gap, [capgap, 0]]))
+
+        
+        
+# default to US style
+Resistor = ResistorUS
+ResistorVar = ResistorVarUS
+Photoresistor = PhotoresistorUS
+Potentiometer = PotentiometerUS
+Fuse = FuseUS
+
+# Old names
+RBox = ResistorIEC
+RBoxVar = ResistorVarIEC
+PotBox = PotentiometerIEC
+PhotoresistorBox = PhotoresistorIEC

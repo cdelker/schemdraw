@@ -89,10 +89,10 @@ class Transformer(Element):
         self._ind_w = ind_w
 
         if 'ltaps' in kwargs:
-            for name, pos in kwargs.get('ltaps').items():
+            for name, pos in kwargs['ltaps'].items():
                 self.tap(name, pos, 'primary')
         if 'rtaps' in kwargs:
-            for name, pos in kwargs.get('rtaps').items():
+            for name, pos in kwargs['rtaps'].items():
                 self.tap(name, pos, 'secondary')
 
     def tap(self, name: str, pos: int, side: Literal['primary', 'secondary', 'left', 'right']='primary'):

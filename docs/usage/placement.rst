@@ -439,7 +439,59 @@ Element styling methods include `color`, `fill`, `linewidth`, and `linestyle`. I
     :hide-code:
 
     d.draw()
+
+
+U.S. versus European Style
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+By default, a `Resistor` and related elements (variable resistor, photo resistor, etc.) appear in U.S. style. To configure
+European/IEC style, use the :py:meth:`schemdraw.elements.style` method with either `elm.STYLE_IEC` or `elm.STYLE_US` parameter.
+
+.. jupyter-execute::
+    :hide-code:
     
+    d = schemdraw.Drawing()
+
+.. jupyter-execute::
+
+    elm.style(elm.STYLE_IEC)
+    d += elm.Resistor()
+    d.draw()
+    
+
+.. jupyter-execute::
+    :hide-code:
+    
+    d = schemdraw.Drawing()
+
+.. jupyter-execute::
+
+    elm.style(elm.STYLE_US)
+    d += elm.Resistor()
+    d.draw()
+
+
+Global styles
+^^^^^^^^^^^^^
+
+The style method :py:meth:`schemdraw.elements.style` can also be used to configure
+global styles on individual elements. It's argument is a dictionary of {name: Element} class pairs.
+Combined with `functools.partial`, parameters to elements can be set globally.
+For example, the following code fills all Diode elements without adding the `fill()` method or `fill` keyword argument.
+
+.. jupyter-execute::
+
+    from functools import partial
+
+    elm.style({'Diode': partial(elm.Diode, fill=True)})
+
+    d = schemdraw.Drawing()
+    d += elm.Diode()
+    d.draw()
+
+
+Be careful, though, because the `style` method can overwrite existing elements in the namespace.
+
     
 Walrus Mode
 -----------

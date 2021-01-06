@@ -17,7 +17,7 @@ def isnotebook():
     ''' Determine whether code is running in Jupyter/interactive mode '''
     try:
         shell = get_ipython().__class__.__name__
-        return shell == 'ZMQInteractiveShell'
+        return shell in ['ZMQInteractiveShell', 'SpyderShell']
     except NameError:
         return False
 
@@ -71,6 +71,7 @@ class Figure:
         self.showframe = kwargs.get('showframe', False)
         self.scale = 64.8 * kwargs.get('inches_per_unit', .5)  # Magic scale factor that matches what MPL did
         self.set_bbox(bbox)
+        self._bgcolor = None
 
     def set_bbox(self, bbox: BBox) -> None:
         ''' Set the bounding box '''
@@ -83,6 +84,10 @@ class Figure:
     def xform(self, x: float, y: float) -> Tuple[float, float]:
         ''' Convert x, y in user coords to svg pixel coords '''
         return x*self.scale, -y*self.scale
+
+    def bgcolor(self, color: str) -> None:
+        ''' Set background color of drawing '''
+        self._bgcolor = color
 
     def plot(self, x: Sequence[float], y: Sequence[float],
              color: str='black', ls: Linestyle='-', lw: float=2,
@@ -269,7 +274,10 @@ class Figure:
         pad = 2
         x0 = self.bbox.xmin * self.scale - pad
         y0 = -self.bbox.ymax * self.scale - pad
-        s = '<svg xmlns="http://www.w3.org/2000/svg" xml:lang="en" height="{}pt" width="{}pt" viewBox="{} {} {} {}">'.format(self.pxheight+2*pad, self.pxwidth+2*pad, x0, y0, self.pxwidth+2*pad, self.pxheight+2*pad)
+        s = '<svg xmlns="http://www.w3.org/2000/svg" xml:lang="en" height="{}pt" width="{}pt" viewBox="{} {} {} {}"'.format(self.pxheight+2*pad, self.pxwidth+2*pad, x0, y0, self.pxwidth+2*pad, self.pxheight+2*pad)
+        if self._bgcolor:
+            s += f' style="background-color:{self._bgcolor};"'
+        s += '>'
 
         if self.showframe:
             s += f'<rect x="{x0}" y="{y0}" width="{self.pxwidth}" height="{self.pxheight}" style="fill:none; stroke-width:1; stroke:black;" />'

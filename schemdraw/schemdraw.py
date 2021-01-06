@@ -1,6 +1,7 @@
 ''' Schemdraw Drawing class '''
 
-from typing import Literal, Union, Type, List, Tuple
+from typing import Literal, Union, Type, List, Tuple, Dict, Any
+from collections import ChainMap
 import warnings
 import math
 
@@ -37,8 +38,100 @@ def use(backend: Backends='matplotlib') -> None:
     _set_elm_backend(Figure)
 
 
+def config(unit: float=3.0, inches_per_unit: float=0.5,
+           lblofst: float=0.1, fontsize: float=14,
+           font: str='sans-serif', color: str='black',
+           lw: float=2, ls: Linestyle='-',
+           fill: str=None, bgcolor: str=None) -> None:
+    ''' Set global schemdraw style configuration
+ 
+        Args:
+            unit: Full length of a 2-terminal element. Inner zig-zag portion
+                of a resistor is 1.0 units.
+            inches_per_unit: Inches per drawing unit for setting drawing scale
+            lblofst: Default offset between element and its label
+            fontsize: Default font size for text labels
+            font: Default font family for text labels
+            color: Default color name or RGB (0-1) tuple
+            lw: Default line width for elements
+            ls: Default line style
+            fill: Deault fill color for closed elements
+    '''
+    schemdrawstyle['unit'] = unit
+    schemdrawstyle['inches_per_unit'] = inches_per_unit
+    schemdrawstyle['lblofst'] = lblofst
+    schemdrawstyle['fontsize'] = fontsize
+    schemdrawstyle['font'] = font
+    schemdrawstyle['color'] = color
+    schemdrawstyle['lw'] = lw
+    schemdrawstyle['ls'] = ls
+    schemdrawstyle['fill'] = fill 
+    if bgcolor:
+        schemdrawstyle['bgcolor'] = bgcolor
+
+
+schemdrawstyle: Dict[str, Any] = {}  # Global style
+config()  # Initialize default configuration
+
+
+def theme(theme='default'):
+    ''' Set schemdraw theme (line color and background color).
+        Themes match those in jupyter-themes package
+        (https://github.com/dunovank/jupyter-themes).
+
+        Available themes:
+            * default (black on white)
+            * dark (white on black)
+            * solarizedd
+            * solarizedl
+            * onedork
+            * oceans16
+            * monokai
+            * gruvboxl
+            * gruvboxd
+            * grade3
+            * chesterish
+    '''
+    if theme == 'default':
+        config()
+    elif theme == 'dark':
+        schemdrawstyle['color'] = 'white'
+        schemdrawstyle['bgcolor'] = 'black'
+    elif theme == 'solarizedd':
+        schemdrawstyle['bgcolor'] = '#002b36'
+        schemdrawstyle['color'] = '#657b83'
+    elif theme == 'solarizedl':
+        schemdrawstyle['bgcolor'] = '#eee8d5'
+        schemdrawstyle['color'] = '#073642'
+    elif theme == 'onedork':
+        schemdrawstyle['bgcolor'] = '#373e4b'
+        schemdrawstyle['color'] = '#899ab8'
+    elif theme == 'oceans16':
+        schemdrawstyle['bgcolor'] = '#384151'
+        schemdrawstyle['color'] = '#CDD2E9'
+    elif theme == 'monokai':
+        schemdrawstyle['bgcolor'] = '#232323'
+        schemdrawstyle['color'] = '#BBBBBB'
+    elif theme == 'gruvboxl':
+        schemdrawstyle['bgcolor'] = '#ebdbb2'
+        schemdrawstyle['color'] = '#3c3836'
+    elif theme == 'gruvboxd':
+        schemdrawstyle['bgcolor'] = '#1d2021'
+        schemdrawstyle['color'] = '#d5c4a1'
+    elif theme == 'grade3':
+        schemdrawstyle['bgcolor'] = '#ffffff'
+        schemdrawstyle['color'] = '#3f3d46'
+    elif theme == 'chesterish':
+        schemdrawstyle['bgcolor'] = '#323A48'
+        schemdrawstyle['color'] = '#92A2BD'
+    else:
+        raise ValueError(f'Unknown theme {theme}')
+
+
 class Drawing:
     ''' A schematic drawing
+
+        See `schemdraw.config` method for argument defaults
 
         Args:
             *elements: List of Element instances to add to the drawing
@@ -60,22 +153,32 @@ class Drawing:
                 element will be added with this angle unless specified
                 otherwise.
     '''
-    def __init__(self, *elements: Element, unit: float=3.0,
-                 inches_per_unit: float=0.5, lblofst: float=0.1,
-                 fontsize: float=14, font: str='sans-serif',
-                 color: str='black', lw: float=2, ls: Linestyle='-',
+    def __init__(self, *elements: Element, unit: float=None,
+                 inches_per_unit: float=None, lblofst: float=None,
+                 fontsize: float=None, font: str=None,
+                 color: str=None, lw: float=None, ls: Linestyle=None,
                  fill: str=None):
         self.elements: List[Element] = []
-        self.inches_per_unit = inches_per_unit
-        self.unit = unit
-        self.dwgparams = {'unit': unit,
-                          'font': font,
-                          'fontsize': fontsize,
-                          'lblofst': lblofst,
-                          'color': color,
-                          'lw': lw,
-                          'ls': ls,
-                          'fill': fill}
+        self.inches_per_unit = inches_per_unit if inches_per_unit is not None else schemdrawstyle.get('inches_per_unit')
+        self.unit = unit if unit is not None else schemdrawstyle.get('unit')
+        
+        self.dwgparams: Dict[str, Any] = {}
+        if unit:
+            self.dwgparams['unit'] = unit
+        if font:
+            self.dwgparams['font'] = font
+        if fontsize:
+            self.dwgparams['fontsize'] = fontsize
+        if lblofst:
+            self.dwgparams['lblofst'] = lblofst
+        if color:
+            self.dwgparams['color'] = color
+        if ls:
+            self.dwgparams['ls'] = ls
+        if lw:
+            self.dwgparams['lw'] = lw
+        if fill:
+            self.dwgparams['fill'] = fill
 
         self.here: XY = Point((0, 0))
         self.theta: float = 0
@@ -136,8 +239,9 @@ class Drawing:
         elif len(kwargs) > 0:
             warnings.warn('kwargs to add method are ignored because element is already instantiated')
 
+        dwgparams = ChainMap(self.dwgparams, schemdrawstyle)
         self.here, self.theta = element._place(self.here, self.theta,
-                                               **self.dwgparams)
+                                               **dwgparams)
         self.elements.append(element)
         return element
 
@@ -173,6 +277,8 @@ class Drawing:
               theta2: float=-35, pad: float=.2, color: str=None) -> Element:
         ''' Draw an arc to indicate a loop current bordered by elements in list
 
+            [DEPRECATED - use LoopCurrent element instead]
+
             Args:
                 elm_list: Boundary elements in order of top, right, bot, left
                 label: Text label to draw in center of loop
@@ -196,6 +302,8 @@ class Drawing:
                arrowlen: float=2, reverse: bool=False, top: bool=True,
                color: str=None) -> Element:
         ''' Add an arrow element along side another element
+
+            [DEPRECATED - use CurrentLabel element instead]
 
             Args:
                 elm: Element to add arrow to
@@ -222,6 +330,8 @@ class Drawing:
                       color: str=None) -> Element:
         ''' Add an arrowhead for labeling current inline with leads.
             Works on Element2Term elements.
+
+            [DEPRECATED - use CurrentLabelInline element instead]
 
             Args:
                 elm: Element to add arrow to
@@ -265,6 +375,10 @@ class Drawing:
                        bbox=self.get_bbox(),
                        inches_per_unit=self.inches_per_unit,
                        showframe=showframe)
+        
+        params = ChainMap(self.dwgparams, schemdrawstyle)
+        if 'bgcolor' in params:
+            fig.bgcolor(params['bgcolor'])
 
         for element in self.elements:
             element._draw(fig)

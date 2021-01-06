@@ -64,6 +64,10 @@ class Figure:
             plt.show()
         plt.close()
 
+    def bgcolor(self, color: str) -> None:
+        ''' Set background color of drawing '''
+        self.fig.set_facecolor(color)
+
     def plot(self, x: float, y: float, color: str='black', ls: Linestyle='-',
              lw: float=2, fill: str=None, capstyle: Capstyle='round',
              joinstyle: Joinstyle='round',  zorder: int=2) -> None:

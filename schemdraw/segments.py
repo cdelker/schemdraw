@@ -491,6 +491,14 @@ class SegmentCircle:
         ls = self.ls if self.ls else style.get('ls', '-')
         lw = self.lw if self.lw else style.get('lw', 2)
 
+        if fill is not None:
+            if fill is True:
+                fill = color
+            if fill is False:
+                fill = None
+            elif fill == 'bg':
+                fill = style.get('bgcolor', 'white')
+        
         fill = color if fill is True else None if fill is False else fill
         fig.circle(center, radius, color=color, fill=fill,
                    lw=lw, ls=ls, zorder=zorder)

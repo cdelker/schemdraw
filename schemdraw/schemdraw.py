@@ -93,7 +93,7 @@ def theme(theme='default'):
             * chesterish
     '''
     if theme == 'default':
-        config()
+        config(bgcolor='white')
     elif theme == 'dark':
         schemdrawstyle['color'] = 'white'
         schemdrawstyle['bgcolor'] = 'black'

@@ -93,7 +93,7 @@ class AudioJack(Element):
                  open: bool=True,
                  **kwargs):
         super().__init__(*d, **kwargs)
-        fill = 'white' if open else None
+        fill = 'bg' if open else None
 
         length = 2.0
         ringlen = .75

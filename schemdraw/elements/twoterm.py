@@ -384,7 +384,7 @@ class FuseUS(Element2Term):
         self.segments.append(Segment(list(zip(fusex, fusey))))
         self.segments.append(Segment([[0, 0], gap, [1+fuser*3, 0]]))
         if dots:
-            self.fill(kwargs.get('fill', 'white'))
+            self.fill(kwargs.get('fill', 'bg'))
 
     def fill(self, color: Union[bool, str]=True) -> 'Element':
         ''' Set element fill '''
@@ -429,15 +429,9 @@ class Breaker(Element2Term):
         self.segments.append(SegmentArc(
             [.5, 0], 1, .65,theta1=theta1, theta2=theta2))
         if dots:
-            self.fill(kwargs.get('fill', 'white'))
-
-    def fill(self, color: Union[bool, str]='white') -> 'Element':
-        ''' Set element fill color '''
-        rad = .12
-        self.segments.append(SegmentCircle([rad, 0], rad, zorder=4, fill=color))
-        self.segments.append(SegmentCircle([1-rad, 0], rad, zorder=4, fill=color))
-        super().fill(color)
-        return self
+            rad = .12
+            self.segments.append(SegmentCircle([rad, 0], rad, zorder=4))
+            self.segments.append(SegmentCircle([1-rad, 0], rad, zorder=4))
 
 
 def cycloid(loops: int=4, ofst: Sequence[float]=(0, 0),

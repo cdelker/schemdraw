@@ -1,11 +1,11 @@
 ''' Lines, Arrows, and Labels '''
 
-from typing import Literal, Sequence, Union
+from typing import Literal, Sequence, Union, Tuple
 
 from ..segments import Segment, SegmentArrow, SegmentCircle, SegmentArc, SegmentPoly
 from .elements import Element, Element2Term
 from .twoterm import gap
-from ..types import XY
+from ..types import XY, Point
 
 
 class Line(Element2Term):
@@ -64,20 +64,20 @@ class LineDot(Line):
 
 
 class Gap(Element2Term):
-    ''' Gap for labeling port voltages, for example.
-
-        Drawn as a white line by default.
-
-        Args:
-            color: Color for the gap line
+    ''' Gap for labeling port voltages, for example. Draws nothing,
+        but provides place to attach a label such as ('+', 'V', '-').
     '''
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
-        color = self._userparams.get('color', 'white')
-        self.segments.append(Segment([[0, 0], gap, [1, 0]], color=color))
+        self.segments.append(Segment([[0, 0], gap, [1, 0]]))
         self.params['lblloc'] = 'center'
         self.params['lblofst'] = 0
-        self.params['zorder'] = 0
+
+    def _place(self, dwgxy: XY, dwgtheta: float, **dwgparams) -> Tuple[Point, float]:
+        ''' Calculate element placement, adding lead extensions '''
+        result = super()._place(dwgxy, dwgtheta, **dwgparams)
+        self.segments = self.segments[1:]  # Remove line segment, but keep any text
+        return result
 
 
 class Dot(Element):
@@ -89,7 +89,7 @@ class Dot(Element):
     '''
     def __init__(self, *d, radius: float=0.075, open: bool=False, **kwargs):
         super().__init__(*d, **kwargs)
-        fill = 'white' if open else True
+        fill = 'bg' if open else True
         self.anchors['start'] = (0, 0)
         self.anchors['center'] = (0, 0)
         self.anchors['end'] = (0, 0)
@@ -124,7 +124,7 @@ class DotDotDot(Element):
     '''
     def __init__(self, *d, radius: float=0.075, open: bool=False, **kwargs):
         super().__init__(*d, **kwargs)
-        fill = 'white' if open else True
+        fill = 'bg' if open else True
         self.params['fill'] = fill
         self.segments.append(SegmentCircle((.5, 0), radius))
         self.segments.append(SegmentCircle((1, 0), radius))

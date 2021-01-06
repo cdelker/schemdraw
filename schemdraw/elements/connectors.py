@@ -167,7 +167,7 @@ class Header(Element):
                  pinfontsizeleft: float=9,
                  pinspacing: float=0.6,
                  edge: float=0.3,
-                 pinfill: str='white',
+                 pinfill: str='bg',
                  **kwargs):
         super().__init__(*d, **kwargs)
         if pinsleft is None:
@@ -191,7 +191,7 @@ class Header(Element):
                     x, y = xy
                     self.segments.append(SegmentPoly([[x-pinrad, y-pinrad], [x+pinrad, y-pinrad],
                                                       [x+pinrad, y+pinrad], [x-pinrad, y+pinrad]],
-                                                     fill='white', zorder=4))
+                                                     fill='bg', zorder=4))
                 elif style == 'screw':
                     x, y = xy
                     self.segments.append(SegmentCircle(xy, pinrad*1.75, fill=pinfill, zorder=4))
@@ -303,7 +303,7 @@ class DB9(Element):
             * pin1 thru pin9
     '''
     def __init__(self, *d, pinspacing: float=0.6, edge: float=0.3, number: bool=False,
-                 pinfill: str='white',
+                 pinfill: str='bg',
                  **kwargs):
         super().__init__(*d, **kwargs)
         self.params['theta'] = 0
@@ -345,7 +345,7 @@ class DB25(Element):
             * pin1 thru pin25
     '''
     def __init__(self, *d, pinspacing: float=0.6, edge: float=0.3, number: bool=False,
-                 pinfill: str='white',
+                 pinfill: str='bg',
                  **kwargs):
         super().__init__(*d, **kwargs)
         self.params['theta'] = 0
@@ -389,7 +389,7 @@ class CoaxConnect(Element):
             * E
             * W
     '''
-    def __init__(self, *d, radius: float=0.4, radiusinner: float=0.12, fillinner: str='white', **kwargs):
+    def __init__(self, *d, radius: float=0.4, radiusinner: float=0.12, fillinner: str='bg', **kwargs):
         super().__init__(*d, **kwargs)
         self.segments.append(SegmentCircle([0, 0], radius))
         self.segments.append(SegmentCircle([0, 0], radiusinner, fill=fillinner, zorder=4))

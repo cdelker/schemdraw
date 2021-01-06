@@ -459,7 +459,9 @@ class Element:
             elif loc == 'rgt':
                 loc = 'lft'
 
-        if align is None:
+        if align is None and loc == 'center' and isinstance(label, (list, tuple)):
+            align = ('center', 'center')
+        elif align is None:
             align = (None, None)
         if None in align:   # Determine best alignment for label based on angle
             th = theta - rotation
@@ -553,34 +555,34 @@ class Element:
         if isinstance(label, (list, tuple)):
             # Divide list along length
             if loc == 'top':
+                xdiv = (xmax-xmin)/(len(label)+1)
+                ofst = Point((0, ofst)) if not isinstance(ofst, (list, tuple)) else Point(ofst)
                 for i, lbltxt in enumerate(label):
-                    xdiv = (xmax-xmin)/(len(label)+1)
                     xy = Point((xmin+xdiv*(i+1), ymax))
-                    ofst = Point((0, ofst)) if not isinstance(ofst, (list, tuple)) else Point(ofst)
                     self.segments.append(SegmentText(xy+ofst, lbltxt, **lblparams))
             elif loc == 'bot':
+                xdiv = (xmax-xmin)/(len(label)+1)
+                ofst = Point((0, -ofst)) if not isinstance(ofst, (list, tuple)) else Point(ofst)
                 for i, lbltxt in enumerate(label):
-                    xdiv = (xmax-xmin)/(len(label)+1)
                     xy = Point((xmin+xdiv*(i+1), ymin))
-                    ofst = Point((0, -ofst)) if not isinstance(ofst, (list, tuple)) else Point(ofst)
                     self.segments.append(SegmentText(xy+ofst, lbltxt, **lblparams))
             elif loc == 'lft':
+                ydiv = (ymax-ymin)/(len(label)+1)
+                ofst = Point((-ofst, 0)) if not isinstance(ofst, (list, tuple)) else Point(ofst)
                 for i, lbltxt in enumerate(label):
-                    ydiv = (ymax-ymin)/(len(label)+1)
                     xy = Point((xmin, ymin+ydiv*(i+1)))
-                    ofst = Point((-ofst, 0)) if not isinstance(ofst, (list, tuple)) else Point(ofst)
                     self.segments.append(SegmentText(xy+ofst, lbltxt, **lblparams))
             elif loc == 'rgt':
+                ydiv = (ymax-ymin)/(len(label)+1)
+                ofst = Point((ofst, 0)) if not isinstance(ofst, (list, tuple)) else Point(ofst)
                 for i, lbltxt in enumerate(label):
-                    ydiv = (ymax-ymin)/(len(label)+1)
                     xy = Point((xmax, ymin+ydiv*(i+1)))
-                    ofst = Point((ofst, 0)) if not isinstance(ofst, (list, tuple)) else Point(ofst)
                     self.segments.append(SegmentText(xy+ofst, lbltxt, **lblparams))
             elif loc == 'center':
+                xdiv = (xmax-xmin)/(len(label)+1)
+                ofst = Point((0, ofst)) if not isinstance(ofst, (list, tuple)) else Point(ofst)
                 for i, lbltxt in enumerate(label):
-                    xdiv = (xmax-xmin)/(len(label)+1)
                     xy = Point((xmin+xdiv*(i+1), 0))
-                    ofst = Point((0, ofst)) if not isinstance(ofst, (list, tuple)) else Point(ofst)
                     self.segments.append(SegmentText(xy+ofst, lbltxt, **lblparams))
 
         elif isinstance(label, str):

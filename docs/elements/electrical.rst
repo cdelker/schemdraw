@@ -254,6 +254,26 @@ lnking the poles.
     drawElements(elmlist, cols=2, dx=8, dy=4, lblofst=(.7, 0))
 
 
+Rotary Switch
+^^^^^^^^^^^^^
+
+The rotary switch :py:class:`schemdraw.elements.switches.SwitchRotary` takes several parameters, with `n` being the number of contacts and other parameters defining the contact placement.
+
+.. jupyter-execute::
+    :hide-code:
+    
+    (SwitchRotary(n=6).label('SwitchRotary(n=6)', ofst=(0,0.5))
+                      .label('P', loc='P', halign='right', color='blue', fontsize=9, ofst=(-.2, 0))
+                      .label('T1', loc='T1', color='blue', fontsize=9, ofst=(0, -.2))
+                      .label('T2', loc='T2', color='blue', fontsize=9, ofst=(0, -.5))
+                      .label('T3', loc='T3', color='blue', fontsize=9, ofst=(.2, 0))
+                      .label('T4', loc='T4', color='blue', fontsize=9, ofst=(.2, 0))
+                      .label('T5', loc='T5', color='blue', fontsize=9, ofst=(0, .2))
+                      .label('T6', loc='T6', color='blue', fontsize=9, ofst=(0, .2))
+    )
+
+
+
 Audio Elements
 --------------
 

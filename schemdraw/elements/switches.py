@@ -1,8 +1,9 @@
 ''' Switches and buttons '''
 from typing import Optional, Literal
+import math
 
 from .elements import Element, Element2Term, gap
-from ..segments import Segment, SegmentCircle, SegmentArc
+from ..segments import Segment, SegmentCircle, SegmentArc, SegmentArrow
 from ..types import Point
 
 sw_dot_r = .12
@@ -112,10 +113,10 @@ class SwitchDpst(Element):
             link: Show dotted line linking switch levers
 
         Anchors:
-            p1
-            p2
-            t1
-            t2
+            * p1
+            * p2
+            * t1
+            * t2
     '''
     def __init__(self, *d, link: bool=True, **kwargs):
         super().__init__(*d, **kwargs)
@@ -144,12 +145,12 @@ class SwitchDpdt(Element):
             link: Show dotted line linking switch levers
 
         Anchors:
-            p1
-            p2
-            t1
-            t2
-            t3
-            t4
+            * p1
+            * p2
+            * t1
+            * t2
+            * t3
+            * t4
     '''
     def __init__(self, *d, link: bool=True, **kwargs):
         super().__init__(*d, **kwargs)
@@ -173,3 +174,52 @@ class SwitchDpdt(Element):
         self.anchors['p2'] = [0, yofst]
         self.anchors['t3'] = [1, yofst+.4]
         self.anchors['t4'] = [1, yofst-.4]
+
+
+class SwitchRotary(Element):
+    ''' Rotary Switch
+
+        Args:
+            n: number of contacts
+            dtheta: angle in degrees between each contact
+            theta0: angle in degrees of first contact
+            radius: radius of switch
+            arrowlen: length of switch arrow
+            arrowcontact: index of contact to point to
+
+        Values for dtheta and theta will be calculated based on `n`
+        if not provided.
+        
+        Anchors:
+            * P
+            * T[x] for each contact (starting at 1)
+    '''
+    def __init__(self, *d, 
+                 n: int=4, dtheta: float=None, theta0: float=None,
+                 radius: float=1, arrowlen: float=0.75,
+                 arrowcontact: int=0,
+                 **kwargs):
+        super().__init__(*d, **kwargs)
+        self.params['fill'] = 'bg'
+        self.params['zorder'] = 4
+        self.segments.append(SegmentCircle((0, 0), sw_dot_r))
+        self.anchors['P'] = (0, 0)
+
+        if dtheta is None:
+            dtheta = min(35, 360/(n+1))
+        
+        dtheta = math.radians(dtheta)
+        if theta0 is None:
+            theta0 = -dtheta * (n-1)/2
+
+        for i in range(n):
+            t = theta0 + dtheta * i
+            x = radius * math.cos(t)
+            y = radius * math.sin(t)
+            self.segments.append(SegmentCircle((x, y), sw_dot_r))
+            self.anchors[f'T{i+1}'] = (x, y)
+        
+            if i == arrowcontact:
+                arrowx = arrowlen * math.cos(t)
+                arrowy = arrowlen * math.sin(t)
+                self.segments.append(SegmentArrow((0, 0), (arrowx, arrowy), zorder=2))

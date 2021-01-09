@@ -384,6 +384,13 @@ class SegmentPoly:
         '''
         fill = self.fill if self.fill is not None else style.get('fill', None)
         color = self.color if self.color else style.get('color', 'black')
+        if fill is not None:
+            if fill is True:
+                fill = color
+            if fill is False:
+                fill = None
+            elif fill == 'bg':
+                fill = style.get('bgcolor', 'white')
         joinstyle = self.joinstyle if self.joinstyle else style.get('joinstyle', 'round')
         capstyle = self.capstyle if self.capstyle else style.get('capstyle', 'round')
         zorder = self.zorder if self.zorder is not None else style.get('zorder', 1)

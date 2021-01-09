@@ -163,7 +163,8 @@ Switches
     
     elmlist = [Button, partial(Button, nc=True),
                Switch, partial(Switch, action='open'),
-               partial(Switch, action='close')]
+               partial(Switch, action='close'),
+               SwitchReed]
     drawElements(elmlist, cols=2)
 
 

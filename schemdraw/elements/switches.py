@@ -5,6 +5,7 @@ import math
 from .elements import Element, Element2Term, gap
 from ..segments import Segment, SegmentCircle, SegmentArc, SegmentArrow
 from ..types import Point
+from ..util import linspace
 
 sw_dot_r = .12
 
@@ -176,6 +177,24 @@ class SwitchDpdt(Element):
         self.anchors['t4'] = [1, yofst-.4]
 
 
+class SwitchReed(Element2Term):
+    ''' Reed Switch '''
+    def __init__(self, *d, **kwargs):
+        super().__init__(*d, **kwargs)
+        self.segments.append(Segment(
+            [[0, 0], [.85, .15], gap, [.8, 0]]))
+        
+        r = .3
+        th = linspace(-math.pi/2, math.pi/2)
+        x1 = [-r * math.cos(t) for t in th]  # Left semicircle
+        y1 = [r * math.sin(t) for t in th]
+        x2 = [1-k for k in x1]  # Right semicircle        
+
+        x = x1 + x2 + [x1[0]]   # Combined
+        y = y1 + y1[::-1] + [y1[0]]
+        self.segments.append(Segment(list(zip(x, y))))
+
+        
 class SwitchRotary(Element):
     ''' Rotary Switch
 

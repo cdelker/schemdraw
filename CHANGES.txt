@@ -16,6 +16,8 @@ v0.9 - IN PROGRESS
         - Varactor
         - FuseIEEE
         - FuseIEC
+        - SwitchRotary
+        - SwitchReed
     
     - Deprecations:
         - `Element.add_label` is deprecated (use `Element.label`)

@@ -248,3 +248,32 @@ The Arduino board uses :py:class:`schemdraw.elements.connectors.OrthoLines` to e
     d += elm.Line().up().toy(Q1.RESET)
     d += elm.Line().right().tox(RST.start)
     d.draw()
+
+
+.. _dip741:
+
+741 Opamp, DIP Layout
+^^^^^^^^^^^^^^^^^^^^^
+
+.. jupyter-execute::
+    :code-below:
+    
+    d = schemdraw.Drawing()
+    d += (Q := elm.IcDIP(pins=8)
+                 .label('Offset Null', loc='p1', fontsize=10)
+                 .label('Inverting Input', loc='p2', fontsize=10)
+                 .label('Non-inverting Input', loc='p3', fontsize=10)
+                 .label('V-', loc='p4', fontsize=10)
+                 .label('Offset Null', loc='p5', fontsize=10)
+                 .label('Output', loc='p6', fontsize=10)
+                 .label('V+', loc='p7', fontsize=10)
+                 .label('NC', loc='p8', fontsize=10))
+    d += elm.Line().at(Q.p2_in).length(d.unit/5)
+    d += (op := elm.Opamp().anchor('in1').scale(.8))
+    d += elm.Line().at(Q.p3_in).length(d.unit/5)
+    d += elm.Line().at(op.out).length(d.unit/14)
+    d += elm.Line().down().toy(Q.p6_in)
+    d += elm.Line().right().tox(Q.p6_in)
+    d += elm.RightLines().at(Q.p4_in).to(op.n1)
+    d += elm.RightLines().at(Q.p7_in).to(op.n2)
+    d.draw()

@@ -3,7 +3,7 @@
 import math
 from dataclasses import dataclass
 from copy import copy
-from typing import List, Optional, Literal, Union, cast
+from typing import List, Optional, Literal, Union, Sequence, cast
 
 from ..segments import Segment, SegmentText, SegmentCircle, SegmentPoly, SegmentType
 from ..elements import Element
@@ -327,6 +327,82 @@ class Multiplexer(Ic):
                          plblsize=plblsize,
                          slant=slant,
                          **kwargs)
+
+
+class IcDIP(Element):
+    ''' Dual-inline Package Integrated Circuit.
+
+        Args:
+            pins: number of pins
+            names: List of names for each pin to display inside the box
+            notch: Show the notch at top of box
+            width: Width of the box
+            pinw: Width and height of each pin
+            spacing: Distance between each pin
+            number: Show pin numbers inside each pin
+            fontsize: Size for pin name labels
+            pfontsize: Size for pin number labels
+
+        Anchors:
+            * p[x]  - Each pin
+            * p[x]_in  - Inside contact for each pin
+
+        If signal names are provided, they will also be added as anchors
+        along with _in inside variants.
+    '''
+    def __init__(self, *d, pins: int=8, 
+                 names: Sequence[str]=None,
+                 notch: bool=True,
+                 width: float=3,
+                 pinw: float=0.6,
+                 spacing: float=0.5,
+                 number: bool=True,
+                 fontsize: float=12,
+                 pfontsize: float=10,         
+                 **kwargs):
+        super().__init__(*d, **kwargs)
+        if pins % 2 == 1:
+            raise ValueError('pins must be even')
+
+        height = pins/2*pinw + spacing*(pins/2+1)    
+        self.segments.append(SegmentPoly(((0, 0), (width, 0), (width, height), (0, height))))
+        
+        if notch:
+            c = width/2
+            theta = linspace(-math.pi, 0)
+            notchr = pinw/2
+            notchx = [c + notchr * math.cos(t) for t in theta]
+            notchy = [height + notchr * math.sin(t) for t in theta]
+            self.segments.append(Segment(list(zip(notchx, notchy))))
+        
+        for i in range(pins//2):
+            y1 = spacing + spacing*i+i*pinw
+            y2 = spacing + spacing*i+(i+1)*pinw
+            ymid = (y1+y2)/2
+
+            # Left
+            self.segments.append(SegmentPoly(((0, y1), (0, y2), (-pinw, y2), (-pinw, y1))))
+            pnum = pins//2 - i
+            self.anchors[f'p{pnum}'] = (-pinw, ymid)
+            self.anchors[f'p{pnum}_in'] = (0, ymid)
+            if number:
+                self.segments.append(SegmentText((-pinw/2, ymid), str(pnum), fontsize=pfontsize))
+            if names:
+                self.segments.append(SegmentText((.1, ymid), names[pnum-1], align=('left', 'center'), fontsize=fontsize))
+                self.anchors[names[pnum-1]] = (-pinw, ymid)
+                self.anchors[f'{names[pnum-1]}_in'] = (0, ymid)
+                
+            # Right
+            self.segments.append(SegmentPoly(((width, y1), (width, y2), (width+pinw, y2), (width+pinw, y1))))
+            pnum = pins//2 + i + 1
+            self.anchors[f'p{pnum}'] = (width+pinw, ymid)
+            self.anchors[f'p{pnum}_in'] = (width, ymid)
+            if number:
+                self.segments.append(SegmentText((width+pinw/2, ymid), str(pnum), fontsize=pfontsize))
+            if names:
+                self.segments.append(SegmentText((width-.1, ymid), names[pnum-1], align=('right', 'center'), fontsize=fontsize))
+                self.anchors[names[pnum-1]] = (width+pinw, ymid)
+                self.anchors[f'{names[pnum-1]}_in'] = (width, ymid)
 
 
 class DFlipFlop(Ic):

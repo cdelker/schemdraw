@@ -72,3 +72,16 @@ a digit to another element, for example to make a multi-digit display.
     :hide-code:
 
     elm.SevenSegment()
+
+
+DIP Integrated Circuits
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Integrated circuits can be drawn in dual-inline package style with :py:class:`schemdraw.elements.intcircuits.IcDIP`.
+Anchors allow connecting elements externally to show the IC in a circuit, or interanally to show the internal
+configuration of the IC (see :ref:`dip741`.)
+
+.. jupyter-execute::
+    :hide-code:
+    
+    elm.IcDIP()

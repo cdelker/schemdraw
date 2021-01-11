@@ -21,6 +21,7 @@ v0.9 - IN PROGRESS
         - Jack
         - Plug
         - Ic555
+        - IcDIP
         - SevenSegment
     
     - Deprecations:

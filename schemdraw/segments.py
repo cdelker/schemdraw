@@ -728,3 +728,7 @@ class SegmentArc:
         fig.arc(center, width=width, height=height,
                 theta1=self.theta1, theta2=self.theta2, angle=angle,
                 color=color, lw=lw, ls=ls, zorder=zorder, arrow=self.arrow)
+
+
+SegmentType = Union[Segment, SegmentText, SegmentPoly, SegmentArc,
+                    SegmentCircle, SegmentArrow]

@@ -52,6 +52,77 @@ Using the :py:class:`schemdraw.elements.intcircuits.Ic` class to define a custom
     d.draw()
 
 
+Seven-Segment Display Counter
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. jupyter-execute::
+    :code-below:
+    
+    d = schemdraw.Drawing(fontsize=12)
+    d += (IC555 := elm.Ic555())
+    d += (gnd := elm.Ground(xy=IC555.GND))
+    d += elm.Dot()
+    d += elm.Resistor().endpoints(IC555.DIS, IC555.THR).label('100 kΩ')
+    d += elm.Resistor().up().at(IC555.DIS).label('1 kΩ').label('+Vcc', 'right')
+    d += elm.Line().endpoints(IC555.THR, IC555.TRG)
+    d += elm.Capacitor(polar=True).down().at(IC555.TRG).toy(gnd.start).label('10 μF')
+    d += elm.Line().right().tox(gnd.start)
+    d += elm.Capacitor().down().at(IC555.CTL).toy(gnd.start).label('.01 μF', 'bottom')
+    d += elm.Line().left().tox(gnd.start)
+
+    d += elm.Dot().at(IC555.DIS)
+    d += elm.Dot().at(IC555.THR)
+    d += elm.Dot().at(IC555.TRG)
+    d += elm.Line().endpoints(IC555.RST,IC555.Vcc)
+    d += elm.Dot()
+    d += elm.Line().up().length(d.unit/4).label('+Vcc', 'right')
+
+    IC4026 = elm.Ic(pins=[elm.IcPin('CLK', pin='1', side='left'),
+                          elm.IcPin('INH', pin='2', side='left'), # Inhibit
+                          elm.IcPin('RST', pin='15', side='left'),
+                          elm.IcPin('DEI', pin='3', side='left'), # Display Enable In
+                          elm.IcPin('Vss', pin='8', side='bot'),
+                          elm.IcPin('Vdd', pin='16', side='top'),
+                          elm.IcPin('UCS', pin='14', side='bot'), # Ungated C Segment
+                          elm.IcPin('DEO', pin='4', side='bot'),  # Display Enable Out
+                          elm.IcPin('Co', pin='4', side='bot'),   # Carry out
+                          elm.IcPin('g', pin='7', side='right'),
+                          elm.IcPin('f', pin='6', side='right'),                      
+                          elm.IcPin('e', pin='11', side='right'),
+                          elm.IcPin('d', pin='9', side='right'),
+                          elm.IcPin('c', pin='13', side='right'),
+                          elm.IcPin('b', pin='12', side='right'),
+                          elm.IcPin('a', pin='10', side='right'),
+                         ],
+                   w=4, leadlen=.8).label('4026').right()
+
+    d += IC4026.at((IC555.OUT[0]+5, IC555.center[1])).anchor('center')
+    d += elm.Line().at(IC555.OUT).right().length(d.unit/3)
+    d += elm.Line().down().toy(IC4026.CLK)
+    d += elm.Line().right().tox(IC4026.CLK)
+    d += elm.LineDot().endpoints(IC4026.INH, IC4026.RST)
+    d += elm.Line().left().length(d.unit/4)
+    d += elm.Ground()
+    d += elm.Line().at(IC4026.DEI).up().toy(IC4026.Vdd)
+    d += elm.LineDot().right().tox(IC4026.Vdd)
+    d += elm.Line().up().length(d.unit/4).label('+Vcc', 'right')
+    d += elm.LineDot().right().at(IC4026.Vss).tox(IC4026.UCS)
+    d += elm.Ground()
+    d += elm.LineDot().tox(IC4026.DEO)
+    d += elm.Line().tox(IC4026.Co)
+
+    d += elm.Resistor().right().at(IC4026.a)
+    d += (disp := elm.SevenSegment(cathode=True).anchor('a'))
+    d += elm.Resistor().at(IC4026.b)
+    d += elm.Resistor().at(IC4026.c)
+    d += elm.Resistor().at(IC4026.d)
+    d += elm.Resistor().at(IC4026.e)
+    d += elm.Resistor().at(IC4026.f)
+    d += elm.Resistor().at(IC4026.g).label('7 x 330', loc='bottom')
+    d += elm.Ground().at(disp.cathode)
+    d.draw()
+
+
 Arduino Board
 ^^^^^^^^^^^^^
 

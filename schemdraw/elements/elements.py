@@ -6,7 +6,7 @@ from dataclasses import dataclass
 import warnings
 import math
 
-from ..segments import Segment, SegmentPoly, SegmentText, SegmentCircle, SegmentArc, SegmentArrow, BBox
+from ..segments import Segment, SegmentPoly, SegmentText, SegmentCircle, SegmentArc, SegmentArrow, BBox, SegmentType
 from ..transform import Transform
 from .. import util
 from ..util import Point
@@ -63,8 +63,7 @@ class Element:
 
         self.anchors: MutableMapping[str, Any] = {}     # Untransformed anchors
         self.absanchors: MutableMapping[str, Any] = {}  # Transformed, absolute anchors
-        self.segments: List[Union[Segment, SegmentText, SegmentArc,
-                                  SegmentArrow, SegmentCircle, SegmentPoly]] = []
+        self.segments: List[SegmentType] = []
         self.transform = Transform(0, [0, 0])
 
         if 'xy' in self._userparams:  # Allow legacy 'xy' parameter

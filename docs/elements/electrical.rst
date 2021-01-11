@@ -130,13 +130,13 @@ Diodes
     drawElements(elmlist, cols=2)
 
 
-Miscmiscellaneous
+Miscellaneous
 ^^^^^^^^^^^^^^^^^
 
 .. jupyter-execute::
     :hide-code:
     
-    elmlist = [Fuse, partial(Fuse, dots=False), Breaker, Crystal, CPE, Josephson, Motor, Lamp, Neon, Thermistor, Memristor, Memristor2]
+    elmlist = [Fuse, partial(Fuse, dots=False), Breaker, Crystal, CPE, Josephson, Motor, Lamp, Neon, Thermistor, Memristor, Memristor2, Jack, Plug]
     drawElements(elmlist, cols=2)
 
 

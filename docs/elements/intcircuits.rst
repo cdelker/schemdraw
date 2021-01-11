@@ -59,3 +59,16 @@ Multiplexers and demultiplexers are drawn with the :py:class:`schemdraw.elements
         edgepadH=-.5)
         
 See the :ref:`gallery` for more examples.
+
+
+Seven-Segment Display
+^^^^^^^^^^^^^^^^^^^^^
+
+A seven-segment display, in :py:class:`schemdraw.elements.intcircuits.SevenSegment`, provides a single digit
+with several options including decimal point and common anode or common cathode mode. The :py:meth:`schemdraw.elements.intcircuits.sevensegdigit` method provides a list of Segment objects for adding
+a digit to another element, for example to make a multi-digit display.
+
+.. jupyter-execute::
+    :hide-code:
+
+    elm.SevenSegment()

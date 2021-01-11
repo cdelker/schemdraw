@@ -1,6 +1,6 @@
 ''' SVG drawing backend for schemdraw '''
 
-from typing import Tuple, List, Literal, Sequence
+from typing import Tuple, List, Literal, Sequence, Optional
 
 import os
 import sys
@@ -71,7 +71,7 @@ class Figure:
         self.showframe = kwargs.get('showframe', False)
         self.scale = 64.8 * kwargs.get('inches_per_unit', .5)  # Magic scale factor that matches what MPL did
         self.set_bbox(bbox)
-        self._bgcolor = None
+        self._bgcolor: Optional[str] = None
 
     def set_bbox(self, bbox: BBox) -> None:
         ''' Set the bounding box '''

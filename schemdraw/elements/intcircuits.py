@@ -3,9 +3,9 @@
 import math
 from dataclasses import dataclass
 from copy import copy
-from typing import List, Optional, Literal, cast
+from typing import List, Optional, Literal, Union, cast
 
-from ..segments import Segment, SegmentText, SegmentCircle
+from ..segments import Segment, SegmentText, SegmentCircle, SegmentPoly, SegmentType
 from ..elements import Element
 from ..util import linspace, Point
 from ..types import XY, Align
@@ -268,6 +268,7 @@ class Ic(Element):
         for p in paths:
             self.segments.append(Segment(p))
         self.params['lblloc'] = 'center'
+        self.anchors['center'] = (w/2, h/2)
 
 
 class Multiplexer(Ic):
@@ -326,3 +327,299 @@ class Multiplexer(Ic):
                          plblsize=plblsize,
                          slant=slant,
                          **kwargs)
+
+
+class DFlipFlop(Ic):
+    ''' D-Type Flip Flop
+
+        Args:
+            preclr: Show preset and clear inputs
+            preclrinvert: Add invert bubble to preset and clear inputs
+            size: Size of the box
+
+        Anchors:
+            * D
+            * CLK
+            * Q
+            * Qbar
+            * PRE
+            * CLR
+    '''
+    def __init__(self, *d, preclr: bool=False, preclrinvert: bool=True, size=(2, 3), **kwargs):
+        pins=[IcPin('D', side='left', slot='2/2'),
+              IcPin('>', side='left', slot='1/2'),
+              IcPin('Q', side='right', slot='2/2'),
+              IcPin('$\overline{\mathrm{Q}}$', side='right', slot='1/2', anchorname='Qbar')]
+
+        if preclr:
+            pins.extend([IcPin('PRE', side='top', invert=preclrinvert),
+                         IcPin('CLR', side='bottom', invert=preclrinvert)])
+
+        super().__init__(pins=pins, size=size)
+        
+
+class JKFlipFlop(Ic):
+    ''' J-K Flip Flop
+
+        Args:
+            preclr: Show preset and clear inputs
+            preclrinvert: Add invert bubble to preset and clear inputs
+            size: Size of the box
+
+        Anchors:
+            * J
+            * K
+            * CLK
+            * Q
+            * Qbar
+            * PRE
+            * CLR
+    '''
+    def __init__(self, *d, preclr: bool=False, preclrinvert: bool=True, size=(2, 3), **kwargs):
+        pins=[IcPin('J', side='left', slot='3/3'),
+              IcPin('>', side='left', slot='2/3'),
+              IcPin('K', side='left', slot='1/3'),
+              IcPin('Q', side='right', slot='2/2'),
+              IcPin('$\overline{\mathrm{Q}}$', side='right', slot='1/2', anchorname='Qbar')]
+
+        if preclr:
+            pins.extend([IcPin('PRE', side='top', invert=preclrinvert),
+                         IcPin('CLR', side='bottom', invert=preclrinvert)])
+
+        super().__init__(pins=pins, size=size)
+
+
+class VoltageRegulator(Ic):
+    ''' Voltage regulator
+
+        Args:
+            size: Size of the box
+
+        Anchors:
+            * in
+            * out
+            * gnd
+    '''
+    def __init__(self, *d, size=(2, 1.5), **kwargs):
+        pins=[IcPin('in', side='left', slot='3/3'),
+              IcPin('out', side='right', slot='3/3'),
+              IcPin('gnd', side='bottom')]
+        super().__init__(pins=pins, size=size)
+
+
+class Ic555(Ic):
+    def __init__(self, *d, **kwargs):
+        pins=[IcPin(name='TRG', side='left', pin='2'),
+              IcPin(name='THR', side='left', pin='6'),
+              IcPin(name='DIS', side='left', pin='7'),
+              IcPin(name='CTL', side='right', pin='5'),
+              IcPin(name='OUT', side='right', pin='3'),
+              IcPin(name='RST', side='top', pin='4'),
+              IcPin(name='Vcc', side='top', pin='8'),
+              IcPin(name='GND', side='bot', pin='1')]
+        super().__init__(pins=pins,
+                         edgepadW=.5,
+                         edgepadH=1,
+                         pinspacing=1.5,
+                         leadlen=1,
+                         label='555')
+        
+        
+def sevensegdigit(bottom: float=0, left: float=0,
+                  seglen: float=1.5, segw: float=0.3, spacing: float=0.12,                  
+                  decimal: bool=False, digit: Union[int, str]=8, 
+                  segcolor: str='red', tilt: float=10, labelsegments: bool=True) -> List[SegmentType]:
+    ''' Generate drawing segments for a 7-segment display digit. Use for
+        building new elements incorporating a 7-segment display.
+    
+        Args:
+            bottom: Location of bottom of digit
+            left: Location of left side of digit
+            seglen: Length of one segment
+            segw: Width of one segment
+            spacing: Distance between segments in corners
+            decimal: Show decimal point segment
+            digit: Number to display
+            segcolor: Color of segments
+            tilt: Tilt angle in degrees
+            labelsegments: Add a-g labels to each segment
+            anode: Add common anode pin
+            cathode: Add common cathode pin
+            size: Total size of the box
+
+        Returns:
+            List of Segments making the digit
+    '''
+    halfw = segw/2 # Half segment width
+    halfspace = spacing/2
+    tilt = math.radians(tilt)
+
+    # Straight (non-tilted) segments - Horizontal
+    segDx = [halfspace, halfspace+halfw, seglen-halfspace-halfw,
+             seglen-halfspace, seglen-halfspace-halfw, halfspace+halfw]
+    segDy = [0, halfw, halfw, 0, -halfw, -halfw]
+    segAx = segDx
+    segGx = segDx
+    segAy = [k + seglen*2 for k in segDy]
+    segGy = [k + seglen for k in segDy]
+    # - Vertical
+    segEx = [0, halfw, halfw, 0, -halfw, -halfw]
+    segEy = [halfspace, halfspace+halfw, seglen-halfspace-halfw,
+             seglen-halfspace,  seglen-halfspace-halfw, halfspace+halfw]
+    segFx = segEx
+    segFy = [k + seglen for k in segEy]
+    segBx = [k + seglen for k in segEx]
+    segBy = segFy
+    segCx = segBx
+    segCy = segEy
+
+    # Label positions
+    segAlabel = (seglen/2 + halfspace, seglen*2+halfw)
+    segGlabel = (seglen/2 + halfspace, seglen+halfw)
+    segDlabel = (seglen/2 + halfspace, halfw)
+    segBlabel = (seglen + halfw + halfspace, seglen*1.5)
+    segClabel = (seglen + halfw + halfspace, seglen*.5)
+    segElabel = (-halfw - halfspace, seglen*.5)
+    segFlabel = (-halfw - halfspace, seglen*1.5)
+
+    # Apply shear
+    if tilt != 0:
+        lam = math.sin(tilt)
+        segAx = [k + lam*i for k, i in zip(segAx, segAy)]
+        segBx = [k + lam*i for k, i in zip(segBx, segBy)]
+        segCx = [k + lam*i for k, i in zip(segCx, segCy)]
+        segDx = [k + lam*i for k, i in zip(segDx, segDy)]
+        segEx = [k + lam*i for k, i in zip(segEx, segEy)]
+        segFx = [k + lam*i for k, i in zip(segFx, segFy)]
+        segGx = [k + lam*i for k, i in zip(segGx, segGy)]
+        def shiftlabel(label):
+            return label[0] + label[1]*lam, label[1]
+        segAlabel = shiftlabel(segAlabel)
+        segGlabel = shiftlabel(segGlabel)
+        segDlabel = shiftlabel(segDlabel)
+        segBlabel = shiftlabel(segBlabel)
+        segClabel = shiftlabel(segClabel)
+        segElabel = shiftlabel(segElabel)
+        segFlabel = shiftlabel(segFlabel)
+        left -= lam*seglen    
+
+    # Translate to final position
+    segDx = [k + left for k in segDx]
+    segDy = [k + bottom for k in segDy]
+    segGx = [k + left for k in segGx]
+    segGy = [k + bottom for k in segGy]
+    segAx = [k + left for k in segAx]
+    segAy = [k + bottom for k in segAy]
+    segEx = [k + left for k in segEx]
+    segEy = [k + bottom for k in segEy]
+    segFx = [k + left for k in segFx]
+    segFy = [k + bottom for k in segFy]
+    segBx = [k + left for k in segBx]
+    segBy = [k + bottom for k in segBy]
+    segCx = [k + left for k in segCx]
+    segCy = [k + bottom for k in segCy]
+    segAlabel = (segAlabel[0] + left, segAlabel[1] + bottom)
+    segGlabel = (segGlabel[0] + left, segGlabel[1] + bottom)
+    segDlabel = (segDlabel[0] + left, segDlabel[1] + bottom)
+    segBlabel = (segBlabel[0] + left, segBlabel[1] + bottom)
+    segClabel = (segClabel[0] + left, segClabel[1] + bottom)
+    segElabel = (segElabel[0] + left, segElabel[1] + bottom)
+    segFlabel = (segFlabel[0] + left, segFlabel[1] + bottom)
+
+    # Fill based on digit parameter
+    fillA = segcolor if str(digit).lower() in ['2', '3', '5', '6', '7', '8', '9', '0', 'a', 'c', 'e', 'f'] else None
+    fillB = segcolor if str(digit).lower() in ['1', '2', '3', '4', '7', '8', '9', '0', 'a', 'd'] else None
+    fillC = segcolor if str(digit).lower() in ['1', '3', '4', '5', '6', '7', '8', '9', '0', 'a', 'b', 'd'] else None
+    fillD = segcolor if str(digit).lower() in ['2', '3', '5', '6', '8', '9', '0', 'b', 'c', 'd', 'e'] else None
+    fillE = segcolor if str(digit).lower() in ['2', '6', '8', '0', 'a', 'b', 'c', 'd', 'e', 'f'] else None
+    fillF = segcolor if str(digit).lower() in ['4', '5', '6', '8', '9', '0', 'a', 'b', 'c', 'e', 'f'] else None
+    fillG = segcolor if str(digit).lower() in ['2', '3', '4', '5', '6', '8', '9', 'a', 'b', 'd', 'e', 'f'] else None
+
+    segments: List[SegmentType] = []
+    segments.append(SegmentPoly(list(zip(segAx, segAy)), color='gray', fill=fillA, lw=.5))
+    segments.append(SegmentPoly(list(zip(segBx, segBy)), color='gray', fill=fillB, lw=.5))
+    segments.append(SegmentPoly(list(zip(segCx, segCy)), color='gray', fill=fillC, lw=.5))
+    segments.append(SegmentPoly(list(zip(segDx, segDy)), color='gray', fill=fillD, lw=.5))
+    segments.append(SegmentPoly(list(zip(segEx, segEy)), color='gray', fill=fillE, lw=.5))
+    segments.append(SegmentPoly(list(zip(segFx, segFy)), color='gray', fill=fillF, lw=.5))
+    segments.append(SegmentPoly(list(zip(segGx, segGy)), color='gray', fill=fillG, lw=.5))
+    if labelsegments:
+        segments.append(SegmentText(segAlabel, 'a', align=('center', 'bottom'), fontsize=10))
+        segments.append(SegmentText(segGlabel, 'g', align=('center', 'bottom'), fontsize=10))
+        segments.append(SegmentText(segDlabel, 'd', align=('center', 'bottom'), fontsize=10))
+        segments.append(SegmentText(segBlabel, 'b', align=('left', 'center'), fontsize=10))
+        segments.append(SegmentText(segClabel, 'c', align=('left', 'center'), fontsize=10))
+        segments.append(SegmentText(segElabel, 'e', align=('right', 'center'), fontsize=10))
+        segments.append(SegmentText(segFlabel, 'f', align=('right', 'center'), fontsize=10))
+
+    if decimal:
+        dotrad = .15
+        segments.append(SegmentCircle((left+seglen+segw+dotrad/2, bottom),
+                                      radius=dotrad, color='gray', fill=segcolor, lw=.5))
+    return segments
+        
+        
+class SevenSegment(Ic):
+    ''' A seven-segment display digit.
+
+        Args:
+            decimal: Show decimal point segment
+            digit: Number to display
+            segcolor: Color of segments
+            tilt: Tilt angle in degrees
+            labelsegments: Add a-g labels to each segment
+            anode: Add common anode pin
+            cathode: Add common cathode pin
+            size: Total size of the box
+
+        Anchors:
+            * a
+            * b
+            * c
+            * d
+            * e
+            * f
+            * g
+            * dp
+            * cathode
+            * anode
+    '''
+    def __init__(self, *d, decimal: bool=False,
+                 digit: Union[int, str]=8, 
+                 segcolor: str='red',
+                 tilt: float=10,
+                 labelsegments: bool=True,
+                 anode: bool=False,
+                 cathode: bool=False,
+                 size=(2, 1.5), **kwargs):
+        
+        if decimal:
+            slots = '8'
+            boxheight = 5.9
+        else:
+            slots = '7'
+            boxheight = 5.3
+        
+        pins=[IcPin(pin='a', side='left', slot=f'{7+decimal}/{slots}', anchorname='a'),
+              IcPin(pin='b', side='left', slot=f'{6+decimal}/{slots}', anchorname='b'),
+              IcPin(pin='c', side='left', slot=f'{5+decimal}/{slots}', anchorname='c'),
+              IcPin(pin='d', side='left', slot=f'{4+decimal}/{slots}', anchorname='d'),
+              IcPin(pin='e', side='left', slot=f'{3+decimal}/{slots}', anchorname='e'),
+              IcPin(pin='f', side='left', slot=f'{2+decimal}/{slots}', anchorname='f'),
+              IcPin(pin='g', side='left', slot=f'{1+decimal}/{slots}', anchorname='g')]
+        if decimal:
+            pins.append(IcPin(pin='dp', side='left', slot=f'1/{slots}', anchorname='dp'))
+        if anode:
+            pins.append(IcPin(pin='ca', side='top', anchorname='anode'))
+        if cathode:
+            pins.append(IcPin(pin='cc', side='bottom', anchorname='cathode'))
+
+        super().__init__(pins=pins, w=3)
+
+        left = 0.8
+        seglen = 1.5
+        bot = (boxheight-seglen*2)/2
+        
+        segments = sevensegdigit(left=0.8, bottom=bot, decimal=decimal, digit=digit,
+                                 segcolor=segcolor, tilt=tilt, labelsegments=labelsegments)
+        self.segments.extend(segments)

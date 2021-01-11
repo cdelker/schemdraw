@@ -8,9 +8,9 @@ from .transistors import NFet, PFet, JFet, JFetN, JFetP, Bjt, BjtNpn, BjtPnp, Bj
 from .misc import Speaker, Mic, Motor, AudioJack
 from .xform import Transformer
 from .cables import Coax, Triax
-from .intcircuits import IcPin, Ic, Multiplexer
+from .intcircuits import IcPin, Ic, Multiplexer, VoltageRegulator, DFlipFlop, JKFlipFlop, Ic555, SevenSegment, sevensegdigit
 from .lines import Line, Dot, Arrowhead, Arrow, LineDot, DotDotDot, Gap, Label, Tag, CurrentLabel, CurrentLabelInline, LoopCurrent, Rect
-from .connectors import OrthoLines, RightLines, Header, Jumper, BusConnect, BusLine, DB25, DB9, CoaxConnect
+from .connectors import OrthoLines, RightLines, Header, Jumper, BusConnect, BusLine, DB25, DB9, CoaxConnect, Plug, Jack
 from .compound import ElementCompound, Optocoupler, Relay
 
 

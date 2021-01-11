@@ -18,6 +18,10 @@ v0.9 - IN PROGRESS
         - FuseIEC
         - SwitchRotary
         - SwitchReed
+        - Jack
+        - Plug
+        - Ic555
+        - SevenSegment
     
     - Deprecations:
         - `Element.add_label` is deprecated (use `Element.label`)

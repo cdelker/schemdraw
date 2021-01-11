@@ -5,6 +5,7 @@ from typing import Tuple, Literal, Sequence
 
 from ..segments import Segment, SegmentText, SegmentCircle, SegmentPoly
 from ..elements import Element, Line
+from .twoterm import resheight, gap
 from ..types import Point, XY, Valign
 
 
@@ -398,3 +399,22 @@ class CoaxConnect(Element):
         self.anchors['S'] = [0, -radius]
         self.anchors['E'] = [radius, 0]
         self.anchors['W'] = [-radius, 0]
+
+
+class Plug(Element):
+    ''' Plug (male connector) '''
+    def __init__(self, *d, **kwargs):
+        super().__init__(*d, **kwargs)
+        pluggap = 0.18
+        self.segments.append(Segment([[0, 0], [1, 0], gap, [1-resheight, resheight], [1, 0],
+                                      [1-resheight, -resheight]]))
+        self.params['drop'] = [1+pluggap, 0]
+
+
+class Jack(Element):
+    ''' Jack (female connector) '''
+    def __init__(self, *d, **kwargs):
+        super().__init__(*d, **kwargs)
+        self.segments.append(Segment([[0, 0], [-resheight, resheight], gap,
+                                      [-resheight, -resheight], [0, 0], [1, 0]]))
+        self.params['drop'] = [1, 0]

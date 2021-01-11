@@ -115,7 +115,7 @@ Note the use of the LaTeX command **overline{Q}** in the label to draw a bar ove
     d += logic.Line().up().at(J.in3).length(d.unit/6)
     d += logic.Line().right().tox(Qb2.start)
     d += logic.Line().down().toy(Qb2.start)
-    d += logic.Line().left().at(J.in2).length(d.unit/4).label('J')
+    d += logic.Line().left().at(J.in2).length(d.unit/4).label('J', 'left')
     d += logic.Line().left().at(G2.in2).length(d.unit/6)
     d += (K := logic.Nand(inputs=3).reverse().anchor('out'))
     d += logic.Line().down().at(K.in1).length(d.unit/6)

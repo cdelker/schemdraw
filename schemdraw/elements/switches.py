@@ -1,9 +1,9 @@
 ''' Switches and buttons '''
-from typing import Optional, Literal
+from typing import Optional, Literal, Sequence
 import math
 
 from .elements import Element, Element2Term, gap
-from ..segments import Segment, SegmentCircle, SegmentArc, SegmentArrow
+from ..segments import Segment, SegmentCircle, SegmentArc, SegmentArrow, SegmentPoly
 from ..types import Point
 from ..util import linspace
 
@@ -242,3 +242,36 @@ class SwitchRotary(Element):
                 arrowx = arrowlen * math.cos(t)
                 arrowy = arrowlen * math.sin(t)
                 self.segments.append(SegmentArrow((0, 0), (arrowx, arrowy), zorder=2))
+
+
+class SwitchDIP(Element):
+    ''' DIP switch
+
+        Args:
+            n: Number of switches
+            pattern: Boolean sequence indicating whether each switch is flipped up or down
+            switchcolor: Fill color for flipped switches
+            swidth: Width of one switch
+            spacing: Spacing between switches
+    '''
+    def __init__(self, *d, n: int=3, pattern: Sequence[bool]=None, switchcolor:str ='#333333', 
+                 swidth: float=0.4, spacing: float=0.2,
+                 **kwargs):
+        super().__init__(*d, **kwargs)
+        
+        width = swidth * n + spacing*(n+1)
+        height = swidth*2 + spacing * 2
+        
+        self.segments.append(SegmentPoly(((0, 0), (width, 0), (width, height), (0, height))))
+        for i in range(n):
+            x = spacing * (i+1) + swidth * i
+            up = pattern and pattern[i]
+            down = pattern and not pattern[i]
+            self.segments.append(SegmentPoly(((x, spacing+swidth), (x+swidth, spacing+swidth),
+                                              (x+swidth, spacing+swidth*2), (x, spacing+swidth*2)),
+                                              fill=switchcolor if up else None))  # Upper
+            self.segments.append(SegmentPoly(((x, spacing), (x+swidth, spacing),
+                                              (x+swidth, spacing+swidth), (x, spacing+swidth)),
+                                              fill=switchcolor if down else None))  # Lower
+            self.anchors[f'a{i+1}'] = (x + swidth/2, 0)
+            self.anchors[f'b{i+1}'] = (x + swidth/2, height)

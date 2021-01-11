@@ -274,6 +274,33 @@ The rotary switch :py:class:`schemdraw.elements.switches.SwitchRotary` takes sev
     )
 
 
+DIP Switch
+^^^^^^^^^^
+
+Switch in a dual-inline package :py:class:`schemdraw.elements.switches.SwitchDIP` can show each switch flipped up or down.
+
+.. jupyter-execute::
+    :hide-code:
+    
+    d = schemdraw.Drawing()
+    d += (elm.SwitchDIP().label('SwitchDIP', 'right')
+         .label('a1', color='blue', loc='a1', valign='top', fontsize=11)
+         .label('a2', color='blue', loc='a2', valign='top', fontsize=11)
+         .label('a3', color='blue', loc='a3', valign='top', fontsize=11)
+         .label('b1', color='blue', loc='b1', valign='bottom', fontsize=11)
+         .label('b2', color='blue', loc='b2', valign='bottom', fontsize=11)
+         .label('b3', color='blue', loc='b3', valign='bottom', fontsize=11))
+    d += (elm.SwitchDIP(pattern=(0, 0, 1)).label('SwitchDIP(pattern=(0, 0, 1))', 'right')
+         .label('a1', color='blue', loc='a1', valign='top', fontsize=11)
+         .label('a2', color='blue', loc='a2', valign='top', fontsize=11)
+         .label('a3', color='blue', loc='a3', valign='top', fontsize=11)
+         .label('b1', color='blue', loc='b1', valign='bottom', fontsize=11)
+         .label('b2', color='blue', loc='b2', valign='bottom', fontsize=11)
+         .label('b3', color='blue', loc='b3', valign='bottom', fontsize=11).at((5, 0)))
+    d.draw()
+
+
+
 
 Audio Elements
 --------------

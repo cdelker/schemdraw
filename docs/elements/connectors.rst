@@ -168,3 +168,23 @@ BusConnect elements define anchors `start`, `end` on the endpoints of the wide b
     :hide-code:
 
     d.draw()
+
+
+Outlets
+^^^^^^^
+
+Power outlets and plugs are drawn using `OutletX` classes, with international styles A through L. Each has anchors
+`hot`, `neutral`, and `ground` (if applicable).
+The `plug` parameter fills the prongs to indicate a plug versus an outlet.
+
+.. jupyter-execute::
+    :hide-code:
+
+    outlets = [elm.OutletA, elm.OutletB, elm.OutletC, elm.OutletD, elm.OutletE, elm.OutletF,
+               elm.OutletG, elm.OutletH, elm.OutletI, elm.OutletJ, elm.OutletK, elm.OutletL]
+    d = schemdraw.Drawing()
+    for i, outlet in enumerate(outlets):
+        K = outlet().label(outlet.__name__, loc='top')
+        d.here = (i % 4) * 4, (i//4) * -4
+        d += K
+    d.draw()

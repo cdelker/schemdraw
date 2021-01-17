@@ -249,9 +249,9 @@ class Ic(Element):
 
                         self.segments.append(SegmentCircle(
                             pinxy+invertofst, invertradius))
-                        paths.append([pinxy+invertofst*2, pinxy+leadext])
+                        paths.append((pinxy+invertofst*2, pinxy+leadext))
                     else:
-                        paths.append([pinxy, pinxy+leadext])
+                        paths.append((pinxy, pinxy+leadext))
 
                 # Define anchors
                 anchorpos = pinxy+leadext

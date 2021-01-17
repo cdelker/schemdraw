@@ -22,16 +22,16 @@ class Box(Element):
     '''
     def __init__(self, w: float=3, h: float=2, **kwargs):
         super().__init__(**kwargs)
-        self.segments.append(Segment([[0, 0], [0, w/2], [h, w/2],
-                                      [h, -w/2], [0, -w/2], [0, 0]]))
+        self.segments.append(Segment([(0, 0), (0, w/2), (h, w/2),
+                                      (h, -w/2), (0, -w/2), (0, 0)]))
         self.params['lblloc'] = 'center'
         self.params['lblofst'] = 0
         self.params['theta'] = -90
-        self.params['drop'] = [h, 0]
-        self.anchors['W'] = [h/2, -w/2]
-        self.anchors['E'] = [h/2, w/2]
-        self.anchors['S'] = [h, 0]
-        self.anchors['N'] = [0, 0]
+        self.params['drop'] = (h, 0)
+        self.anchors['W'] = (h/2, -w/2)
+        self.anchors['E'] = (h/2, w/2)
+        self.anchors['S'] = (h, 0)
+        self.anchors['N'] = (0, 0)
 
 
 class Subroutine(Element):
@@ -51,18 +51,18 @@ class Subroutine(Element):
     '''
     def __init__(self, w: float=3.5, h: float=2, s: float=0.3, **kwargs):
         super().__init__(**kwargs)
-        self.segments.append(Segment([[0, 0], [0, w/2], [h, w/2],
-                                      [h, -w/2], [0, -w/2], [0, 0]]))
-        self.segments.append(Segment([[0, w/2-s], [h, w/2-s]]))
-        self.segments.append(Segment([[0, -w/2+s], [h, -w/2+s]]))
+        self.segments.append(Segment([(0, 0), (0, w/2), (h, w/2),
+                                      (h, -w/2), (0, -w/2), (0, 0)]))
+        self.segments.append(Segment([(0, w/2-s), (h, w/2-s)]))
+        self.segments.append(Segment([(0, -w/2+s), (h, -w/2+s)]))
         self.params['lblloc'] = 'center'
         self.params['lblofst'] = 0
         self.params['theta'] = -90
-        self.params['drop'] = [h, 0]
-        self.anchors['W'] = [h/2, -w/2]
-        self.anchors['E'] = [h/2, w/2]
-        self.anchors['S'] = [h, 0]
-        self.anchors['N'] = [0, 0]
+        self.params['drop'] = (h, 0)
+        self.anchors['W'] = (h/2, -w/2)
+        self.anchors['E'] = (h/2, w/2)
+        self.anchors['S'] = (h, 0)
+        self.anchors['N'] = (0, 0)
 
 
 class Data(Element):
@@ -81,16 +81,16 @@ class Data(Element):
     '''
     def __init__(self, w: float=3, h: float=2, s: float=0.5, **kwargs):
         super().__init__(**kwargs)
-        self.segments.append(Segment([[0, 0], [0, w/2+s/2], [h, w/2-s/2],
-                                      [h, -w/2-s/2], [0, -w/2+s/2], [0, 0]]))
+        self.segments.append(Segment([(0, 0), (0, w/2+s/2), (h, w/2-s/2),
+                                      (h, -w/2-s/2), (0, -w/2+s/2), (0, 0)]))
         self.params['lblloc'] = 'center'
         self.params['lblofst'] = 0
         self.params['theta'] = -90
-        self.params['drop'] = [h, 0]
-        self.anchors['W'] = [h/2, -w/2]
-        self.anchors['E'] = [h/2, w/2]
-        self.anchors['S'] = [h, 0]
-        self.anchors['N'] = [0, 0]
+        self.params['drop'] = (h, 0)
+        self.anchors['W'] = (h/2, -w/2)
+        self.anchors['E'] = (h/2, w/2)
+        self.anchors['S'] = (h, 0)
+        self.anchors['N'] = (0, 0)
 
 
 class Start(Element):
@@ -118,11 +118,11 @@ class Start(Element):
         self.params['lblloc'] = 'center'
         self.params['lblofst'] = 0
         self.params['theta'] = -90
-        self.params['drop'] = [h, 0]
-        self.anchors['W'] = [h/2, -w/2]
-        self.anchors['E'] = [h/2, w/2]
-        self.anchors['S'] = [h, 0]
-        self.anchors['N'] = [0, 0]
+        self.params['drop'] = (h, 0)
+        self.anchors['W'] = (h/2, -w/2)
+        self.anchors['E'] = (h/2, w/2)
+        self.anchors['S'] = (h, 0)
+        self.anchors['N'] = (0, 0)
 
 
 class Decision(Element):
@@ -150,16 +150,16 @@ class Decision(Element):
                  font: str=None, fontsize: float=14,
                  **kwargs):
         super().__init__(**kwargs)
-        self.segments.append(Segment([[0, 0], [h/2, w/2], [h, 0],
-                                      [h/2, -w/2], [0, 0]]))
+        self.segments.append(Segment([(0, 0), (h/2, w/2), (h, 0),
+                                      (h/2, -w/2), (0, 0)]))
         self.params['lblloc'] = 'center'
         self.params['lblofst'] = 0
         self.params['theta'] = -90
-        self.params['drop'] = [h, 0]
-        self.anchors['W'] = [h/2, -w/2]
-        self.anchors['E'] = [h/2, w/2]
-        self.anchors['S'] = [h, 0]
-        self.anchors['N'] = [0, 0]
+        self.params['drop'] = (h, 0)
+        self.anchors['W'] = (h/2, -w/2)
+        self.anchors['E'] = (h/2, w/2)
+        self.anchors['S'] = (h, 0)
+        self.anchors['N'] = (0, 0)
 
         lblofst = .13
         if N:
@@ -195,12 +195,12 @@ class Connect(Element):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         r = kwargs.get('r', 0.75)
-        self.segments.append(SegmentCircle([r, 0], r))
+        self.segments.append(SegmentCircle((r, 0), r))
         self.params['lblloc'] = 'center'
         self.params['lblofst'] = 0
         self.params['theta'] = -90
-        self.params['drop'] = [2*r, 0]
-        self.anchors['W'] = [r, -r]
-        self.anchors['E'] = [r, r]
-        self.anchors['S'] = [2*r, 0]
-        self.anchors['N'] = [0, 0]
+        self.params['drop'] = (2*r, 0)
+        self.anchors['W'] = (r, -r)
+        self.anchors['E'] = (r, r)
+        self.anchors['S'] = (2*r, 0)
+        self.anchors['N'] = (0, 0)

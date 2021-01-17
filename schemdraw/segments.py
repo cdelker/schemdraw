@@ -80,7 +80,7 @@ class Segment:
     ''' A segment path
 
         Args:
-            path: List of [x,y] coordinates making the path
+            path: List of (x,y) coordinates making the path
             color: Color for this segment
             lw: Line width for the segment
             ls: Line style for the segment '-', '--', ':', etc.
@@ -105,10 +105,6 @@ class Segment:
         self.ls = ls
         self.capstyle = capstyle
         self.joinstyle = joinstyle
-
-    def end(self) -> XY:
-        ''' Get endpoint of this segment, untransformed '''
-        return self.path[-1]
 
     def xform(self, transform, **style) -> 'Segment':
         ''' Return a new Segment that has been transformed
@@ -172,8 +168,6 @@ class Segment:
                 fill = None
             elif fill is True:
                 fill = color
-            elif fill is False:
-                fill = None
 
         x = [p[0] for p in path]
         y = [p[1] for p in path]
@@ -245,10 +239,6 @@ class SegmentText:
         return SegmentText(transform.transform(self.xy),
                            self.text, **params)
 
-    def end(self) -> Sequence[float]:
-        ''' Get endpoint of this segment, untransformed '''
-        return self.xy
-
     def get_bbox(self) -> BBox:
         ''' Get bounding box (untransformed)
 
@@ -302,7 +292,7 @@ class SegmentPoly:
     ''' A polygon segment
 
         Args:
-            xy: List of [x,y] coordinates making the polygon
+            xy: List of (x,y) coordinates making the polygon
             closed: Draw a closed polygon (default True)
             cornerradius: Round the corners to this radius (0 for no rounding)
             color: Color for this segment
@@ -359,10 +349,6 @@ class SegmentPoly:
         style = {k: v for k, v in style.items() if k in params.keys()}
         params.update(style)
         return SegmentPoly(transform.transform_array(self.verts), **params)
-
-    def end(self) -> Sequence[float]:
-        ''' Get endpoint of this segment, untransformed '''
-        return self.verts[-1]
 
     def get_bbox(self) -> BBox:
         ''' Get bounding box (untransformed)
@@ -437,10 +423,6 @@ class SegmentCircle:
 
         # Reference for adding things AFTER lead extensions
         self.endref = ref
-
-    def end(self) -> Sequence[float]:
-        ''' Get endpoint of this segment, untransformed '''
-        return self.center
 
     def doreverse(self, centerx: float) -> None:
         ''' Reverse the path (flip horizontal about the centerx point) '''
@@ -583,10 +565,6 @@ class SegmentArrow:
         ymax = max(self.tail[1], self.head[1])
         return BBox(xmin, ymin-hw, xmax, ymax+hw)
 
-    def end(self) -> Sequence[float]:
-        ''' Get endpoint of this segment, untransformed '''
-        return self.head
-
     def draw(self, fig, transform, **style) -> None:
         ''' Draw the segment
 
@@ -676,10 +654,6 @@ class SegmentArc:
         return SegmentArc(transform.transform(self.center),
                           self.width*transform.zoom, self.height*transform.zoom, angle=angle,
                           theta1=self.theta1, theta2=self.theta2, **params)
-
-    def end(self) -> Sequence[float]:
-        ''' Get endpoint of this segment, untransformed '''
-        return self.center
 
     def get_bbox(self) -> BBox:
         ''' Get bounding box (untransformed)

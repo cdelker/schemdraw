@@ -56,7 +56,7 @@ class OrthoLines(Element):
         if dy == 0:
             for i in range(n):
                 y = -i*ndy
-                self.segments.append(Segment([[0, y], [dx, y+dy]]))
+                self.segments.append(Segment([(0, y), (dx, y+dy)]))
         else:
             # x0 is first line to go up
             if xstart is not None:
@@ -76,7 +76,7 @@ class OrthoLines(Element):
                     x = x0 + ndy*i if dx > 0 else x0 - ndy*i
                 else:
                     x = x0 + (n-i)*ndy if dx > 0 else x0 - (n-i)*ndy
-                self.segments.append(Segment([[0, y], [x, y], [x, y+dy], [dx, y+dy]]))
+                self.segments.append(Segment([(0, y), (x, y), (x, y+dy), (dx, y+dy)]))
         return super()._place(dwgxy, dwgtheta, **dwgparams)
 
 
@@ -124,7 +124,7 @@ class RightLines(Element):
                 x = dx - i*ndy if dx < 0 else dx + i*ndy
             else:
                 x = dx + (n-i-1)*ndy if dx > 0 else dx - (n-i-1)*ndy
-            self.segments.append(Segment([[0, y], [x, y], [x, dy]]))
+            self.segments.append(Segment([(0, y), (x, y), (x, dy)]))
         return super()._place(dwgxy, dwgtheta, **dwgparams)
 
 
@@ -183,20 +183,20 @@ class Header(Element):
         h = (rows-1) * pinspacing + edge*2
         pinrad = .1
 
-        self.segments.append(SegmentPoly([[0, 0], [0, h], [w, h], [w, 0]]))
+        self.segments.append(SegmentPoly([(0, 0), (0, h), (w, h), (w, 0)]))
         for row in range(rows):
             for col in range(cols):
-                xy = [col*pinspacing+edge, h-row*pinspacing-edge]
+                xy = (col*pinspacing+edge, h-row*pinspacing-edge)
 
                 if style == 'square':
                     x, y = xy
-                    self.segments.append(SegmentPoly([[x-pinrad, y-pinrad], [x+pinrad, y-pinrad],
-                                                      [x+pinrad, y+pinrad], [x-pinrad, y+pinrad]],
+                    self.segments.append(SegmentPoly([(x-pinrad, y-pinrad), (x+pinrad, y-pinrad),
+                                                      (x+pinrad, y+pinrad), (x-pinrad, y+pinrad)],
                                                      fill='bg', zorder=4))
                 elif style == 'screw':
                     x, y = xy
                     self.segments.append(SegmentCircle(xy, pinrad*1.75, fill=pinfill, zorder=4))
-                    self.segments.append(Segment([[x+pinrad, y+pinrad], [x-pinrad, y-pinrad]], zorder=5))
+                    self.segments.append(Segment([(x+pinrad, y+pinrad), (x-pinrad, y-pinrad)], zorder=5))
 
                 else:  # style == 'round'
                     self.segments.append(SegmentCircle(xy, pinrad, fill=pinfill, zorder=4))
@@ -210,17 +210,17 @@ class Header(Element):
                 self.anchors['pin{}'.format(pnumber)] = xy
 
                 if shownumber:
-                    numxy = [w+.05 if col % 2 else -.05, xy[1]]
+                    numxy = (w+.05 if col % 2 else -.05, xy[1])
                     align = ('left' if col % 2 else 'right', 'bottom')
                     self.segments.append(SegmentText(numxy, pnumber, fontsize=pinfontsizeleft, align=align))  # type: ignore
 
                 if pinsleft and (cols == 1 or not col % 2):
-                    lblxy = [-.05, xy[1]]
+                    lblxy = (-.05, xy[1])
                     self.segments.append(SegmentText(lblxy, pinsleft[row], fontsize=pinfontsizeleft,
                                                      align=('right', pinalignleft)))
 
                 if pinsright and (cols == 1 or col % 2):
-                    lblxy = [w+.05, xy[1]]
+                    lblxy = (w+.05, xy[1])
                     self.segments.append(SegmentText(lblxy, pinsright[row], fontsize=pinfontsizeright,
                                                      align=('left', pinalignright)))
 
@@ -239,8 +239,8 @@ class Jumper(Element):
         self.params['theta'] = 0
         pinrad = .1
         x = pinrad*2.5
-        self.segments.append(SegmentPoly([[-x, -x], [pinspacing+x, -x],
-                                         [pinspacing+x, x], [-x, x]]))
+        self.segments.append(SegmentPoly([(-x, -x), (pinspacing+x, -x),
+                                         (pinspacing+x, x), (-x, x)]))
 
 
 class BusConnect(Element):
@@ -270,12 +270,12 @@ class BusConnect(Element):
 
         for i in range(n):
             y = -i*dy
-            self.segments.append(Segment([[0, y], [dx-slantx, y], [dx, y+slanty]]))
-            self.anchors['pin{}'.format(i+1)] = [0, y]
-        self.segments.append(Segment([[dx, slantx], [dx, slanty-n*dy]], lw=lwbus))
-        self.params['drop'] = [dx, slantx]
-        self.anchors['start'] = [dx, slantx]
-        self.anchors['end'] = [dx, slantx-n*dy]
+            self.segments.append(Segment([(0, y), (dx-slantx, y), (dx, y+slanty)]))
+            self.anchors['pin{}'.format(i+1)] = (0, y)
+        self.segments.append(Segment([(dx, slantx), (dx, slanty-n*dy)], lw=lwbus))
+        self.params['drop'] = (dx, slantx)
+        self.anchors['start'] = (dx, slantx)
+        self.anchors['end'] = (dx, slantx-n*dy)
 
 
 class BusLine(Line):
@@ -313,10 +313,10 @@ class DB9(Element):
         h2 = h1 + .5
         pinrad = .1
 
-        self.segments.append(SegmentPoly([[0, 0], [0, h1], [w, h2], [w, -.5]], cornerradius=.25))
+        self.segments.append(SegmentPoly([(0, 0), (0, h1), (w, h2), (w, -.5)], cornerradius=.25))
 
         for i in range(4):
-            xy = [edge, h1-(i+.5)*pinspacing-edge]
+            xy = (edge, h1-(i+.5)*pinspacing-edge)
             self.segments.append(SegmentCircle(xy, pinrad, fill=pinfill, zorder=4))
             self.anchors['pin{}'.format(9-i)] = xy
             if number:
@@ -324,7 +324,7 @@ class DB9(Element):
                                                  str(9-i), fontsize=9,
                                                  align=('center', 'bottom')))
         for i in range(5):
-            xy = [edge+pinspacing, h2-(i+.75)*pinspacing-edge]
+            xy = (edge+pinspacing, h2-(i+.75)*pinspacing-edge)
             self.segments.append(SegmentCircle(xy, pinrad, fill=pinfill, zorder=4))
             self.anchors['pin{}'.format(5-i)] = xy
             if number:
@@ -355,10 +355,10 @@ class DB25(Element):
         h2 = h1 + .5
         pinrad = .1
 
-        self.segments.append(SegmentPoly([[0, 0], [0, h1], [w, h2], [w, -.5]], cornerradius=.25))
+        self.segments.append(SegmentPoly([(0, 0), (0, h1), (w, h2), (w, -.5)], cornerradius=.25))
 
         for i in range(12):
-            xy = [edge, h1-(i+.5)*pinspacing-edge]
+            xy = (edge, h1-(i+.5)*pinspacing-edge)
             self.segments.append(SegmentCircle(xy, pinrad, fill=pinfill, zorder=4))
             self.anchors['pin{}'.format(25-i)] = xy
             if number:
@@ -366,7 +366,7 @@ class DB25(Element):
                                                  str(25-i), fontsize=9,
                                                  align=('center', 'bottom')))
         for i in range(13):
-            xy = [edge+pinspacing, h2-(i+.75)*pinspacing-edge]
+            xy = (edge+pinspacing, h2-(i+.75)*pinspacing-edge)
             self.segments.append(SegmentCircle(xy, pinrad, fill=pinfill, zorder=4))
             self.anchors['pin{}'.format(13-i)] = xy
             if number:
@@ -392,13 +392,13 @@ class CoaxConnect(Element):
     '''
     def __init__(self, *d, radius: float=0.4, radiusinner: float=0.12, fillinner: str='bg', **kwargs):
         super().__init__(*d, **kwargs)
-        self.segments.append(SegmentCircle([0, 0], radius))
-        self.segments.append(SegmentCircle([0, 0], radiusinner, fill=fillinner, zorder=4))
-        self.anchors['center'] = [0, 0]
-        self.anchors['N'] = [0, radius]
-        self.anchors['S'] = [0, -radius]
-        self.anchors['E'] = [radius, 0]
-        self.anchors['W'] = [-radius, 0]
+        self.segments.append(SegmentCircle((0, 0), radius))
+        self.segments.append(SegmentCircle((0, 0), radiusinner, fill=fillinner, zorder=4))
+        self.anchors['center'] = (0, 0)
+        self.anchors['N'] = (0, radius)
+        self.anchors['S'] = (0, -radius)
+        self.anchors['E'] = (radius, 0)
+        self.anchors['W'] = (-radius, 0)
 
 
 class Plug(Element):
@@ -406,15 +406,15 @@ class Plug(Element):
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
         pluggap = 0.18
-        self.segments.append(Segment([[0, 0], [1, 0], gap, [1-resheight, resheight], [1, 0],
-                                      [1-resheight, -resheight]]))
-        self.params['drop'] = [1+pluggap, 0]
+        self.segments.append(Segment([(0, 0), (1, 0), gap, (1-resheight, resheight), (1, 0),
+                                      (1-resheight, -resheight)]))
+        self.params['drop'] = (1+pluggap, 0)
 
 
 class Jack(Element):
     ''' Jack (female connector) '''
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
-        self.segments.append(Segment([[0, 0], [-resheight, resheight], gap,
-                                      [-resheight, -resheight], [0, 0], [1, 0]]))
-        self.params['drop'] = [1, 0]
+        self.segments.append(Segment([(0, 0), (-resheight, resheight), gap,
+                                      (-resheight, -resheight), (0, 0), (1, 0)]))
+        self.params['drop'] = (1, 0)

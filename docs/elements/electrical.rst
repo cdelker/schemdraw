@@ -53,23 +53,23 @@ Some elements have optional parameters, shown in parenthesis in the table below.
 Styled Elements
 ^^^^^^^^^^^^^^^
 
-These elements change based on U.S. vs European/IEC style configured by :py:meth:`schemdraw.elements.style`.
-Selectable elements, such as `Resistor`, point to either `ResistorUS` or `ResistorIEC`, for example.
+These elements change based on IEEE/U.S. vs IEC/European style configured by :py:meth:`schemdraw.elements.style`.
+Selectable elements, such as `Resistor`, point to either `ResistorIEEE` or `ResistorIEC`, for example.
 
-U.S Style
-*********
+IEEE Style
+**********
 
-U.S. style is the default, or it can be configured using
+IEEE style, common in the U.S., is the default, or it can be configured using
 
 .. code-block:: python
 
-    elm.style(elm.STYLE_US)
+    elm.style(elm.STYLE_IEEE)
 
 
 .. jupyter-execute::
     :hide-code:
 
-    elm.style(elm.STYLE_US)
+    elm.style(elm.STYLE_IEEE)
     elmlist = ['Resistor', 'ResistorVar', 'ResistorVar', 'Potentiometer', 'Photoresistor', 'Fuse']
     drawElements(elmlist, cols=2)
 
@@ -94,12 +94,12 @@ European style can be enabled using
 Resistors
 ^^^^^^^^^
 
-Both U.S. and European styles of resistors are always available using these classes.
+Both styles of resistors are always available using these classes.
 
 .. jupyter-execute::
     :hide-code:
 
-    elmlist = [ResistorUS, ResistorIEC, ResistorVarUS, ResistorVarIEC, PotentiometerUS,
+    elmlist = [ResistorIEEE, ResistorIEC, ResistorVarIEEE, ResistorVarIEC, PotentiometerIEEE,
                PotentiometerIEC, FuseUS, FuseIEEE, FuseIEC]
     drawElements(elmlist, cols=2)
 

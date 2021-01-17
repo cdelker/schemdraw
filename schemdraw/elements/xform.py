@@ -73,14 +73,14 @@ class Transformer(Element):
             center = ind_gap/2
             core_w = ind_gap/10
             self.segments.append(Segment(
-                [[center-core_w, top], [center-core_w, bot]]))
+                [(center-core_w, top), (center-core_w, bot)]))
             self.segments.append(Segment(
-                [[center+core_w, top], [center+core_w, bot]]))
+                [(center+core_w, top), (center+core_w, bot)]))
 
-        self.anchors['p1'] = [0, ltop]
-        self.anchors['p2'] = [0, lbot]
-        self.anchors['s1'] = [ind_gap, rtop]
-        self.anchors['s2'] = [ind_gap, rbot]
+        self.anchors['p1'] = (0, ltop)
+        self.anchors['p2'] = (0, lbot)
+        self.anchors['s1'] = (ind_gap, rtop)
+        self.anchors['s2'] = (ind_gap, rbot)
 
         self._ltapx = ltapx  # Save these for adding taps
         self._rtapx = rtapx
@@ -107,9 +107,9 @@ class Transformer(Element):
                 side: Primary (left) or Secondary (right) side
         '''
         if side in ['left', 'primary']:
-            self.anchors[name] = [self._ltapx, self._ltop - pos * self._ind_w]
+            self.anchors[name] = (self._ltapx, self._ltop - pos * self._ind_w)
         elif side in ['right', 'secondary']:
-            self.anchors[name] = [self._rtapx, self._rtop - pos * self._ind_w]
+            self.anchors[name] = (self._rtapx, self._rtop - pos * self._ind_w)
         else:
             raise ValueError(f'Undefined tap side {side}')
         return self

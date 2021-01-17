@@ -15,18 +15,18 @@ class Speaker(Element):
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
         sph = .5
-        self.segments.append(Segment([[0, 0], [resheight, 0]]))
-        self.segments.append(Segment([[0, -sph], [resheight, -sph]]))
+        self.segments.append(Segment([(0, 0), (resheight, 0)]))
+        self.segments.append(Segment([(0, -sph), (resheight, -sph)]))
         self.segments.append(SegmentPoly(
-            [[resheight, sph/2], [resheight, -sph*1.5],
-             [resheight*2, -sph*1.5], [resheight*2, sph/2]]))
+            [(resheight, sph/2), (resheight, -sph*1.5),
+             (resheight*2, -sph*1.5), (resheight*2, sph/2)]))
         self.segments.append(SegmentPoly(
-            [[resheight*2, sph/2], [resheight*3.5, sph*1.25],
-             [resheight*3.5, -sph*2.25], [resheight*2, -sph*1.5]],
+            [(resheight*2, sph/2), (resheight*3.5, sph*1.25),
+             (resheight*3.5, -sph*2.25), (resheight*2, -sph*1.5)],
             closed=False))
-        self.anchors['in1'] = [0, 0]
-        self.anchors['in2'] = [0, -sph]
-        self.params['drop'] = [0, -sph]
+        self.anchors['in1'] = (0, 0)
+        self.anchors['in2'] = (0, -sph)
+        self.params['drop'] = (0, -sph)
 
 
 class Mic(Element):
@@ -40,17 +40,17 @@ class Mic(Element):
         super().__init__(*d, **kwargs)
         sph = .5
         self.segments.append(Segment(  # Upper lead
-            [[0, 0], [resheight, 0]]))
+            [(0, 0), (resheight, 0)]))
         self.segments.append(Segment(  # Lower lead
-            [[0, -sph], [resheight, -sph]]))
+            [(0, -sph), (resheight, -sph)]))
         self.segments.append(Segment(  # Vertical flat
-            [[-resheight*2, resheight], [-resheight*2, -resheight*3]]))
+            [(-resheight*2, resheight), (-resheight*2, -resheight*3)]))
         self.segments.append(SegmentArc(
-            [-resheight*2, -resheight], theta1=270, theta2=90,
+            (-resheight*2, -resheight), theta1=270, theta2=90,
             width=resheight*4, height=resheight*4))
-        self.anchors['in1'] = [resheight, 0]
-        self.anchors['in2'] = [resheight, -sph]
-        self.params['drop'] = [0, -sph]
+        self.anchors['in1'] = (resheight, 0)
+        self.anchors['in2'] = (resheight, -sph)
+        self.params['drop'] = (0, -sph)
 
 
 class Motor(Element2Term):
@@ -59,12 +59,12 @@ class Motor(Element2Term):
         super().__init__(*d, **kwargs)
         mw = .22
         self.segments.append(Segment(
-            [[-mw, 0], [-mw, 0], gap, [1+mw, 0], [1+mw, 0]]))
+            [(-mw, 0), (-mw, 0), gap, (1+mw, 0), (1+mw, 0)]))
         self.segments.append(Segment(
-            [[0, -mw], [0-mw, -mw], [0-mw, mw], [0, mw]]))
+            [(0, -mw), (0-mw, -mw), (0-mw, mw), (0, mw)]))
         self.segments.append(Segment(
-            [[1, -mw], [1+mw, -mw], [1+mw, mw], [1, mw]]))
-        self.segments.append(SegmentCircle([0.5, 0], 0.5))
+            [(1, -mw), (1+mw, -mw), (1+mw, mw), (1, mw)]))
+        self.segments.append(SegmentCircle((0.5, 0), 0.5))
 
 
 class AudioJack(Element):
@@ -115,58 +115,58 @@ class AudioJack(Element):
 
         if ring:
             if dots:
-                self.segments.append(SegmentCircle([0, -sleevey], radius,
+                self.segments.append(SegmentCircle((0, -sleevey), radius,
                                                    fill=fill, zorder=4))
             self.segments.append(Segment(
-                [[-radius, -sleevey], [-length, -sleevey],
-                 [-length, 0], [-length, sleeveheight],
-                 [-length-swidth, sleeveheight],
-                 [-length-swidth, 0], [-length, 0]]))
-            self.anchors['sleeve'] = [0, -sleevey]
+                [(-radius, -sleevey), (-length, -sleevey),
+                 (-length, 0), (-length, sleeveheight),
+                 (-length-swidth, sleeveheight),
+                 (-length-swidth, 0), (-length, 0)]))
+            self.anchors['sleeve'] = (0, -sleevey)
 
             if dots:
                 self.segments.append(SegmentCircle(
-                    [0,  ringy], radius, fill=fill, zorder=4))
+                    (0,  ringy), radius, fill=fill, zorder=4))
             self.segments.append(Segment(
-                [[-radius, ringy], [-length*.75, ringy],
-                 [-length*ringlen-2*radius, ringy+2*radius],
-                 [-length*ringlen-radius*4, ringy]]))
-            self.anchors['ring'] = [0, ringy]
+                [(-radius, ringy), (-length*.75, ringy),
+                 (-length*ringlen-2*radius, ringy+2*radius),
+                 (-length*ringlen-radius*4, ringy)]))
+            self.anchors['ring'] = (0, ringy)
 
         else:
             if dots:
                 self.segments.append(SegmentCircle(
-                    [0, 0], radius, fill=fill, zorder=4))
+                    (0, 0), radius, fill=fill, zorder=4))
             self.segments.append(Segment(
-                [[-radius, 0], [-length, 0], [-length, sleeveheight],
-                 [-length+swidth, sleeveheight], [-length+swidth, 0]]))
-            self.anchors['sleeve'] = [0, 0]
+                [(-radius, 0), (-length, 0), (-length, sleeveheight),
+                 (-length+swidth, sleeveheight), (-length+swidth, 0)]))
+            self.anchors['sleeve'] = (0, 0)
 
         if dots:
             self.segments.append(SegmentCircle(
-                [0, tipy], radius, fill=fill, zorder=4))
+                (0, tipy), radius, fill=fill, zorder=4))
         self.segments.append(Segment(
-            [[-radius, tipy], [-length*.55, tipy],
-             [-length*tiplen-2*radius, tipy-2*radius],
-             [-length*tiplen-radius*4, tipy]]))
-        self.anchors['tip'] = [0, tipy]
+            [(-radius, tipy), (-length*.55, tipy),
+             (-length*tiplen-2*radius, tipy-2*radius),
+             (-length*tiplen-radius*4, tipy)]))
+        self.anchors['tip'] = (0, tipy)
 
         if switch:
             if dots:
                 self.segments.append(SegmentCircle(
-                    [0, tipy-swdy], radius, fill=fill, zorder=4))
+                    (0, tipy-swdy), radius, fill=fill, zorder=4))
             self.segments.append(Segment(
-                [[0, tipy-swdy], [-swlen, tipy-swdy]]))
+                [(0, tipy-swdy), (-swlen, tipy-swdy)]))
             self.segments.append(SegmentArrow(
-                [-swlen, tipy-swdy], [-swlen, tipy]))
-            self.anchors['tipswitch'] = [0, tipy-swdy]
+                (-swlen, tipy-swdy), (-swlen, tipy)))
+            self.anchors['tipswitch'] = (0, tipy-swdy)
 
         if ring and ringswitch:
             if dots:
                 self.segments.append(SegmentCircle(
-                    [0, ringy+swdy], radius, fill=fill, zorder=4))
+                    (0, ringy+swdy), radius, fill=fill, zorder=4))
             self.segments.append(Segment(
-                [[0, ringy+swdy], [-swlen, ringy+swdy]]))
+                [(0, ringy+swdy), (-swlen, ringy+swdy)]))
             self.segments.append(SegmentArrow(
-                [-swlen, ringy+swdy], [-swlen, ringy]))
-            self.anchors['ringswitch'] = [0, ringy+swdy]
+                (-swlen, ringy+swdy), (-swlen, ringy)))
+            self.anchors['ringswitch'] = (0, ringy+swdy)

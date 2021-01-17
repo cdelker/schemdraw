@@ -17,7 +17,7 @@ from typing import Literal, Tuple
 import string
 import re
 
-from ..util import Point
+from ..util import Point, rotate
 
 
 # Conversion from Latex codes to unicode characters.
@@ -366,10 +366,10 @@ def text_tosvg(text: str, x: float, y: float, font: str='Arial', size: float=16,
     anchor = {'center': 'middle', 'left': 'start', 'right': 'end'}.get(halign)
 
     org = Point((x, y))
-    p1 = Point((boxx, ytext)).rotate(rotation, org)
-    p2 = Point((boxx, ytext-h)).rotate(rotation, org)
-    p3 = Point((boxx+w, ytext-h)).rotate(rotation, org)
-    p4 = Point((boxx+w, ytext)).rotate(rotation, org)
+    p1 = Point((boxx, ytext)).rotate(-rotation, org)
+    p2 = Point((boxx, ytext-h)).rotate(-rotation, org)
+    p3 = Point((boxx+w, ytext-h)).rotate(-rotation, org)
+    p4 = Point((boxx+w, ytext)).rotate(-rotation, org)
 
     # Bounding box, unshifted for "default" rotation mode
     pxmin = min(p1[0], p2[0], p3[0], p4[0])

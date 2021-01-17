@@ -57,20 +57,20 @@ class Optocoupler(ElementCompound):
         unit = 1.5
         super().__init__(*d, unit=unit, **kwargs)
         D = self.add(elm.Diode(d='d'))
-        bjt = elm.BjtNpn(d='r', at=[1, -unit/2])
+        bjt = elm.BjtNpn(d='r', at=(1, -unit/2))
         bjt.segments.pop(0)  # Remove base contact
         B = self.add(bjt)
-        self.add(elm.Arrow(d='r', at=[.5, -unit/2 + .2], l=.6,
+        self.add(elm.Arrow(d='r', at=(.5, -unit/2 + .2), l=.6,
                            headwidth=.15, headlength=.2))
-        self.add(elm.Arrow(d='r', at=[.5, -unit/2 - .2], l=.6,
+        self.add(elm.Arrow(d='r', at=(.5, -unit/2 - .2), l=.6,
                            headwidth=.15, headlength=.2))
 
         bbox = self.get_bbox()
         if box:
             self.add(elm.Rect(
-                d='r', at=[0, 0],
-                corner1=[bbox.xmin-boxpad, bbox.ymin-boxpad],
-                corner2=[bbox.xmax+boxpad, bbox.ymax+boxpad],
+                d='r', at=(0, 0),
+                corner1=(bbox.xmin-boxpad, bbox.ymin-boxpad),
+                corner2=(bbox.xmax+boxpad, bbox.ymax+boxpad),
                 fill=boxfill, zorder=0))
 
         if base:
@@ -119,7 +119,7 @@ class Relay(ElementCompound):
         Lleft = L.get_bbox(transform=True).xmax
         swleft = Lleft + .6
         if core:
-            self.add(elm.Line(d='d', at=[Lleft+.15, -unit/2],
+            self.add(elm.Line(d='d', at=(Lleft+.15, -unit/2),
                               anchor='center', l=1))
             swleft += .1
 
@@ -127,7 +127,7 @@ class Relay(ElementCompound):
         if switch == 'spst':
             SW = elm.Switch(d='d', reverse=swreverse, flip=swflip)
             bbox = SW.get_bbox()
-            SW._userparams['at'] = [swleft-(-bbox.ymax if swflip else bbox.ymin), 0]
+            SW._userparams['at'] = (swleft-(-bbox.ymax if swflip else bbox.ymin), 0)
             self.add(SW)
             self.anchors['a'] = SW.start
             self.anchors['b'] = SW.end
@@ -135,7 +135,7 @@ class Relay(ElementCompound):
         elif switch == 'spdt':
             SW = elm.SwitchSpdt2(d='d', reverse=swreverse, flip=swflip)
             bbox = SW.get_bbox()
-            SW._userparams['at'] = [swleft-(-bbox.ymax if swflip else bbox.ymin), -.5]
+            SW._userparams['at'] = (swleft-(-bbox.ymax if swflip else bbox.ymin), -.5)
             self.add(SW)
             toy = -unit if swreverse else 0
             a = self.add(elm.Line(d='d' if swreverse else 'u', at=SW.a, toy=toy))
@@ -149,7 +149,7 @@ class Relay(ElementCompound):
         elif switch == 'dpst':
             SW = elm.SwitchDpst(d='d', link=False, reverse=swreverse, flip=swflip)
             bbox = SW.get_bbox()
-            SW._userparams['at'] = [swleft-(-bbox.ymax if swflip else bbox.ymin), -.5]
+            SW._userparams['at'] = (swleft-(-bbox.ymax if swflip else bbox.ymin), -.5)
             self.add(SW)
             toy = 0 if swreverse else -unit
             t1 = self.add(elm.Line(d='u' if swreverse else 'd', at=SW.t1, toy=toy))
@@ -165,7 +165,7 @@ class Relay(ElementCompound):
         elif switch == 'dpdt':
             SW = elm.SwitchDpdt(d='d', link=False, reverse=swreverse, flip=swflip)
             bbox = SW.get_bbox()
-            SW._userparams['at'] = [swleft-(-bbox.ymax if swflip else bbox.ymin), -.5]
+            SW._userparams['at'] = (swleft-(-bbox.ymax if swflip else bbox.ymin), -.5)
             self.add(SW)
             toy = 0 if swreverse else -unit
             t1 = self.add(elm.Line(d='u' if swreverse else 'd', at=SW.t1, toy=toy))
@@ -184,11 +184,11 @@ class Relay(ElementCompound):
 
         if link:
             tox = SW.get_bbox().ymax if swflip else SW.get_bbox().ymin
-            self.add(elm.Line(d='r', at=[Lleft+.2, -unit/2], ls=':', tox=tox))
+            self.add(elm.Line(d='r', at=(Lleft+.2, -unit/2), ls=':', tox=tox))
 
         if box:
             bbox = self.get_bbox()
-            self.add(elm.Rect(d='r', at=[0, 0],
-                              corner1=[bbox.xmin-boxpad, bbox.ymin+.2],
-                              corner2=[bbox.xmax+boxpad, bbox.ymax-.2],
+            self.add(elm.Rect(d='r', at=(0, 0),
+                              corner1=(bbox.xmin-boxpad, bbox.ymin+.2),
+                              corner2=(bbox.xmax+boxpad, bbox.ymax-.2),
                               fill=boxfill, zorder=0))

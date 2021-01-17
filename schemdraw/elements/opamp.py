@@ -32,28 +32,28 @@ class Opamp(Element):
     def __init__(self, *d, sign: bool=True, **kwargs):
         super().__init__(*d, **kwargs)
         self.segments.append(Segment(
-            [[0, 0], [0, oa_back/2], [oa_xlen, 0], [0, -oa_back/2], [0, 0],
-             gap, [oa_xlen, 0]]))
+            [(0, 0), (0, oa_back/2), (oa_xlen, 0), (0, -oa_back/2), (0, 0),
+             gap, (oa_xlen, 0)]))
 
         if sign:
             self.segments.append(Segment(
-                [[oa_lblx-oa_pluslen/2, oa_back/4],
-                 [oa_lblx+oa_pluslen/2, oa_back/4]]))
+                [(oa_lblx-oa_pluslen/2, oa_back/4),
+                 (oa_lblx+oa_pluslen/2, oa_back/4)]))
             self.segments.append(Segment(
-                [[oa_lblx-oa_pluslen/2, -oa_back/4],
-                 [oa_lblx+oa_pluslen/2, -oa_back/4]]))
+                [(oa_lblx-oa_pluslen/2, -oa_back/4),
+                 (oa_lblx+oa_pluslen/2, -oa_back/4)]))
             self.segments.append(Segment(
-                [[oa_lblx, -oa_back/4-oa_pluslen/2],
-                 [oa_lblx, -oa_back/4+oa_pluslen/2]]))
+                [(oa_lblx, -oa_back/4-oa_pluslen/2),
+                 (oa_lblx, -oa_back/4+oa_pluslen/2)]))
 
-        self.anchors['center'] = [oa_xlen/2, 0]
-        self.anchors['in1'] = [0, oa_back/4]
-        self.anchors['in2'] = [0, -oa_back/4]
-        self.anchors['out'] = [oa_xlen, 0]
-        self.anchors['vd'] = [oa_xlen/3, .84]
-        self.anchors['vs'] = [oa_xlen/3, -.84]
-        self.anchors['n1'] = [oa_xlen*2/3, -.42]
-        self.anchors['n2'] = [oa_xlen*2/3, .42]
-        self.anchors['n1a'] = [oa_xlen*.9, -.13]
-        self.anchors['n2a'] = [oa_xlen*.9, .13]
-        self.params['drop'] = [oa_xlen, 0]
+        self.anchors['center'] = (oa_xlen/2, 0)
+        self.anchors['in1'] = (0, oa_back/4)
+        self.anchors['in2'] = (0, -oa_back/4)
+        self.anchors['out'] = (oa_xlen, 0)
+        self.anchors['vd'] = (oa_xlen/3, .84)
+        self.anchors['vs'] = (oa_xlen/3, -.84)
+        self.anchors['n1'] = (oa_xlen*2/3, -.42)
+        self.anchors['n2'] = (oa_xlen*2/3, .42)
+        self.anchors['n1a'] = (oa_xlen*.9, -.13)
+        self.anchors['n2a'] = (oa_xlen*.9, .13)
+        self.params['drop'] = (oa_xlen, 0)

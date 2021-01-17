@@ -40,12 +40,12 @@ class And(Element):
                  (leadlen, 0), (leadlen, -rad),
                  (gatel+leadlen, -rad)]
         self.segments.append(Segment(path))
-        self.anchors['out'] = [gatel+gateh/2+leadlen*2, 0]
+        self.anchors['out'] = (gatel+gateh/2+leadlen*2, 0)
         self.anchors['end'] = self.anchors['out']
 
         if nand:
             self.segments.append(SegmentCircle(
-                [leadlen+gatel+gateh/2+notbubble, 0], notbubble))
+                (leadlen+gatel+gateh/2+notbubble, 0), notbubble))
 
         # Set distance between inputs. A little larger for 2 input gates.
         if inputs == 2:
@@ -59,28 +59,28 @@ class And(Element):
         # Add the inputs and define anchor names
         for i in range(inputs):
             y = (i+1 - (inputs/2+.5)) * dy
-            self.anchors['in%d' % (inputs-i)] = [0, y]
+            self.anchors['in%d' % (inputs-i)] = (0, y)
 
             if inputnots and (inputs-i) in inputnots:
-                self.segments.append(SegmentCircle([leadlen-notbubble, y], notbubble))
-                self.segments.append(Segment([[0, y], [leadlen-notbubble*2, y]]))
+                self.segments.append(SegmentCircle((leadlen-notbubble, y), notbubble))
+                self.segments.append(Segment([(0, y), (leadlen-notbubble*2, y)]))
             else:
-                self.segments.append(Segment([[0, y], [leadlen, y]]))
+                self.segments.append(Segment([(0, y), (leadlen, y)]))
 
         # Extended back for large number of inputs
         if inputs > 3:
-            self.segments.append(Segment([[leadlen, backlen/2+dy/2],
-                                          [leadlen, -backlen/2-dy/2]]))
+            self.segments.append(Segment([(leadlen, backlen/2+dy/2),
+                                          (leadlen, -backlen/2-dy/2)]))
 
         # Output lead
         if nand:
             self.segments.append(Segment(
-                [[0, 0], gap, [gatel+gateh/2+leadlen+notbubble*2, 0],
-                 [gatel+gateh/2+leadlen*2, 0]]))
+                [(0, 0), gap, (gatel+gateh/2+leadlen+notbubble*2, 0),
+                 (gatel+gateh/2+leadlen*2, 0)]))
         else:
             self.segments.append(Segment(
-                [[0, 0], gap, [gatel+gateh/2+leadlen, 0],
-                 [gatel+gateh/2+leadlen*2, 0]]))
+                [(0, 0), gap, (gatel+gateh/2+leadlen, 0),
+                 (gatel+gateh/2+leadlen*2, 0)]))
         self.params['drop'] = self.segments[-1].path[-1]  # type: ignore
 
 
@@ -139,14 +139,14 @@ class Or(Element):
         else:
             path += list(zip(x2[::-1], y2[::-1]))
         self.segments.append(Segment(path))
-        self.anchors['out'] = [tip+leadlen, 0]
+        self.anchors['out'] = (tip+leadlen, 0)
         self.anchors['end'] = self.anchors['out']
 
         if xor:
             self.segments.append(Segment(list(zip(x2, y2))))
 
         if nor:
-            self.segments.append(SegmentCircle([tip+notbubble, 0], notbubble))
+            self.segments.append(SegmentCircle((tip+notbubble, 0), notbubble))
 
         # Set distance between inputs. A little larger for 2 input gates.
         if inputs == 2:
@@ -165,29 +165,29 @@ class Or(Element):
             if inputs > 3 and ((y > orheight) or (y < -orheight)):
                 xback = leadlen
 
-            self.anchors['in%d' % (inputs-i)] = [0, y]
+            self.anchors['in%d' % (inputs-i)] = (0, y)
 
             if inputnots and (inputs-i) in inputnots:
                 self.segments.append(SegmentCircle(
-                    [xback-notbubble, y], notbubble))
-                self.segments.append(Segment([[0, y], [xback-notbubble*2, y]]))
+                    (xback-notbubble, y), notbubble))
+                self.segments.append(Segment([(0, y), (xback-notbubble*2, y)]))
             else:
-                self.segments.append(Segment([[0, y], [xback, y]]))
+                self.segments.append(Segment([(0, y), (xback, y)]))
 
         # Extended back for large number of inputs
         if inputs > 3:
             self.segments.append(Segment(
-                [[leadlen, backlen/2+dy/2], [leadlen, orheight]]))
+                [(leadlen, backlen/2+dy/2), (leadlen, orheight)]))
             self.segments.append(Segment(
-                [[leadlen, -backlen/2-dy/2], [leadlen, -orheight]]))
+                [(leadlen, -backlen/2-dy/2), (leadlen, -orheight)]))
 
         # Output lead
         if nor:
             self.segments.append(Segment(
-                [[0, 0], gap, [tip+notbubble*2, 0], [tip+leadlen, 0]]))
+                [(0, 0), gap, (tip+notbubble*2, 0), (tip+leadlen, 0)]))
         else:
             self.segments.append(Segment(
-                [[0, 0], gap, [tip, 0], [tip+leadlen, 0]]))
+                [(0, 0), gap, (tip, 0), (tip+leadlen, 0)]))
         self.params['drop'] = self.segments[-1].path[-1]  # type: ignore
 
 
@@ -206,14 +206,14 @@ class Buf(Element2Term):
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
         self.segments.append(Segment(
-            [[0, 0], [leadlen, 0], gap, [gatel+leadlen, 0]]))
+            [(0, 0), (leadlen, 0), gap, (gatel+leadlen, 0)]))
         self.segments.append(Segment(
-            [[gatel+leadlen, 0], [gatel+leadlen*2, 0]]))
+            [(gatel+leadlen, 0), (gatel+leadlen*2, 0)]))
         self.segments.append(Segment(
-            [[leadlen, 0], [leadlen, -gateh/2],
-             [gatel+leadlen, 0], [leadlen, gateh/2], [leadlen, 0]]))
-        self.anchors['out'] = [gatel+gateh/2+leadlen*2, 0]
-        self.anchors['in'] = [0, 0]
+            [(leadlen, 0), (leadlen, -gateh/2),
+             (gatel+leadlen, 0), (leadlen, gateh/2), (leadlen, 0)]))
+        self.anchors['out'] = (gatel+gateh/2+leadlen*2, 0)
+        self.anchors['in'] = (0, 0)
 
 
 class Not(Element2Term):
@@ -225,16 +225,16 @@ class Not(Element2Term):
     '''
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
-        self.segments.append(Segment([[0, 0], [leadlen, 0], gap,
-                                      [gatel+leadlen+notbubble*2, 0]]))
-        self.segments.append(Segment([[gatel+leadlen+notbubble*2, 0],
-                                      [gatel+leadlen*2, 0]]))
-        self.segments.append(Segment([[leadlen, 0], [leadlen, -gateh/2],
-                                      [gatel+leadlen, 0], [leadlen, gateh/2],
-                                      [leadlen, 0]]))
-        self.segments.append(SegmentCircle([gatel+leadlen+notbubble, 0], notbubble))
-        self.anchors['out'] = [gatel+leadlen+notbubble*2, 0]
-        self.anchors['in'] = [0, 0]
+        self.segments.append(Segment([(0, 0), (leadlen, 0), gap,
+                                      (gatel+leadlen+notbubble*2, 0)]))
+        self.segments.append(Segment([(gatel+leadlen+notbubble*2, 0),
+                                      (gatel+leadlen*2, 0)]))
+        self.segments.append(Segment([(leadlen, 0), (leadlen, -gateh/2),
+                                      (gatel+leadlen, 0), (leadlen, gateh/2),
+                                      (leadlen, 0)]))
+        self.segments.append(SegmentCircle((gatel+leadlen+notbubble, 0), notbubble))
+        self.anchors['out'] = (gatel+leadlen+notbubble*2, 0)
+        self.anchors['in'] = (0, 0)
 
 
 class NotNot(Element2Term):
@@ -246,17 +246,17 @@ class NotNot(Element2Term):
     '''
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
-        self.segments.append(Segment([[0, 0], [leadlen-notbubble*2, 0], gap,
-                                      [gatel+leadlen+notbubble*2, 0]]))
-        self.segments.append(Segment([[gatel+leadlen+notbubble*2, 0],
-                                      [gatel+leadlen*2, 0]]))
-        self.segments.append(Segment([[leadlen, 0], [leadlen, -gateh/2],
-                                      [gatel+leadlen, 0], [leadlen, gateh/2],
-                                      [leadlen, 0]]))
-        self.segments.append(SegmentCircle([gatel+leadlen+notbubble, 0], notbubble))
-        self.segments.append(SegmentCircle([leadlen-notbubble, 0], notbubble))
-        self.anchors['out'] = [gatel+gateh/2+leadlen*2, 0]
-        self.anchors['in'] = [0, 0]
+        self.segments.append(Segment([(0, 0), (leadlen-notbubble*2, 0), gap,
+                                      (gatel+leadlen+notbubble*2, 0)]))
+        self.segments.append(Segment([(gatel+leadlen+notbubble*2, 0),
+                                      (gatel+leadlen*2, 0)]))
+        self.segments.append(Segment([(leadlen, 0), (leadlen, -gateh/2),
+                                      (gatel+leadlen, 0), (leadlen, gateh/2),
+                                      (leadlen, 0)]))
+        self.segments.append(SegmentCircle((gatel+leadlen+notbubble, 0), notbubble))
+        self.segments.append(SegmentCircle((leadlen-notbubble, 0), notbubble))
+        self.anchors['out'] = (gatel+gateh/2+leadlen*2, 0)
+        self.anchors['in'] = (0, 0)
 
 
 class Tgate(Element2Term):
@@ -271,22 +271,22 @@ class Tgate(Element2Term):
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
         self.segments.append(Segment(
-            [[0, 0], [leadlen, 0], gap, [gatel+leadlen, 0]]))
+            [(0, 0), (leadlen, 0), gap, (gatel+leadlen, 0)]))
         self.segments.append(Segment(
-            [[leadlen, 0], [leadlen, -gateh/2], [gatel+leadlen, 0],
-             [leadlen, gateh/2], [leadlen, 0]]))
+            [(leadlen, 0), (leadlen, -gateh/2), (gatel+leadlen, 0),
+             (leadlen, gateh/2), (leadlen, 0)]))
         self.segments.append(Segment(
-            [[leadlen+gatel, 0], [leadlen+gatel, -gateh/2], [leadlen, 0],
-             [leadlen+gatel, gateh/2], [leadlen+gatel, 0]]))
-        self.segments.append(SegmentCircle([leadlen+gatel/2, .28+.08], .08))
+            [(leadlen+gatel, 0), (leadlen+gatel, -gateh/2), (leadlen, 0),
+             (leadlen+gatel, gateh/2), (leadlen+gatel, 0)]))
+        self.segments.append(SegmentCircle((leadlen+gatel/2, .28+.08), .08))
         self.segments.append(Segment(
-            [[leadlen+gatel/2, .28+.16], [leadlen+gatel/2, .7]]))
+            [(leadlen+gatel/2, .28+.16), (leadlen+gatel/2, .7)]))
         self.segments.append(Segment(
-            [[leadlen+gatel/2, -.28], [leadlen+gatel/2, -.7]]))
-        self.anchors['out'] = [gatel+gateh/2+leadlen*2, 0]
-        self.anchors['in'] = [0, 0]
-        self.anchors['c'] = [leadlen+gatel/2, -.7]
-        self.anchors['cbar'] = [leadlen+gatel/2, .7]
+            [(leadlen+gatel/2, -.28), (leadlen+gatel/2, -.7)]))
+        self.anchors['out'] = (gatel+gateh/2+leadlen*2, 0)
+        self.anchors['in'] = (0, 0)
+        self.anchors['c'] = (leadlen+gatel/2, -.7)
+        self.anchors['cbar'] = (leadlen+gatel/2, .7)
 
 
 class Schmitt(Buf):
@@ -299,10 +299,10 @@ class Schmitt(Buf):
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
         xofst = leadlen
-        self.segments.append(Segment([[xofst+.07, -.15], [xofst+.25, -.15],
-                                      [xofst+.25, .15], gap,
-                                      [xofst+.33, .15], [xofst+.15, .15],
-                                      [xofst+.15, -.15]], lw=1))
+        self.segments.append(Segment([(xofst+.07, -.15), (xofst+.25, -.15),
+                                      (xofst+.25, .15), gap,
+                                      (xofst+.33, .15), (xofst+.15, .15),
+                                      (xofst+.15, -.15)], lw=1))
 
 
 class SchmittNot(Not):
@@ -315,10 +315,10 @@ class SchmittNot(Not):
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
         xofst = leadlen
-        self.segments.append(Segment([[xofst+.07, -.15], [xofst+.25, -.15],
-                                      [xofst+.25, .15], gap,
-                                      [xofst+.33, .15], [xofst+.15, .15],
-                                      [xofst+.15, -.15]], lw=1))
+        self.segments.append(Segment([(xofst+.07, -.15), (xofst+.25, -.15),
+                                      (xofst+.25, .15), gap,
+                                      (xofst+.33, .15), (xofst+.15, .15),
+                                      (xofst+.15, -.15)], lw=1))
 
 
 class SchmittAnd(And):
@@ -332,10 +332,10 @@ class SchmittAnd(And):
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
         xofst = .65
-        self.segments.append(Segment([[xofst+.07, -.15], [xofst+.25, -.15],
-                                      [xofst+.25, .15], gap,
-                                      [xofst+.33, .15], [xofst+.15, .15],
-                                      [xofst+.15, -.15]], lw=1))
+        self.segments.append(Segment([(xofst+.07, -.15), (xofst+.25, -.15),
+                                      (xofst+.25, .15), gap,
+                                      (xofst+.33, .15), (xofst+.15, .15),
+                                      (xofst+.15, -.15)], lw=1))
 
 
 SchmittNand = partial(SchmittAnd, nand=True)

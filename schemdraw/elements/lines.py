@@ -69,7 +69,7 @@ class Gap(Element2Term):
     '''
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
-        self.segments.append(Segment([[0, 0], gap, [1, 0]]))
+        self.segments.append(Segment([(0, 0), gap, (1, 0)]))
         self.params['lblloc'] = 'center'
         self.params['lblofst'] = 0
 
@@ -305,7 +305,7 @@ class LoopCurrent(Element):
         bot = bbox3.ymax + pad
         left = bbox4.xmax + pad
         rght = bbox2.xmin - pad
-        center = [(left+rght)/2, (top+bot)/2]
+        center = ((left+rght)/2, (top+bot)/2)
         width = rght - left
         height = top - bot
 
@@ -333,7 +333,7 @@ class Rect(Element):
     '''
     def __init__(self, *d, corner1: XY=(0, 0), corner2: XY=(1, 1), **kwargs):
         super().__init__(*d, **kwargs)
-        c1a = [corner1[0], corner2[1]]
-        c2a = [corner2[0], corner1[1]]
+        c1a = (corner1[0], corner2[1])
+        c2a = (corner2[0], corner1[1])
         self.segments.append(Segment([corner1, c1a, corner2, c2a, corner1], zorder=0))
         self.params['zorder'] = 0   # Put on bottom

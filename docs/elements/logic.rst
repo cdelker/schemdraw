@@ -64,7 +64,7 @@ Logic Parser
 ------------
 
 Logic trees can also be created from a string logic expression such as "(a and b) or c" using using :py:func:`schemdraw.parsing.logic_parser.logicparse`.
-The logic parser requires the `pyparsing <https://pyparsing-docs.readthedocs.io/en/latest/>` module.
+The logic parser requires the `pyparsing <https://pyparsing-docs.readthedocs.io/en/latest/>`_ module.
 
 Examples:
 

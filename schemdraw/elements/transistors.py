@@ -198,7 +198,7 @@ class BjtNpn(Bjt):
             * base
     '''
     def __init__(self, *d, circle: bool=False, **kwargs):
-        super().__init__(*d, **kwargs)
+        super().__init__(*d, circle=circle, **kwargs)
         self.segments.append(SegmentArrow(
             (bjt_v, -bjt_a), (bjt_emx, -bjt_emy), headwidth=.2))
 
@@ -215,7 +215,7 @@ class BjtPnp(Bjt):
             * base
     '''
     def __init__(self, *d, circle: bool=False, **kwargs):
-        super().__init__(*d, **kwargs)
+        super().__init__(*d, circle=circle, **kwargs)
         self.segments.append(SegmentArrow((bjt_emx, bjt_emy),
                                           (bjt_v, bjt_a), headwidth=.2))
         self.anchors['base'] = (0, 0)
@@ -236,7 +236,7 @@ class BjtPnp2c(BjtPnp):
             * C2
     '''
     def __init__(self, *d, circle: bool=False, **kwargs):
-        super().__init__(*d, **kwargs)
+        super().__init__(*d, circle=circle, **kwargs)
         bjt_2c_dy = -.25
         self.segments.append(Segment([(bjt_v, -bjt_a-bjt_2c_dy),
                                       (bjt_emx, -bjt_emy-bjt_2c_dy)]))

@@ -30,7 +30,7 @@ If no position is given, the next element will start at the current drawing posi
     d.draw()  
 
 Remember that `+=` is equivalent to calling `d.add()`.
-If a direction method is added, the element is rotated in that direction, and future elements take the same direction:
+If a direction method is added to an element, the element is rotated in that direction, and future elements take the same direction:
 
 .. jupyter-execute::
 
@@ -62,7 +62,7 @@ The `theta` method can be used to specify any rotation angle in degrees.
 Using anchors
 ^^^^^^^^^^^^^
 
-The (x, y) position can also be specified using the `at` method.
+The (x, y) position of an element can also be specified using its `at` method.
 Rather than using exact numerical coordinates, the `at` parameter will usually be set to an "anchor" of another element.
 
 An anchor is simply a predefined position within an element.
@@ -70,8 +70,8 @@ Two-terminal elements have anchors named `start`, `center`, and `end`.
 Three-terminal elements have other named anchors, for example an Opamp has `in1`, `in2`, and `out` anchors.
 Each element's docstring lists the available anchors.
 
-Once an element is added to the drawing, it contains attributes defining the coordinates of all the element's anchors.
-For example, to draw an opamp and place a resistor on the output, store the Opamp instance to a variable. Then call the `at` method of the new element passing the `out` attribute of the Opamp. The current Drawing position is ignored, and reset to the endpoint of the resistor.
+Once an element is added to the drawing, all its anchor positions will be added as attributes to the element object.
+For example, to draw an opamp and place a resistor on the output, store the Opamp instance to a variable. Then call the `at` method of the new element passing the `out` attribute of the Opamp. The current Drawing position is ignored, and is reset to the endpoint of the resistor.
 
 .. jupyter-execute::
     :hide-code:
@@ -98,7 +98,7 @@ The above code can be written equivalently as:
     d += elm.Resistor().right().at(opamp.out)
 
 
-Additionally, a new element can be placed with its anchor set to the current Drawing position using the `anchor` method. Here, an Opamp is placed at the end of a resistor, connected to its `in1` anchor (the inverting input).
+Additionally, a new element can be placed with its anchor set to the current Drawing position using the `anchor` method. Here, an Opamp is placed at the end of a resistor, connected to the opamp's `in1` anchor (the inverting input).
 
 
 .. jupyter-execute::
@@ -224,7 +224,7 @@ Finally, exact endpoints can also be specified using the `endpoints` method.
 Orientation
 ^^^^^^^^^^^
 
-The `flip` and `reverse` methods are useful for changing direction of directional elements such as Diodes,
+The `flip` and `reverse` methods are useful for changing orientation of directional elements such as Diodes,
 but they do not affect the drawing direction.
 
 
@@ -264,9 +264,10 @@ for times when it's useful to save the drawing state and come back to it later.
     d += elm.Dot()
     print('d.here:', d.here)
     d.push()  # Save this drawing position/direction for later
-    
-    d += elm.Capacitor().down()
+
+    d += elm.Capacitor().down()  # Go off in another direction temporarily
     print('d.here:', d.here)
+
     d.pop()   # Return to the pushed position/direction
     print('d.here:', d.here)
     d += elm.Diode()
@@ -281,7 +282,8 @@ Labels
 Labels are added to elements using the :py:meth:`schemdraw.elements.Element.label` method.
 Some unicode utf-8 characters are allowed, such as :code:`'1μF'` and :code:`'1MΩ'` if the character is included in your font set.
 Alternatively, in the Matplotlib backend, full LaTeX math expressions can be rendered when enclosed in `$..$`, such as :code:`r'$\tau = \frac{1}{RC}$'`
-For full details on LaTeX math support, see `Matplotlib Mathtext <https://matplotlib.org/3.3.0/tutorials/text/mathtext.html/>`_
+For full details on LaTeX math support, see `Matplotlib Mathtext <https://matplotlib.org/3.3.0/tutorials/text/mathtext.html/>`_.
+The SVG backend supports a limited subset of Mathtext, including most special characters, subscripts, and superscripts.
 
 Subscripts and superscripts are also added using LaTeX math mode, for example:
 
@@ -313,6 +315,25 @@ These directions do not depend on rotation. A label with `loc='left'` is always 
     :hide-code:
 
     d.draw()
+
+.. jupyter-execute::
+    :hide-code:
+
+    d = schemdraw.Drawing()
+
+.. jupyter-execute::
+    :hide-output:
+
+    d.add(elm.BjtNpn()
+          .label('b', loc='base')
+          .label('c', loc='collector')
+          .label('e', loc='emitter'))
+
+.. jupyter-execute::
+    :hide-code:
+
+    d.draw()
+
 
 Alternatively, a label may be a list/tuple of strings, which will be evenly-spaced along the length of the element.
 This allows for labeling positive and negative along with a component name, for example:
@@ -444,8 +465,8 @@ Element styling methods include `color`, `fill`, `linewidth`, and `linestyle`. I
 U.S. versus European Style
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-By default, a `Resistor` and related elements (variable resistor, photo resistor, etc.) appear in U.S. style. To configure
-European/IEC style, use the :py:meth:`schemdraw.elements.style` method with either `elm.STYLE_IEC` or `elm.STYLE_US` parameter.
+By default, a `Resistor` and related elements (variable resistor, photo resistor, etc.) appear in IEEE/U.S. style. To configure
+IEC/European style, use the :py:meth:`schemdraw.elements.style` method with either `elm.STYLE_IEC` or `elm.STYLE_IEEE` parameter.
 
 .. jupyter-execute::
     :hide-code:
@@ -466,7 +487,7 @@ European/IEC style, use the :py:meth:`schemdraw.elements.style` method with eith
 
 .. jupyter-execute::
 
-    elm.style(elm.STYLE_US)
+    elm.style(elm.STYLE_IEEE)
     d += elm.Resistor()
     d.draw()
 
@@ -475,8 +496,8 @@ Global styles
 ^^^^^^^^^^^^^
 
 The style method :py:meth:`schemdraw.elements.style` can also be used to configure
-global styles on individual elements. It's argument is a dictionary of {name: Element} class pairs.
-Combined with `functools.partial`, parameters to elements can be set globally.
+global styles on individual elements. Its argument is a dictionary of {name: Element} class pairs.
+Combined with `functools.partial <https://docs.python.org/3/library/functools.html#functools.partial>`_ from the standard library, parameters to elements can be set globally.
 For example, the following code fills all Diode elements without adding the `fill()` method or `fill` keyword argument.
 
 .. jupyter-execute::
@@ -496,7 +517,7 @@ Be careful, though, because the `style` method can overwrite existing elements i
 Walrus Mode
 -----------
 
-Python 3.8's new walrus operator (`:=`) allows for adding elements and referencing them directly to the Drawing initialization.
+Python 3.8's new walrus operator (`:=`) allows for adding elements and assigning them to a variable all in one line.
 The global position of an element is not calculated until the element is actually added to the drawing, however, so setting an `at`
 position based on another element's anchor attribute won't work. However, the `at` parameter also accepts a tuple of (Element, anchorname)
 to allow filling in the position when the element is ready to be drawn.

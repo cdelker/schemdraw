@@ -44,9 +44,13 @@ For elements consisting of several other already-defined elements (like a relay)
 Subclasses only need to define the `__init__` method in order to add lines, shapes, and text to the new element, all of which are defined using :py:class:`schemdraw.segments.Segment` classes. New Segments should be appended to the `Element.segments` attribute list.
 
 Coordinates are all defined in element cooridnates, where the element begins
-at [0, 0] and is drawn from left to right. The drawing engine will then rotate
-and translate the element to its final position. A standard resistor is
-1 drawing unit long, and with default lead extension will become 3 units long.
+at (0, 0) and is drawn from left to right.
+The drawing engine will rotate and translate the element to its final position, and for two-terminal
+elements deriving from Element2Term, will add lead extensions to the correct length depending
+on the element's placement parameters.
+Therefore elements deriving from Element2Term should not define the lead extensions
+(e.g. a Resistor only defines the zig-zag portion).
+A standard resistor is 1 drawing unit long, and with default lead extension will become 3 units long.
 
 Segments include :py:class:`schemdraw.segments.Segment`, :py:class:`schemdraw.segments.SegmentPoly`,
 :py:class:`schemdraw.segments.SegmentCircle`, :py:class:`schemdraw.segments.SegmentArc`, :py:class:`schemdraw.segments.SegmentArrow`, and :py:class:`schemdraw.segments.SegmentText`.
@@ -54,7 +58,7 @@ Segments include :py:class:`schemdraw.segments.Segment`, :py:class:`schemdraw.se
 The subclassed `Element.__init__` method can be defined with extra parameters
 to help define the element options.
 
-In addition to the list of Segments, named anchors and other parameters should be specified.
+In addition to the list of Segments, any named anchors and other parameters should be specified.
 Anchors should be added to the `Element.anchors` dictionary as {name: (x, y)} key/value pairs.
 
 The Element instance maintains its own parameters dictionary in `Element.params` that override the default drawing parameters.
@@ -86,7 +90,7 @@ As an example, here's the definition of our favorite element, the resistor:
 
 
 The resistor is made of one path.
-`reswidth` and `resheight` are constants that define the height and width of the resistor (and are referenced by several other elements too).
+`reswidth` and `resheight` are constants that define the height and width of the resistor zigzag (and are referenced by several other elements too).
 Browse the source code in the `Schemdraw.elements` submodule to see the definitions of the other built-in elements.
 
 
@@ -106,9 +110,9 @@ Start by importing the Segments and define the class name and `__init__` functio
         def __init__(self, *d, **kwargs):
             super().__init__(*d, **kwargs)
 
-The `d` and `kwargs` are passed to `super` to maintain backward compatibility.
+The `d` and `kwargs` are passed to `super` to initialize the Element.
 
-We want a dot in the center of our flux capacitor, so start by adding a `SegmentCircle`. The `fclen` and `radius` variables could be set as arguments to the __init__ for the user to adjust, if desired.
+We want a dot in the center of our flux capacitor, so start by adding a `SegmentCircle`. The `fclen` and `radius` variables could be set as arguments to the __init__ for the user to adjust, if desired, but here they are defined as constants in the __init__.
 
 .. code-block:: python
 

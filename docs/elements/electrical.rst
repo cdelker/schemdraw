@@ -74,10 +74,10 @@ IEEE style, common in the U.S., is the default, or it can be configured using
     drawElements(elmlist, cols=2)
 
 
-European/IEC Style
+IEC/European Style
 ******************
 
-European style can be enabled using
+IEC style can be enabled using
 
 .. code-block:: python
 
@@ -136,7 +136,7 @@ Miscellaneous
 .. jupyter-execute::
     :hide-code:
     
-    elmlist = [Fuse, partial(Fuse, dots=False), Breaker, Crystal, CPE, Josephson, Motor, Lamp, Neon, Thermistor, Memristor, Memristor2, Jack, Plug]
+    elmlist = [Breaker, Crystal, CPE, Josephson, Motor, Lamp, Neon, Thermistor, Memristor, Memristor2, Jack, Plug]
     drawElements(elmlist, cols=2)
 
 
@@ -277,7 +277,8 @@ The rotary switch :py:class:`schemdraw.elements.switches.SwitchRotary` takes sev
 DIP Switch
 ^^^^^^^^^^
 
-Switch in a dual-inline package :py:class:`schemdraw.elements.switches.SwitchDIP` can show each switch flipped up or down.
+A set of switches in a dual-inline package, where can show each switch flipped up or down.
+See :py:class:`schemdraw.elements.switches.SwitchDIP` for options.
 
 .. jupyter-execute::
     :hide-code:
@@ -467,13 +468,16 @@ either side.
     d.add(elm.Transformer().label('Transformer'))
     d.add(elm.Transformer(loop=True).at([5, 0]).label('Transformer(loop=True)'))
     d.here = [0, -4]
+    d.draw()
 
 
-Anchors, including a custom tap on the right side:
+Here is a transformers with anchor "B" added using the `tap` method. Note the tap by itself
+does not draw anything, but defines a named anchor to connect to.
 
 .. jupyter-execute::
 
-    x = d.add(elm.Transformer(t1=4, t2=8)#, rtaps={'B':3}))
+    d = schemdraw.Drawing(fontsize=12)
+    x = d.add(elm.Transformer(t1=4, t2=8)
               .tap(name='B', pos=3, side='secondary'))
     d.add(elm.Line().at(x.s1).length(d.unit/4).label('s1', 'rgt').color('blue'))
     d.add(elm.Line().at(x.s2).length(d.unit/4).label('s2', 'rgt').color('blue'))

@@ -28,9 +28,7 @@ Here, a J-K flip flop, as part of an HC7476 integrated circuit, is drawn with in
                       elm.IcPin(name='$\overline{Q}$', pin='14', side='right', anchorname='QBAR'),
                       elm.IcPin(name='Q', pin='15', side='right')],
                 edgepadW = .5,  # Make it a bit wider
-                botlabel='HC7476',
-                lblsize=12,
-                pinspacing=1)
+                pinspacing=1).label('HC7476', 'bottom', fontsize=12)
     display(JK)
 
 
@@ -65,7 +63,7 @@ Seven-Segment Display
 ^^^^^^^^^^^^^^^^^^^^^
 
 A seven-segment display, in :py:class:`schemdraw.elements.intcircuits.SevenSegment`, provides a single digit
-with several options including decimal point and common anode or common cathode mode. The :py:meth:`schemdraw.elements.intcircuits.sevensegdigit` method provides a list of Segment objects for adding
+with several options including decimal point and common anode or common cathode mode. The :py:meth:`schemdraw.elements.intcircuits.sevensegdigit` method generates a list of Segment objects that can be used to add
 a digit to another element, for example to make a multi-digit display.
 
 .. jupyter-execute::
@@ -85,3 +83,32 @@ configuration of the IC (see :ref:`dip741`.)
     :hide-code:
     
     elm.IcDIP()
+
+
+Predefined ICs
+^^^^^^^^^^^^^^
+
+A few common integrated circuits are predefined as shown below.
+
+.. jupyter-execute::
+    :hide-code:
+    
+    elm.Ic555().label('Ic555()', 'bottom')
+
+
+.. jupyter-execute::
+    :hide-code:
+    
+    elm.VoltageRegulator().label('VoltageRegulator()', 'bottom')
+
+
+.. jupyter-execute::
+    :hide-code:
+    
+    elm.DFlipFlop().label('DFlipFlop()', 'bottom')
+
+
+.. jupyter-execute::
+    :hide-code:
+    
+    elm.JKFlipFlop().label('JKFlipFlop()', 'bottom')

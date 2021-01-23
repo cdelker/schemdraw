@@ -185,10 +185,10 @@ class Ic(Element):
                     clkxy = pinxy
                     clkw, clkh = 0.4 * lsize/16, 0.2 * lsize/16
                     if side in ['T', 'B']:
-                        clkh = math.copysign(clkh, leadext[1]) if leadext[1] != 0 else clkh
-                        clkpath = [Point((clkxy[0]-clkw, clkxy[1])),
-                                   Point((clkxy[0], clkxy[1]-clkh)),
-                                   Point((clkxy[0]+clkw, clkxy[1]))]
+                        clkw = math.copysign(clkw, leadext[1]) if leadext[1] != 0 else clkw
+                        clkpath = [Point((clkxy[0]-clkh, clkxy[1])),
+                                   Point((clkxy[0], clkxy[1]-clkw)),
+                                   Point((clkxy[0]+clkh, clkxy[1]))]
                     else:
                         clkw = math.copysign(clkw, -leadext[0]) if leadext[0] != 0 else clkw
                         clkpath = [Point((clkxy[0], clkxy[1]+clkh)),
@@ -249,9 +249,9 @@ class Ic(Element):
 
                         self.segments.append(SegmentCircle(
                             pinxy+invertofst, invertradius))
-                        paths.append((pinxy+invertofst*2, pinxy+leadext))
+                        paths.append([pinxy+invertofst*2, pinxy+leadext])
                     else:
-                        paths.append((pinxy, pinxy+leadext))
+                        paths.append([pinxy, pinxy+leadext])
 
                 # Define anchors
                 anchorpos = pinxy+leadext

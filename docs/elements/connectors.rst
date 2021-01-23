@@ -16,38 +16,6 @@ Headers
 
 A :py:class:`schemdraw.elements.connectors.Header` is a generic Header block with any number of rows and columns. It can have round, square, or screw-head connection points.
 
-.. class:: schemdraw.elements.connectors.Header(**kwargs)
-
-    Generic Header connector element
-
-    :param rows: Number of rows [4]
-    :type rows: int
-    :param cols: Number of columns. Pin numbering requires 1 or 2 columns. [1]
-    :type cols: int
-    :param style: Connector style, 'round', 'square', or 'screw'
-    :type style: string
-    :param numbering: Pin numbering order. 'lr' for left-to-right numbering, 'ud' for up-down numbering, or 'ccw' for counter-clockwise integrated-circuit style numbering. Pin 1 is always at the top-left corner, unless `flip` parameter is also set.
-    :type numbering: string
-    :param shownumber: Draw pin numbers outside the header [False]
-    :type shownumber: bool
-    :param pinsleft: List of pin labels for left side
-    :type pinsleft: list
-    :param pinsright: List of pin labels for right side
-    :type pinsright: list
-    :param pinalignleft: Vertical alignment for pins on left side ('center', 'top', 'bottom')
-    :type pinalignleft: string
-    :param pinalignright: Vertical alignment for pins on right side ('center', 'top', 'bottom')
-    :param pinfontsizeleft: Font size for pin labels on left
-    :type pinfontsizeleft: float
-    :param pinfontsizeright: Font size for pin labels on right
-    :type pinfontsizeright: float
-    :param pinspacing: Distance between pins [0.6]
-    :type pinspacing: float
-    :param edge: Distance between header edge and first pin row/column [0.3]
-    :type edge: float
-    :param pinfill: Color to fill pin circles
-    :type pinfill: string
-
 
 .. jupyter-execute::
     :hide-code:
@@ -88,7 +56,7 @@ The `flip` argument can be set True to put pin 1 at the bottom.
     d.add(elm.Header(at=[6, 0], shownumber=True, cols=2, numbering='ccw', label="ccw"))
     d.draw()
 
-A Jumper element is also defined, as a simple rectangle, for easy placing onto a header.
+A :py:class:`schemdraw.elements.connectors.Jumper` element is also defined, as a simple rectangle, for easy placing onto a header.
 
 .. jupyter-execute::
     :hide-code:
@@ -99,7 +67,7 @@ A Jumper element is also defined, as a simple rectangle, for easy placing onto a
     :hide-output:
 
     J = d.add(elm.Header(cols=2, style='square'))
-    d.add(elm.Jumper(at=J.pin3, fill='lightgray'))
+    d.add(elm.Jumper().at(J.pin3).fill('lightgray'))
 
 .. jupyter-execute::
     :hide-code:
@@ -110,7 +78,7 @@ A Jumper element is also defined, as a simple rectangle, for easy placing onto a
 D-Sub Connectors
 ^^^^^^^^^^^^^^^^
 
-Both DB9 and DB25 subminiature connectors are defined, with anchors `pin1` through `pin9` or `pin25`.
+Both :py:class:`schemdraw.elements.connectors.DB9` and :py:class:`schemdraw.elements.connectors.DB25` subminiature connectors are defined, with anchors `pin1` through `pin9` or `pin25`.
 
 .. jupyter-execute::
     :hide-code:
@@ -125,9 +93,8 @@ Both DB9 and DB25 subminiature connectors are defined, with anchors `pin1` throu
 Multiple Lines
 ^^^^^^^^^^^^^^
 
-The :py:class:`schemdraw.elements.connectors.RightLines` and :py:class:`schemdraw.elements.connectors.OrthoLines` elements are useful for connecting multiple pins of an integrated circuit or header all at once. Both need an `at` and `to` location specified, along with the `n` parameter for setting the number of lines to draw.
+The :py:class:`schemdraw.elements.connectors.RightLines` and :py:class:`schemdraw.elements.connectors.OrthoLines` elements are useful for connecting multiple pins of an integrated circuit or header all at once. Both need an `at` and `to` location specified, along with the `n` parameter for setting the number of lines to draw. Use RightLines when the Headers are perpindicular to each other.
 
-Use RightLines when the Headers are perpindicular to each other.
 
 .. jupyter-execute::
     :hide-code:
@@ -141,8 +108,8 @@ Use RightLines when the Headers are perpindicular to each other.
                             elm.IcPin(name='B', side='t', slot='2/4'),
                             elm.IcPin(name='C', side='t', slot='3/4'),
                             elm.IcPin(name='D', side='t', slot='4/4')]))
-    D2 = d.add(elm.Header(rows=4, at=[5,4]))
-    d.add(elm.RightLines(at=D2.pin1, to=D1.D, n=4, label='RightLines'))
+    D2 = d.add(elm.Header(rows=4).at((5,4)))
+    d.add(elm.RightLines(n=4).at(D2.pin1).to(D1.D).label('RightLines'))
 
 .. jupyter-execute::
     :hide-code:
@@ -164,8 +131,8 @@ Use the `xstart` parameter, between 0 and 1, to specify the position where the f
                             elm.IcPin(name='B', side='r', slot='2/4'),
                             elm.IcPin(name='C', side='r', slot='3/4'),
                             elm.IcPin(name='D', side='r', slot='4/4')]))
-    D2 = d.add(elm.Header(rows=4, at=[7, -3]))
-    d.add(elm.OrthoLines(at=D1.D, to=D2.pin1, n=4, label='OrthoLines'))
+    D2 = d.add(elm.Header(rows=4).at((7, -3)))
+    d.add(elm.OrthoLines(n=4).at(D1.D).to(D2.pin1).label('OrthoLines'))
 
 .. jupyter-execute::
     :hide-code:
@@ -192,12 +159,32 @@ BusConnect elements define anchors `start`, `end` on the endpoints of the wide b
     :hide-output:
 
     J = d.add(elm.Header(rows=6))
-    B = d.add(elm.BusConnect(n=6, at=J.pin1))
-    d.add(elm.BusLine('down', at=B.end, l=3))
-    B2 = d.add(elm.BusConnect(n=6, anchor='start', reverse=True))
-    d.add(elm.Header(rows=6, at=B2.pin1, anchor='pin1'))
+    B = d.add(elm.BusConnect(n=6).at(J.pin1))
+    d.add(elm.BusLine().down().at(B.end).length(3))
+    B2 = d.add(elm.BusConnect(n=6).anchor('start').reverse())
+    d.add(elm.Header(rows=6).at(B2.pin1).anchor('pin1'))
 
 .. jupyter-execute::
     :hide-code:
 
+    d.draw()
+
+
+Outlets
+^^^^^^^
+
+Power outlets and plugs are drawn using `OutletX` classes, with international styles A through L. Each has anchors
+`hot`, `neutral`, and `ground` (if applicable).
+The `plug` parameter fills the prongs to indicate a plug versus an outlet.
+
+.. jupyter-execute::
+    :hide-code:
+
+    outlets = [elm.OutletA, elm.OutletB, elm.OutletC, elm.OutletD, elm.OutletE, elm.OutletF,
+               elm.OutletG, elm.OutletH, elm.OutletI, elm.OutletJ, elm.OutletK, elm.OutletL]
+    d = schemdraw.Drawing()
+    for i, outlet in enumerate(outlets):
+        K = outlet().label(outlet.__name__, loc='top')
+        d.here = (i % 4) * 4, (i//4) * -4
+        d += K
     d.draw()

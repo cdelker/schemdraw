@@ -1,22 +1,26 @@
 ''' Utility functions for point geometry '''
 
+from typing import Sequence, List, Tuple
+
 import math
 from operator import mul
 from itertools import starmap
 
 
-def dot(a, b):
-    ''' Dot product of iterables a and b (can be 2D list of lists)'''
+def dot(a: Sequence[float], b: Sequence[Sequence[float]]) -> 'Point':
+    ''' Dot product of iterables a and b '''
     return Point([sum(starmap(mul, zip(a, col))) for col in zip(*b)])
 
 
-def linspace(start, stop, num=50):
+def linspace(start: float, stop: float, num: int=50) -> List[float]:
     ''' List of evenly spaced numbers '''
     step = (stop - start) / (num - 1)
     return [start+step*i for i in range(num)]
 
 
-def rotate(xy, angle, center=(0, 0)):
+def rotate(xy: Sequence[float],
+           angle: float,
+           center: Sequence[float]=(0, 0)) -> 'Point':
     ''' Rotate the xy point by angle degrees '''
     co = math.cos(math.radians(angle))
     so = math.sin(math.radians(angle))
@@ -28,34 +32,37 @@ def rotate(xy, angle, center=(0, 0)):
     return b
 
 
-def mirrorx(xy, centerx=0):
+def mirrorx(xy, centerx=0) -> Tuple[float, float]:
     ''' Mirror the point horizontally '''
     return -(xy[0]-centerx)+centerx, xy[1]
 
 
-def flip(xy):
+def flip(xy: Sequence[float]) -> Tuple[float, float]:
     ''' Flip the point vertically '''
     return xy[0], -xy[1]
 
 
-def delta(a, b):
+def delta(a: Sequence[float], b: Sequence[float]) -> Tuple[float, float]:
     ''' Delta between points a and b '''
     return b[0] - a[0], b[1] - a[1]
 
 
-def angle(a, b):
+def angle(a: Sequence[float], b: Sequence[float]) -> float:
     ''' Compute angle from point a to b '''
     theta = math.degrees(math.atan2(b[1] - a[1], b[0] - a[0]))
     return theta
 
 
 class Point(tuple):
+    ''' An (x, y) tuple that can do math operations '''
     @property
-    def x(self):
+    def x(self) -> float:
+        ''' X value of point '''
         return self[0]
 
     @property
-    def y(self):
+    def y(self) -> float:
+        ''' Y value of point '''
         return self[1]
 
     def __repr__(self):
@@ -79,10 +86,10 @@ class Point(tuple):
         except AttributeError:
             return Point((a-self.x, a-self.y))
 
-    def __mul__(self, a):
+    def __mul__(self, a: float):
         return Point((a*self.x, a*self.y))
 
-    def __truediv__(self, a):
+    def __truediv__(self, a: float):
         return Point((self.x/a, self.y/a))
 
     def __neg__(self):
@@ -91,14 +98,14 @@ class Point(tuple):
     __radd__ = __add__
     __rmul__ = __mul__
 
-    def rotate(self, angle, center=(0, 0)):
+    def rotate(self, angle: float, center: Sequence[float] = (0, 0)) -> 'Point':
         ''' Rotate the point by angle degrees about the center '''
         return Point(rotate(self, angle, center=Point(center)))
 
-    def mirrorx(self, centerx=0):
+    def mirrorx(self, centerx: float=0) -> 'Point':
         ''' Mirror in x direction about the centerx point '''
         return Point(mirrorx(self, centerx))
 
-    def flip(self):
+    def flip(self) -> 'Point':
         ''' Flip the point vertically '''
         return Point(flip(self))

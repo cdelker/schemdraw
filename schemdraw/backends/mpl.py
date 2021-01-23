@@ -1,31 +1,35 @@
 ''' Matplotlib drawing backend for schemdraw '''
 
+from typing import Sequence
 from io import BytesIO
 import math
 
-import matplotlib
-import matplotlib.pyplot as plt
-from matplotlib.patches import Arc
+import matplotlib  # type: ignore
+import matplotlib.pyplot as plt  # type: ignore
+from matplotlib.patches import Arc  # type: ignore
 
 from .. import util
+from ..types import Capstyle, Joinstyle, Linestyle, BBox
 
 inline = 'inline' in matplotlib.get_backend()
 
 
-class Figure(object):
+def fix_capstyle(capstyle):
+    ''' Matplotlib uses 'projecting' rather than 'square' for some reason '''
+    if capstyle == 'square':
+        return 'projecting'
+    return capstyle
+
+
+class Figure:
     ''' Schemdraw figure on Matplotlib figure
 
-        Parameters
-        ----------
-        bbox : schemdraw.segments.BBox
-            Coordinate bounding box for drawing, used to
-            override Matplotlib's autoscale
-        inches_per_unit : float
-            Scale for the drawing
-        showframe : bool
-            Show Matplotlib axis frame
-        ax : Matplotlib axis
-            Existing axis to draw on
+        Args:
+            bbox: Coordinate bounding box for drawing, used to
+                override Matplotlib's autoscale
+            inches_per_unit: Scale for the drawing
+            showframe: Show Matplotlib axis frame
+            ax: Existing Matplotlib axis to draw on
     '''
     def __init__(self, **kwargs):
         if kwargs.get('ax'):
@@ -33,6 +37,10 @@ class Figure(object):
             self.fig = self.ax.figure
             self.userfig = True
         else:
+            # a Figure (big F) is not part of the pyplot interface
+            # so won't be shown double in Jupyter/inline interfaces.
+            # But a figure (small f) is required to show the image in
+            # MPL's popup GUI.
             if inline:
                 self.fig = plt.Figure()
             else:
@@ -49,28 +57,36 @@ class Figure(object):
         self.bbox = kwargs.get('bbox', None)
         self.inches_per_unit = kwargs.get('inches_per_unit', .5)
 
-    def set_bbox(self, bbox):
+    def set_bbox(self, bbox: BBox):
         ''' Set bounding box, to override Matplotlib's autoscale '''
         self.bbox = bbox
 
-    def show(self):
-        ''' Display figure in interactive window '''
+    def show(self) -> None:
+        ''' Display figure in interactive window. Does nothing
+            when running inline (ie Jupyter) which shows the
+            figure using _repr_ methods.
+        '''
         if not inline:
             self.getfig()
             plt.show()
-        plt.close()
 
-    def plot(self, x, y, color='black', ls='-', lw=2, fill=None,
-             capstyle='round', joinstyle='round',  zorder=2):
+    def bgcolor(self, color: str) -> None:
+        ''' Set background color of drawing '''
+        self.fig.set_facecolor(color)
+
+    def plot(self, x: float, y: float, color: str='black', ls: Linestyle='-',
+             lw: float=2, fill: str=None, capstyle: Capstyle='round',
+             joinstyle: Joinstyle='round',  zorder: int=2) -> None:
         ''' Plot a path '''
         self.ax.plot(x, y, zorder=zorder, color=color, ls=ls, lw=lw,
-                     solid_capstyle=capstyle, solid_joinstyle=joinstyle)
+                     solid_capstyle=fix_capstyle(capstyle),
+                     solid_joinstyle=joinstyle)
         if fill:
             self.ax.fill(x, y, color=fill, zorder=zorder)
 
-    def text(self, s, x, y, color='black', fontsize=14, fontfamily='sans-serif',
+    def text(self, s: str, x, y, color='black', fontsize=14, fontfamily='sans-serif',
              rotation=0, halign='center', valign='center', rotation_mode='anchor',
-             zorder=3):
+             zorder=3) -> None:
         ''' Add text to the figure '''
         self.ax.text(x, y, s, transform=self.ax.transData, color=color,
                      fontsize=fontsize, fontfamily=fontfamily,
@@ -78,33 +94,35 @@ class Figure(object):
                      horizontalalignment=halign, verticalalignment=valign,
                      zorder=zorder)
 
-    def poly(self, verts, closed=True, color='black', fill=None, lw=2, ls='-',
-             capstyle='round', joinstyle='round', zorder=1):
+    def poly(self, verts: Sequence[Sequence[float]], closed: bool=True,
+             color: str='black', fill: str=None, lw: float=2, ls: Linestyle='-',
+             capstyle: Capstyle='round', joinstyle: Joinstyle='round', zorder: int=1) -> None:
         ''' Draw a polynomial '''
         p = plt.Polygon(verts, closed=closed, ec=color,
                         fc=fill, fill=fill is not None,
-                        lw=lw, ls=ls, capstyle=capstyle,
+                        lw=lw, ls=ls, capstyle=fix_capstyle(capstyle),
                         joinstyle=joinstyle, zorder=zorder)
         self.ax.add_patch(p)
 
-    def circle(self, center, radius, color='black', fill=None,
-               lw=2, ls='-', zorder=1):
+    def circle(self, center: Sequence[float], radius: float, color: str='black', fill: str=None,
+               lw: float=2, ls: Linestyle='-', zorder: int=1) -> None:
         ''' Draw a circle '''
         circ = plt.Circle(xy=center, radius=radius, ec=color, fc=fill,
                           fill=fill is not None, lw=lw, ls=ls, zorder=zorder)
         self.ax.add_patch(circ)
 
-    def arrow(self, x, y, dx, dy, headwidth=.2, headlength=.2,
-              color='black', lw=2, zorder=1):
+    def arrow(self, x: float, y: float, dx: float, dy: float,
+              headwidth: float=.2, headlength: float=.2,
+              color: str='black', lw: float=2, zorder: int=1) -> None:
         ''' Draw an arrow '''
-
         self.ax.arrow(x, y, dx, dy, head_width=headwidth, head_length=headlength,
                       length_includes_head=True, color=color, lw=lw, zorder=zorder)
 
-    def arc(self, center, width, height, theta1=0, theta2=90, angle=0,
-            color='black', lw=2, ls='-', zorder=1, arrow=None):
+    def arc(self, center: Sequence[float], width: float, height: float,
+            theta1: float=0, theta2: float=90, angle: float=0,
+            color: str='black', lw: float=2, ls: Linestyle='-',
+            zorder: int=1, arrow: bool=None) -> None:
         ''' Draw an arc or ellipse, with optional arrowhead '''
-
         arc = Arc(center, width=width, height=height, theta1=theta1,
                   theta2=theta2, angle=angle, color=color,
                   lw=lw, ls=ls, zorder=zorder)
@@ -118,14 +136,14 @@ class Figure(object):
             if arrow == 'ccw':
                 dx = math.cos(math.radians(th2+90)) / 100
                 dy = math.sin(math.radians(theta2+90)) / 100
-                s = [center[0] + width/2*math.cos(math.radians(th2)),
-                     center[1] + height/2*math.sin(math.radians(th2))]
+                s = util.Point((center[0] + width/2*math.cos(math.radians(th2)),
+                                center[1] + height/2*math.sin(math.radians(th2))))
             else:
                 dx = -math.cos(math.radians(th1+90)) / 100
                 dy = -math.sin(math.radians(th1+90)) / 100
 
-                s = [center[0] + width/2*math.cos(math.radians(th1)),
-                     center[1] + height/2*math.sin(math.radians(th1))]
+                s = util.Point((center[0] + width/2*math.cos(math.radians(th1)),
+                                center[1] + height/2*math.sin(math.radians(th1))))
 
             s = util.rotate(s, angle, center)
             darrow = util.rotate((dx, dy), angle)
@@ -133,11 +151,12 @@ class Figure(object):
             self.ax.arrow(s[0], s[1], darrow[0], darrow[1], head_width=.15,
                           head_length=.25, color=color, zorder=zorder)
 
-    def save(self, fname, transparent=True, dpi=72):
+    def save(self, fname: str, transparent: bool=True, dpi: float=72) -> None:
         ''' Save the figure to a file '''
         fig = self.getfig()
         fig.savefig(fname, bbox_inches='tight', transparent=transparent, dpi=dpi,
                     bbox_extra_artists=self.ax.get_default_bbox_extra_artists())
+        plt.close()  # don't show popup twice if draw is called later
 
     def getfig(self):
         ''' Get the Matplotlib figure '''
@@ -172,6 +191,11 @@ class Figure(object):
         fig.savefig(output, format=ext, bbox_inches='tight')
         return output.getvalue()
 
+    def __repr__(self):
+        if plt.isinteractive():
+            self.show()
+        return super().__repr__()
+    
     def _repr_png_(self):
         ''' PNG representation for Jupyter '''
         return self.getimage('png')

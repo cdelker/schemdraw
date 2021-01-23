@@ -1,8 +1,36 @@
 v0.9 - IN PROGRESS
 
-    - Added string parser for logic diagrams
-    - Fixed zooming of arc segments
+    - Added optional SVG backend for drawing directly to an SVG image
+    - Implemented method-chaining "fluent" interface for building elements
+    - Added `elements.style` method for setting U.S. or European/IEC resistor style
     - Added parameter for drawing schematic on existing matplotlib axis
+    - Added string parser for creating logic diagrams from expressions like "A or B"
+    - Fixed zooming of arc segments
+    - Added type annotations
+    - Added `Drawing.move` method for moving cursor by dx and dy.
+    - Drawing class implements += operator, so elements can be added by `Drawing += Element()`
+    - Removed dependency on Numpy.
+
+    - New Elements:
+        - CPE (Constant Phase Element)
+        - Varactor
+        - FuseIEEE
+        - FuseIEC
+        - SwitchRotary
+        - SwitchReed
+        - Jack
+        - Plug
+        - Ic555
+        - IcDIP
+        - SevenSegment
+        - Outlet Elements
+    
+    - Deprecations:
+        - `Element.add_label` is deprecated (use `Element.label`)
+        - `Drawing.loopI` is deprecated (add a `LoopCurrent` element)
+        - `Drawing.labelI` is deprecated (add a `CurrentLabel` element)
+        - `Drawing.labelI_inline` is deprecated (add a `CurrentLabelInline` element)
+
 
 
 v0.8 - 15-Aug-2020

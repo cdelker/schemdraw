@@ -19,7 +19,7 @@ import pkg_resources
 # -- Project information -----------------------------------------------------
 
 project = 'SchemDraw'
-copyright = '2020, Collin J. Delker'
+copyright = '2021, Collin J. Delker'
 author = 'Collin J. Delker'
 
 # The full version, including alpha/beta/rc tags
@@ -34,6 +34,7 @@ release = pkg_resources.get_distribution(project).version
 extensions = [
     'jupyter_sphinx',
     'sphinx.ext.autodoc',
+    'sphinx.ext.autodoc.typehints',
     'sphinx.ext.napoleon'
 ]
 

@@ -9,7 +9,7 @@ Logic Gates
     from schemdraw import logic
 
 
-Logic gates can be drawn by importing the :py:mod:`logic` module:
+Logic gates can be drawn by importing the :py:mod:`schemdraw.logic.logic` module:
 
 .. code-block:: python
 
@@ -63,10 +63,8 @@ Finally, any input can be pre-inverted (active low) using the `inputnots` keywor
 Logic Parser
 ------------
 
-Logic trees can also be created from a string logic expression such as "(a and b) or c" using using :py:func:`schemdraw.parsing.logicparse`.
-The logic parser requires the pyparsing module.
-
-.. autofunction:: schemdraw.parsing.logicparse
+Logic trees can also be created from a string logic expression such as "(a and b) or c" using using :py:func:`schemdraw.parsing.logic_parser.logicparse`.
+The logic parser requires the `pyparsing <https://pyparsing-docs.readthedocs.io/en/latest/>`_ module.
 
 Examples:
 

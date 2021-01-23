@@ -1,7 +1,8 @@
 ''' Convert strings into SVG <text> elements, including some basic
     Latex-like math markup and formatting.
 
-    The math only covers the most common cases in encountered electrical schematics:
+    The math only covers the most common cases in encountered
+    electrical schematics:
         - Superscripts
         - Subscripts
         - Overline
@@ -11,11 +12,12 @@
     and rotation centers.
 '''
 
+from typing import Literal, Tuple
+
 import string
 import re
-import math
 
-from ..util import Point
+from ..util import Point, rotate
 
 
 # Conversion from Latex codes to unicode characters.
@@ -156,24 +158,21 @@ numsuperscripts = {
     '9': '⁹'}
 
 
-def replacelatex(text):
+def replacelatex(text: str) -> str:
     ''' Replace latex math codes with unicode equivalents '''
     for k, v in textable.items():
         text = re.sub(k, v, text)
     return text
 
 
-def mathtextsvg(text, tag=True):
+def mathtextsvg(text: str, tag: bool=True) -> str:
     ''' Convert any math string delimited by $..$ into a string
         that can be used in svg <text>
-        
-        Parameters
-        ----------
-        text : string
-            The text to convert
-        tag: bool
-            Apply svg tags such as <tspans for applying baseline shift.
-            Set to false when estimating string width.
+
+        Args:
+            text: The text to convert
+            tag: Apply svg tags such as <tspans for applying baseline shift.
+                Set to false when estimating string width.
     '''
     tokens = re.split(r'(\$.*?\$)', text)
     svgtext = ''
@@ -183,7 +182,7 @@ def mathtextsvg(text, tag=True):
             continue
         t = t[1:-1]
         t = replacelatex(t)
-        
+
         # Find superscripts within {}
         sups = re.split(r'(\^\{.*?\})', t)
         for sup in sups:
@@ -248,8 +247,17 @@ def mathtextsvg(text, tag=True):
     return svgtext
 
 
-def string_width(st, fontsize=12, font='Arial'):
-    ''' Estimate string width based on individual characters '''
+def string_width(st: str, fontsize: float=12, font: str='Arial') -> float:
+    ''' Estimate string width based on individual characters
+
+        Args:
+            st: string to estimate
+            fontsize: font size
+            font: font family
+
+        Returns:
+            Estimated width of string
+    '''
     # adapted from https://stackoverflow.com/a/16008023/13826284
     # The only alternative is to draw the string to an actual canvas
 
@@ -287,36 +295,25 @@ def string_width(st, fontsize=12, font='Arial'):
     return size * 72 / 1000.0 * (fontsize/12)  # to points
 
 
-def text_approx_size(text, font='Arial', size=16):
+def text_approx_size(text: str, font: str='Arial', size: float=16) -> Tuple[float, float, float]:
     ''' Get approximate width, height and line spacing of multiline text
 
-        Parameters
-        ----------
-        text : string
-            The text to approximate
-        font : string
-            Font family, either Arial or Times
-        size : float
-            Font point size
-
-        Returns
-        -------
-        w : float
-            Width of text box, in points
-        h : float
-            Height of text box, in points
-        dy : float
-            Spacing between lines of text, in points
-
-        Note
-        ----
         Does not account for descent or ascent of text (for example,
         a "g" going below the baseline), or for superscripts/subscripts.
+
+        Args:
+            text: The text to approximate
+            font: Font family, either Arial or Times
+            size: Font point size
+
+        Returns:
+            w: Width of text box, in points
+            h: Height of text box, in points
+            dy: Spacing between lines of text, in points
     '''
-    w = 0
-    h = 0
+    w = 0.
+    h = 0.
     lines = text.splitlines()
-    h = 0
     dy = size if len(lines) > 1 else size * 0.8
     for line in lines:
         w = max(w, string_width(mathtextsvg(line, tag=False), fontsize=size, font=font))
@@ -324,42 +321,29 @@ def text_approx_size(text, font='Arial', size=16):
     return w, h, dy
 
 
-def text_tosvg(text, x, y, font='Arial', size=16, color='black',
-               halign='center', valign='center',
-               rotation=0, rotation_mode='anchor',
-               testmode=False):
+def text_tosvg(text: str, x: float, y: float, font: str='Arial', size: float=16, color: str='black',
+               halign: Literal['left', 'center', 'right']='center', valign: Literal['top', 'center', 'bottom']='center',
+               rotation: float=0, rotation_mode: Literal['anchor', 'default']='anchor',
+               testmode: bool=False) -> str:
     ''' Convert text to svg <text> tag.
 
-        Parameters
-        ----------
-        text : string
-            The text to convert
-        x : float
-            Anchor x position, points
-        y : float
-            Anchor y position, points
-        font : string
-            Font family
-        size : float
-            Font point size
-        color : string
-            Font color
-        halign : string
-            Horizontal alignment (left, center, right)
-        valign : string
-            Vertical alignment (top, center, bottom)
-        rotation : float
-            Rotation angle, degrees
-        rotation_mode : string
-            Rotation mode (anchor, default), see Matplotlib    https://matplotlib.org/3.1.1/gallery/text_labels_and_annotations/demo_text_rotation_mode.html
-        testmode : bool
-            For testing, draw rectable around text bounding box
-            and dot at text anchor
+        Args:
+            text: The text to convert
+            x: Anchor x position, points
+            y: Anchor y position, points
+            font: Font family
+            size: Font point size
+            color: Font color
+            halign: Horizontal alignment (left, center, right)
+            valign: Vertical alignment (top, center, bottom)
+            rotation: Rotation angle, degrees
+            rotation_mode: Rotation mode (anchor, default), see
+            Matplotlib https://matplotlib.org/3.1.1/gallery/text_labels_and_annotations/demo_text_rotation_mode.html
+            testmode: For testing, draw rectable around text bounding box
+                and dot at text anchor
 
-        Returns
-        -------
-        svgtext : string
-            Text formatted in svg <text> element.
+        Returns:
+            Text formatted in svg <text> element string.
     '''
     w, h, dy = text_approx_size(text, font=font, size=size)
 
@@ -382,12 +366,13 @@ def text_tosvg(text, x, y, font='Arial', size=16, color='black',
     anchor = {'center': 'middle', 'left': 'start', 'right': 'end'}.get(halign)
 
     org = Point((x, y))
-    p1 = Point((boxx, ytext)).rotate(rotation, org)
-    p2 = Point((boxx, ytext-h)).rotate(rotation, org)
-    p3 = Point((boxx+w, ytext-h)).rotate(rotation, org)
-    p4 = Point((boxx+w, ytext)).rotate(rotation, org)
+    p1 = Point((boxx, ytext)).rotate(-rotation, org)
+    p2 = Point((boxx, ytext-h)).rotate(-rotation, org)
+    p3 = Point((boxx+w, ytext-h)).rotate(-rotation, org)
+    p4 = Point((boxx+w, ytext)).rotate(-rotation, org)
 
-    pxmin = min(p1[0], p2[0], p3[0], p4[0])  # Bounding box, unshifted for "default" rotation mode
+    # Bounding box, unshifted for "default" rotation mode
+    pxmin = min(p1[0], p2[0], p3[0], p4[0])
     pxmax = max(p1[0], p2[0], p3[0], p4[0])
     pymin = min(p1[1], p2[1], p3[1], p4[1])
     pymax = max(p1[1], p2[1], p3[1], p4[1])

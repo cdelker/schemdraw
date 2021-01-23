@@ -37,6 +37,10 @@ class Figure:
             self.fig = self.ax.figure
             self.userfig = True
         else:
+            # a Figure (big F) is not part of the pyplot interface
+            # so won't be shown double in Jupyter/inline interfaces.
+            # But a figure (small f) is required to show the image in
+            # MPL's popup GUI.
             if inline:
                 self.fig = plt.Figure()
             else:
@@ -58,11 +62,13 @@ class Figure:
         self.bbox = bbox
 
     def show(self) -> None:
-        ''' Display figure in interactive window '''
+        ''' Display figure in interactive window. Does nothing
+            when running inline (ie Jupyter) which shows the
+            figure using _repr_ methods.
+        '''
         if not inline:
             self.getfig()
             plt.show()
-        plt.close()
 
     def bgcolor(self, color: str) -> None:
         ''' Set background color of drawing '''
@@ -150,6 +156,7 @@ class Figure:
         fig = self.getfig()
         fig.savefig(fname, bbox_inches='tight', transparent=transparent, dpi=dpi,
                     bbox_extra_artists=self.ax.get_default_bbox_extra_artists())
+        plt.close()  # don't show popup twice if draw is called later
 
     def getfig(self):
         ''' Get the Matplotlib figure '''
@@ -184,6 +191,11 @@ class Figure:
         fig.savefig(output, format=ext, bbox_inches='tight')
         return output.getvalue()
 
+    def __repr__(self):
+        if plt.isinteractive():
+            self.show()
+        return super().__repr__()
+    
     def _repr_png_(self):
         ''' PNG representation for Jupyter '''
         return self.getimage('png')

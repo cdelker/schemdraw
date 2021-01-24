@@ -32,6 +32,9 @@ class Figure:
             ax: Existing Matplotlib axis to draw on
     '''
     def __init__(self, **kwargs):
+        self.showframe = kwargs.get('showframe', False)
+        self.bbox = kwargs.get('bbox', None)
+        self.inches_per_unit = kwargs.get('inches_per_unit', .5)        
         if kwargs.get('ax'):
             self.ax = kwargs.get('ax')
             self.fig = self.ax.figure
@@ -52,10 +55,12 @@ class Figure:
                 top=0.90)
             self.ax = self.fig.add_subplot()
             self.userfig = False
+            self.ax.set_aspect('equal')
+            if not self.showframe:
+                self.ax.axes.get_xaxis().set_visible(False)
+                self.ax.axes.get_yaxis().set_visible(False)
+                self.ax.set_frame_on(False)
         self.ax.autoscale_view(True)  # This autoscales all the shapes too
-        self.showframe = kwargs.get('showframe', False)
-        self.bbox = kwargs.get('bbox', None)
-        self.inches_per_unit = kwargs.get('inches_per_unit', .5)
 
     def set_bbox(self, bbox: BBox):
         ''' Set bounding box, to override Matplotlib's autoscale '''
@@ -68,7 +73,8 @@ class Figure:
         '''
         if not inline:
             self.getfig()
-            plt.show()
+            self.fig.show()
+            plt.show()   # To start the MPL event loop
 
     def bgcolor(self, color: str) -> None:
         ''' Set background color of drawing '''
@@ -156,12 +162,11 @@ class Figure:
         fig = self.getfig()
         fig.savefig(fname, bbox_inches='tight', transparent=transparent, dpi=dpi,
                     bbox_extra_artists=self.ax.get_default_bbox_extra_artists())
-        plt.close()  # don't show popup twice if draw is called later
 
     def getfig(self):
         ''' Get the Matplotlib figure '''
         if not self.userfig:
-            if self.bbox is None:
+            if self.bbox is None or math.inf in self.bbox or -math.inf in self.bbox:
                 # Use MPL's bbox, which sometimes clips things like arrowheads
                 x1, x2 = self.ax.get_xlim()
                 y1, y2 = self.ax.get_ylim()
@@ -171,8 +176,11 @@ class Figure:
             x2 += .1
             y1 -= .1
             y2 += .1
-            self.ax.set_xlim(x1, x2)
-            self.ax.set_ylim(y1, y2)
+            try:
+                self.ax.set_xlim(x1, x2)
+                self.ax.set_ylim(y1, y2)
+            except ValueError:
+                pass  # No elements
             w = x2-x1
             h = y2-y1
 
@@ -180,8 +188,11 @@ class Figure:
                 self.ax.axes.get_xaxis().set_visible(False)
                 self.ax.axes.get_yaxis().set_visible(False)
                 self.ax.set_frame_on(False)
-            self.ax.get_figure().set_size_inches(self.inches_per_unit*w,
-                                                 self.inches_per_unit*h)
+            try:
+                self.ax.get_figure().set_size_inches(self.inches_per_unit*w,
+                                                     self.inches_per_unit*h)
+            except ValueError:
+                pass  # infinite size (no elements yet)
         return self.fig
 
     def getimage(self, ext='svg'):
@@ -191,6 +202,10 @@ class Figure:
         fig.savefig(output, format=ext, bbox_inches='tight')
         return output.getvalue()
 
+    def clear(self) -> None:
+        ''' Remove everything '''
+        self.ax.clear()
+    
     def __repr__(self):
         if plt.isinteractive():
             self.show()

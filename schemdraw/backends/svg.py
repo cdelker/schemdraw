@@ -288,6 +288,10 @@ class Figure:
         s += '</svg>'
         return s.encode('utf-8')
 
+    def clear(self) -> None:
+        ''' Remove everything '''
+        self.svgelements = []
+
     def _repr_svg_(self):
         ''' SVG representation for Jupyter '''
         return self.getimage().decode()

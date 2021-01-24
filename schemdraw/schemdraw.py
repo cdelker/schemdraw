@@ -183,6 +183,7 @@ class Drawing:
         self.here: XY = Point((0, 0))
         self.theta: float = 0
         self._state: List[Tuple[Point, float]] = []  # Push/Pop stack
+        self._initfig()
 
         for element in elements:
             self.add(element)
@@ -243,12 +244,25 @@ class Drawing:
         self.here, self.theta = element._place(self.here, self.theta,
                                                **dwgparams)
         self.elements.append(element)
+        element._draw(self.fig)
+        self.fig.set_bbox(self.get_bbox())
+        self.fig.getimage()  # Run scaling stuff
         return element
 
     def add_elements(self, *elements: Element) -> None:
         ''' Add multiple elements to the drawing '''
         for element in elements:
             self.add(element)
+
+    def undo(self) -> None:
+        ''' Removes previously added element '''
+        self.elements.pop(-1)
+        self.fig.clear()
+        for element in self.elements:
+            element._draw(self.fig)
+        self.here, self.theta = self.elements[-1].absdrop
+        self.fig.set_bbox(self.get_bbox())
+        self.fig.getimage()  # Scale
 
     def move(self, dx: float, dy: float) -> None:
         ''' Move the current drawing position
@@ -355,6 +369,19 @@ class Drawing:
         self.add(element)
         return element
 
+    def _initfig(self, ax=None, backend: Backends=None, showframe: bool=False) -> None:
+        figclass = {'matplotlib': mplFigure,
+                    'svg': svgFigure}.get(backend, Figure)  # type: ignore
+        fig = figclass(ax=ax,
+                       bbox=self.get_bbox(),
+                       inches_per_unit=self.inches_per_unit,
+                       showframe=showframe)
+        
+        params = ChainMap(self.dwgparams, schemdrawstyle)
+        if 'bgcolor' in params:
+            fig.bgcolor(params['bgcolor'])
+        self.fig = fig
+    
     def draw(self, showframe: bool=False, show: bool=True,
              ax=None, backend: Backends=None):
         ''' Draw the schematic
@@ -369,22 +396,17 @@ class Drawing:
             Returns:
                 schemdraw Figure object
         '''
-        figclass = {'matplotlib': mplFigure,
-                    'svg': svgFigure}.get(backend, Figure)  # type: ignore
-        fig = figclass(ax=ax,
-                       bbox=self.get_bbox(),
-                       inches_per_unit=self.inches_per_unit,
-                       showframe=showframe)
-        
-        params = ChainMap(self.dwgparams, schemdrawstyle)
-        if 'bgcolor' in params:
-            fig.bgcolor(params['bgcolor'])
+        # Redraw only if needed. Otherwise, show/return what's already
+        # been drawn on the figure
+        if (ax is not None or showframe != self.fig.showframe or
+            backend is not None):
+            self._initfig(ax=ax, backend=backend, showframe=showframe)
+            for element in self.elements:
+                element._draw(self.fig)
 
-        for element in self.elements:
-            element._draw(fig)
         if show:
-            fig.show()  # Show figure in window if not inline/Jupyter mode
-        return fig  # Otherwise return Figure and let _repr_ display it
+            self.fig.show()  # Show figure in window if not inline/Jupyter mode
+        return self.fig  # Otherwise return Figure and let _repr_ display it
 
     def save(self, fname: str, transparent: bool=True, dpi: float=72) -> None:
         ''' Save figure to a file
@@ -395,8 +417,7 @@ class Drawing:
                 transparent: Save as transparent background, if available
                 dpi: Dots-per-inch for raster formats
         '''
-        fig = self.draw(show=False)
-        fig.save(fname, transparent=transparent, dpi=dpi)
+        self.fig.save(fname, transparent=transparent, dpi=dpi)
 
     def get_imagedata(self, fmt: Union[ImageFormat, ImageType]) -> bytes:
         ''' Get image data as bytes array
@@ -409,5 +430,4 @@ class Drawing:
         '''
         if Figure == svgFigure and fmt.lower() != 'svg':
             raise ValueError('Format not available in SVG backend.')
-        fig = self.draw(show=False)
-        return fig.getimage(ext=fmt)
+        return self.fig.getimage(ext=fmt)

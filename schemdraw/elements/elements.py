@@ -357,12 +357,13 @@ class Element:
 
         drop = self._cparams.get('drop', None)
         if drop is None or not self._cparams.get('move_cur', True):
-            return Point(dwgxy), dwgtheta
+            self.absdrop = Point(dwgxy), dwgtheta
         elif self.params.get('theta', None) == 0:
             # Element def specified theta = 0, don't change
-            return self.transform.transform(drop), dwgtheta
+            self.absdrop = self.transform.transform(drop), dwgtheta
         else:
-            return self.transform.transform(drop), theta
+            self.absdrop = self.transform.transform(drop), theta
+        return self.absdrop
 
     def get_bbox(self, transform=False, includetext=True):
         ''' Get element bounding box

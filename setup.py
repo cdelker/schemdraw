@@ -22,6 +22,7 @@ setuptools.setup(
                 'schemdraw.dsp',
                 'schemdraw.flow',
                 'schemdraw.backends',
+                'schemdraw.parsing'
                ],
     package_dir={'schemdraw': 'schemdraw'},
     keywords = ['circuit', 'schematic', 'electrical', 'flowchart', 'logic'],

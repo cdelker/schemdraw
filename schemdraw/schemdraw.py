@@ -185,10 +185,17 @@ class Drawing:
         self.here: XY = Point((0, 0))
         self.theta: float = 0
         self._state: list[tuple[Point, float]] = []  # Push/Pop stack
-        self._initfig()
+        self._interactive = False
+        self.fig = None
 
         for element in elements:
             self.add(element)
+
+    def interactive(self, interactive: bool=True):
+        ''' Enable interactive mode (matplotlib backend only). Matplotlib
+            must also be set to interactive with `plt.ion()`.
+        '''
+        self._interactive = interactive
 
     def get_bbox(self) -> BBox:
         ''' Get drawing bounding box '''
@@ -245,9 +252,15 @@ class Drawing:
         self.here, self.theta = element._place(self.here, self.theta,
                                                **dwgparams)
         self.elements.append(element)
-        element._draw(self.fig)
-        self.fig.set_bbox(self.get_bbox())
-        self.fig.getimage()  # Run scaling stuff
+        
+        if self._interactive:
+            if self.fig is None:
+                self._initfig()
+            element._draw(self.fig)
+            self.fig.set_bbox(self.get_bbox())
+            self.fig.getimage()  # Run scaling stuff
+        else:
+            self.fig = None  # Clear any existing figure
         return element
 
     def add_elements(self, *elements: Element) -> None:
@@ -399,7 +412,8 @@ class Drawing:
         '''
         # Redraw only if needed. Otherwise, show/return what's already
         # been drawn on the figure
-        if (ax is not None or showframe != self.fig.showframe or
+        if (self.fig is None or
+            ax is not None or showframe != self.fig.showframe or
             backend is not None):
             self._initfig(ax=ax, backend=backend, showframe=showframe)
             for element in self.elements:
@@ -418,6 +432,8 @@ class Drawing:
                 transparent: Save as transparent background, if available
                 dpi: Dots-per-inch for raster formats
         '''
+        if self.fig is None:
+            self.draw(show=False)
         self.fig.save(fname, transparent=transparent, dpi=dpi)
 
     def get_imagedata(self, fmt: ImageFormat | ImageType) -> bytes:

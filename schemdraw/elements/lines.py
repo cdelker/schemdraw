@@ -1,6 +1,7 @@
 ''' Lines, Arrows, and Labels '''
 
-from typing import Literal, Sequence, Union, Tuple
+from __future__ import annotations
+from typing import Literal, Sequence
 
 from ..segments import Segment, SegmentArrow, SegmentCircle, SegmentArc, SegmentPoly
 from .elements import Element, Element2Term
@@ -73,7 +74,7 @@ class Gap(Element2Term):
         self.params['lblloc'] = 'center'
         self.params['lblofst'] = 0
 
-    def _place(self, dwgxy: XY, dwgtheta: float, **dwgparams) -> Tuple[Point, float]:
+    def _place(self, dwgxy: XY, dwgtheta: float, **dwgparams) -> tuple[Point, float]:
         ''' Calculate element placement, adding lead extensions '''
         result = super()._place(dwgxy, dwgtheta, **dwgparams)
         self.segments = self.segments[1:]  # Remove line segment, but keep any text
@@ -203,7 +204,7 @@ class CurrentLabel(Element):
         self.segments.append(SegmentArrow(
             a, b, headwidth=.2, headlength=.3))
 
-    def at(self, xy: Union[XY, Element]) -> 'Element':  # type: ignore[override]
+    def at(self, xy: XY | Element) -> 'Element':  # type: ignore[override]
         ''' Specify CurrentLabel position.
         
             If xy is an Element, arrow will be centered
@@ -258,7 +259,7 @@ class CurrentLabelInline(Element):
         self.segments.append(SegmentArrow(
             (x, 0), (x+dx, 0), headwidth=headwidth, headlength=headlength))
 
-    def at(self, xy: Union[XY, Element]) -> 'Element':  # type: ignore[override]
+    def at(self, xy: XY | Element) -> 'Element':  # type: ignore[override]
         ''' Specify CurrentLabelInline position.
 
             If xy is an Element, arrow will be placed

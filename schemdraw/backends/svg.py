@@ -1,6 +1,7 @@
 ''' SVG drawing backend for schemdraw '''
 
-from typing import Tuple, List, Literal, Sequence, Optional
+from __future__ import annotations
+from typing import Literal, Sequence, Optional
 
 import os
 import sys
@@ -67,7 +68,7 @@ class Figure:
             showframe: Show frame around entire drawing
     '''
     def __init__(self, bbox: BBox, **kwargs):
-        self.svgelements: List[Tuple[int, str]] = []  # (zorder, elementtext)
+        self.svgelements: list[tuple[int, str]] = []  # (zorder, elementtext)
         self.showframe = kwargs.get('showframe', False)
         self.scale = 64.8 * kwargs.get('inches_per_unit', .5)  # Magic scale factor that matches what MPL did
         self.set_bbox(bbox)
@@ -81,7 +82,7 @@ class Figure:
         self.pxwidth = max(5, self.pxwidth)
         self.pxheight = max(5, self.pxheight)
 
-    def xform(self, x: float, y: float) -> Tuple[float, float]:
+    def xform(self, x: float, y: float) -> tuple[float, float]:
         ''' Convert x, y in user coords to svg pixel coords '''
         return x*self.scale, -y*self.scale
 

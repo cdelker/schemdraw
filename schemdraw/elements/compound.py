@@ -1,7 +1,6 @@
 ''' Compound elements made from groups of other elements '''
 
 import warnings
-from typing import Union
 
 from ..import elements as elm
 from ..types import Point
@@ -123,7 +122,7 @@ class Relay(ElementCompound):
                               anchor='center', l=1))
             swleft += .1
 
-        SW: Union[elm.Switch, elm.SwitchSpdt2, elm.SwitchDpst, elm.SwitchDpdt]
+        SW: elm.Switch | elm.SwitchSpdt2 | elm.SwitchDpst | elm.SwitchDpdt
         if switch == 'spst':
             SW = elm.Switch(d='d', reverse=swreverse, flip=swflip)
             bbox = SW.get_bbox()

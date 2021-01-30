@@ -4,7 +4,8 @@
     that define drawing primitives.
 '''
 
-from typing import Sequence, List, Literal, Dict, Any, Union
+from __future__ import annotations
+from typing import Sequence, Literal, Any, Union
 import math
 
 from .types import BBox, XY, Linestyle, Capstyle, Joinstyle, Align
@@ -24,7 +25,7 @@ def roundcorners(verts: Sequence[XY], radius: float=.5) -> Sequence[XY]:
         Adapted from:
         https://stackoverflow.com/questions/24771828/algorithm-for-creating-rounded-corners-in-a-polygon
     '''
-    poly: List[Point] = []
+    poly: list[Point] = []
     for v in range(len(verts))[::-1]:
         p1 = verts[v]
         p2 = verts[v-1]
@@ -114,7 +115,7 @@ class Segment:
                 transform: Transformation to apply
                 style: Style parameters from Element to apply as default
         '''
-        params: Dict[str, Any] = {'zorder': self.zorder,
+        params: dict[str, Any] = {'zorder': self.zorder,
                                   'color': self.color,
                                   'fill': self.fill,
                                   'lw': self.lw,
@@ -226,7 +227,7 @@ class SegmentText:
                 transform: Transformation to apply
                 style: Style parameters from Element to apply as default
         '''
-        params: Dict[str, Any] = {'align': self.align,
+        params: dict[str, Any] = {'align': self.align,
                                   'font': self.font,
                                   'fontsize': self.fontsize,
                                   'color': self.color,
@@ -338,7 +339,7 @@ class SegmentPoly:
                 transform: Transformation to apply
                 style: Style parameters from Element to apply as default
         '''
-        params: Dict[str, Any] = {'color': self.color,
+        params: dict[str, Any] = {'color': self.color,
                                   'fill': self.fill,
                                   'joinstyle': self.joinstyle,
                                   'capstyle': self.capstyle,
@@ -410,7 +411,7 @@ class SegmentCircle:
                  color: str=None,
                  lw: float=None,
                  ls: Linestyle=None,
-                 fill: Union[bool, str]=None,
+                 fill: bool | str | None=None,
                  zorder: int=None,
                  ref: Literal['start', 'end']=None):
         self.center = center
@@ -441,7 +442,7 @@ class SegmentCircle:
                 transform: Transformation to apply
                 style: Style parameters from Element to apply as default
         '''
-        params: Dict[str, Any] = {'zorder': self.zorder,
+        params: dict[str, Any] = {'zorder': self.zorder,
                                   'color': self.color,
                                   'fill': self.fill,
                                   'lw': self.lw,
@@ -540,7 +541,7 @@ class SegmentArrow:
         '''
         # See https://github.com/python/mypy/issues/5382
         # for this weird type annotation
-        params: Dict[str, Any] = {'zorder': self.zorder,
+        params: dict[str, Any] = {'zorder': self.zorder,
                                   'color': self.color,
                                   'lw': self.lw,
                                   'headwidth': self.headwidth,
@@ -645,7 +646,7 @@ class SegmentArc:
                 style: Style parameters from Element to apply as default
         '''
         angle = self.angle + transform.theta
-        params: Dict[str, Any] = {'color': self.color,
+        params: dict[str, Any] = {'color': self.color,
                                   'lw': self.lw,
                                   'ls': self.ls,
                                   'zorder': self.zorder}

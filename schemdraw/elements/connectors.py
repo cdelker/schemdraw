@@ -1,7 +1,8 @@
 ''' Connectors and bus lines '''
 
+from __future__ import annotations
 import warnings
-from typing import Tuple, Literal, Sequence
+from typing import Literal, Sequence
 
 from ..segments import Segment, SegmentText, SegmentCircle, SegmentPoly
 from ..elements import Element, Line
@@ -38,7 +39,7 @@ class OrthoLines(Element):
         self._userparams['to'] = xy
         return self
 
-    def _place(self, dwgxy: XY, dwgtheta: float, **dwgparams) -> Tuple[Point, float]:
+    def _place(self, dwgxy: XY, dwgtheta: float, **dwgparams) -> tuple[Point, float]:
         ''' Calculate absolute placement of Element '''
         self._dwgparams = dwgparams
         if not self._cparams:
@@ -105,7 +106,7 @@ class RightLines(Element):
         self._userparams['to'] = xy
         return self
 
-    def _place(self, dwgxy: XY, dwgtheta: float, **dwgparams) -> Tuple[Point, float]:
+    def _place(self, dwgxy: XY, dwgtheta: float, **dwgparams) -> tuple[Point, float]:
         ''' Calculate absolute placement of Element '''
         self._dwgparams = dwgparams
         if not self._cparams:

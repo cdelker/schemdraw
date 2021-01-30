@@ -2,7 +2,8 @@
     global position within the drawing
 '''
 
-from typing import List, Sequence, Literal
+from __future__ import annotations
+from typing import Sequence, Literal
 
 from .util import Point
 
@@ -42,7 +43,7 @@ class Transform:
                   'end': self.localshift*2}.get(ref, self.localshift)  # type: ignore
         return ((Point(pt) + lshift) * self.zoom).rotate(self.theta) + self.shift
 
-    def transform_array(self, pts: List[Sequence[float]]) -> List[Point]:
+    def transform_array(self, pts: list[Sequence[float]]) -> list[Point]:
         ''' Apply the transform to multiple points
 
             Args:

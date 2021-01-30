@@ -1,9 +1,10 @@
 ''' Integrated Circuit Element '''
 
+from __future__ import annotations
 import math
 from dataclasses import dataclass
 from copy import copy
-from typing import List, Optional, Literal, Union, Sequence, cast
+from typing import Optional, Literal, Sequence, cast
 
 from ..segments import Segment, SegmentText, SegmentCircle, SegmentPoly, SegmentType
 from ..elements import Element
@@ -28,17 +29,17 @@ class IcPin:
             rotation: Rotation for label text
             anchorname: Named anchor for the pin
      '''
-    name: Optional[str] = None
-    pin: Optional[str] = None
+    name: str | None = None
+    pin: str | None = None
     side: Literal['left', 'right', 'top', 'bottom', 'L', 'R', 'T', 'B'] = 'L'
-    pos: Optional[float] = None
-    slot: Optional[str] = None
+    pos: float | None = None
+    slot: str | None = None
     invert: bool = False
     invertradius: float = 0.15
-    color: Optional[str] = None
+    color: str | None = None
     rotation: float = 0
-    anchorname: Optional[str] = None
-    lblsize: Optional[float] = None
+    anchorname: str | None = None
+    lblsize: float | None = None
 
 
 class Ic(Element):
@@ -72,7 +73,7 @@ class Ic(Element):
     '''
     def __init__(self,
                  size: XY=None,
-                 pins: List[IcPin]=None,
+                 pins: list[IcPin]=None,
                  pinspacing: float = 0.6,
                  edgepadH: float = 0.25,
                  edgepadW: float = 0.25,
@@ -124,7 +125,7 @@ class Ic(Element):
             w, h = size
 
         # Main box, adjusted for slant
-        paths: List[List[Point]]
+        paths: list[list[Point]]
         if slant > 0:
             y1 = 0 - w * math.tan(math.radians(slant))
             y2 = h + w * math.tan(math.radians(slant))
@@ -303,7 +304,7 @@ class Multiplexer(Ic):
     def __init__(self,
                  demux: bool = False,
                  size: XY=None,
-                 pins: List[IcPin]=None,
+                 pins: list[IcPin]=None,
                  pinspacing: float = 0.6,
                  edgepadH: float = 0.25,
                  edgepadW: float = 0.25,
@@ -503,8 +504,8 @@ class Ic555(Ic):
         
 def sevensegdigit(bottom: float=0, left: float=0,
                   seglen: float=1.5, segw: float=0.3, spacing: float=0.12,                  
-                  decimal: bool=False, digit: Union[int, str]=8, 
-                  segcolor: str='red', tilt: float=10, labelsegments: bool=True) -> List[SegmentType]:
+                  decimal: bool=False, digit: int | str=8, 
+                  segcolor: str='red', tilt: float=10, labelsegments: bool=True) -> list[SegmentType]:
     ''' Generate drawing segments for a 7-segment display digit. Use for
         building new elements incorporating a 7-segment display.
     
@@ -611,7 +612,7 @@ def sevensegdigit(bottom: float=0, left: float=0,
     fillF = segcolor if str(digit).lower() in ['4', '5', '6', '8', '9', '0', 'a', 'b', 'c', 'e', 'f'] else None
     fillG = segcolor if str(digit).lower() in ['2', '3', '4', '5', '6', '8', '9', 'a', 'b', 'd', 'e', 'f'] else None
 
-    segments: List[SegmentType] = []
+    segments: list[SegmentType] = []
     segments.append(SegmentPoly(list(zip(segAx, segAy)), color='gray', fill=fillA, lw=.5))
     segments.append(SegmentPoly(list(zip(segBx, segBy)), color='gray', fill=fillB, lw=.5))
     segments.append(SegmentPoly(list(zip(segCx, segCy)), color='gray', fill=fillC, lw=.5))
@@ -661,7 +662,7 @@ class SevenSegment(Ic):
             * anode
     '''
     def __init__(self, *d, decimal: bool=False,
-                 digit: Union[int, str]=8, 
+                 digit: int | str=8, 
                  segcolor: str='red',
                  tilt: float=10,
                  labelsegments: bool=True,

@@ -1,6 +1,8 @@
 ''' Schemdraw Drawing class '''
 
-from typing import Literal, Union, Type, List, Tuple, Dict, Any
+from __future__ import annotations
+
+from typing import Literal, Type, Any
 from collections import ChainMap
 import warnings
 import math
@@ -18,7 +20,7 @@ except ImportError:
     mplFigure = None  # type: ignore
 
 
-Figure: Union[Type[svgFigure], Type[mplFigure]]
+Figure: Type[svgFigure] | Type[mplFigure]
 if mplFigure is None:
     Figure = svgFigure
 else:
@@ -70,7 +72,7 @@ def config(unit: float=3.0, inches_per_unit: float=0.5,
         schemdrawstyle['bgcolor'] = bgcolor
 
 
-schemdrawstyle: Dict[str, Any] = {}  # Global style
+schemdrawstyle: dict[str, Any] = {}  # Global style
 config()  # Initialize default configuration
 
 
@@ -158,11 +160,11 @@ class Drawing:
                  fontsize: float=None, font: str=None,
                  color: str=None, lw: float=None, ls: Linestyle=None,
                  fill: str=None):
-        self.elements: List[Element] = []
+        self.elements: list[Element] = []
         self.inches_per_unit = inches_per_unit if inches_per_unit is not None else schemdrawstyle.get('inches_per_unit')
         self.unit = unit if unit is not None else schemdrawstyle.get('unit')
         
-        self.dwgparams: Dict[str, Any] = {}
+        self.dwgparams: dict[str, Any] = {}
         if unit:
             self.dwgparams['unit'] = unit
         if font:
@@ -182,7 +184,7 @@ class Drawing:
 
         self.here: XY = Point((0, 0))
         self.theta: float = 0
-        self._state: List[Tuple[Point, float]] = []  # Push/Pop stack
+        self._state: list[tuple[Point, float]] = []  # Push/Pop stack
         self._initfig()
 
         for element in elements:
@@ -202,9 +204,8 @@ class Drawing:
             ymax = max(bbox.ymax, ymax)
         return BBox(xmin, ymin, xmax, ymax)
 
-    def get_segments(self) -> List[Union['Segment', 'SegmentText',
-                                         'SegmentArc', 'SegmentArrow',
-                                         'SegmentCircle', 'SegmentPoly']]:
+    def get_segments(self) -> list['Segment' | 'SegmentText' | 'SegmentArc' | 'SegmentArrow' |
+                                   'SegmentCircle' | 'SegmentPoly']:
         ''' Get flattened list of all segments in the drawing '''
         segments = []
         for element in self.elements:
@@ -227,7 +228,7 @@ class Drawing:
         self.add(element)
         return self
 
-    def add(self, element: Union[Element, Type[Element]], **kwargs) -> Element:
+    def add(self, element: Element | Type[Element], **kwargs) -> Element:
         ''' Add an element to the drawing.
 
             Args:
@@ -286,7 +287,7 @@ class Drawing:
         if len(self._state) > 0:
             self.here, self.theta = self._state.pop()
 
-    def loopI(self, elm_list: List[Element], label: str='',
+    def loopI(self, elm_list: list[Element], label: str='',
               d: Arcdirection='cw', theta1: float=35,
               theta2: float=-35, pad: float=.2, color: str=None) -> Element:
         ''' Draw an arc to indicate a loop current bordered by elements in list
@@ -419,7 +420,7 @@ class Drawing:
         '''
         self.fig.save(fname, transparent=transparent, dpi=dpi)
 
-    def get_imagedata(self, fmt: Union[ImageFormat, ImageType]) -> bytes:
+    def get_imagedata(self, fmt: ImageFormat | ImageType) -> bytes:
         ''' Get image data as bytes array
 
             Args:

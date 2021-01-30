@@ -12,7 +12,8 @@
     and rotation centers.
 '''
 
-from typing import Literal, Tuple
+from __future__ import annotations
+from typing import Literal
 
 import string
 import re
@@ -295,7 +296,7 @@ def string_width(st: str, fontsize: float=12, font: str='Arial') -> float:
     return size * 72 / 1000.0 * (fontsize/12)  # to points
 
 
-def text_approx_size(text: str, font: str='Arial', size: float=16) -> Tuple[float, float, float]:
+def text_approx_size(text: str, font: str='Arial', size: float=16) -> tuple[float, float, float]:
     ''' Get approximate width, height and line spacing of multiline text
 
         Does not account for descent or ascent of text (for example,

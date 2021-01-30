@@ -1,7 +1,8 @@
 ''' Two-terminal element definitions '''
 
+from __future__ import annotations
 import math
-from typing import Sequence, List, Tuple, Union
+from typing import Sequence
 
 from .elements import Element, Element2Term, gap
 from ..util import Point, linspace
@@ -386,7 +387,7 @@ class FuseUS(Element2Term):
         if dots:
             self.fill(kwargs.get('fill', 'bg'))
 
-    def fill(self, color: Union[bool, str]=True) -> 'Element':
+    def fill(self, color: bool | str=True) -> 'Element':
         ''' Set element fill '''
         fuser = .12
         self.segments.append(SegmentCircle(
@@ -437,7 +438,7 @@ class Breaker(Element2Term):
 def cycloid(loops: int=4, ofst: Sequence[float]=(0, 0),
             a:float=.06, b:float=.19, norm:bool=True,
             vertical:bool=False,
-            flip:bool=False) -> List[Tuple[float, float]]:
+            flip:bool=False) -> list[tuple[float, float]]:
     ''' Generate a prolate cycloid (inductor spiral) that
         will always start and end at y=0.
 

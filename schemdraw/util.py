@@ -1,6 +1,7 @@
 ''' Utility functions for point geometry '''
 
-from typing import Sequence, List, Tuple
+from __future__ import annotations
+from typing import Sequence
 
 import math
 from operator import mul
@@ -12,7 +13,7 @@ def dot(a: Sequence[float], b: Sequence[Sequence[float]]) -> 'Point':
     return Point([sum(starmap(mul, zip(a, col))) for col in zip(*b)])
 
 
-def linspace(start: float, stop: float, num: int=50) -> List[float]:
+def linspace(start: float, stop: float, num: int=50) -> list[float]:
     ''' List of evenly spaced numbers '''
     step = (stop - start) / (num - 1)
     return [start+step*i for i in range(num)]
@@ -32,17 +33,17 @@ def rotate(xy: Sequence[float],
     return b
 
 
-def mirrorx(xy, centerx=0) -> Tuple[float, float]:
+def mirrorx(xy, centerx=0) -> tuple[float, float]:
     ''' Mirror the point horizontally '''
     return -(xy[0]-centerx)+centerx, xy[1]
 
 
-def flip(xy: Sequence[float]) -> Tuple[float, float]:
+def flip(xy: Sequence[float]) -> tuple[float, float]:
     ''' Flip the point vertically '''
     return xy[0], -xy[1]
 
 
-def delta(a: Sequence[float], b: Sequence[float]) -> Tuple[float, float]:
+def delta(a: Sequence[float], b: Sequence[float]) -> tuple[float, float]:
     ''' Delta between points a and b '''
     return b[0] - a[0], b[1] - a[1]
 

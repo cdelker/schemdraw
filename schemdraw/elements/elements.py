@@ -1,6 +1,7 @@
 ''' Schemdraw base Element class '''
 
-from typing import Union, Tuple, Sequence, List, MutableMapping, Any, Optional
+from __future__ import annotations
+from typing import Sequence, MutableMapping, Any
 from collections import ChainMap
 from dataclasses import dataclass
 import warnings
@@ -23,14 +24,14 @@ def _set_elm_backend(figureclass):
 @dataclass
 class Label:
     ''' Element Label Parameters. '''
-    label: Union[str, Sequence[str]]
-    loc: Optional[LabelLoc] = None   # top, bot, lft, rgt, OR anchor
-    ofst: Optional[Union[XY, float]] = None
-    align: Optional[Align] = None
-    rotate: Union[bool, float] = False  # True=same angle as element; False = 0
-    fontsize: Optional[float] = None
-    font: Optional[str] = None
-    color: Optional[str] = None
+    label: str | Sequence[str]
+    loc: LabelLoc | None = None   # top, bot, lft, rgt, OR anchor
+    ofst: XY | float | None = None
+    align: Align | None = None
+    rotate: bool | float = False  # True=same angle as element; False = 0
+    fontsize: float | None = None
+    font: str | None = None
+    color: str | None = None
 
 
 class Element:
@@ -59,11 +60,11 @@ class Element:
         self.params: MutableMapping[str, Any] = {}      # Element-specific definition
         self._cparams: MutableMapping[str, Any] = {}    # ChainMap of above params
         self._localshift: XY = Point((0, 0))
-        self._userlabels: List[Label] = []
+        self._userlabels: list[Label] = []
 
         self.anchors: MutableMapping[str, Any] = {}     # Untransformed anchors
         self.absanchors: MutableMapping[str, Any] = {}  # Transformed, absolute anchors
-        self.segments: List[SegmentType] = []
+        self.segments: list[SegmentType] = []
         self.transform = Transform(0, [0, 0])
 
         if 'xy' in self._userparams:  # Allow legacy 'xy' parameter
@@ -114,7 +115,7 @@ class Element:
         self._userparams['theta'] = theta
         return self
 
-    def at(self, xy: Union[XY, Tuple['Element', str]]) -> 'Element':
+    def at(self, xy: XY | tuple['Element', str]) -> 'Element':
         ''' Set the element xy position
 
             Args:
@@ -177,7 +178,7 @@ class Element:
         self._userparams['lw'] = lw
         return self
 
-    def fill(self, color: Union[bool, str]=True) -> 'Element':
+    def fill(self, color: bool | str=True) -> 'Element':
         ''' Sets the element fill color.
 
             Args:
@@ -219,12 +220,12 @@ class Element:
         self._userparams['move_cur'] = False
         return self
 
-    def label(self, label: Union[str, Sequence[str]],
+    def label(self, label: str | Sequence[str],
               loc: LabelLoc=None,
-              ofst: Union[XY, float]=None,
+              ofst: XY | float | None=None,
               halign: Halign=None,
               valign: Valign=None,
-              rotate: Union[bool, float]=False,
+              rotate: bool | float=False,
               fontsize: float=None,
               font: str=None,
               color: str=None):
@@ -287,7 +288,7 @@ class Element:
             for name, pt in self.anchors.items():
                 self.anchors[name] = Point(pt).mirrorx(centerx)
 
-    def _place(self, dwgxy: XY, dwgtheta: float, **dwgparams) -> Tuple[Point, float]:
+    def _place(self, dwgxy: XY, dwgtheta: float, **dwgparams) -> tuple[Point, float]:
         ''' Calculate element position within the drawing '''
         self._dwgparams = dwgparams
         if not self._cparams:
@@ -419,7 +420,7 @@ class Element:
                           fontsize=fontsize, font=font, color=color)
 
     def _place_label(self, label: str, loc: LabelLoc=None,
-                     ofst: Union[XY, float]=None, align: Align=(None, None),
+                     ofst: XY | float | None=None, align: Align=(None, None),
                      rotation: float=0, fontsize: float=None,
                      font: str=None, color: str=None) -> None:
         ''' Adds the label Segment to the element, AFTER element placement
@@ -474,7 +475,7 @@ class Element:
                 th = th + 270
             th = (th+360) % 360  # Normalize angle so it's positive, clockwise
 
-            rotalign: List[Align] = [('center', 'bottom'),  # label on top
+            rotalign: list[Align] = [('center', 'bottom'),  # label on top
                                      ('right', 'bottom'),
                                      ('right', 'center'),   # label on right
                                      ('right', 'top'),
@@ -665,12 +666,12 @@ class Element2Term(Element):
         self._userparams['to'] = xy
         return self
 
-    def tox(self, x: Union[float, XY, Element]) -> 'Element2Term':
+    def tox(self, x: float | XY | Element) -> 'Element2Term':
         ''' Sets ending x-position of element (for horizontal elements) '''
         self._userparams['tox'] = x
         return self
 
-    def toy(self, y: Union[float, XY, Element]) -> 'Element2Term':
+    def toy(self, y: float | XY | Element) -> 'Element2Term':
         ''' Sets ending y-position of element (for vertical elements) '''
         self._userparams['toy'] = y
         return self
@@ -687,7 +688,7 @@ class Element2Term(Element):
         self._userparams['endpts'] = (start, end)
         return self
 
-    def _place(self, dwgxy: XY, dwgtheta: float, **dwgparams) -> Tuple[Point, float]:
+    def _place(self, dwgxy: XY, dwgtheta: float, **dwgparams) -> tuple[Point, float]:
         ''' Calculate element placement, adding lead extensions '''
         self._dwgparams = dwgparams
         if not self._cparams:

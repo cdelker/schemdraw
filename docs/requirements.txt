@@ -1,3 +1,4 @@
+pyparsing
 matplotlib
 schemdraw
 jupyter_sphinx

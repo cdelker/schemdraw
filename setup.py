@@ -5,10 +5,10 @@ with open('README.txt', 'r') as f:
 
 setuptools.setup(
     name = 'schemdraw',
-    version = '0.8',
+    version = '0.9',
     description = 'Electrical circuit schematic drawing',
     author = 'Collin J. Delker',
-    author_email = 'developer@collindelker.com',
+    author_email = 'schemdraw@collindelker.com',
     url = 'https://schemdraw.readthedocs.io/',
     long_description=long_description,
     long_description_content_type="text/markdown",

@@ -257,8 +257,8 @@ class Drawing:
             if self.fig is None:
                 self._initfig()
             element._draw(self.fig)
-            self.fig.set_bbox(self.get_bbox())
-            self.fig.getimage()  # Run scaling stuff
+            self.fig.set_bbox(self.get_bbox())  # type: ignore
+            self.fig.getimage()  # type: ignore
         else:
             self.fig = None  # Clear any existing figure
         return element
@@ -271,12 +271,12 @@ class Drawing:
     def undo(self) -> None:
         ''' Removes previously added element '''
         self.elements.pop(-1)
-        self.fig.clear()
+        self.fig.clear()  # type: ignore
         for element in self.elements:
             element._draw(self.fig)
         self.here, self.theta = self.elements[-1].absdrop
-        self.fig.set_bbox(self.get_bbox())
-        self.fig.getimage()  # Scale
+        self.fig.set_bbox(self.get_bbox())  # type: ignore
+        self.fig.getimage()  # type: ignore
 
     def move(self, dx: float, dy: float) -> None:
         ''' Move the current drawing position
@@ -420,7 +420,8 @@ class Drawing:
                 element._draw(self.fig)
 
         if show:
-            self.fig.show()  # Show figure in window if not inline/Jupyter mode
+            # Show figure in window if not inline/Jupyter mode            
+            self.fig.show()  # type: ignore
         return self.fig  # Otherwise return Figure and let _repr_ display it
 
     def save(self, fname: str, transparent: bool=True, dpi: float=72) -> None:
@@ -434,7 +435,7 @@ class Drawing:
         '''
         if self.fig is None:
             self.draw(show=False)
-        self.fig.save(fname, transparent=transparent, dpi=dpi)
+        self.fig.save(fname, transparent=transparent, dpi=dpi)  # type: ignore
 
     def get_imagedata(self, fmt: ImageFormat | ImageType) -> bytes:
         ''' Get image data as bytes array
@@ -447,4 +448,4 @@ class Drawing:
         '''
         if Figure == svgFigure and fmt.lower() != 'svg':
             raise ValueError('Format not available in SVG backend.')
-        return self.fig.getimage(ext=fmt)
+        return self.fig.getimage(ext=fmt)  # type: ignore

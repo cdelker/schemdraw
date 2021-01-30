@@ -3,4 +3,4 @@ from .segments import Segment, SegmentCircle, SegmentArc, SegmentText, SegmentPo
 from .transform import Transform
 from .types import ImageFormat
 
-__version__ = '0.9'
+__version__ = '0.9.1'

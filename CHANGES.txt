@@ -1,3 +1,7 @@
+v0.9.1 - 30-Jan-2021
+
+    - Fixed missing module in setup.py.
+
 v0.9 - 30-Jan-2021
 
     - Added optional SVG backend for drawing directly to an SVG image

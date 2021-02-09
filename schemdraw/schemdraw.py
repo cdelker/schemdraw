@@ -448,4 +448,6 @@ class Drawing:
         '''
         if Figure == svgFigure and fmt.lower() != 'svg':
             raise ValueError('Format not available in SVG backend.')
+        if self.fig is None:
+            self.draw(show=False)
         return self.fig.getimage(ext=fmt)  # type: ignore

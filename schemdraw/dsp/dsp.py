@@ -105,6 +105,14 @@ class SumSigma(Circle):
 class Mixer(Circle):
     ''' Mixer
 
+        Args:
+            N: text in North sector
+            S: text in South sector
+            E: text in East sector
+            W: text in West sector
+            font: Font family/name
+            fontsize: Point size of label font
+
         Anchors:
             * N
             * S
@@ -115,14 +123,31 @@ class Mixer(Circle):
             * SW
             * SE
     '''
-    def __init__(self, *d, **kwargs):
+    def __init__(self, *d, N: str=None, E: str=None, S: str=None, W: str=None,
+                 font: str=None, fontsize: float=10, **kwargs):
         super().__init__(*d, **kwargs)
         rad = .5
         k = rad*math.sqrt(2)/2  # Diagonal distance
-        self.segments.append(Segment([(rad+k, k), (rad-k, -k)]))
-        self.segments.append(Segment([(rad+k, -k), (rad-k, k)]))
+        self.segments.append(Segment([(rad+k, k), (rad-k, -k)], lw=1))
+        self.segments.append(Segment([(rad+k, -k), (rad-k, k)], lw=1))
         self.params['lblloc'] = 'top'
         self.params['lblofst'] = 0.2
+        if N:
+            self.segments.append(SegmentText(
+                (rad, rad/2+0.01), N,
+                font=font, fontsize=fontsize))
+        if S:
+            self.segments.append(SegmentText(
+                (rad, -rad/2-0.065), S,
+                font=font, fontsize=fontsize))
+        if E:
+            self.segments.append(SegmentText(
+                (rad*1.5+0.05, 0), E,
+                font=font, fontsize=fontsize))
+        if W:
+            self.segments.append(SegmentText(
+                (rad/2-0.05, 0), W,
+                font=font, fontsize=fontsize))
 
 
 class Speaker(Element):

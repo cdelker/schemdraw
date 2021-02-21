@@ -29,7 +29,7 @@ setuptools.setup(
     install_requires=[],
     extras_require={
         'matplotlib':  ['matplotlib>=3'],
-    }
+    },
     classifiers = [
     'Programming Language :: Python',
     'Programming Language :: Python :: 3',

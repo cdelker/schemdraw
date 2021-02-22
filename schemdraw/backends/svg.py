@@ -173,15 +173,24 @@ class Figure:
         fin1 = Point((fullen - headlength, headwidth/2)).rotate(theta) + tail
         fin2 = Point((fullen - headlength, -headwidth/2)).rotate(theta) + tail
 
-        s = f'<path d="M {head[0]} {head[1]} '
-        s += f'L {fin1[0]} {fin1[1]} '
-        s += f'L {finc[0]} {finc[1]} '
-        s += f'L {tail[0]} {tail[1]} '
-        s += f'L {finc[0]} {finc[1]} '
-        s += f'L {fin2[0]} {fin2[1]} Z" '
-        s += getstyle(color=color, lw=lw, capstyle='butt', joinstyle='miter', fill=color)
-        s += ' />'
-        self.svgelements.append((zorder, s))
+        # Shrink arrow head by lw so it points right at the line
+        head = Point((head[0] - lw * math.cos(math.radians(theta)),
+                      head[1] - lw * math.sin(math.radians(theta))))
+        
+        s1 = f'<path d="M {head[0]} {head[1]} '
+        s1 += f'L {fin1[0]} {fin1[1]} '
+        s1 += f'L {fin2[0]} {fin2[1]} Z" '
+        s1 += getstyle(color=color, lw=0, capstyle='butt',
+                       joinstyle='miter', fill=color)
+        s1 += ' />'
+        
+        s2 = f'<path d="M {finc[0]} {finc[1]} '
+        s2 += f'L {tail[0]} {tail[1]} Z" '
+        s2 += getstyle(color=color, lw=lw, capstyle='butt',
+                       joinstyle='miter', fill=color)
+        s2 += ' />'
+        self.svgelements.append((zorder, s1))
+        self.svgelements.append((zorder, s2))
 
     def arc(self, center: Sequence[float], width: float, height: float,
             theta1: float=0, theta2: float=90, angle: float=0,

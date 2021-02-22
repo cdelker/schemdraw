@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 from typing import Literal, Sequence
+import math
 
 from ..segments import Segment, SegmentArrow, SegmentCircle, SegmentArc, SegmentPoly
 from .elements import Element, Element2Term
@@ -26,20 +27,50 @@ class Arrow(Line):
     '''
     def __init__(self, *d,
                  double: bool=False,
-                 headwidth: float=0.15, headlength: float=0.2,
+                 headwidth: float=0.2, headlength: float=0.25,
                  **kwargs):
         super().__init__(*d, **kwargs)
-        self.segments.append(SegmentArrow((-.3, 0), (0, 0),
+        self.double = double
+        self.headlength = headlength
+        self.headwidth = headwidth
+        self.segments.append(SegmentArrow((-headlength, 0), (0, 0),
                                           ref='end',
                                           headwidth=headwidth,
                                           headlength=headlength))
-        if double:
-            self.segments.append(SegmentArrow((0, 0), (-.3, 0),
+        if self.double:
+            self.segments.append(SegmentArrow((headlength, 0), (0, 0),
                                               ref='start',
                                               headwidth=headwidth,
                                               headlength=headlength))
         # Explicitly define center so reverses work
         self.anchors['center'] = (0, 0)
+        
+    def _place(self, xy, theta, **dwgparams):
+        ''' Shorten the underlying line so it doesn't stick out
+            from arrowhead
+        '''
+        result = super()._place(xy, theta, **dwgparams)
+        line = self.segments[0]  # The base line which needs to be shortened
+        xy1 = line.path[0]
+        xy2 = line.path[-1]
+        dx = xy2[0] - xy1[0]
+        dy = xy2[1] - xy1[1]
+        theta = math.atan2(dy, dx)
+        newhead = xy2
+        newtail = xy1
+        reverse = self._cparams.get('reverse')
+
+        if reverse or self.double:
+            newtail = (xy1[0] + self.headlength * math.cos(theta),
+                       xy1[1] + self.headlength * math.sin(theta))
+        
+        if (not reverse) or self.double:
+            newhead = (xy2[0] - self.headlength * math.cos(theta),
+                       xy2[1] - self.headlength * math.sin(theta))
+            
+        line.path[0] = newtail
+        line.path[-1] = newhead
+        return result
 
 
 class LineDot(Line):

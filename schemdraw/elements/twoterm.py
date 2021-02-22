@@ -41,7 +41,7 @@ class ResistorVarIEEE(ResistorIEEE):
         super().__init__(**kwargs)
         self.segments.append(SegmentArrow((1.5*reswidth, -resheight*2),
                                           (4.5*reswidth, reswidth*3.5),
-                                          headwidth=.12, headlength=.2))
+                                          headwidth=.16, headlength=.2))
 
 
 class ResistorVarIEC(ResistorIEC):
@@ -50,7 +50,7 @@ class ResistorVarIEC(ResistorIEC):
         super().__init__(*d, **kwargs)
         self.segments.append(SegmentArrow((1*reswidth, -resheight*2),
                                           (5*reswidth, reswidth*3.5),
-                                          headwidth=.12, headlength=.2))
+                                          headwidth=.16, headlength=.2))
 
 
 class Thermistor(ResistorIEC):
@@ -65,9 +65,9 @@ class PhotoresistorIEEE(ResistorIEEE):
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
         self.segments.append(SegmentArrow((.7, .75), (.4, .4),
-                                          headwidth=.12, headlength=.2))
+                                          headwidth=.16, headlength=.2))
         self.segments.append(SegmentArrow((1, .75), (.7, .4),
-                                          headwidth=.12, headlength=.2))
+                                          headwidth=.16, headlength=.2))
 
 
 class PhotoresistorIEC(ResistorIEC):
@@ -75,9 +75,9 @@ class PhotoresistorIEC(ResistorIEC):
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
         self.segments.append(SegmentArrow((.7, .75), (.4, .4),
-                                          headwidth=.12, headlength=.2))
+                                          headwidth=.16, headlength=.2))
         self.segments.append(SegmentArrow((1, .75), (.7, .4),
-                                          headwidth=.12, headlength=.2))
+                                          headwidth=.16, headlength=.2))
 
 
 class Capacitor(Element2Term):
@@ -120,7 +120,7 @@ class CapacitorVar(Capacitor):
         super().__init__(*d, **kwargs)
         self.segments.append(SegmentArrow((-2*reswidth, -resheight),
                                           (3*reswidth, reswidth*2),
-                                          headwidth=.12, headlength=.2))
+                                          headwidth=.2, headlength=.2))
 
 
 class CapacitorTrim(Capacitor):
@@ -128,9 +128,21 @@ class CapacitorTrim(Capacitor):
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
         capgap = 0.18
-        self.segments.append(SegmentArrow(
-            (-1.8*reswidth, -resheight), (1.8*reswidth+capgap, resheight),
-            headlength=.0001, headwidth=.3))
+        # Line endpoints
+        p1 = Point((-1.8*reswidth, -resheight))
+        p2 = Point((1.8*reswidth+capgap, resheight))
+        dx = p2.x - p1.x
+        dy = p2.y - p1.y
+
+        self.segments.append(Segment([p1, p2]))
+
+        tlen = .14
+        theta = math.atan2(dy, dx) + math.radians(90)
+        t1 = Point((p2.x + tlen * math.cos(theta),
+                    p2.y + tlen * math.sin(theta)))
+        t2 = Point((p2.x + tlen * math.cos(theta-math.pi),
+                    p2.y + tlen * math.sin(theta-math.pi)))
+        self.segments.append(Segment([t1, t2]))
 
 
 class Crystal(Element2Term):
@@ -220,10 +232,10 @@ class LED(Diode):
         super().__init__(*d, **kwargs)
         self.segments.append(SegmentArrow((resheight, resheight*1.5),
                                           (resheight*2, resheight*3.25),
-                                          headwidth=.12, headlength=.2))
+                                          headwidth=.16, headlength=.2))
         self.segments.append(SegmentArrow((resheight*.1, resheight*1.5),
                                           (resheight*1.1, resheight*3.25),
-                                          headwidth=.12, headlength=.2))
+                                          headwidth=.16, headlength=.2))
         self.params['lblloc'] = 'bot'
 
 
@@ -234,13 +246,18 @@ class LED2(Diode):
         x = linspace(-1, 1)
         y = [-x0*(x0-.7)*(x0+.7)/2 + resheight*2.5 for x0 in x]
         x = linspace(resheight*.75, resheight*1.25)
+        
         theta = 20
         p = [Point((x0, y0)).rotate(theta) for x0, y0 in zip(x, y)]
         p2 = [Point((x0-.2, y0)).rotate(theta) for x0, y0 in zip(x, y)]
+        
+        pa = Point((x[0], y[0]+.1)).rotate(theta)
+        pa2 = Point((x[0]-.2, y[0]+.1)).rotate(theta)
+        
         self.segments.append(Segment(p))
         self.segments.append(Segment(p2))
-        self.segments.append(SegmentArrow(p[1], p[0], headwidth=.07, headlength=.08))
-        self.segments.append(SegmentArrow(p2[1], p2[0], headwidth=.07, headlength=.08))
+        self.segments.append(SegmentArrow(p[1], pa, headwidth=.15, headlength=.2))
+        self.segments.append(SegmentArrow(p2[1], pa2, headwidth=.15, headlength=.2))
         self.params['lblloc'] = 'bot'
 
 
@@ -254,10 +271,13 @@ class Photodiode(Diode):
         theta = 20
         p = [Point((x0, y0)).rotate(theta) for x0, y0 in zip(x, y)]
         p2 = [Point((x0-.2, y0)).rotate(theta) for x0, y0 in zip(x, y)]
+
+        pa = Point((x[-1], y[-1]-.1)).rotate(theta)
+        pa2 = Point((x[-1]-.2, y[-1]-.1)).rotate(theta)
         self.segments.append(Segment(p))
         self.segments.append(Segment(p2))
-        self.segments.append(SegmentArrow(p[-2], p[-1], headwidth=.07, headlength=.08))
-        self.segments.append(SegmentArrow(p2[-2], p2[-1], headwidth=.07, headlength=.08))
+        self.segments.append(SegmentArrow(p[-2], pa, headwidth=.15, headlength=.2))
+        self.segments.append(SegmentArrow(p2[-2], pa2, headwidth=.15, headlength=.2))
         self.params['lblloc'] = 'bot'
 
 

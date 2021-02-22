@@ -32,12 +32,10 @@ Various Networks
     d += (sm := dsp.SumSigma())
     d += dsp.Arrow().at(sm.E).length(d.unit/2)
     d += (intg := dsp.Box(w=2, h=2).anchor('W').label('$\int$'))
-    d += dsp.Line().right().at(intg.E).length(d.unit/2)
-    d += dsp.Arrowhead().label('out')
+    d += dsp.Arrow().right().at(intg.E).length(d.unit/2).label('out', loc='right')
     d += dsp.Line().down().at(inpt.center).length(d.unit/2)
     d += dsp.Line().right().tox(sm.S)
-    d += dsp.Line().up().toy(sm.S)
-    d += dsp.Arrowhead().label('+', 'bottom')
+    d += dsp.Arrow().up().toy(sm.S).label('+', loc='bot')
     d.draw()
 
 
@@ -60,8 +58,7 @@ Various Networks
     d += dsp.Arrow().down().toy(sm.N)
     d += dsp.Line().right().at(h2.E).tox(sm.S)
     d += dsp.Arrow().up().toy(sm.S)
-    d += dsp.Line().right().at(sm.E).length(d.unit/3)
-    d += dsp.Arrowhead().label('Y(s)')
+    d += dsp.Arrow().right().at(sm.E).length(d.unit/3).label('Y(s)', 'right')
     d.draw()
 
 
@@ -129,8 +126,7 @@ Direct Conversion Receiver
     d += dsp.Adc().label('ADC')
     d += dsp.Arrow().to(dsp1.inL1)
 
-    d += dsp.Arrowhead().up().at(mix1.S)
-    d += dsp.Line().down().at(mix1.S).length(d.unit/6)
+    d += dsp.Arrow().down().reverse().at(mix1.S).length(d.unit/6)
     d += dsp.Line().left().length(d.unit*1.25)
     d += dsp.Line().down().length(d.unit*.75)
     d += (flo := dsp.Dot().label('$f_{LO}$', 'left'))
@@ -138,11 +134,9 @@ Direct Conversion Receiver
     d += dsp.Line().down().length(d.unit/5)
     d += dsp.Oscillator().right().anchor('N').label('LO', 'left', ofst=.15)
     d.pop()
-    d += dsp.Arrowhead().up().at(mix2.S)
-    d += dsp.Line().down().at(mix2.S).length(d.unit/4)
+    d += dsp.Arrow().down().reverse().at(mix2.S).length(d.unit/4)
     d += (b1 := dsp.Square().right().label('90°').anchor('N'))
-    d += dsp.Arrowhead().right().at(b1.W)
-    d += dsp.Line().left().at(b1.W).length(d.unit/4)
+    d += dsp.Arrow().left().reverse().at(b1.W).length(d.unit/4)
     d += dsp.Line().up().toy(flo.center)
     d += dsp.Line().left().tox(flo.center)
     d.draw()

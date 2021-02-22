@@ -121,8 +121,28 @@ class Figure:
               headwidth: float=.2, headlength: float=.2,
               color: str='black', lw: float=2, zorder: int=1) -> None:
         ''' Draw an arrow '''
-        self.ax.arrow(x, y, dx, dy, head_width=headwidth, head_length=headlength,
-                      length_includes_head=True, color=color, lw=lw, zorder=zorder)
+        # Easier to skip Matplotlib's arrow or annotate methods and just draw a line
+        # and a polygon.
+        head = util.Point((x+dx, y+dy))
+        tail = util.Point((x, y))
+        fullen = math.sqrt(dx**2 + dy**2)
+        theta = math.degrees(math.atan2(dy, dx))
+
+        # Endpoints of the arrow fins
+        fin1 = util.Point((fullen - headlength, headwidth/2)).rotate(theta) + tail
+        fin2 = util.Point((fullen - headlength, -headwidth/2)).rotate(theta) + tail
+
+        # Shorten the line so it doesn't poke through the arrowhead
+        linehead = util.Point((dx - headlength * math.cos(math.radians(theta)) + tail.x,
+                              dy - headlength * math.sin(math.radians(theta)) + tail.y))
+
+        self.ax.plot([tail.x, linehead.x], [tail.y, linehead.y],
+                lw=lw, color=color)
+        p = plt.Polygon((fin1, head, fin2), closed=True, ec='none',
+                        fc=color, fill=color is not None,
+                        lw=1, zorder=zorder)
+        self.ax.add_patch(p)
+
 
     def arc(self, center: Sequence[float], width: float, height: float,
             theta1: float=0, theta2: float=90, angle: float=0,

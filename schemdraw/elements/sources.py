@@ -147,9 +147,9 @@ class Solar(Source):
         self.segments.append(Segment([(0, 0), (cellx, 0), gap,
                                       (cellx+.2, 0), (1, 0)]))
         self.segments.append(SegmentArrow((1.1, .9), (.8, .6),
-                                          headwidth=.12, headlength=.2))
+                                          headwidth=.16, headlength=.2))
         self.segments.append(SegmentArrow((1.3, .7), (1, .4),
-                                          headwidth=.12, headlength=.2))
+                                          headwidth=.16, headlength=.2))
 
 
 class MeterV(Source):

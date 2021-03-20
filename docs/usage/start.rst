@@ -179,3 +179,16 @@ Reasons to use Matplotlib backend:
     - To customize the schematic after drawing it by using other Matplotlib functionality.
     - To render in other, non-SVG, image formats
 
+Searchable SVGs
+***************
+
+By default, the Matplotlib backend renders text labels as primative lines and arcs rather than text elements. This has the downside
+that SVG editors, such as Inkscape, cannot perform textual searches on the SVGs. The upside is that there is no dependence on
+installed fonts on the hosts that open the SVGs.
+
+To configure Matplotlib to render labels as SVG text elements:
+
+.. code-block:: python
+
+    import matplotlib
+    matplotlib.rcParams['svg.fonttype'] = 'none'

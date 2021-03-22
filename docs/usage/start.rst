@@ -10,6 +10,12 @@ schemdraw can be installed from pip using
 
     pip install schemdraw
 
+or to include optional ``matplotlib`` backend dependencies
+
+.. code-block:: bash
+
+    pip install schemdraw[matplotlib]
+
 or directly by downloading the source and running
 
 .. code-block:: bash

@@ -30,6 +30,8 @@ setuptools.setup(
     extras_require={
         'matplotlib':  ['matplotlib>=3'],
     },
+    package_data = {'schemdraw': ['py.typed']},
+    zip_safe=False,
     classifiers = [
     'Programming Language :: Python',
     'Programming Language :: Python :: 3',

@@ -14,6 +14,7 @@
 
 from __future__ import annotations
 from typing import Literal
+from xml.etree import ElementTree as ET
 
 import string
 import re
@@ -48,7 +49,7 @@ textable = {
     r'\\iota': 'ι',
     r'\\kappa': 'κ',
     r'\\lambda': 'λ',
-    r'\\mu': 'μ',  # \u03BC - "Greek small letter mu" (not \uB5 micro sign)
+    r'\\mu': 'μ', # \u03BC - "Greek small letter mu" (not \uB5 micro sign)
     r'\\nu': 'ν',
     r'\\xi': 'ξ',
     r'\\omicron': 'ο',
@@ -166,14 +167,12 @@ def replacelatex(text: str) -> str:
     return text
 
 
-def mathtextsvg(text: str, tag: bool=True) -> str:
-    ''' Convert any math string delimited by $..$ into a string
-        that can be used in svg <text>
+def mathtextsvg(text: str) -> ET.Element:
+    ''' Convert any math string delimited by $..$ into a <tspan> element
+        that can be used in <text>
 
         Args:
             text: The text to convert
-            tag: Apply svg tags such as <tspans for applying baseline shift.
-                Set to false when estimating string width.
     '''
     tokens = re.split(r'(\$.*?\$)', text)
     svgtext = ''
@@ -181,6 +180,7 @@ def mathtextsvg(text: str, tag: bool=True) -> str:
         if not (t.startswith('$') and t.endswith('$')):
             svgtext += t
             continue
+
         t = t[1:-1]
         t = replacelatex(t)
 
@@ -192,18 +192,13 @@ def mathtextsvg(text: str, tag: bool=True) -> str:
                 if chrs.isnumeric():
                     chrs = ''.join([numsuperscripts[c] for c in chrs])
                     t = t.replace(sup, chrs)
-                elif tag:
-                    t = t.replace(sup, f'<tspan baseline-shift="super" font-size="smaller">{chrs}</tspan>')
                 else:
-                    t = t.replace(sup, chrs)
+                    t = t.replace(sup, f'<tspan baseline-shift="super" font-size="smaller">{chrs}</tspan>')
         # Find superscripts single char
         sups = re.split(r'(\^.)', t)
         for sup in sups:
             if sup.startswith('^'):
-                if tag:
-                    t = t.replace(sup, f'<tspan baseline-shift="super" font-size="smaller">{sup[1]}</tspan>')
-                else:
-                    t = t.replace(sup, sup[1])
+                t = t.replace(sup, f'<tspan baseline-shift="super" font-size="smaller">{sup[1]}</tspan>')
 
         # Find subscripts within {}
         sups = re.split(r'(\_\{.*?\})', t)
@@ -213,39 +208,29 @@ def mathtextsvg(text: str, tag: bool=True) -> str:
                 if chrs.isnumeric():
                     chrs = ''.join([numsubscripts[c] for c in chrs])
                     t = t.replace(sup, chrs)
-                elif tag:
-                    t = t.replace(sup, f'<tspan baseline-shift="sub" font-size="smaller">{chrs}</tspan>')
                 else:
-                    t = t.replace(sup, chrs)
+                    t = t.replace(sup, f'<tspan baseline-shift="sub" font-size="smaller">{chrs}</tspan>')
         # Find subscripts single char
         sups = re.split(r'(\_.)', t)
         for sup in sups:
             if sup.startswith('_'):
-                if tag:
-                    t = t.replace(sup, fr'<tspan baseline-shift="sub" font-size="smaller">{sup[1]}</tspan>')
-                else:
-                    t = t.replace(sup, sup[1])
+                t = t.replace(sup, fr'<tspan baseline-shift="sub" font-size="smaller">{sup[1]}</tspan>')
 
         # \sqrt
         sups = re.split(r'(\\sqrt{.*})', t)
         for sup in sups:
             if sup.startswith(r'\sqrt{'):
-                if tag:
-                    t = t.replace(sup, fr'√\overline{{{sup[6:-1]}}}')
-                else:
-                    t = t.replace(sup, f'√{sup[6:-1]}')
+                t = t.replace(sup, fr'√\overline{{{sup[6:-1]}}}')
 
         # \overline
         sups = re.split(r'(\\overline{.*})', t)
         for sup in sups:
             if sup.startswith(r'\overline{'):
-                if tag:
-                    t = t.replace(sup, f'<tspan text-decoration="overline">{sup[10:-1]}</tspan>')
-                else:
-                    t = t.replace(sup, sup[10:-1])
-
+                t = t.replace(sup, f'<tspan text-decoration="overline">{sup[10:-1]}</tspan>')
         svgtext += t
-    return svgtext
+        
+    svgtext = '<tspan>' + svgtext + '</tspan>'    
+    return ET.fromstring(svgtext)
 
 
 def string_width(st: str, fontsize: float=12, font: str='Arial') -> float:
@@ -317,7 +302,8 @@ def text_approx_size(text: str, font: str='Arial', size: float=16) -> tuple[floa
     lines = text.splitlines()
     dy = size if len(lines) > 1 else size * 0.8
     for line in lines:
-        w = max(w, string_width(mathtextsvg(line, tag=False), fontsize=size, font=font))
+        math = ' '.join(mathtextsvg(line).itertext())  # itertext strips all the tags
+        w = max(w, string_width(math, fontsize=size, font=font))
         h += dy
     return w, h, dy
 
@@ -325,7 +311,7 @@ def text_approx_size(text: str, font: str='Arial', size: float=16) -> tuple[floa
 def text_tosvg(text: str, x: float, y: float, font: str='Arial', size: float=16, color: str='black',
                halign: Literal['left', 'center', 'right']='center', valign: Literal['top', 'center', 'bottom']='center',
                rotation: float=0, rotation_mode: Literal['anchor', 'default']='anchor',
-               testmode: bool=False) -> str:
+               testmode: bool=False) -> ET.Element:
     ''' Convert text to svg <text> tag.
 
         Args:
@@ -348,10 +334,13 @@ def text_tosvg(text: str, x: float, y: float, font: str='Arial', size: float=16,
     '''
     w, h, dy = text_approx_size(text, font=font, size=size)
 
-    texttag = ''
+    textelm = ET.Element('text')
+    
     for line in text.splitlines():
-        line = mathtextsvg(line)
-        texttag += f'<tspan x="{x}" dy="{dy}">{line}</tspan>'
+        tspan = mathtextsvg(line)
+        tspan.set('x', str(x))
+        tspan.set('dy', str(dy))
+        textelm.append(tspan)
 
     boxx = x
     if halign == 'center':
@@ -364,7 +353,7 @@ def text_tosvg(text: str, x: float, y: float, font: str='Arial', size: float=16,
         ytext += h/2
     elif valign == 'top':
         ytext += h
-    anchor = {'center': 'middle', 'left': 'start', 'right': 'end'}.get(halign)
+    anchor = {'center': 'middle', 'left': 'start', 'right': 'end'}.get(halign, 'start')
 
     org = Point((x, y))
     p1 = Point((boxx, ytext)).rotate(-rotation, org)
@@ -392,12 +381,17 @@ def text_tosvg(text: str, x: float, y: float, font: str='Arial', size: float=16,
             dy = y-(pymax+pymin)/2
         else:  # bottom
             dy = y-pymax
-        xform = f' transform=" translate({dx} {dy}) rotate({-rotation} {x} {y})"'
+        xform = f'translate({dx} {dy}) rotate({-rotation} {x} {y})'
     else:
-        xform = f' transform=" rotate({-rotation} {x} {y})"'
+        xform = f'rotate({-rotation} {x} {y})'
 
-    texttag = f'''<text x="{x}" y="{ytext-h}" fill="{color}" font-size="{size}"
-font-family="{font}" text-anchor="{anchor}" {xform}>{texttag}</text>'''
+    textelm.set('x', str(x))
+    textelm.set('y', str(ytext-h))
+    textelm.set('fill', color)
+    textelm.set('font-size', str(size))
+    textelm.set('font-family', font)
+    textelm.set('text-anchor', anchor)
+    textelm.set('transform', xform)
 
     if testmode:
         pxmin += dx   # Final bounding box
@@ -405,9 +399,27 @@ font-family="{font}" text-anchor="{anchor}" {xform}>{texttag}</text>'''
         pymin += dy
         pymax += dy
 
-        texttag += f'''<rect x="{boxx}" y="{ytext-h}" width="{w}" height="{h}"
-style="stroke:blue;stroke-width:1;fill:none" {xform} />
-<circle cx="{x}" cy="{y}" r="1.5" stroke="red" fill="red"/>
-<rect x="{pxmin}" y="{pymin}" width="{pxmax-pxmin}" height="{pymax-pymin}"
-style="stroke:red;stroke-width:1;fill:none" />'''
-    return texttag
+        topelm = ET.Element('g')  # Put everything in a group
+        topelm.append(textelm)
+        box = ET.SubElement(topelm, 'rect')
+        box.set('x', str(boxx))
+        box.set('y', str(ytext-h))
+        box.set('width', str(w))
+        box.set('height', str(h))
+        box.set('style', 'stroke:blue;stroke-width:1;fill:none')
+        box.set('transform', xform)
+        circ = ET.SubElement(topelm, 'circle')
+        circ.set('cx', str(x))
+        circ.set('cy', str(y))
+        circ.set('r', '1.5')
+        circ.set('stroke', 'red')
+        circ.set('fill', 'red')
+        rect = ET.SubElement(topelm, 'rect')
+        rect.set('x', str(pxmin))
+        rect.set('y', str(pymin))
+        rect.set('width', str(pxmax-pxmin))
+        rect.set('height', str(pymax-pymin))
+        rect.set('style', 'stroke:red;stroke-width:1;fill:none')
+        textelm = topelm
+
+    return textelm

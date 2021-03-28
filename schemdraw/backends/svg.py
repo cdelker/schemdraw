@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 from typing import Literal, Sequence, Optional
+from xml.etree import ElementTree as ET
 
 import os
 import sys
@@ -54,8 +55,6 @@ def getstyle(color: str=None, ls: Linestyle=None, lw: float=None,
     if joinstyle:
         s += f'stroke-linejoin:{joinstyle};'
 
-    if s:
-        s = f'style="{s}"'
     return s
 
 
@@ -68,7 +67,7 @@ class Figure:
             showframe: Show frame around entire drawing
     '''
     def __init__(self, bbox: BBox, **kwargs):
-        self.svgelements: list[tuple[int, str]] = []  # (zorder, elementtext)
+        self.svgelements: list[tuple[int, ET.Element]] = []  # (zorder, element)
         self.showframe = kwargs.get('showframe', False)
         self.scale = 64.8 * kwargs.get('inches_per_unit', .5)  # Magic scale factor that matches what MPL did
         self.set_bbox(bbox)
@@ -95,21 +94,22 @@ class Figure:
              fill: str='none', capstyle: Capstyle='round',
              joinstyle: Joinstyle='round', zorder: int=2) -> None:
         ''' Plot a path '''
-        s = '<path d="M {},{} '.format(*self.xform(x[0], y[0]))
+        et = ET.Element('path')
+        d = 'M {},{} '.format(*self.xform(x[0], y[0]))
         for xx, yy in zip(x[1:], y[1:]):
             if str(xx) == 'nan' or str(yy) == 'nan':
-                s += 'M '
+                d += 'M '
                 continue
-            elif not s.endswith('M '):
-                s += 'L '
+            elif not d.endswith('M '):
+                d += 'L '
             xx, yy = self.xform(xx, yy)
-            s += '{},{} '.format(xx, yy)
+            d += '{},{} '.format(xx, yy)
 
-        s = s.strip() + '" '  # End path points
-        s += getstyle(color=color, ls=ls, lw=lw, capstyle=capstyle,
-                      joinstyle=joinstyle, fill=fill)
-        s += ' />'
-        self.svgelements.append((zorder, s))
+        d = d.strip()
+        et.set('d', d)
+        et.set('style', getstyle(color=color, ls=ls, lw=lw, capstyle=capstyle,
+                                 joinstyle=joinstyle, fill=fill))
+        self.svgelements.append((zorder, et))
 
     def text(self, s: str, x: float, y: float, color: str='black',
              fontsize: float=14, fontfamily: str='sans-serif',
@@ -134,25 +134,27 @@ class Figure:
             self.plot(x, y, color=color, fill=fill, lw=lw, ls=ls,
                       capstyle=capstyle, joinstyle=joinstyle, zorder=zorder)
         else:
-            s = '<polygon points="'
+            et = ET.Element('polygon')
+            points = ''
             for xx, yy in verts:
                 xx, yy = self.xform(xx, yy)
-                s += '{},{} '.format(xx, yy)
-            s += '" '
-            s += getstyle(color=color, ls=ls, lw=lw, capstyle=capstyle,
-                          joinstyle=joinstyle, fill=fill)
-            s += '/>'
-            self.svgelements.append((zorder, s))
+                points += '{},{} '.format(xx, yy)
+            et.set('points', points)
+            et.set('style', getstyle(color=color, ls=ls, lw=lw, capstyle=capstyle,
+                                     joinstyle=joinstyle, fill=fill))
+            self.svgelements.append((zorder, et))
 
     def circle(self, center: Sequence[float], radius: float, color: str='black',
                fill: str='none', lw: float=2, ls: Linestyle='-', zorder: int=1) -> None:
         ''' Draw a circle '''
         x, y = self.xform(*center)
         radius = radius * self.scale
-        s = '<circle cx="{}" cy="{}" r="{}" '.format(x, y, radius)
-        s += getstyle(color=color, lw=lw, ls=ls, fill=fill)
-        s += '/>'
-        self.svgelements.append((zorder, s))
+        et = ET.Element('circle')
+        et.set('cx', str(x))
+        et.set('cy', str(y))
+        et.set('r', str(radius))
+        et.set('style', getstyle(color=color, lw=lw, ls=ls, fill=fill))
+        self.svgelements.append((zorder, et))
 
     def arrow(self, x: float, y: float, dx: float, dy: float,
               headwidth: float=.2, headlength: float=.2,
@@ -177,20 +179,22 @@ class Figure:
         head = Point((head[0] - lw * math.cos(math.radians(theta)),
                       head[1] - lw * math.sin(math.radians(theta))))
         
-        s1 = f'<path d="M {head[0]} {head[1]} '
-        s1 += f'L {fin1[0]} {fin1[1]} '
-        s1 += f'L {fin2[0]} {fin2[1]} Z" '
-        s1 += getstyle(color=color, lw=0, capstyle='butt',
-                       joinstyle='miter', fill=color)
-        s1 += ' />'
-        
-        s2 = f'<path d="M {finc[0]} {finc[1]} '
-        s2 += f'L {tail[0]} {tail[1]} Z" '
-        s2 += getstyle(color=color, lw=lw, capstyle='butt',
-                       joinstyle='miter', fill=color)
-        s2 += ' />'
-        self.svgelements.append((zorder, s1))
-        self.svgelements.append((zorder, s2))
+        et1 = ET.Element('path')
+        d = f'M {head[0]} {head[1]} '
+        d += f'L {fin1[0]} {fin1[1]} '
+        d += f'L {fin2[0]} {fin2[1]} Z'
+        et1.set('d', d)
+        et1.set('style', getstyle(color=color, lw=0, capstyle='butt',
+                                  joinstyle='miter', fill=color))
+
+        et2 = ET.Element('path')
+        d = f'M {finc[0]} {finc[1]} '
+        d += f'L {tail[0]} {tail[1]} Z'
+        et2.set('d', d)
+        et2.set('style', getstyle(color=color, lw=lw, capstyle='butt',
+                                  joinstyle='miter', fill=color))
+        self.svgelements.append((zorder, et1))
+        self.svgelements.append((zorder, et2))
 
     def arc(self, center: Sequence[float], width: float, height: float,
             theta1: float=0, theta2: float=90, angle: float=0,
@@ -224,23 +228,31 @@ class Figure:
         endx, endy = round(endx, 2), round(endy, 2)
         dx, dy = endx-startx, endy-starty
 
-        s = ''
         if abs(dx) < .1 and abs(dy) < .1:
             # Full ellipse - can't be drawn with a single <path>
             # because when start/end points are the same it draws a dot.
-            s += f'<ellipse cx="{centerx}" cy="{centery}" rx="{width/2}" ry="{height/2}"'
+            et = ET.Element('ellipse')
+            et.set('cx', str(centerx))
+            et.set('cy', str(centery))
+            et.set('rx', str(width/2))
+            et.set('ry', str(height/2))
             if angle != 0:
-                s += f' transform="rotate({angle} {centerx} {centery})"'
-            s += f' stroke="{color}" stroke-width="{lw}" fill="none"/>'
-            self.svgelements.append((zorder, s))
+                et.set('transform', f'rotate({angle} {centerx} {centery})')
+            et.set('stroke', color)
+            et.set('stroke-width', str(lw))
+            et.set('fill', 'none')
+            self.svgelements.append((zorder, et))
 
         else:
             flags = '1 1' if abs(t2-t1) >= math.pi else '0 1'
-            s += f'<path d="M {startx} {starty}'
-            s += f' a {width/2} {height/2} {angle} {flags} {dx} {dy}"'
-            s += f' stroke="{color}" stroke-width="{lw}" fill="none"'
-            s += '/>'
-            self.svgelements.append((zorder, s))
+            et = ET.Element('path')
+            d = f'M {startx} {starty}'
+            d += f' a {width/2} {height/2} {angle} {flags} {dx} {dy}'
+            et.set('d', d)
+            et.set('stroke', color)
+            et.set('stroke-width', str(lw))
+            et.set('fill', 'none')
+            self.svgelements.append((zorder, et))
 
         if arrow is not None:
             # Back to user coordinates
@@ -284,19 +296,28 @@ class Figure:
         pad = 2
         x0 = self.bbox.xmin * self.scale - pad
         y0 = -self.bbox.ymax * self.scale - pad
-        s = '<svg xmlns="http://www.w3.org/2000/svg" xml:lang="en" height="{}pt" width="{}pt" viewBox="{} {} {} {}"'.format(self.pxheight+2*pad, self.pxwidth+2*pad, x0, y0, self.pxwidth+2*pad, self.pxheight+2*pad)
+        svg = ET.Element('svg')
+        svg.set('xmlns', 'http://www.w3.org/2000/svg')
+        svg.set('xml:lang', 'en')
+        svg.set('height', f'{self.pxheight+2*pad}pt')
+        svg.set('width', f'{self.pxwidth+2*pad}pt')
+        svg.set('viewBox', f'{x0} {y0} {self.pxwidth+2*pad} {self.pxheight+2*pad}')
         if self._bgcolor:
-            s += f' style="background-color:{self._bgcolor};"'
-        s += '>'
+            svg.set('style', f'background-color:{self._bgcolor};')
 
         if self.showframe:
-            s += f'<rect x="{x0}" y="{y0}" width="{self.pxwidth}" height="{self.pxheight}" style="fill:none; stroke-width:1; stroke:black;" />'
+            rect = ET.SubElement(svg, 'rect')
+            rect.set('x', str(x0))
+            rect.set('y', str(y0))
+            rect.set('width', str(self.pxwidth))
+            rect.set('height', str(self.pxheight))
+            rect.set('style', 'fill:none; stroke-width:1; stroke:black;')
 
         # sort by zorder
         elements = [k[1] for k in sorted(self.svgelements, key=lambda x: x[0])]
-        s += '\n'.join(elements)
-        s += '</svg>'
-        return s.encode('utf-8')
+        for elm in elements:
+            svg.append(elm)
+        return ET.tostring(svg, encoding='utf-8')
 
     def clear(self) -> None:
         ''' Remove everything '''

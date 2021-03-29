@@ -10,9 +10,39 @@ import subprocess
 import tempfile
 import math
 
+try:
+    import ziamath
+except ImportError:
+    ziamath = None  # type: ignore
+
 from ..types import Capstyle, Joinstyle, Linestyle, BBox
 from ..util import Point
 from . import svgtext
+
+TextModeType = Literal['path', 'text']
+
+textmode: TextModeType = 'path' if ziamath is not None else 'text'
+
+
+def settextmode(mode: TextModeType) -> None:
+    ''' Set the mode for rendering text in the SVG backend.
+
+        In 'text' mode, text is drawn as SVG <text> elements
+        and will be searchable in the SVG, however it may
+        render differently on systems without the same fonts
+        installed. In 'path' mode, text converted to SVG
+        <path> elements and will render independently of
+        any fonts on the system. Path mode enables full
+        rendering of math expressions, but also requires the
+        ziafont/ziamath packages.
+
+        Args:
+            mode: Text Mode.
+    '''
+    if mode == 'path' and ziamath is None:
+        raise ValueError('Path mode requires ziamath package')
+    global textmode
+    textmode = mode
 
 
 def isnotebook():
@@ -56,6 +86,39 @@ def getstyle(color: str=None, ls: Linestyle=None, lw: float=None,
         s += f'stroke-linejoin:{joinstyle};'
 
     return s
+
+
+def text_size(text: str, font: str='Arial', size: float=16) -> tuple[float, float, float]:
+    ''' Get size of text. Size will be exact bounding box if ziamath installed and
+        using path text mode. Otherwise size will be estimated based on character
+        widths.
+
+        Args:
+            text: string to calculate
+            font: Font family
+            size: Font size in points
+        
+        Returns:
+            width, height, linespacing
+    '''
+    if ziamath:
+        if text == '':
+            return 0, 0, 0
+
+        if font.lower() in ['sans-serif', 'Arial']:
+            font = 'sans'
+        
+        lines = text.splitlines()
+        maths = []
+        for line in lines:
+            maths.append(ziamath.Math.fromlatextext(line, size=size, mathstyle=font, textstyle=font))
+        sizes = [m.getsize() for m in maths]
+        w: float = max([s[0] for s in sizes])
+        h: float = sum([s[1] for s in sizes])
+        textsize = (w, h, 0.)
+    else:
+        textsize = svgtext.text_approx_size(text, font=font, size=size)
+    return textsize
 
 
 class Figure:
@@ -117,10 +180,51 @@ class Figure:
              valign: Literal['top', 'center', 'bottom']='center',
              rotation_mode: Literal['anchor', 'default']='anchor', zorder: int=3) -> None:
         ''' Add text to the figure '''
+        if s == '':
+            return
+
         x, y = self.xform(x, y)
-        texttag = svgtext.text_tosvg(s, x, y, font=fontfamily, size=fontsize,
-                                     halign=halign, valign=valign, color=color,
-                                     rotation=rotation, rotation_mode=rotation_mode, testmode=False)
+
+        # TODO: Add user setting for text vs path. Enable path only if ziamath installed.
+        if ziamath and textmode == 'path':
+            texttag = ET.Element('g')
+            if fontfamily.lower() in ['sans-serif', 'Arial']:
+                fontfamily = 'sans'
+
+            lines = s.splitlines()
+            maths = []
+            for i, line in enumerate(lines):
+                maths.append(ziamath.Math.fromlatextext(
+                    line, size=fontsize, mathstyle=fontfamily, textstyle=fontfamily))
+
+            dys = [max(m.node.bbox.ymax*1.25, 0) for m in maths]
+            if len(lines) > 1:
+                topbase = sum(dys[:-1])
+                if valign == 'bottom':
+                    y -= topbase
+                elif valign == 'center':
+                    y -= topbase/2 - fontsize/2
+                elif valign == 'top':
+                    y += topbase
+            elif valign == 'top':
+                y += dys[0]
+            elif valign == 'center':
+                y += dys[0]/2
+
+            yi = y
+            for dy, m in zip(dys, maths):
+                m.drawon(x, yi, texttag, halign=halign, valign='baseline', color=color)
+                yi += dy
+
+            if rotation:
+                texttag.set('transform', f'rotate({-rotation} {x} {y})')
+
+        else:
+            texttag = svgtext.text_tosvg(s, x, y, font=fontfamily, size=fontsize,
+                                         halign=halign, valign=valign, color=color,
+                                         rotation=rotation, rotation_mode=rotation_mode,
+                                         testmode=False)
+
         self.svgelements.append((zorder, texttag))
 
     def poly(self, verts: Sequence[Sequence[float]], closed: bool=True,

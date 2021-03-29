@@ -10,13 +10,21 @@ schemdraw can be installed from pip using
 
     pip install schemdraw
 
-or to include optional ``matplotlib`` backend dependencies
+or to include optional ``matplotlib`` backend dependencies:
 
 .. code-block:: bash
 
     pip install schemdraw[matplotlib]
 
-or directly by downloading the source and running
+To allow the SVG drawing :ref:`backends` to render math expressions,
+install the optional `ziamath <https://ziamath.readthedocs.io>`_ dependency with:
+
+.. code-block:: bash
+
+    pip install schemdraw[svgmath]
+
+
+Alternatively, schemdraw can be installed directly by downloading the source and running
 
 .. code-block:: bash
 
@@ -158,6 +166,8 @@ Then get the drawing using `d.get_imagedata()`, or `d.save()` rather than `d.dra
 Alternatively, use the SVG backend (see below).
 
 
+.. _backends:
+
 Backends
 --------
 
@@ -181,9 +191,9 @@ Reasons to choose the SVG backend include:
 
 Reasons to use Matplotlib backend:
 
-    - To use complicated math formulas via Matplotlib's Mathtext. SVG backend only supports basic math symbols, superscripts, and subscripts
     - To customize the schematic after drawing it by using other Matplotlib functionality.
-    - To render in other, non-SVG, image formats
+    - To render directly in other, non-SVG, image formats
+
 
 Searchable SVGs
 ***************
@@ -198,3 +208,15 @@ To configure Matplotlib to render labels as SVG text elements:
 
     import matplotlib
     matplotlib.rcParams['svg.fonttype'] = 'none'
+
+The SVG backend can produce searchable-text SVGs by setting:
+
+.. code-block:: python
+
+    schemdraw.settextmode('text')
+
+or it can render text as SVG paths (the default if `ziamath <https://ziamath.readthedocs.io>`_ is installed), allowing for complete Latex math support, by setting:
+
+.. code-block:: python
+
+    schemdraw.settextmode('path')

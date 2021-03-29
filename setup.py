@@ -29,6 +29,7 @@ setuptools.setup(
     install_requires=[],
     extras_require={
         'matplotlib':  ['matplotlib>=3'],
+        'svgmath': ['ziafont', 'ziamath', 'latex2mathml']
     },
     package_data = {'schemdraw': ['py.typed']},
     zip_safe=False,

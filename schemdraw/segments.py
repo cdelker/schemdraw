@@ -11,7 +11,7 @@ import math
 from .types import BBox, XY, Linestyle, Capstyle, Joinstyle, Align
 from . import util
 from .util import Point
-from .backends import svgtext
+from .backends import svg
 
 
 def roundcorners(verts: Sequence[XY], radius: float=.5) -> Sequence[XY]:
@@ -246,7 +246,7 @@ class SegmentText:
             Returns:
                 Bounding box limits (xmin, ymin, xmax, ymax)
         '''
-        w, h, _ = svgtext.text_approx_size(self.text, 'Arial', self.fontsize)
+        w, h, _ = svg.text_size(self.text, 'Arial', self.fontsize)
         # h, w are in points, convert back to inches (/72)
         # then convert back to drawing units (*2)
         # This makes text the same point size regardless of inches_per_unit

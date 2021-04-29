@@ -414,8 +414,8 @@ is shown pointing into or out of the element, and which end to place the arrowhe
     d.draw()
 
 
-Loop currents can be added using :py:class:`schemdraw.elements.lines.LoopCurrent`.
-The class requires a list of 4 existing elements surrounding the loop.
+Loop currents can be added using :py:class:`schemdraw.elements.lines.LoopCurrent`, given
+ a list of 4 existing elements surrounding the loop.
 
 .. jupyter-execute::
     :hide-code:
@@ -433,6 +433,24 @@ The class requires a list of 4 existing elements surrounding the loop.
 
 .. jupyter-execute::
     :hide-code:
+
+    d.draw()
+
+Alternatively, loop current arrows can be added anywhere with any size using :py:class:`schemdraw.elements.lines.LoopArrow`.
+
+.. jupyter-execute::
+    :hide-code:
+    
+    d = schemdraw.Drawing()
+    
+.. jupyter-execute::
+    :hide-output:
+    
+    d = schemdraw.Drawing()
+    d += (a:=elm.LineDot())
+    d += elm.LoopArrow(width=.75, height=.75).at(a.end)
+
+.. jupyter-execute::
 
     d.draw()
 

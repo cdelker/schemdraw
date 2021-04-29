@@ -311,8 +311,34 @@ class CurrentLabelInline(Element):
         return self
 
 
-class LoopCurrent(Element):
-    ''' Loop current label, for mesh analysis notation
+class LoopArrow(Element):
+    ''' Loop arrow, for mesh analysis notation
+
+        Args:
+            direction: loop direction 'cw' or 'ccw'
+            theta1: Angle of start of loop arrow
+            theta2: Angle of end of loop arrow
+            width: Width of loop
+            height: Height of loop
+    '''
+    def __init__(self, direction: Literal['cw', 'ccw']='cw',
+                 theta1: float=35, theta2: float=-35,
+                 width: float=1.0, height: float=1.0, **kwargs):
+        super().__init__(**kwargs)
+
+        self.segments.append(SegmentArc(
+            (0, 0), arrow=direction, theta1=theta1, theta2=theta2,
+            width=width, height=height))
+
+        self.params['lblloc'] = 'center'
+        self.params['lblofst'] = 0
+        self.params['theta'] = 0
+        self.anchors['center'] = (0, 0)
+
+
+class LoopCurrent(LoopArrow):
+    ''' Loop current label, for mesh analysis notation,
+        placed within a box of 4 existing elements.
 
         Args:
             elm_list: List of 4 elements surrounding loop, in
@@ -320,14 +346,12 @@ class LoopCurrent(Element):
             direction: loop direction 'cw' or 'ccw'
             theta1: Angle of start of loop arrow
             theta2: Angle of end of loop arrow
-            width: Width of loop
-            height: Height of loop
+            pad: Distance from elements to loop
     '''
     def __init__(self, elm_list: Sequence[Element]=None,
                  direction: Literal['cw', 'ccw']='cw',
                  theta1: float=35, theta2: float=-35,
                  pad: float=0.2, **kwargs):
-        super().__init__(**kwargs)
         assert elm_list is not None
         bbox1 = elm_list[0].get_bbox(transform=True, includetext=False)
         bbox2 = elm_list[1].get_bbox(transform=True, includetext=False)
@@ -340,15 +364,7 @@ class LoopCurrent(Element):
         center = ((left+rght)/2, (top+bot)/2)
         width = rght - left
         height = top - bot
-
-        self.segments.append(SegmentArc(
-            (0, 0), arrow=direction, theta1=theta1, theta2=theta2,
-            width=width, height=height))
-
-        self.params['lblloc'] = 'center'
-        self.params['lblofst'] = 0
-        self.params['theta'] = 0
-        self.anchors['center'] = (0, 0)
+        super().__init__(direction, theta1, theta2, width, height, **kwargs)
         self._userparams['at'] = center
 
 

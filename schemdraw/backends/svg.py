@@ -445,4 +445,7 @@ class Figure:
                 os.startfile(path)
             else:
                 cmd = 'open' if sys.platform == 'darwin' else 'xdg-open'
-                subprocess.call([cmd, path])
+                try:
+                    subprocess.call([cmd, path])
+                except FileNotFoundError:  # Some linux without display may not have xdg-open
+                    pass

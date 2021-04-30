@@ -1,3 +1,13 @@
+v0.10 - 30-Apr-2021
+
+    - Added options to place labels inside Mixer elements
+    - Fixed arrowhead overshoot
+    - Fixed get_imagedata function
+    - Update pip install to include optional dependencies
+    - Added ziamath optional dependency for rendering math in SVG backend
+    - Added LoopArrow as superclass of LoopCurrent, for placing a loop anywhere
+
+
 v0.9.1 - 30-Jan-2021
 
     - Fixed missing module in setup.py.

@@ -4,4 +4,4 @@ from .transform import Transform
 from .types import ImageFormat
 from .backends.svg import settextmode
 
-__version__ = '0.9.1'
+__version__ = '0.10'

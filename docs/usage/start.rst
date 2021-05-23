@@ -220,3 +220,10 @@ or it can render text as SVG paths (the default if `ziamath <https://ziamath.rea
 .. code-block:: python
 
     schemdraw.settextmode('path')
+
+Some SVG renderers are not fully compatible with SVG2.0. For better compatibility with SVG1.x, use
+
+.. code-block:: python
+
+    schemdraw.settextmode('path', svg2=False)
+

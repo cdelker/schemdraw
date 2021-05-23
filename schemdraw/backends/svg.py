@@ -22,9 +22,10 @@ from . import svgtext
 TextModeType = Literal['path', 'text']
 
 textmode: TextModeType = 'path' if ziamath is not None else 'text'
+svg2mode: bool = True
+    
 
-
-def settextmode(mode: TextModeType) -> None:
+def settextmode(mode: TextModeType, svg2: bool=True) -> None:
     ''' Set the mode for rendering text in the SVG backend.
 
         In 'text' mode, text is drawn as SVG <text> elements
@@ -38,11 +39,14 @@ def settextmode(mode: TextModeType) -> None:
 
         Args:
             mode: Text Mode.
+            svg2: Use SVG2.0. Disable for better compatibility.
     '''
     if mode == 'path' and ziamath is None:
         raise ValueError('Path mode requires ziamath package')
     global textmode
+    global svg2mode
     textmode = mode
+    svg2mode = svg2
 
 
 def isnotebook():
@@ -111,7 +115,7 @@ def text_size(text: str, font: str='Arial', size: float=16) -> tuple[float, floa
         lines = text.splitlines()
         maths = []
         for line in lines:
-            maths.append(ziamath.Math.fromlatextext(line, size=size, mathstyle=font, textstyle=font))
+            maths.append(ziamath.Math.fromlatextext(line, size=size, mathstyle=font, textstyle=font, svg2=svg2mode))
         sizes = [m.getsize() for m in maths]
         w: float = max([s[0] for s in sizes])
         h: float = sum([s[1] for s in sizes])
@@ -185,7 +189,6 @@ class Figure:
 
         x, y = self.xform(x, y)
 
-        # TODO: Add user setting for text vs path. Enable path only if ziamath installed.
         if ziamath and textmode == 'path':
             texttag = ET.Element('g')
             if fontfamily.lower() in ['sans-serif', 'Arial']:
@@ -195,7 +198,8 @@ class Figure:
             maths = []
             for i, line in enumerate(lines):
                 maths.append(ziamath.Math.fromlatextext(
-                    line, size=fontsize, mathstyle=fontfamily, textstyle=fontfamily))
+                    line, size=fontsize, mathstyle=fontfamily, textstyle=fontfamily,
+                    svg2=svg2mode))
 
             dys = [max(m.node.bbox.ymax*1.25, 0) for m in maths]
             if len(lines) > 1:

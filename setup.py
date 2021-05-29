@@ -15,7 +15,7 @@ setuptools.setup(
     project_urls={
         'Source': 'https://bitbucket.org/cdelker/schemdraw',
     },
-    python_requires='>=3.7',
+    python_requires='>=3.8',
     packages = ['schemdraw',
                 'schemdraw.elements',
                 'schemdraw.logic',
@@ -36,8 +36,8 @@ setuptools.setup(
     classifiers = [
     'Programming Language :: Python',
     'Programming Language :: Python :: 3',
-    'Programming Language :: Python :: 3.7',
     'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.9',
     'Development Status :: 4 - Beta',
     'License :: OSI Approved :: MIT License',
     'Operating System :: OS Independent',

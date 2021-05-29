@@ -12,6 +12,7 @@ v0.9.1 - 30-Jan-2021
 
     - Fixed missing module in setup.py.
 
+
 v0.9 - 30-Jan-2021
 
     - Added optional SVG backend for drawing directly to an SVG image
@@ -25,6 +26,7 @@ v0.9 - 30-Jan-2021
     - Drawing class implements += operator, so elements can be added by `Drawing += Element()`
     - Removed dependency on Numpy
     - Added Drawing.interactive` to allow element-by-element drawing with Matplotlib's plt.ion().
+    - Now requires Python 3.8+
 
     - New Elements:
         - CPE (Constant Phase Element)

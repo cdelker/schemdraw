@@ -30,9 +30,7 @@ Alternatively, schemdraw can be installed directly by downloading the source and
 
     python setup.py install
 
-Schemdraw requires Python 3.7+.
-Python 3.8+ is recommended for its walrus operator (:=) that allows a
-more compact notation of defining schematics.
+Starting with version 0.9, schemdraw requires Python 3.8 or higher.
 
 
 Overview

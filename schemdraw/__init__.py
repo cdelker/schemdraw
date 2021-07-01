@@ -6,7 +6,7 @@ from .backends.svg import settextmode
 
 __all__ = [
     "Drawing", "use", "config", "theme", "Segment", "SegmentCircle", "SegmentArc", "SegmentText",
-	"SegmentPoly", "SegmentArrow", "Transform", "ImageFormat", "settextmode"
+    "SegmentPoly", "SegmentArrow", "Transform", "ImageFormat", "settextmode"
 ]
 
 __version__ = '0.10'

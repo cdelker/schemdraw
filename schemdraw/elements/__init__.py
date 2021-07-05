@@ -18,6 +18,24 @@ from .outlets import OutletA, OutletB, OutletC, OutletD, OutletE, OutletF, Outle
 from . import legacy
 import warnings
 
+__all__ = [
+    "Element", "ElementDrawing", "Element2Term", 
+    "Resistor", "ResistorIEEE", "ResistorIEC", "ResistorVar", "ResistorVarIEEE", "ResistorVarIEC", "Thermistor", "Photoresistor", "PhotoresistorIEEE", "PhotoresistorIEC", "Capacitor", "Capacitor2", "CapacitorVar", "CapacitorTrim", "Diode", "Schottky", "DiodeTunnel", "DiodeShockley", "Zener", "Varactor", "LED", "LED2", "Photodiode", "Potentiometer", "PotentiometerIEEE, PotentiometerIEC", "Diac", "Triac", "SCR", "Memristor", "Memristor2", "Josephson", "Fuse", "FuseUS", "FuseIEEE", "FuseIEC", "Inductor", "Inductor2", "Crystal", "Breaker", "PotentiometerIEC", "ResistorVarIEC", "CPE", "RBox", "RBoxVar", "PotBox", "PhotoresistorBox",
+    "Ground", "GroundSignal", "GroundChassis", "Antenna", "AntennaLoop", "AntennaLoop2", "Vss", "Vdd",
+    "Opamp",
+    "Source", "SourceV", "SourceI", "SourceSin", "SourcePulse", "SourceSquare", "SourceTriangle", "SourceRamp", "SourceControlled", "SourceControlledV", "SourceControlledI", "BatteryCell", "Battery", "MeterV", "MeterI", "MeterA", "MeterOhm", "Lamp", "Solar", "Neon",
+    "Switch", "SwitchSpdt", "SwitchSpdt2", "SwitchDpst", "SwitchDpdt", "Button", "SwitchReed", "SwitchRotary", "SwitchDIP",
+    "NFet", "PFet", "JFet", "JFetN", "JFetP", "Bjt", "BjtNpn", "BjtPnp", "BjtPnp2c",
+    "Speaker", "Mic", "Motor", "AudioJack",
+    "Transformer",
+    "Coax", "Triax",
+    "IcPin", "Ic", "Multiplexer", "IcDIP", "VoltageRegulator", "DFlipFlop", "JKFlipFlop", "Ic555", "SevenSegment", "sevensegdigit",
+    "Line", "Dot", "Arrowhead", "Arrow", "LineDot", "DotDotDot", "Gap", "Label", "Tag", "CurrentLabel", "CurrentLabelInline", "LoopCurrent", "LoopArrow", "Rect",
+    "OrthoLines", "RightLines", "Header", "Jumper", "BusConnect", "BusLine", "DB25", "DB9", "CoaxConnect", "Plug", "Jack",
+    "ElementCompound", "Optocoupler", "Relay",
+    "OutletA", "OutletB", "OutletC", "OutletD", "OutletE", "OutletF", "OutletG", "OutletH", "OutletI", "OutletJ", "OutletK", "OutletL",
+]
+
 def __getattr__(name):
     e = getattr(legacy, name, None)
     if e is None:

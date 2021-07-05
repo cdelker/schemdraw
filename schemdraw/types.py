@@ -1,6 +1,12 @@
 ''' Data types for schemdraw '''
 
-from typing import Literal, Union, Tuple, Sequence, Optional
+import sys
+if sys.version_info >= (3, 8):
+    from typing import Literal
+else:
+    from typing_extensions import Literal
+
+from typing import Union, Tuple, Sequence, Optional
 from collections import namedtuple
 from enum import Enum, unique
 

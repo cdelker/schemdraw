@@ -1,10 +1,17 @@
 ''' Integrated Circuit Element '''
 
 from __future__ import annotations
+
+import sys
+if sys.version_info >= (3, 8):
+    from typing import Literal
+else:
+    from typing_extensions import Literal
+
+from typing import Optional, Sequence, cast
 import math
 from dataclasses import dataclass
 from copy import copy
-from typing import Optional, Literal, Sequence, cast
 
 from ..segments import Segment, SegmentText, SegmentCircle, SegmentPoly, SegmentType
 from ..elements import Element

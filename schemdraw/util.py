@@ -54,6 +54,18 @@ def angle(a: Sequence[float], b: Sequence[float]) -> float:
     return theta
 
 
+def dist(a: Sequence[float], b: Sequence[float]) -> float:
+    ''' Get distance from point a to b.
+
+        Same as math.dist in Python 3.8+.
+    '''
+    try:
+        # Python 3.8+
+        return math.dist(a, b)  # type: ignore
+    except AttributeError:
+        return math.sqrt((a[0]-b[0])**2 + (a[1]-b[1])**2)
+
+
 class Point(tuple):
     ''' An (x, y) tuple that can do math operations '''
     @property

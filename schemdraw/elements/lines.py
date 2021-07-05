@@ -1,7 +1,14 @@
 ''' Lines, Arrows, and Labels '''
 
 from __future__ import annotations
-from typing import Literal, Sequence
+
+import sys
+if sys.version_info >= (3, 8):
+    from typing import Literal
+else:
+    from typing_extensions import Literal
+
+from typing import Sequence
 import math
 
 from ..segments import Segment, SegmentArrow, SegmentCircle, SegmentArc, SegmentPoly

@@ -1,8 +1,15 @@
 ''' Connectors and bus lines '''
 
 from __future__ import annotations
+
+import sys
+if sys.version_info >= (3, 8):
+    from typing import Literal
+else:
+    from typing_extensions import Literal
+
+from typing import Sequence
 import warnings
-from typing import Literal, Sequence
 
 from ..segments import Segment, SegmentText, SegmentCircle, SegmentPoly
 from ..elements import Element, Line

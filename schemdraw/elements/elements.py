@@ -721,10 +721,10 @@ class Element2Term(Element):
             xy = Point(endpts[0])
 
         if endpts is not None:
-            totlen = math.dist(endpts[0], endpts[1])
+            totlen = util.dist(endpts[0], endpts[1])
         elif to is not None:
             # Move until X or Y position is 'end'. Depends on direction
-            totlen = math.dist(xy, to)
+            totlen = util.dist(xy, to)
         elif tox is not None:
             # Allow either full coordinate (only keeping x), or just an x value
             if isinstance(tox, (int, float)):
@@ -732,7 +732,7 @@ class Element2Term(Element):
             else:
                 x = tox[0]
             endpt = [x, xy[1]]
-            totlen = math.dist(xy, endpt)
+            totlen = util.dist(xy, endpt)
         elif toy is not None:
             # Allow either full coordinate (only keeping y), or just a y value
             if isinstance(toy, (int, float)):
@@ -740,7 +740,7 @@ class Element2Term(Element):
             else:
                 y = toy[1]
             endpt = [xy[0], y]
-            totlen = math.dist(xy, endpt)
+            totlen = util.dist(xy, endpt)
 
         self._localshift = Point((0, 0))
         if self._cparams.get('extend', True):

@@ -1,7 +1,14 @@
 ''' SVG drawing backend for schemdraw '''
 
 from __future__ import annotations
-from typing import Literal, Sequence, Optional
+
+import sys
+if sys.version_info >= (3, 8):
+    from typing import Literal
+else:
+    from typing_extensions import Literal
+
+from typing import Sequence, Optional
 from xml.etree import ElementTree as ET
 
 import os
@@ -11,7 +18,7 @@ import tempfile
 import math
 
 try:
-    import ziamath
+    import ziamath  # type: ignore
 except ImportError:
     ziamath = None  # type: ignore
 

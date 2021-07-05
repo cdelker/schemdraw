@@ -2,7 +2,13 @@
 
 from __future__ import annotations
 
-from typing import Literal, Type, Any
+import sys
+if sys.version_info >= (3, 8):
+    from typing import Literal
+else:
+    from typing_extensions import Literal
+
+from typing import Type, Any
 from collections import ChainMap
 import warnings
 import math

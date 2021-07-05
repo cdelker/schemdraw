@@ -5,7 +5,7 @@ with open('README.md', 'r') as f:
 
 setuptools.setup(
     name = 'schemdraw',
-    version = '0.10',
+    version = '0.11',
     description = 'Electrical circuit schematic drawing',
     author = 'Collin J. Delker',
     author_email = 'schemdraw@collindelker.com',
@@ -15,7 +15,7 @@ setuptools.setup(
     project_urls={
         'Source': 'https://bitbucket.org/cdelker/schemdraw',
     },
-    python_requires='>=3.8',
+    python_requires='>=3.7',
     packages = ['schemdraw',
                 'schemdraw.elements',
                 'schemdraw.logic',
@@ -26,10 +26,10 @@ setuptools.setup(
                ],
     package_dir={'schemdraw': 'schemdraw'},
     keywords = ['circuit', 'schematic', 'electrical', 'flowchart', 'logic'],
-    install_requires=[],
+    install_requires=['typing_extensions; python_version<"3.8"'],
     extras_require={
         'matplotlib':  ['matplotlib>=3'],
-        'svgmath': ['ziafont', 'ziamath', 'latex2mathml']
+        'svgmath': ['ziafont>=0.2', 'ziamath>=0.3', 'latex2mathml']
     },
     package_data = {'schemdraw': ['py.typed']},
     zip_safe=False,

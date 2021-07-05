@@ -5,8 +5,16 @@
 '''
 
 from __future__ import annotations
-from typing import Sequence, Literal, Any, Union
+
+import sys
+if sys.version_info >= (3, 8):
+    from typing import Literal
+else:
+    from typing_extensions import Literal
+
+from typing import Sequence, Any, Union
 import math
+
 
 from .types import BBox, XY, Linestyle, Capstyle, Joinstyle, Align
 from . import util

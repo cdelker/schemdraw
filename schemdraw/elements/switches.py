@@ -1,5 +1,12 @@
 ''' Switches and buttons '''
-from typing import Optional, Literal, Sequence
+
+import sys
+if sys.version_info >= (3, 8):
+    from typing import Literal
+else:
+    from typing_extensions import Literal
+
+from typing import Optional, Sequence
 import math
 
 from .elements import Element, Element2Term, gap

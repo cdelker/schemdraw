@@ -1,7 +1,13 @@
 ''' Signal processing elements '''
 
+import sys
+if sys.version_info >= (3, 8):
+    from typing import Literal
+else:
+    from typing_extensions import Literal
+
 import math
-from typing import Literal, Sequence
+from typing import Sequence
 
 from ..util import linspace
 from ..segments import Segment, SegmentCircle, SegmentText

@@ -30,7 +30,7 @@ Alternatively, schemdraw can be installed directly by downloading the source and
 
     python setup.py install
 
-Starting with version 0.9, schemdraw requires Python 3.8 or higher.
+schemdraw requires Python 3.7 or higher. Versions 0.9 and 0.10 were only compatible with Python 3.8+, but schemdraw 0.11 restores Python 3.7 compatibility. Note that many of the examples and test notebooks still require 3.8+ to run due to their use of the walrus operator. The optional svgmath dependencies also require 3.8+.
 
 
 Overview

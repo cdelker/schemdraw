@@ -1,6 +1,10 @@
 ''' Transformer element definitions '''
 
-from typing import Literal
+import sys
+if sys.version_info >= (3, 8):
+    from typing import Literal
+else:
+    from typing_extensions import Literal
 
 from ..segments import Segment, SegmentArc
 from .elements import Element

@@ -1,7 +1,7 @@
 ''' Schemdraw base Element class '''
 
 from __future__ import annotations
-from typing import Sequence, MutableMapping, Any
+from typing import Sequence, MutableMapping, Any, Union
 from collections import ChainMap
 from dataclasses import dataclass
 import warnings
@@ -62,7 +62,7 @@ class Element:
         self._localshift: XY = Point((0, 0))
         self._userlabels: list[Label] = []
 
-        self.anchors: MutableMapping[str, Any] = {}     # Untransformed anchors
+        self.anchors: MutableMapping[str, Union[Point, tuple[float,float]]] = {}     # Untransformed anchors
         self.absanchors: MutableMapping[str, Any] = {}  # Transformed, absolute anchors
         self.segments: list[SegmentType] = []
         self.transform = Transform(0, [0, 0])
@@ -765,7 +765,7 @@ class Element2Term(Element):
         self.anchors['center'] = (start+end)/2
 
         if anchor is not None:
-            self._localshift = -self.anchors[anchor]
+            self._localshift = -Point(self.anchors[anchor])
         transform = Transform(theta, xy, self._localshift, zoom)
 
         self.absanchors = {}

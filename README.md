@@ -1,6 +1,6 @@
 # schemdraw
 
-Schemdraw is a python package for producing high-quality electrical circuit schematic diagrams. Typical usage::
+Schemdraw is a python package for producing high-quality electrical circuit schematic diagrams. Typical usage:
 
 ```python
 import schemdraw

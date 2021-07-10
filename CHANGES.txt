@@ -1,6 +1,7 @@
-v0.11 - IN PROGRESS
+v0.11 - 10-Jul-2021
 
     - Fixed placing elements by anchor when anchors were defined using a tuple rather than Point
+    - SVG backend adds option for SVG1.x format for better compatibility with SVG renderers
     - Restore compabitliiby with Python 3.7 via conditional import of typing_extensions.
 
 

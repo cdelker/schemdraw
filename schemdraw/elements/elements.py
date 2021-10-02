@@ -742,7 +742,6 @@ class Element2Term(Element):
             endpt = [xy[0], y]
             totlen = util.dist(xy, endpt)
 
-        self._localshift = Point((0, 0))
         if self._cparams.get('extend', True):
             in_path = self.segments[0].path  # type: ignore
             dz = util.delta(in_path[-1], in_path[0])   # Defined delta of path
@@ -760,13 +759,22 @@ class Element2Term(Element):
                 end = Point(in_path[-1])
                 self._localshift = Point((0, 0))
 
+            # Adjust position of endpoints (arrowheads, dots, etc.)
+            for i in range(len(self.segments)):
+                if getattr(self.segments[i], 'endref', None) == 'end':
+                    xform = Transform(0, end)
+                    self.segments[i] = self.segments[i].xform(xform)
+                elif getattr(self.segments[i], 'endref', None) == 'start':
+                    xform = Transform(0, start)
+                    self.segments[i] = self.segments[i].xform(xform)
+
         self.anchors['start'] = Point(start)
         self.anchors['end'] = Point(end)
         self.anchors['center'] = (start+end)/2
 
         if anchor is not None:
-            self._localshift = -Point(self.anchors[anchor])
-        transform = Transform(theta, xy, self._localshift, zoom)
+            self._localshift = self._localshift-Point(self.anchors[anchor])
+        transform = Transform(theta, xy, self._localshift, zoom=zoom)
 
         self.absanchors = {}
         if len(self.segments) == 0:

@@ -32,23 +32,19 @@ class Transform:
         self.zoom = zoom
 
     def __repr__(self):
-        return 'Transform: xy={}; theta={}; scale={}'.format(
-            self.shift, self.theta, self.zoom)
+        return 'Transform: xy={}; theta={}; scale={}; lshift={}'.format(
+            self.shift, self.theta, self.zoom, self.localshift)
 
-    def transform(self, pt: Sequence[float], ref: Literal['start', 'end']=None) -> Point:
+    def transform(self, pt: Sequence[float]) -> Point:
         ''' Apply the transform to the point
 
             Args:
             pt: Original (x, y) coordinates
-            ref: 'start', 'end', or None, transformation reference
-                (whether to apply localshift)
 
             Returns:
                 Transformed (x, y) coordinates
         '''
-        lshift = {'start': Point((0, 0)),
-                  'end': self.localshift*2}.get(ref, self.localshift)  # type: ignore
-        return ((Point(pt) + lshift) * self.zoom).rotate(self.theta) + self.shift
+        return ((Point(pt) + self.localshift) * self.zoom).rotate(self.theta) + self.shift
 
     def transform_array(self, pts: list[Sequence[float]]) -> list[Point]:
         ''' Apply the transform to multiple points

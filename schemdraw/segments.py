@@ -458,7 +458,7 @@ class SegmentCircle:
                                   'ref': self.endref}
         style = {k: v for k, v in style.items() if k in params.keys()}
         params.update(style)
-        return SegmentCircle(transform.transform(self.center, self.endref),
+        return SegmentCircle(transform.transform(self.center),
                              self.radius, **params)
 
     def get_bbox(self) -> BBox:
@@ -481,7 +481,7 @@ class SegmentCircle:
                 transform: Transform to apply before drawing
                 style: Default style parameters
         '''
-        center = transform.transform(self.center, self.endref)
+        center = transform.transform(self.center)
         radius = transform.zoom * self.radius
         zorder = self.zorder if self.zorder is not None else style.get('zorder', 1)
         color = self.color if self.color else style.get('color', 'black')
@@ -557,8 +557,8 @@ class SegmentArrow:
                                   'ref': self.endref}
         style = {k: v for k, v in style.items() if k in params.keys()}
         params.update(style)
-        return SegmentArrow(transform.transform(self.tail, ref=self.endref),
-                            transform.transform(self.head, ref=self.endref),
+        return SegmentArrow(transform.transform(self.tail),
+                            transform.transform(self.head),
                             **params)
 
     def get_bbox(self) -> BBox:
@@ -582,8 +582,8 @@ class SegmentArrow:
                 transform: Transform to apply before drawing
                 style: Default style parameters
         '''
-        tail = transform.transform(self.tail, ref=self.endref)
-        head = transform.transform(self.head, ref=self.endref)
+        tail = transform.transform(self.tail)
+        head = transform.transform(self.head)
         zorder = self.zorder if self.zorder is not None else style.get('zorder', 1)
         color = self.color if self.color else style.get('color', 'black')
         lw = self.lw if self.lw else style.get('lw', 2)

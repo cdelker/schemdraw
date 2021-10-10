@@ -76,8 +76,8 @@ class Element:
 
     def __getattr__(self, name: str) -> Any:
         ''' Allow getting anchor position as attribute '''
-        if name in self.absanchors.keys():
-            return self.absanchors[name]
+        if name in vars(self).get('absanchors', {}):
+            return vars(self).get('absanchors')[name]
         raise AttributeError(f'{name} not defined in Element')
 
     def up(self) -> 'Element':

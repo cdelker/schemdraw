@@ -281,9 +281,8 @@ Labels
 
 Labels are added to elements using the :py:meth:`schemdraw.elements.Element.label` method.
 Some unicode utf-8 characters are allowed, such as :code:`'1μF'` and :code:`'1MΩ'` if the character is included in your font set.
-Alternatively, in the Matplotlib backend, full LaTeX math expressions can be rendered when enclosed in `$..$`, such as :code:`r'$\tau = \frac{1}{RC}$'`
-For full details on LaTeX math support, see `Matplotlib Mathtext <https://matplotlib.org/3.3.0/tutorials/text/mathtext.html/>`_.
-The SVG backend supports a limited subset of Mathtext, including most special characters, subscripts, and superscripts.
+Alternatively, full LaTeX math expressions can be rendered when enclosed in `$..$`, such as :code:`r'$\tau = \frac{1}{RC}$'`
+For a description of supported math expressions, in the Matplotlib backend see `Matplotlib Mathtext <https://matplotlib.org/3.3.0/tutorials/text/mathtext.html/>`_, and the SVG backend refer to the `Ziamath <https://ziamath.readthedocs.io>`_ package.
 
 Subscripts and superscripts are also added using LaTeX math mode, for example:
 
@@ -516,7 +515,7 @@ Global styles
 The style method :py:meth:`schemdraw.elements.style` can also be used to configure
 global styles on individual elements. Its argument is a dictionary of {name: Element} class pairs.
 Combined with `functools.partial <https://docs.python.org/3/library/functools.html#functools.partial>`_ from the standard library, parameters to elements can be set globally.
-For example, the following code fills all Diode elements without adding the `fill()` method or `fill` keyword argument.
+For example, the following code fills all Diode elements without adding the `fill()` method or `fill` keyword argument to every diode.
 
 .. jupyter-execute::
 
@@ -525,6 +524,7 @@ For example, the following code fills all Diode elements without adding the `fil
     elm.style({'Diode': partial(elm.Diode, fill=True)})
 
     d = schemdraw.Drawing()
+    d += elm.Diode()
     d += elm.Diode()
     d.draw()
 

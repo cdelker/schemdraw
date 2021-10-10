@@ -3,11 +3,6 @@
 from __future__ import annotations
 
 import sys
-if sys.version_info >= (3, 8):
-    from typing import Literal
-else:
-    from typing_extensions import Literal
-
 from typing import Optional, Sequence, cast
 import math
 from dataclasses import dataclass
@@ -16,7 +11,7 @@ from copy import copy
 from ..segments import Segment, SegmentText, SegmentCircle, SegmentPoly, SegmentType
 from ..elements import Element
 from ..util import linspace, Point
-from ..types import XY, Align
+from ..types import XY, Align, Side
 
 
 @dataclass
@@ -38,7 +33,7 @@ class IcPin:
      '''
     name: str | None = None
     pin: str | None = None
-    side: Literal['left', 'right', 'top', 'bottom', 'L', 'R', 'T', 'B'] = 'L'
+    side: Side = 'L'
     pos: float | None = None
     slot: str | None = None
     invert: bool = False

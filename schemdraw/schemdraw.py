@@ -1,19 +1,12 @@
 ''' Schemdraw Drawing class '''
 
 from __future__ import annotations
-
-import sys
-if sys.version_info >= (3, 8):
-    from typing import Literal
-else:
-    from typing_extensions import Literal
-
 from typing import Type, Any
 from collections import ChainMap
 import warnings
 import math
 
-from .types import BBox, Backends, ImageFormat, Linestyle, Arcdirection, XY, ImageType
+from .types import BBox, Backends, ImageFormat, Linestyle, Arcdirection, XY, ImageType, BilateralDirection
 from .elements import Element, _set_elm_backend
 from .elements.lines import LoopCurrent, CurrentLabel, CurrentLabelInline
 from .segments import Segment, SegmentText, SegmentArc, SegmentArrow, SegmentCircle, SegmentPoly
@@ -359,7 +352,7 @@ class Drawing:
         return element
 
     def labelI_inline(self, elm: Element, label: str=None,
-                      botlabel: str=None, d: Literal['in', 'out']='in',
+                      botlabel: str=None, d: BilateralDirection='in',
                       start: bool=True, ofst: float=.8,
                       color: str=None) -> Element:
         ''' Add an arrowhead for labeling current inline with leads.

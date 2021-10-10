@@ -5,18 +5,10 @@
 '''
 
 from __future__ import annotations
-
-import sys
-if sys.version_info >= (3, 8):
-    from typing import Literal
-else:
-    from typing_extensions import Literal
-
 from typing import Sequence, Any, Union
 import math
 
-
-from .types import BBox, XY, Linestyle, Capstyle, Joinstyle, Align
+from .types import BBox, XY, Linestyle, Capstyle, Joinstyle, Align, Arcdirection, EndRef, RotationMode
 from . import util
 from .util import Point
 from .backends import svg
@@ -204,7 +196,7 @@ class SegmentText:
     def __init__(self, pos: Sequence[float], label: str,
                  align: Align=None,
                  rotation: float=None,
-                 rotation_mode: Literal['anchor', 'default']=None,
+                 rotation_mode: RotationMode=None,
                  color: str=None,
                  fontsize: float=14,
                  font: str=None,
@@ -421,7 +413,7 @@ class SegmentCircle:
                  ls: Linestyle=None,
                  fill: bool | str | None=None,
                  zorder: int=None,
-                 ref: Literal['start', 'end']=None):
+                 ref: EndRef=None):
         self.center = center
         self.radius = radius
         self.zorder = zorder
@@ -518,7 +510,7 @@ class SegmentArrow:
     def __init__(self, tail: Sequence[float], head: Sequence[float],
                  headwidth: float=None, headlength: float=None,
                  color: str=None, lw: float=None,
-                 ref: Literal['start', 'end']=None,
+                 ref: EndRef=None,
                  zorder: int=None):
         self.tail = tail
         self.head = head
@@ -615,7 +607,7 @@ class SegmentArc:
     def __init__(self, center: Sequence[float],
                  width: float, height: float,
                  theta1: float=35, theta2: float=-35,
-                 arrow: Literal['cw', 'ccw']=None,
+                 arrow: Arcdirection=None,
                  angle: float=0,
                  color: str=None,
                  lw: float=None,

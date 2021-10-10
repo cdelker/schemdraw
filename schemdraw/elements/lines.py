@@ -1,20 +1,13 @@
 ''' Lines, Arrows, and Labels '''
 
 from __future__ import annotations
-
-import sys
-if sys.version_info >= (3, 8):
-    from typing import Literal
-else:
-    from typing_extensions import Literal
-
 from typing import Sequence
 import math
 
 from ..segments import Segment, SegmentArrow, SegmentCircle, SegmentArc, SegmentPoly
 from .elements import Element, Element2Term
 from .twoterm import gap
-from ..types import XY, Point
+from ..types import XY, Point, Arcdirection, BilateralDirection
 
 
 class Line(Element2Term):
@@ -276,7 +269,7 @@ class CurrentLabelInline(Element):
             headwidth: Width of arrowhead
     '''
     def __init__(self,
-                 direction: Literal['in', 'out']='in',
+                 direction: BilateralDirection='in',
                  ofst: float=0.8, start: bool=True,
                  headlength: float=0.3, headwidth: float=0.3, **kwargs):
         super().__init__(**kwargs)
@@ -328,7 +321,7 @@ class LoopArrow(Element):
             width: Width of loop
             height: Height of loop
     '''
-    def __init__(self, direction: Literal['cw', 'ccw']='cw',
+    def __init__(self, direction: Arcdirection='cw',
                  theta1: float=35, theta2: float=-35,
                  width: float=1.0, height: float=1.0, **kwargs):
         super().__init__(**kwargs)
@@ -356,7 +349,7 @@ class LoopCurrent(LoopArrow):
             pad: Distance from elements to loop
     '''
     def __init__(self, elm_list: Sequence[Element]=None,
-                 direction: Literal['cw', 'ccw']='cw',
+                 direction: Arcdirection='cw',
                  theta1: float=35, theta2: float=-35,
                  pad: float=0.2, **kwargs):
         assert elm_list is not None

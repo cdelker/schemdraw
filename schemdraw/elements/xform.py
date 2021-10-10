@@ -1,14 +1,9 @@
 ''' Transformer element definitions '''
 
-import sys
-if sys.version_info >= (3, 8):
-    from typing import Literal
-else:
-    from typing_extensions import Literal
-
 from ..segments import Segment, SegmentArc
 from .elements import Element
 from .twoterm import cycloid
+from ..types import XformTap
 
 
 class Transformer(Element):
@@ -99,7 +94,7 @@ class Transformer(Element):
             for name, pos in kwargs['rtaps'].items():
                 self.tap(name, pos, 'secondary')
 
-    def tap(self, name: str, pos: int, side: Literal['primary', 'secondary', 'left', 'right']='primary'):
+    def tap(self, name: str, pos: int, side: XformTap='primary'):
         ''' Add a tap
 
             A tap is simply a named anchor definition along one side

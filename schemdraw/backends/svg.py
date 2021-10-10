@@ -3,11 +3,6 @@
 from __future__ import annotations
 
 import sys
-if sys.version_info >= (3, 8):
-    from typing import Literal
-else:
-    from typing_extensions import Literal
-
 from typing import Sequence, Optional
 from xml.etree import ElementTree as ET
 
@@ -22,17 +17,16 @@ try:
 except ImportError:
     ziamath = None  # type: ignore
 
-from ..types import Capstyle, Joinstyle, Linestyle, BBox
+from ..types import Capstyle, Joinstyle, Linestyle, BBox, Halign, Valign, RotationMode, TextMode
 from ..util import Point
 from . import svgtext
 
-TextModeType = Literal['path', 'text']
 
-textmode: TextModeType = 'path' if ziamath is not None else 'text'
+textmode: TextMode = 'path' if ziamath is not None else 'text'
 svg2mode: bool = True
     
 
-def settextmode(mode: TextModeType, svg2: bool=True) -> None:
+def settextmode(mode: TextMode, svg2: bool=True) -> None:
     ''' Set the mode for rendering text in the SVG backend.
 
         In 'text' mode, text is drawn as SVG <text> elements
@@ -187,9 +181,9 @@ class Figure:
 
     def text(self, s: str, x: float, y: float, color: str='black',
              fontsize: float=14, fontfamily: str='sans-serif',
-             rotation: float=0, halign: Literal['left', 'center', 'right']='center',
-             valign: Literal['top', 'center', 'bottom']='center',
-             rotation_mode: Literal['anchor', 'default']='anchor', zorder: int=3) -> None:
+             rotation: float=0, halign: Halign='center',
+             valign: Valign='center',
+             rotation_mode: RotationMode='anchor', zorder: int=3) -> None:
         ''' Add text to the figure '''
         if s == '':
             return

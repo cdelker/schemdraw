@@ -77,7 +77,7 @@ class Element:
     def __getattr__(self, name: str) -> Any:
         ''' Allow getting anchor position as attribute '''
         if name in vars(self).get('absanchors', {}):
-            return vars(self).get('absanchors')[name]
+            return vars(self).get('absanchors')[name]  # type: ignore
         raise AttributeError(f'{name} not defined in Element')
 
     def up(self) -> 'Element':
@@ -446,19 +446,25 @@ class Element:
 
         if loc is None:
             loc = self._cparams.get('lblloc', 'top')
-        loc = {'bottom': 'bot', 'left': 'lft', 'right': 'rgt'}.get(loc, loc)  # type: ignore
+        loc = {'bot': 'bottom',
+               'B': 'bottom',
+               'lft': 'left',
+               'L': 'left',
+               'rgt': 'right',
+               'R': 'right',
+               'T': 'top'}.get(loc, loc)  # type: ignore
 
         # This ensures a 'top' label is always on top, regardless of rotation
         theta = self.transform.theta
         if (theta % 360) > 90 and (theta % 360) <= 270:
             if loc == 'top':
-                loc = 'bot'
-            elif loc == 'bot':
+                loc = 'bottom'
+            elif loc == 'bottom':
                 loc = 'top'
-            elif loc == 'lft':
-                loc = 'rgt'
-            elif loc == 'rgt':
-                loc = 'lft'
+            elif loc == 'left':
+                loc = 'right'
+            elif loc == 'right':
+                loc = 'left'
 
         if align is None and loc == 'center' and isinstance(label, (list, tuple)):
             align = ('center', 'center')
@@ -467,11 +473,11 @@ class Element:
         if None in align:   # Determine best alignment for label based on angle
             th = theta - rotation
             # Below alignment divisions work for label on top. Rotate angle for other sides.
-            if loc == 'lft':
+            if loc == 'left':
                 th = th + 90
-            elif loc == 'bot':
+            elif loc == 'bottom':
                 th = th + 180
-            elif loc == 'rgt':
+            elif loc == 'right':
                 th = th + 270
             th = (th+360) % 360  # Normalize angle so it's positive, clockwise
 
@@ -561,19 +567,19 @@ class Element:
                 for i, lbltxt in enumerate(label):
                     xy = Point((xmin+xdiv*(i+1), ymax))
                     self.segments.append(SegmentText(xy+ofst, lbltxt, **lblparams))
-            elif loc == 'bot':
+            elif loc == 'bottom':
                 xdiv = (xmax-xmin)/(len(label)+1)
                 ofst = Point((0, -ofst)) if not isinstance(ofst, (list, tuple)) else Point(ofst)
                 for i, lbltxt in enumerate(label):
                     xy = Point((xmin+xdiv*(i+1), ymin))
                     self.segments.append(SegmentText(xy+ofst, lbltxt, **lblparams))
-            elif loc == 'lft':
+            elif loc == 'left':
                 ydiv = (ymax-ymin)/(len(label)+1)
                 ofst = Point((-ofst, 0)) if not isinstance(ofst, (list, tuple)) else Point(ofst)
                 for i, lbltxt in enumerate(label):
                     xy = Point((xmin, ymin+ydiv*(i+1)))
                     self.segments.append(SegmentText(xy+ofst, lbltxt, **lblparams))
-            elif loc == 'rgt':
+            elif loc == 'right':
                 ydiv = (ymax-ymin)/(len(label)+1)
                 ofst = Point((ofst, 0)) if not isinstance(ofst, (list, tuple)) else Point(ofst)
                 for i, lbltxt in enumerate(label):
@@ -591,13 +597,13 @@ class Element:
             if loc == 'top':
                 ofst = Point((0, ofst)) if not isinstance(ofst, (list, tuple)) else Point(ofst)
                 xy = Point(((xmax+xmin)/2, ymax))
-            elif loc == 'bot':
+            elif loc == 'bottom':
                 ofst = Point((0, -ofst)) if not isinstance(ofst, (list, tuple)) else Point(ofst)  # type: ignore
                 xy = Point(((xmax+xmin)/2, ymin))
-            elif loc == 'lft':
+            elif loc == 'left':
                 ofst = Point((-ofst, 0)) if not isinstance(ofst, (list, tuple)) else Point(ofst)  # type: ignore
                 xy = Point((xmin, (ymax+ymin)/2))
-            elif loc == 'rgt':
+            elif loc == 'right':
                 ofst = Point((ofst, 0)) if not isinstance(ofst, (list, tuple)) else Point(ofst)
                 xy = Point((xmax, (ymax+ymin)/2))
             elif loc == 'center':

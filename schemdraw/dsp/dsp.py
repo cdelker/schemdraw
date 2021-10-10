@@ -15,6 +15,9 @@ from ..elements import Element
 from ..types import XY
 
 
+FilterType = Literal['lp', 'bp', 'hp', 'notch']
+
+
 class Square(Element):
     ''' Empty square element
 
@@ -239,7 +242,7 @@ class Filter(Square):
             * E
             * W
     '''
-    def __init__(self, *d, response: Literal['lp', 'bp', 'hp', 'notch']=None, **kwargs):
+    def __init__(self, *d, response: FilterType=None, **kwargs):
         super().__init__(*d, **kwargs)
         path = _makesine()
         path1 = [[p[0], p[1]+.25] for p in path]

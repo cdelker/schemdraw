@@ -1,22 +1,14 @@
 ''' Switches and buttons '''
 
-import sys
-if sys.version_info >= (3, 8):
-    from typing import Literal
-else:
-    from typing_extensions import Literal
-
 from typing import Optional, Sequence
 import math
 
 from .elements import Element, Element2Term, gap
 from ..segments import Segment, SegmentCircle, SegmentArc, SegmentArrow, SegmentPoly
-from ..types import Point
+from ..types import Point, ActionType
 from ..util import linspace
 
 sw_dot_r = .12
-
-ActionType = Optional[Literal['open', 'close']]
 
 
 class Switch(Element2Term):

@@ -1,20 +1,13 @@
 ''' Connectors and bus lines '''
 
 from __future__ import annotations
-
-import sys
-if sys.version_info >= (3, 8):
-    from typing import Literal
-else:
-    from typing_extensions import Literal
-
 from typing import Sequence
 import warnings
 
 from ..segments import Segment, SegmentText, SegmentCircle, SegmentPoly
 from ..elements import Element, Line
 from .twoterm import resheight, gap
-from ..types import Point, XY, Valign
+from ..types import Point, XY, Valign, HeaderStyle, HeaderNumbering
 
 
 class OrthoLines(Element):
@@ -165,8 +158,8 @@ class Header(Element):
     '''
     def __init__(self, *d,
                  rows: int=4, cols: int=1,
-                 style: Literal['round', 'square', 'screw']='round',
-                 numbering: Literal['lr', 'ud', 'ccw']='lr',
+                 style: HeaderStyle='round',
+                 numbering: HeaderNumbering='lr',
                  shownumber: bool=False,
                  pinsleft: Sequence[str] = None,
                  pinsright: Sequence[str] = None,

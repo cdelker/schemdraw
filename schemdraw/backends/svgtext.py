@@ -14,18 +14,12 @@
 
 from __future__ import annotations
 
-import sys
-if sys.version_info >= (3, 8):
-    from typing import Literal
-else:
-    from typing_extensions import Literal
-
 from xml.etree import ElementTree as ET
-
 import string
 import re
 
 from ..util import Point, rotate
+from ..types import Halign, Valign, RotationMode
 
 
 # Conversion from Latex codes to unicode characters.
@@ -315,8 +309,8 @@ def text_approx_size(text: str, font: str='Arial', size: float=16) -> tuple[floa
 
 
 def text_tosvg(text: str, x: float, y: float, font: str='Arial', size: float=16, color: str='black',
-               halign: Literal['left', 'center', 'right']='center', valign: Literal['top', 'center', 'bottom']='center',
-               rotation: float=0, rotation_mode: Literal['anchor', 'default']='anchor',
+               halign: Halign='center', valign: Valign='center',
+               rotation: float=0, rotation_mode: RotationMode='anchor',
                testmode: bool=False) -> ET.Element:
     ''' Convert text to svg <text> tag.
 

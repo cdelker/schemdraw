@@ -1,3 +1,10 @@
+v0.12 - 05-Nov-2021
+
+    - Fixed Arrow and LineDot element placement when placed with anchor
+    - Fixed copy/pickle of Element class
+    - Fixed importing * from schemdraw.elements
+
+
 v0.11 - 10-Jul-2021
 
     - Fixed placing elements by anchor when anchors were defined using a tuple rather than Point

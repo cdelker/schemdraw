@@ -90,3 +90,44 @@ Use the `gateH` and `gateW` parameters to adjust how gates line up:
 .. jupyter-execute::
 
     logicparse('(not a) and b or c', gateH=.5)
+
+
+Karnaugh Maps
+-------------
+
+Karnaugh Maps, or K-Maps, are useful for simplifying a logical truth table into the smallest number of gates. Schemdraw can draw K-Maps, with 2, 3, or 4 input variables, using the :py:class:`schemdraw.logic.kmap.Kmap` class.
+
+.. jupyter-execute::
+
+    logic.Kmap(names='ABCD')
+
+The `names` parameter must be a string with 2, 3, or 4 characters, each defining the name of one input variable.
+The `truthtable` parameter contains a list of tuples defining the logic values to display in the map. The first `len(names)` elements are 0's and 1's defining the position of the cell, and the last element is the string to display in that cell.
+The `default` parameter is a string to show in each cell of the K-Map when that cell is undefined in the `truthtable`.
+
+For example, this 2x2 K-Map has a '1' in the 01 position, and 0's elsewhere:
+
+.. jupyter-execute::
+
+    logic.Kmap(names='AB', truthtable=[(0, 1, '1')])
+
+K-Maps are typically used by grouping sets of 1's together. These groupings can be drawn using the `groups` parameter. The keys of the `groups` dictionary define which cells to group together, and the values of the dictionary define style parameters for the circle around the group.
+Each key must be a string of length `len(names)`, with either a `0`, `1`, or `.` in each position. As an example, with `names='ABCD'`, a group key of `"1..."` will place a circle around all cells where A=1. Or `".00."` draws a circle around all cells where B and C are both 0. Groups will automatically "wrap" around the edges.
+Parameters of the style dictionary include `color`, `fill`, `lw`, and `ls`.
+
+.. jupyter-execute::
+
+    logic.Kmap(names='ABCD',
+               truthtable=[(1,1,0,0,'1'),
+                           (1,1,0,1,'1'),
+                           (1,1,1,1,'1'),
+                           (1,1,1,0,'1'),
+                           (0,1,0,1,'1'),
+                           (0,1,1,1,'X'),
+                           (1,1,0,1,'1'),
+                           (1,1,1,1,'1'),
+                           (0,0,0,0,'1'),
+                           (1,0,0,0,'1')],
+               groups={'11..': {'color': 'red', 'fill': '#ff000033'},
+                       '.1.1': {'color': 'blue', 'fill': '#0000ff33'},
+                       '.000': {'color': 'green', 'fill': '#00ff0033'}})

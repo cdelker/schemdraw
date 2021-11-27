@@ -1,5 +1,6 @@
 from .logic import And, Nand, Or, Nor, Xor, Xnor, Buf, Not, NotNot, Tgate, Schmitt, SchmittNot, SchmittAnd, SchmittNand
 from .kmap import Kmap
+from .table import Table
 from ..elements import Arrow, Arrowhead, Dot, Line
 
 

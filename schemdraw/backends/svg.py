@@ -188,6 +188,7 @@ class Figure:
         if s == '':
             return
 
+        y += fontsize/72*2/6  # A bit of baseline shift to match MPL
         x, y = self.xform(x, y)
 
         if ziamath and textmode == 'path':

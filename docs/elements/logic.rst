@@ -92,6 +92,29 @@ Use the `gateH` and `gateW` parameters to adjust how gates line up:
     logicparse('(not a) and b or c', gateH=.5)
 
 
+Tables
+------
+
+Simple tables can be drawn using the :py:class:`schemdraw.logic.table.Table` class. This class is included in the logic module as it's primary purpose was for drawing logical truth tables.
+
+The tables are defined using typical Markdown syntax. The `colfmt` parameter works like the LaTeX tabular environment parameter for defining lines to draw between table columns: "cc|c" draws three centered columns, with a vertical line before the last column.
+Each column must be specified with a 'c', 'r', or 'l' for center, right, or left justification
+Two pipes (`||`), or a double pipe character (`ǁ`) draw a double bar between columns.
+Row lines are added to the table string itself, with either `---` or `===` in the row.
+
+.. jupyter-execute::
+
+    table = '''
+     A | B | C
+    ---|---|---
+     0 | 0 | 0
+     0 | 1 | 0
+     1 | 0 | 0
+     1 | 1 | 1
+    '''    
+    logic.Table(table, colfmt='cc||c')
+
+
 Karnaugh Maps
 -------------
 
@@ -109,7 +132,7 @@ For example, this 2x2 K-Map has a '1' in the 01 position, and 0's elsewhere:
 
 .. jupyter-execute::
 
-    logic.Kmap(names='AB', truthtable=[(0, 1, '1')])
+    logic.Kmap(names='AB', truthtable=[('01', '1')])
 
 K-Maps are typically used by grouping sets of 1's together. These groupings can be drawn using the `groups` parameter. The keys of the `groups` dictionary define which cells to group together, and the values of the dictionary define style parameters for the circle around the group.
 Each key must be a string of length `len(names)`, with either a `0`, `1`, or `.` in each position. As an example, with `names='ABCD'`, a group key of `"1..."` will place a circle around all cells where A=1. Or `".00."` draws a circle around all cells where B and C are both 0. Groups will automatically "wrap" around the edges.
@@ -118,16 +141,16 @@ Parameters of the style dictionary include `color`, `fill`, `lw`, and `ls`.
 .. jupyter-execute::
 
     logic.Kmap(names='ABCD',
-               truthtable=[(1,1,0,0,'1'),
-                           (1,1,0,1,'1'),
-                           (1,1,1,1,'1'),
-                           (1,1,1,0,'1'),
-                           (0,1,0,1,'1'),
-                           (0,1,1,1,'X'),
-                           (1,1,0,1,'1'),
-                           (1,1,1,1,'1'),
-                           (0,0,0,0,'1'),
-                           (1,0,0,0,'1')],
+               truthtable=[('1100', '1'),
+                           ('1101', '1'),
+                           ('1111', '1'),
+                           ('1110', '1'),
+                           ('0101', '1'),
+                           ('0111', 'X'),
+                           ('1101', '1'),
+                           ('1111', '1'),
+                           ('0000', '1'),
+                           ('1000', '1')],
                groups={'11..': {'color': 'red', 'fill': '#ff000033'},
                        '.1.1': {'color': 'blue', 'fill': '#0000ff33'},
                        '.000': {'color': 'green', 'fill': '#00ff0033'}})

@@ -17,9 +17,9 @@ class Kmap(Element):
             names: 2, 3, or 4-character string defining names of
                 the inputs
             truthtable: list defining values to display in each
-                box of the K-Map. First 2, 3, or 4 elements are
-                the logic 0 or 1, and last element is the string
-                to display for that input. Example: (0,0,0,0,'1')
+                box of the K-Map. First element is string of 2, 3, 
+                or 4 logic 0's and 1's, and last element is the string
+                to display for that input. Example: ('0000', '1')
                 displays a '1' when all inputs are 0.
             groups: dictionary of style parameters for circling groups
                 of inputs. Dictionary key must be same length as names,
@@ -84,11 +84,11 @@ class Kmap(Element):
                                              align=('right', 'center'), fontsize=10))
 
         # Logic values
-        ttable_in = [k[:-1] for k in truthtable]
-        ttable_out = [k[-1] for k in truthtable]
+        ttable_in = [k[0] for k in truthtable]
+        ttable_out = [k[1] for k in truthtable]
         for i, col in enumerate(order[:cols]):
             for j, row in enumerate(order[:rows]):
-                invalue = tuple([int(k) for k in format(i, colfmt)] + [int(k) for k in format(j, rowfmt)])
+                invalue = ''.join([k for k in format(i, colfmt)] + [k for k in format(j, rowfmt)])
                 try:
                     idx = ttable_in.index(invalue)
                 except ValueError:

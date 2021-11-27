@@ -1,3 +1,8 @@
+v0.13 - IN PROGRESS
+
+    - Added Table and Kmap elements
+
+
 v0.12 - 05-Nov-2021
 
     - Fixed Arrow and LineDot element placement when placed with anchor

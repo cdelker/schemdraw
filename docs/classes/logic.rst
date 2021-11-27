@@ -8,4 +8,6 @@ Logic Gates
 
 .. automethod:: schemdraw.parsing.logic_parser.logicparse
 
+.. autoclass:: schemdraw.logic.table.Table
+
 .. autoclass:: schemdraw.logic.kmap.Kmap

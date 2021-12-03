@@ -6,7 +6,7 @@ import math
 import tokenize
 
 from ..elements import Element
-from ..segments import Segment, SegmentPoly, SegmentText
+from ..segments import Segment, SegmentPoly, SegmentText, SegmentArrow
 
 from .. import util
 from ..types import BBox
@@ -377,9 +377,9 @@ class WaveClk(Wave0):
         
     
 class TimingDiagram(Element):
-    def __init__(self, wave: dict[str, str], **kwargs):
+    def __init__(self, wavedrom: dict[str, str], **kwargs):
         super().__init__(**kwargs)
-        self.wave = wave
+        self.wave = wavedrom
 
         kwargs.setdefault('lw', 1)
         width = .5
@@ -387,14 +387,16 @@ class TimingDiagram(Element):
         risetime = .15
         
         signals = self.wave.get('signal', [])
+        config = self.wave.get('config', {})
+        hscale = config.get('hscale', 1)
 
         totheight = (width+ysep)*len(signals)
         totperiods = max(len(w.get('wave', [])) for w in signals)
         for p in range(totperiods+1):
-            self.segments.append(Segment([(p*2*width, width+ysep/2), (p*2*width, width-totheight)],
+            self.segments.append(Segment([(p*2*width*hscale, width+ysep/2), (p*2*width*hscale, width-totheight)],
                                          ls=':', lw=1, color='#DDDDDD', zorder=0))
 
-        clipbox = BBox(0, width, totperiods*width*2, -totheight)
+        clipbox = BBox(0, width, totperiods*width*2*hscale, -totheight)
         kwargs['clip'] = clipbox
 
         y0 = 0
@@ -403,7 +405,7 @@ class TimingDiagram(Element):
             wave = signal.get('wave', '')
             data = signal.get('data', [])
             phase = signal.get('phase', 0)
-            period = 2*width*signal.get('period', 1)
+            period = 2*width*signal.get('period', 1) * hscale
             halfperiod = period/2
             textpad = .2
             

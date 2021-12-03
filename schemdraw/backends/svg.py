@@ -25,6 +25,9 @@ from . import svgtext
 textmode: TextMode = 'path' if ziamath is not None else 'text'
 svg2mode: bool = True
     
+hatchpattern = '''<defs><pattern id="hatch" patternUnits="userSpaceOnUse" width="4" height="4">
+<path d="M-1,1 l2,-2 M0,4 l4,-4 M3,5 l2,-2" style="stroke:black; stroke-width:.5" /></pattern></defs>'''
+
 
 def settextmode(mode: TextMode, svg2: bool=True) -> None:
     ''' Set the mode for rendering text in the SVG backend.
@@ -64,14 +67,17 @@ inline = isnotebook()
 
 def getstyle(color: str=None, ls: Linestyle=None, lw: float=None,
              capstyle: Capstyle=None, joinstyle: Joinstyle=None,
-             fill: str=None) -> str:
+             fill: str=None, hatch: bool=False) -> str:
     ''' Get style for svg element. Leave empty if property matches default '''
     # Note: styles are added to every SVG element, rather than in a global <style>
     # tag, since multiple images in one HTML page may share <styles>.
     s = ''
     if color:
         s += f'stroke:{color};'
-    s += f'fill:{str(fill).lower()};'
+    if hatch:
+        s += 'fill:url(#hatch);'
+    else:
+        s += f'fill:{str(fill).lower()};'
     if lw:
         s += f'stroke-width:{lw};'
     dash = {'--': '7.4,3.2',
@@ -136,6 +142,8 @@ class Figure:
     '''
     def __init__(self, bbox: BBox, **kwargs):
         self.svgelements: list[tuple[int, ET.Element]] = []  # (zorder, element)
+        self.hatch: Optional[str] = None
+        self.clips: dict[BBox, str] = {}
         self.showframe = kwargs.get('showframe', False)
         self.scale = 64.8 * kwargs.get('inches_per_unit', .5)  # Magic scale factor that matches what MPL did
         self.set_bbox(bbox)
@@ -157,10 +165,26 @@ class Figure:
         ''' Set background color of drawing '''
         self._bgcolor = color
 
+    def addclip(self, et: ET.Element, bbox: Optional[BBox]):
+        ''' Add clip path to the element '''
+        if bbox is not None:
+            if bbox in self.clips:
+                clipid = self.clips[bbox]
+            else:
+                clipid = len(self.clips)
+                self.clips[bbox] = clipid
+
+                x0, y0 = self.xform(bbox.xmin, bbox.ymin)
+                x1, y1 = self.xform(bbox.xmax, bbox.ymax)
+                clip = ET.fromstring(f'''<defs>
+    <clipPath id="clip{clipid}"><rect x="{x0-1}" y="{y0-1}" width="{x1-x0+2}" height="{y1-y0+2}" /></clipPath></defs>''')
+                self.svgelements.append((0, clip))
+            et.set('clip-path', f'url(#clip{clipid})')
+
     def plot(self, x: Sequence[float], y: Sequence[float],
              color: str='black', ls: Linestyle='-', lw: float=2,
              fill: str='none', capstyle: Capstyle='round',
-             joinstyle: Joinstyle='round', zorder: int=2) -> None:
+             joinstyle: Joinstyle='round', clip: BBox=None, zorder: int=2) -> None:
         ''' Plot a path '''
         et = ET.Element('path')
         d = 'M {},{} '.format(*self.xform(x[0], y[0]))
@@ -177,13 +201,14 @@ class Figure:
         et.set('d', d)
         et.set('style', getstyle(color=color, ls=ls, lw=lw, capstyle=capstyle,
                                  joinstyle=joinstyle, fill=fill))
+        self.addclip(et, clip)
         self.svgelements.append((zorder, et))
 
     def text(self, s: str, x: float, y: float, color: str='black',
              fontsize: float=14, fontfamily: str='sans-serif',
              rotation: float=0, halign: Halign='center',
              valign: Valign='center',
-             rotation_mode: RotationMode='anchor', zorder: int=3) -> None:
+             rotation_mode: RotationMode='anchor', clip: BBox=None, zorder: int=3) -> None:
         ''' Add text to the figure '''
         if s == '':
             return
@@ -230,32 +255,29 @@ class Figure:
                                          halign=halign, valign=valign, color=color,
                                          rotation=rotation, rotation_mode=rotation_mode,
                                          testmode=False)
-
+        self.addclip(texttag, clip)
         self.svgelements.append((zorder, texttag))
 
     def poly(self, verts: Sequence[Sequence[float]], closed: bool=True,
              color: str='black', fill: str='none', lw: float=2,
-             ls: Linestyle='-', capstyle: Capstyle='round',
-             joinstyle: Joinstyle='round', zorder: int=1) -> None:
+             ls: Linestyle='-', hatch: bool=False, capstyle: Capstyle='round',
+             joinstyle: Joinstyle='round', clip: BBox=None, zorder: int=1) -> None:
         ''' Draw a polygon '''
-        if not closed:
-            x = [v[0] for v in verts]
-            y = [v[1] for v in verts]
-            self.plot(x, y, color=color, fill=fill, lw=lw, ls=ls,
-                      capstyle=capstyle, joinstyle=joinstyle, zorder=zorder)
-        else:
-            et = ET.Element('polygon')
-            points = ''
-            for xx, yy in verts:
-                xx, yy = self.xform(xx, yy)
-                points += '{},{} '.format(xx, yy)
-            et.set('points', points)
-            et.set('style', getstyle(color=color, ls=ls, lw=lw, capstyle=capstyle,
-                                     joinstyle=joinstyle, fill=fill))
-            self.svgelements.append((zorder, et))
+        et = ET.Element('polyline') if not closed else ET.Element('polygon')
+        points = ''
+        for xx, yy in verts:
+            xx, yy = self.xform(xx, yy)
+            points += '{},{} '.format(xx, yy)
+        et.set('points', points)
+        et.set('style', getstyle(color=color, ls=ls, lw=lw, capstyle=capstyle,
+                                 joinstyle=joinstyle, fill=fill, hatch=hatch))
+        self.addclip(et, clip)
+        self.svgelements.append((zorder, et))
+        if hatch:
+            self.hatch = True
 
     def circle(self, center: Sequence[float], radius: float, color: str='black',
-               fill: str='none', lw: float=2, ls: Linestyle='-', zorder: int=1) -> None:
+               fill: str='none', lw: float=2, ls: Linestyle='-', clip: BBox=None, zorder: int=1) -> None:
         ''' Draw a circle '''
         x, y = self.xform(*center)
         radius = radius * self.scale
@@ -264,11 +286,12 @@ class Figure:
         et.set('cy', str(y))
         et.set('r', str(radius))
         et.set('style', getstyle(color=color, lw=lw, ls=ls, fill=fill))
+        self.addclip(et, clip)
         self.svgelements.append((zorder, et))
 
     def arrow(self, x: float, y: float, dx: float, dy: float,
               headwidth: float=.2, headlength: float=.2,
-              color: str='black', lw: float=2, zorder: int=1) -> None:
+              color: str='black', lw: float=2, clip: BBox=None, zorder: int=1) -> None:
         ''' Draw an arrow '''
         x, y = self.xform(x, y)
         dx, dy = dx*self.scale, dy*self.scale
@@ -303,13 +326,15 @@ class Figure:
         et2.set('d', d)
         et2.set('style', getstyle(color=color, lw=lw, capstyle='butt',
                                   joinstyle='miter', fill=color))
+        self.addclip(et1, clip)
+        self.addclip(et2, clip)
         self.svgelements.append((zorder, et1))
         self.svgelements.append((zorder, et2))
 
     def arc(self, center: Sequence[float], width: float, height: float,
             theta1: float=0, theta2: float=90, angle: float=0,
             color: str='black', lw: float=2, ls: Linestyle='-', zorder: int=1,
-            arrow: bool=None) -> None:
+            arrow: bool=None, clip: BBox=None) -> None:
         ''' Draw an arc or ellipse, with optional arrowhead '''
         centerx, centery = self.xform(*center)
         width, height = width*self.scale, height*self.scale
@@ -351,6 +376,7 @@ class Figure:
             et.set('stroke', color)
             et.set('stroke-width', str(lw))
             et.set('fill', 'none')
+            self.addclip(et, clip)
             self.svgelements.append((zorder, et))
 
         else:
@@ -362,6 +388,7 @@ class Figure:
             et.set('stroke', color)
             et.set('stroke-width', str(lw))
             et.set('fill', 'none')
+            self.addclip(et, clip)
             self.svgelements.append((zorder, et))
 
         if arrow is not None:
@@ -414,6 +441,9 @@ class Figure:
         svg.set('viewBox', f'{x0} {y0} {self.pxwidth+2*pad} {self.pxheight+2*pad}')
         if self._bgcolor:
             svg.set('style', f'background-color:{self._bgcolor};')
+
+        if self.hatch:
+            svg.append(ET.fromstring(hatchpattern))
 
         if self.showframe:
             rect = ET.SubElement(svg, 'rect')

@@ -97,6 +97,7 @@ class Segment:
                  capstyle: Capstyle=None,
                  joinstyle: Joinstyle=None,
                  fill: str=None,
+                 clip: BBox=None,
                  zorder: int=None):
         self.path: Sequence[XY] = path  # Untranformed path
         self.zorder = zorder
@@ -104,6 +105,7 @@ class Segment:
         self.fill = fill
         self.lw = lw
         self.ls = ls
+        self.clip = clip
         self.capstyle = capstyle
         self.joinstyle = joinstyle
 
@@ -174,7 +176,7 @@ class Segment:
         y = [p[1] for p in path]
         fig.plot(x, y, color=color, fill=fill,
                  ls=ls, lw=lw, capstyle=capstyle, joinstyle=joinstyle,
-                 zorder=zorder)
+                 clip=self.clip, zorder=zorder)
 
 
 class SegmentText:
@@ -200,6 +202,7 @@ class SegmentText:
                  color: str=None,
                  fontsize: float=14,
                  font: str=None,
+                 clip: BBox=None,
                  zorder: int=None):
         self.xy = pos
         self.text = label
@@ -209,6 +212,7 @@ class SegmentText:
         self.color = color
         self.rotation = rotation
         self.rotation_mode = rotation_mode
+        self.clip = clip
         self.zorder = zorder
 
     def doreverse(self, centerx: float) -> None:
@@ -233,6 +237,7 @@ class SegmentText:
                                   'color': self.color,
                                   'rotation': self.rotation,
                                   'rotation_mode': self.rotation_mode,
+                                  'clip': self.clip,
                                   'zorder': self.zorder}
 
         style = {k: v for k, v in style.items() if k in params.keys()}
@@ -286,7 +291,7 @@ class SegmentText:
         fig.text(self.text, xy[0], xy[1],
                  color=color, fontsize=fontsize, fontfamily=font,
                  rotation=rotation, rotation_mode=rotmode,
-                 halign=align[0], valign=align[1], zorder=zorder)
+                 halign=align[0], valign=align[1], clip=self.clip, zorder=zorder)
 
 
 class SegmentPoly:
@@ -309,19 +314,23 @@ class SegmentPoly:
                  fill: str=None,
                  lw: float=None,
                  ls: Linestyle=None,
+                 hatch: bool=False,
                  joinstyle: Joinstyle=None,
                  capstyle: Capstyle=None,
+                 clip: BBox=None,
                  zorder: int=None):
         self.verts = verts
         self.closed = closed
         self.cornerradius = cornerradius
         self.color = color
         self.fill = fill
+        self.hatch = hatch
         self.joinstyle = joinstyle
         self.capstyle = capstyle
         self.zorder = zorder
         self.lw = lw
         self.ls = ls
+        self.clip = clip
 
     def doreverse(self, centerx: float) -> None:
         ''' Reverse the path (flip horizontal about the centerx point) '''
@@ -346,6 +355,7 @@ class SegmentPoly:
                                   'lw': self.lw,
                                   'ls': self.ls,
                                   'cornerradius': self.cornerradius,
+                                  'clip': self.clip,
                                   'zorder': self.zorder}
         style = {k: v for k, v in style.items() if k in params.keys()}
         params.update(style)
@@ -391,7 +401,7 @@ class SegmentPoly:
             verts = roundcorners(verts, self.cornerradius)
 
         fig.poly(verts, closed=self.closed, color=color, fill=fill, lw=lw, ls=ls,
-                 capstyle=capstyle, joinstyle=joinstyle, zorder=zorder)
+                 hatch=self.hatch, capstyle=capstyle, joinstyle=joinstyle, clip=self.clip, zorder=zorder)
 
 
 class SegmentCircle:
@@ -412,6 +422,7 @@ class SegmentCircle:
                  lw: float=None,
                  ls: Linestyle=None,
                  fill: bool | str | None=None,
+                 clip: BBox=None,
                  zorder: int=None,
                  ref: EndRef=None):
         self.center = center
@@ -421,6 +432,7 @@ class SegmentCircle:
         self.fill = fill
         self.lw = lw
         self.ls = ls
+        self.clip = clip
 
         # Reference for adding things AFTER lead extensions
         self.endref = ref
@@ -447,6 +459,7 @@ class SegmentCircle:
                                   'fill': self.fill,
                                   'lw': self.lw,
                                   'ls': self.ls,
+                                  'clip': self.clip,
                                   'ref': self.endref}
         style = {k: v for k, v in style.items() if k in params.keys()}
         params.update(style)
@@ -491,7 +504,7 @@ class SegmentCircle:
         
         fill = color if fill is True else None if fill is False else fill
         fig.circle(center, radius, color=color, fill=fill,
-                   lw=lw, ls=ls, zorder=zorder)
+                   lw=lw, ls=ls, clip=self.clip, zorder=zorder)
 
 
 class SegmentArrow:
@@ -510,6 +523,7 @@ class SegmentArrow:
     def __init__(self, tail: Sequence[float], head: Sequence[float],
                  headwidth: float=None, headlength: float=None,
                  color: str=None, lw: float=None,
+                 clip: BBox=None,
                  ref: EndRef=None,
                  zorder: int=None):
         self.tail = tail
@@ -519,6 +533,7 @@ class SegmentArrow:
         self.headlength = headlength
         self.color = color
         self.lw = lw
+        self.clip = clip
         self.endref = ref
 
     def doreverse(self, centerx: float) -> None:
@@ -584,7 +599,7 @@ class SegmentArrow:
 
         fig.arrow(tail[0], tail[1], head[0]-tail[0], head[1]-tail[1],
                   headwidth=headwidth, headlength=headlength,
-                  color=color, lw=lw, zorder=zorder)
+                  color=color, lw=lw, clip=self.clip, zorder=zorder)
 
 
 class SegmentArc:
@@ -612,6 +627,7 @@ class SegmentArc:
                  color: str=None,
                  lw: float=None,
                  ls: Linestyle=None,
+                 clip: BBox=None,
                  zorder: int=None):
         self.center = center
         self.width = width
@@ -623,6 +639,7 @@ class SegmentArc:
         self.color = color
         self.lw = lw
         self.ls = ls
+        self.clip = clip
         self.zorder = zorder
 
     def doreverse(self, centerx: float) -> None:
@@ -649,6 +666,7 @@ class SegmentArc:
         params: dict[str, Any] = {'color': self.color,
                                   'lw': self.lw,
                                   'ls': self.ls,
+                                  'clip': self.clip,
                                   'zorder': self.zorder}
         style = {k: v for k, v in style.items() if k in params.keys()}
         params.update(style)
@@ -702,7 +720,7 @@ class SegmentArc:
         height = self.height * transform.zoom
         fig.arc(center, width=width, height=height,
                 theta1=self.theta1, theta2=self.theta2, angle=angle,
-                color=color, lw=lw, ls=ls, zorder=zorder, arrow=self.arrow)
+                color=color, lw=lw, ls=ls, clip=self.clip, zorder=zorder, arrow=self.arrow)
 
 
 SegmentType = Union[Segment, SegmentText, SegmentPoly, SegmentArc,

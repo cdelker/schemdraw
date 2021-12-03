@@ -6,7 +6,7 @@ import math
 
 import matplotlib  # type: ignore
 import matplotlib.pyplot as plt  # type: ignore
-from matplotlib.patches import Arc  # type: ignore
+from matplotlib.patches import Arc, Rectangle  # type: ignore
 
 from .. import util
 from ..types import Capstyle, Joinstyle, Linestyle, BBox
@@ -80,38 +80,50 @@ class Figure:
         ''' Set background color of drawing '''
         self.fig.set_facecolor(color)
 
+    def addclip(self, patch, clip):
+        if clip:
+            cliprect = Rectangle((clip.xmin, clip.ymax),
+                                 abs(clip.xmax-clip.xmin), abs(clip.ymax-clip.ymin),
+                                 transform=self.ax.transData)
+            patch.set_clip_path(cliprect)
+        
     def plot(self, x: float, y: float, color: str='black', ls: Linestyle='-',
              lw: float=2, fill: str=None, capstyle: Capstyle='round',
-             joinstyle: Joinstyle='round',  zorder: int=2) -> None:
+             joinstyle: Joinstyle='round', clip: BBox=None, zorder: int=2) -> None:
         ''' Plot a path '''
-        self.ax.plot(x, y, zorder=zorder, color=color, ls=ls, lw=lw,
+        p, = self.ax.plot(x, y, zorder=zorder, color=color, ls=ls, lw=lw,
                      solid_capstyle=fix_capstyle(capstyle),
                      solid_joinstyle=joinstyle)
+        self.addclip(p, clip)
         if fill:
-            self.ax.fill(x, y, color=fill, zorder=zorder)
+            p, = self.ax.fill(x, y, color=fill, zorder=zorder)
+            self.addclip(p, clip)
 
     def text(self, s: str, x, y, color='black', fontsize=14, fontfamily='sans-serif',
              rotation=0, halign='center', valign='center', rotation_mode='anchor',
-             zorder=3) -> None:
+             clip: BBox=None, zorder=3) -> None:
         ''' Add text to the figure '''
-        self.ax.text(x, y, s, transform=self.ax.transData, color=color,
-                     fontsize=fontsize, fontfamily=fontfamily,
-                     rotation=rotation, rotation_mode=rotation_mode,
-                     horizontalalignment=halign, verticalalignment=valign,
-                     zorder=zorder)
+        t = self.ax.text(x, y, s, transform=self.ax.transData, color=color,
+                         fontsize=fontsize, fontfamily=fontfamily,
+                         rotation=rotation, rotation_mode=rotation_mode,
+                         horizontalalignment=halign, verticalalignment=valign,
+                         zorder=zorder, clip_on=True)
+        self.addclip(t, clip)
 
     def poly(self, verts: Sequence[Sequence[float]], closed: bool=True,
-             color: str='black', fill: str=None, lw: float=2, ls: Linestyle='-',
-             capstyle: Capstyle='round', joinstyle: Joinstyle='round', zorder: int=1) -> None:
+             color: str='black', fill: str=None, lw: float=2, ls: Linestyle='-', hatch: bool=False,
+             capstyle: Capstyle='round', joinstyle: Joinstyle='round', clip: BBox=None, zorder: int=1) -> None:
         ''' Draw a polynomial '''
+        h = '///////' if hatch else None
         p = plt.Polygon(verts, closed=closed, ec=color,
                         fc=fill, fill=fill is not None,
-                        lw=lw, ls=ls, capstyle=fix_capstyle(capstyle),
+                        lw=lw, ls=ls, hatch=h, capstyle=fix_capstyle(capstyle),
                         joinstyle=joinstyle, zorder=zorder)
         self.ax.add_patch(p)
+        self.addclip(p, clip)
 
     def circle(self, center: Sequence[float], radius: float, color: str='black', fill: str=None,
-               lw: float=2, ls: Linestyle='-', zorder: int=1) -> None:
+               lw: float=2, ls: Linestyle='-', clip: BBox=None, zorder: int=1) -> None:
         ''' Draw a circle '''
         circ = plt.Circle(xy=center, radius=radius, ec=color, fc=fill,
                           fill=fill is not None, lw=lw, ls=ls, zorder=zorder)
@@ -119,7 +131,7 @@ class Figure:
 
     def arrow(self, x: float, y: float, dx: float, dy: float,
               headwidth: float=.2, headlength: float=.2,
-              color: str='black', lw: float=2, zorder: int=1) -> None:
+              color: str='black', lw: float=2, clip: BBox=None, zorder: int=1) -> None:
         ''' Draw an arrow '''
         # Easier to skip Matplotlib's arrow or annotate methods and just draw a line
         # and a polygon.
@@ -142,17 +154,18 @@ class Figure:
                         fc=color, fill=color is not None,
                         lw=1, zorder=zorder)
         self.ax.add_patch(p)
-
+        self.addclip(p, clip)
 
     def arc(self, center: Sequence[float], width: float, height: float,
             theta1: float=0, theta2: float=90, angle: float=0,
             color: str='black', lw: float=2, ls: Linestyle='-',
-            zorder: int=1, arrow: bool=None) -> None:
+            zorder: int=1, clip: BBox=None, arrow: bool=None) -> None:
         ''' Draw an arc or ellipse, with optional arrowhead '''
         arc = Arc(center, width=width, height=height, theta1=theta1,
                   theta2=theta2, angle=angle, color=color,
                   lw=lw, ls=ls, zorder=zorder)
         self.ax.add_patch(arc)
+        self.addclip(arc, clip)
 
         if arrow is not None:
             x, y = math.cos(math.radians(theta2)), math.sin(math.radians(theta2))
@@ -174,8 +187,9 @@ class Figure:
             s = util.rotate(s, angle, center)
             darrow = util.rotate((dx, dy), angle)
 
-            self.ax.arrow(s[0], s[1], darrow[0], darrow[1], head_width=.15,
-                          head_length=.25, color=color, zorder=zorder)
+            a = self.ax.arrow(s[0], s[1], darrow[0], darrow[1], head_width=.15,
+                              head_length=.25, color=color, zorder=zorder)
+            self.addclip(a, clip)
 
     def save(self, fname: str, transparent: bool=True, dpi: float=72) -> None:
         ''' Save the figure to a file '''

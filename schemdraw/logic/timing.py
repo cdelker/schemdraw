@@ -4,12 +4,18 @@ import ast
 import json
 import math
 import tokenize
+from collections import namedtuple
 
 from ..elements import Element
 from ..segments import Segment, SegmentPoly, SegmentText, SegmentArrow
 
 from .. import util
+from ..backends.svg import text_size
 from ..types import BBox
+
+LabelInfo = namedtuple('LabelInfo', ['name', 'row', 'height', 'level'])
+
+PTS_TO_UNITS = 2/72
 
 
 def state_level(state, ud=False, np=False):
@@ -23,13 +29,18 @@ def state_level(state, ud=False, np=False):
     state = re.sub('h|H', '1', state)
     return state
 
+
 def expcurve(height):
+    ''' Exponential decay curve (for u/d waveforms) '''
     xcurve = util.linspace(0, 1, 10)
     ycurve = [height * math.exp(-v*6) for v in xcurve]
     return xcurve, ycurve
 
+
 def getsplit(x0, y0, y1, **kwargs):
-    ''' Splits are filled in the middle to cover/hide the wave underneath '''
+    ''' Get segments for a split, based on double-sigmoid. Splits are filled
+        with background color to hide whatever's underneath.
+    '''
     sig = Doublesigmoid(x0, y0, y1, **kwargs)
     leftx, lefty = sig.curve(side='left')
     rghtx, rghty = sig.curve(side='right')
@@ -37,7 +48,7 @@ def getsplit(x0, y0, y1, **kwargs):
     right = list(zip(rghtx, rghty))
     segments = [Segment(left, lw=1, zorder=3),
                 Segment(right, lw=1, zorder=3),
-                SegmentPoly(left+right[::-1], zorder=2, color='none', fill='white', lw=1, closed=False)]
+                SegmentPoly(left+right[::-1], zorder=2, color='none', fill='bg', lw=1, closed=False)]
     return segments
 
 
@@ -251,8 +262,7 @@ class WaveV(Wave0):
         return verts
 
     def fillcolor(self):
-        fill = {#'x': '#DDDDDD',   # TODO: HATCH
-                '3': '#feffc2',
+        fill = {'3': '#feffc2',
                 '4': '#ffe2ba',
                 '5': '#abd9ff',
                 '6': '#bdfbff',
@@ -276,17 +286,21 @@ class WaveV(Wave0):
             segments.append(SegmentPoly([(self.x0, self.y0), (self.xend, self.y0),
                                               (self.xend, self.y1), (self.x0, self.y1)], **ukwargs))
         elif self.pstate in '-|':  # Open left end
-            segments.append(SegmentPoly([(self.x0, self.y0)] + self.verts_out() + [(self.x0, self.y1)], closed=False, **ukwargs))
+            segments.append(SegmentPoly(
+                [(self.x0, self.y0)] + self.verts_out() + [(self.x0, self.y1)], closed=False, **ukwargs))
 
         elif self.nstate in '-|':  # Open right end
-            segments.append(SegmentPoly([(self.xend, self.y1)] + self.verts_in() + [(self.xend, self.y0)], closed=False, **ukwargs))
+            segments.append(
+                SegmentPoly([(self.xend, self.y1)] + self.verts_in() + [(self.xend, self.y0)],
+                            closed=False, **ukwargs))
 
         else:
             segments.append(SegmentPoly(self.verts_in()+self.verts_out(), **ukwargs))
 
         if self.params.get('data', None) and self.params.get('state', None) != 'x':
             segments.append(SegmentText((self.xtext, self.yhalf), self.params['data'][0],
-                                         fontsize=11, align=('center', 'center')))
+                                        color=self.params['datacolor'],
+                                        fontsize=11, align=('center', 'center')))
             self.params['data'].pop(0)
         return segments
     
@@ -374,55 +388,112 @@ class WaveClk(Wave0):
                 segments.append(SegmentArrow((xcenter, ytail), (xcenter, yhead),
                                         headwidth=hwidth, headlength=hlength))
         return segments
-        
+
+
+def flatten(S):
+    ''' Flatten the signals list so only individual rows (dicts) are included '''
+    if S == []:
+        return S
+    if isinstance(S[0], list):
+        return flatten(S[0]) + flatten(S[1:])
+    if isinstance(S[0], str):
+        return flatten(S[1:])
+    return S[:1] + flatten(S[1:])
+
+
+def max_depth(sig) -> int:
+    ''' Get maximum group depth of the signal list '''
+    return isinstance(sig, list) and max(map(max_depth, sig))+1
+
+
+def get_nrows(sig) -> int:
+    ''' Get the number of signal rows in the signal list '''
+    if isinstance(sig, dict):
+        return 1
+    elif isinstance(sig[0], list):
+        return sum(map(get_nrows, sig[0]))
+    elif isinstance(sig[0], str):
+        return sum(map(get_nrows, sig[1:]))
+
+
     
+def getlabels(sig, row:int=0, level:int=0) -> list[LabelInfo]:
+    ''' Get a list of group label info '''
+    if isinstance(sig, dict) or sig == []:
+        return []
+    elif all(isinstance(s, dict) for s in sig):
+        return []
+    elif isinstance(sig[0], str):
+        l = [LabelInfo(sig[0], row, get_nrows(sig), level)]
+        n = 0
+        for s in sig[1:]:
+            l.extend(getlabels(s, row=row+n, level=level+1))
+            n += get_nrows(s)
+        return l
+    else:
+        l = []
+        n = 0
+        for s in sig:
+            l.extend(getlabels(s, row=row+n, level=level+1))
+            n += get_nrows(s)
+        return l
+
+
 class TimingDiagram(Element):
     def __init__(self, wavedrom: dict[str, str], **kwargs):
         super().__init__(**kwargs)
         self.wave = wavedrom
 
         kwargs.setdefault('lw', 1)
-        width = .5
-        ysep = .3
-        risetime = .15
-        
+        yheight = kwargs.pop('yheight', .5)
+        ygap = kwargs.pop('ygap', .3)
+        risetime = kwargs.pop('risetime', .15)
+        fontsize = kwargs.pop('fontsize', 12)
+        namecolor = kwargs.pop('namecolor', 'blue')
+        datacolor = kwargs.pop('datacolor', None)  # default: get color from theme
+        gridcolor = kwargs.pop('gridcolor', '#DDDDDD')
+
         signals = self.wave.get('signal', [])
+        signals_flat = flatten(signals)
         config = self.wave.get('config', {})
         hscale = config.get('hscale', 1)
 
-        totheight = (width+ysep)*len(signals)
-        totperiods = max(len(w.get('wave', [])) for w in signals)
+        totheight = (yheight+ygap)*len(signals_flat)
+        totperiods = max(len(w.get('wave', [])) for w in signals_flat)
         for p in range(totperiods+1):
-            self.segments.append(Segment([(p*2*width*hscale, width+ysep/2), (p*2*width*hscale, width-totheight)],
-                                         ls=':', lw=1, color='#DDDDDD', zorder=0))
+            self.segments.append(
+                Segment([(p*2*yheight*hscale, yheight+ygap/2),
+                         (p*2*yheight*hscale, yheight-totheight)],
+                        ls=':', lw=1, color=gridcolor, zorder=0))
 
-        clipbox = BBox(0, width, totperiods*width*2*hscale, -totheight)
+        clipbox = BBox(0, yheight, totperiods*yheight*2*hscale, -totheight)
         kwargs['clip'] = clipbox
 
+        labelwidth = 0
         y0 = 0
-        for signal in signals:            
+        for signal in signals_flat:            
             name = signal.get('name', '')
             wave = signal.get('wave', '')
             data = signal.get('data', [])
             phase = signal.get('phase', 0)
-            period = 2*width*signal.get('period', 1) * hscale
+            period = 2*yheight*signal.get('period', 1) * hscale
             halfperiod = period/2
             textpad = .2
-            
+
             if not isinstance(data, list):
                 data = data.split()  # Sometimes it's a space-separated string...
 
             x = 0
-            y1 = y0 + width
+            y1 = y0 + yheight
             i = 0
             pstate = '-'
 
+            labelwidth = max(labelwidth, text_size(name, size=12)[0])
             self.segments.append(SegmentText((x-textpad, y0), name, align=('right', 'bottom'),
-                                             fontsize=12, color='blue'))
+                                             fontsize=fontsize, color=namecolor))
             x -= period*phase
             while i < len(wave):
                 state = wave[i]
-
                 splits = []
                 periods = 1
                 k = i+1
@@ -447,6 +518,7 @@ class TimingDiagram(Element):
                           'y1': y1,
                           'rise': risetime,
                           'data': data,
+                          'datacolor': datacolor,
                           'kwargs': kwargs}
 
                 wavecls = {'0': Wave0,
@@ -471,10 +543,27 @@ class TimingDiagram(Element):
                 pstate = state # if not split else pstate
                 x += periods*period
                 i = k
-            y0 -= (width+ysep)
-                                              
+            y0 -= (yheight+ygap)
+
+        # Add the group labels            
+        nlevels = max_depth(signals)
+        edgelen = .05
+        levelwidth = 0.5
+        for label in getlabels(signals):
+            xval = -(labelwidth*PTS_TO_UNITS) - (nlevels-label.level)*levelwidth
+            ytop = -label.row*(yheight+ygap) + yheight - edgelen
+            ybot = ytop - label.height * (yheight+ygap) + ygap/2 + edgelen
+            ycenter = (ytop+ybot)/2
+            xtext = xval - .1
+            self.segments.append(
+                Segment([(xval+edgelen, ybot-edgelen), (xval, ybot),
+                         (xval, ytop), (xval+edgelen, ytop+edgelen)], color=namecolor, lw=1))
+            self.segments.append(
+                SegmentText((xtext, ycenter), label.name, rotation=90,
+                            align=('center', 'bottom'), color=namecolor, fontsize=fontsize))
+    
     @classmethod
-    def from_json(cls, wave: str):
+    def from_json(cls, wave: str, **kwargs):
         # Source for cleaning up JSON: https://stackoverflow.com/a/61783377/13826284
         tokens = tokenize.generate_tokens(io.StringIO(wave).readline)
         modified_tokens = (
@@ -482,7 +571,4 @@ class TimingDiagram(Element):
             for token in tokens)
 
         fixed_input = tokenize.untokenize(modified_tokens)
-        return cls(ast.literal_eval(fixed_input))
-        
-
-                
+        return cls(ast.literal_eval(fixed_input), **kwargs)

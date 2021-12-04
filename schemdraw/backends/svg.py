@@ -142,7 +142,7 @@ class Figure:
     '''
     def __init__(self, bbox: BBox, **kwargs):
         self.svgelements: list[tuple[int, ET.Element]] = []  # (zorder, element)
-        self.hatch: Optional[str] = None
+        self.hatch: bool = False
         self.clips: dict[BBox, str] = {}
         self.showframe = kwargs.get('showframe', False)
         self.scale = 64.8 * kwargs.get('inches_per_unit', .5)  # Magic scale factor that matches what MPL did
@@ -171,7 +171,7 @@ class Figure:
             if bbox in self.clips:
                 clipid = self.clips[bbox]
             else:
-                clipid = len(self.clips)
+                clipid = str(len(self.clips))
                 self.clips[bbox] = clipid
 
                 x0, y0 = self.xform(bbox.xmin, bbox.ymin)

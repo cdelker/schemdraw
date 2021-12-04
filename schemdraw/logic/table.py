@@ -11,13 +11,13 @@ from ..elements import Element
 from ..backends import svg
 
 
-def parse_colfmt(colfmt: str):
+def parse_colfmt(colfmt: str) -> tuple[str, str]:
     ''' Parse the column formatter string, using LaTeX style table formatter
         (e.g. "cc|c")
-        
+
         Args:
             colfmt: column format string
-        
+
         Returns:
             justifications: string of all justification characters, length = n
             bars: string of all separator characters, |, ǁ, or ., length = n+1
@@ -40,7 +40,7 @@ def parse_colfmt(colfmt: str):
 
 
 class Table(Element):
-    ''' Table Element for drawing rudimentary Markdown formatted tables, such
+    r''' Table Element for drawing rudimentary Markdown formatted tables, such
         as logic truth tables.
 
         Args:
@@ -85,7 +85,7 @@ class Table(Element):
 
         if colfmt in [None, '']:
             colfmt = 'c' * len(rows[0].strip('| ').split('|'))
-        coljusts, colbars = parse_colfmt(colfmt)
+        coljusts, colbars = parse_colfmt(colfmt)  # type: ignore
 
         ncols = len(coljusts)
         nrows = len(rowjusts)
@@ -93,8 +93,8 @@ class Table(Element):
         if len(rows[0].strip('| ').split('|')) != ncols:
             raise ValueError('Number of columns in table does not match number of columns in colfmt string.')
 
-        colwidths = [0] * ncols
-        rowheights = [0] * nrows
+        colwidths = [0.] * ncols
+        rowheights = [0.] * nrows
         for k, row in enumerate(rows):
             cells = [c.strip() for c in row.strip('| ').split('|')]
             for i, cell in enumerate(cells):
@@ -126,7 +126,7 @@ class Table(Element):
             cells = [c.strip() for c in row.strip('| ').split('|')]
             for c, cell in enumerate(cells):
                 cellx = sum(colwidths[:c])
-                celly = -sum(rowheights[:r]) - rowheights[r]# - rowpad
+                celly = -sum(rowheights[:r]) - rowheights[r]
                 halign = {'c': 'center', 'l': 'left', 'r': 'right'}.get(coljusts[c])
                 if halign == 'center':
                     cellx += colwidths[c]/2
@@ -134,4 +134,6 @@ class Table(Element):
                     cellx += colwidths[c] - colpad/2
                 else:
                     cellx += colpad/2
-                self.segments.append(SegmentText((cellx, celly), cell, align=(halign, 'bottom'), font=font, fontsize=fontsize))
+                self.segments.append(
+                    SegmentText((cellx, celly), cell, font=font, fontsize=fontsize,
+                                align=(halign, 'bottom')))    # type: ignore

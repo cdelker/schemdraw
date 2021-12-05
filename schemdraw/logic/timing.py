@@ -4,7 +4,7 @@ import re
 import io
 import ast
 import tokenize
-from collections import namedtuple
+from collections import namedtuple, ChainMap
 
 from ..elements import Element
 from ..segments import Segment, SegmentText, SegmentPoly
@@ -88,6 +88,11 @@ class TimingDiagram(Element):
         can't be copied as proper Python dicts due to lack of
         quoting).
 
+        Schemdraw provides a few additional extensions to the
+        WaveJSON dictionary, including asynchronous waveforms
+        and configuration options (color, lw) on each wave.
+        See documentation for full specification.
+
         Args:
             wave: WaveJSON as a Python dict
 
@@ -102,152 +107,248 @@ class TimingDiagram(Element):
             nodecolor: Color for node text
             gridcolor: Color of background grid
     '''
+    _wavelookup = {'0': Wave0,
+                   '1': Wave1,
+                   'H': WaveH,
+                   'h': WaveH,
+                   'L': WaveL,
+                   'l': WaveL,
+                   'z': Wavez,
+                   'u': WaveU,
+                   'd': WaveD,
+                   'n': WaveClk,
+                   'p': WaveClk,
+                   'N': WaveClk,
+                   'P': WaveClk,
+                   }
+
     def __init__(self, waved: dict[str, str], **kwargs):
         super().__init__(**kwargs)
         self.wave = waved
 
-        kwargs.setdefault('lw', 1)
-        yheight = kwargs.pop('yheight', .5)
-        ygap = kwargs.pop('ygap', .3)
-        risetime = kwargs.pop('risetime', .15)
-        fontsize = kwargs.pop('fontsize', 12)
-        nodesize = kwargs.pop('nodesize', 8)
-        namecolor = kwargs.pop('namecolor', 'blue')
-        datacolor = kwargs.pop('datacolor', None)  # default: get color from theme
-        nodecolor = kwargs.pop('nodecolor', None)
-        gridcolor = kwargs.pop('gridcolor', '#DDDDDD')
+        self.yheight = kwargs.pop('yheight', .5)
+        self.ygap = kwargs.pop('ygap', .3)
+        self.risetime = kwargs.pop('risetime', .15)
+        self.fontsize = kwargs.pop('fontsize', 12)
+        self.nodesize = kwargs.pop('nodesize', 8)
+        self.namecolor = kwargs.pop('namecolor', 'blue')
+        self.datacolor = kwargs.pop('datacolor', None)  # default: get color from theme
+        self.nodecolor = kwargs.pop('nodecolor', None)
+        self.gridcolor = kwargs.pop('gridcolor', '#DDDDDD')
+        self.kwargs = kwargs
 
         signals = self.wave.get('signal', [])  # type: ignore
         signals_flat = flatten(signals)
         config = self.wave.get('config', {})  # type: ignore
-        hscale = config.get('hscale', 1)  # type: ignore
+        self.hscale = config.get('hscale', 1)  # type: ignore
 
-        totheight = (yheight+ygap)*len(signals_flat)
-        totperiods = max(len(w.get('wave', [])) for w in signals_flat)
-        for p in range(totperiods+1):
-            self.segments.append(
-                Segment([(p*2*yheight*hscale, yheight+ygap/2),
-                         (p*2*yheight*hscale, yheight-totheight)],
-                        ls=':', lw=1, color=gridcolor, zorder=0))
+        height = (self.yheight+self.ygap)*len(signals_flat)
+        periods = max(len(w.get('wave', [])) for w in signals_flat)
+        self._drawgrid(periods, height)
 
-        clipbox = BBox(0, yheight, totperiods*yheight*2*hscale, -totheight)
-        kwargs['clip'] = clipbox
+        # phase shifts that go off screen will be clipped by this rect
+        clipbox = BBox(0, self.yheight, periods*self.yheight*2*self.hscale, -height)
+        self.kwargs['clip'] = clipbox
 
         labelwidth = 0.
         y0 = 0.
         for signal in signals_flat:
             name = signal.get('name', '')
-            wave = signal.get('wave', '')
-            data = signal.get('data', [])
-            nodes = signal.get('node', [])
-            phase = signal.get('phase', 0)
-            period = 2*yheight*signal.get('period', 1) * hscale
-            textpad = .2
+            _width = self._drawname(name, y0)
+            labelwidth = max(labelwidth, _width)
 
-            if not isinstance(data, list):
-                data = data.split()  # Sometimes it's a space-separated string...
+            if 'async' in signal:
+                self._drawasync(signal, y0)
+            else:
+                self._drawwave(signal, y0=y0)
+            self._drawnodes(signal, y0=y0)
+            y0 -= (self.yheight+self.ygap)
 
-            x = 0.
-            y1 = y0 + yheight
-            i = 0
-            pstate = '-'
+        self._drawgroups(signals, labelwidth)
 
-            labelwidth = max(labelwidth, text_size(name, size=12)[0])
+    def _drawgrid(self, periods, height):
+        ''' Draw grid (vertical dotted lines) '''
+        for p in range(periods+1):
             self.segments.append(
-                SegmentText((x-textpad, y0), name, align=('right', 'bottom'),
-                            fontsize=fontsize, color=namecolor))
-            x -= period*phase
-            while i < len(wave):
-                state = wave[i]
-                splits = []
-                periods = 1
-                k = i+1
-                while k < len(wave) and wave[k] in '|.':
-                    if wave[k] == '|':
-                        splits.append(periods)
-                    periods += 1
-                    k += 1
-                nstate = wave[k] if k < len(wave) else '-'
+                Segment([(p*2*self.yheight*self.hscale, self.yheight+self.ygap/2),
+                         (p*2*self.yheight*self.hscale, self.yheight-height)],
+                        ls=':', lw=1, color=self.gridcolor, zorder=0))
 
-                xend = x+periods*period
-                params = {'state': state,
-                          'pstate': pstate,
-                          'nstate': nstate,
-                          'plevel': state_level(pstate),
-                          'nlevel': state_level(nstate),
-                          'periods': periods,
-                          'period': period,
-                          'x0': x,
-                          'xend': xend,
-                          'y0': y0,
-                          'y1': y1,
-                          'rise': risetime,
-                          'data': data,
-                          'datacolor': datacolor,
-                          'kwargs': kwargs}
+    def _drawname(self, name, y0):
+        ''' Draw name of one wave. Returns calculated unit width of the string. '''
+        textpad = .2
+        self.segments.append(
+            SegmentText((-textpad, y0), name, align=('right', 'bottom'),
+                        fontsize=self.fontsize, color=self.namecolor))
+        return text_size(name, size=self.fontsize)[0] * PTS_TO_UNITS
 
-                wavecls = {'0': Wave0,
-                           '1': Wave1,
-                           'H': WaveH,
-                           'h': WaveH,
-                           'L': WaveL,
-                           'l': WaveL,
-                           'z': Wavez,
-                           'u': WaveU,
-                           'd': WaveD,
-                           'n': WaveClk,
-                           'p': WaveClk,
-                           'N': WaveClk,
-                           'P': WaveClk,
-                           }.get(state, WaveV)
+    def _drawwave(self, signal, y0=0):
+        ''' Draw one wave.
 
-                self.segments.extend(wavecls(params).segments())
-                
-                for split in splits:
-                    self.segments.extend(
-                        getsplit(x + (split+1)*period-period/2, y0, y1))
+            Args:
+                signal: Dictionary defining the signal to draw
+                y0: Vertical position
+        '''
+        wave = signal.get('wave', '')
+        phase = signal.get('phase', 0)
+        waverise = signal.get('risetime', None)
+        wavekwargs = ChainMap({'color': signal.get('color', None),
+                               'lw': signal.get('lw', 1)}, self.kwargs)
 
-                pstate = state
-                x += periods*period
-                i = k
+        data = signal.get('data', [])
+        if not isinstance(data, list):
+            data = data.split()  # Sometimes it's a space-separated string...
 
-            # Draw nodes and define anchors
-            x = 0
-            for j, node in enumerate(nodes):
-                if node == '.': continue
-                w, h, _ = text_size(node, size=nodesize)
-                w, h = w*PTS_TO_UNITS*2.5, h*PTS_TO_UNITS*2.5
-                ycenter = (y0+y1)/2
-                xnode = j*period + risetime/2
-                if not node.isupper():  # Only uppercase nodes and symbols are drawn
-                    self.segments.append(SegmentPoly([(xnode-w/2, ycenter-h/2), (xnode-w/2, ycenter+h/2),
-                                                      (xnode+w/2, ycenter+h/2), (xnode+w/2, ycenter-h/2)],
-                                                     color='none', fill='bg', zorder=3))
-                    self.segments.append(
-                        SegmentText((xnode, ycenter), node, align=('center', 'center'),
-                                    fontsize=nodesize, color=nodecolor))
-                self.anchors[f'node_{node}'] = (xnode, ycenter)
+        period = 2*self.yheight*signal.get('period', 1) * self.hscale
+        y1 = y0 + self.yheight
+        i = 0
+        pstate = '-'
 
-            y0 -= (yheight+ygap)
+        x = -period*phase
+        while i < len(wave):
+            state = wave[i]
+            splits = []
+            periods = 1
+            k = i+1
+            while k < len(wave) and wave[k] in '|.':
+                if wave[k] == '|':
+                    splits.append(periods)
+                periods += 1
+                k += 1
+            nstate = wave[k] if k < len(wave) else '-'
 
-        # Add the group labels
+            xend = x+periods*period
+            params = {'state': state,
+                      'pstate': pstate,
+                      'nstate': nstate,
+                      'plevel': state_level(pstate),
+                      'nlevel': state_level(nstate),
+                      'periods': periods,
+                      'period': period,
+                      'x0': x,
+                      'xend': xend,
+                      'y0': y0,
+                      'y1': y1,
+                      'rise': waverise if waverise is not None else self.risetime,
+                      'data': data,
+                      'datacolor': self.datacolor,
+                      'kwargs': wavekwargs}
+
+            wavecls = self._wavelookup.get(state, WaveV)
+            self.segments.extend(wavecls(params).segments())
+
+            for split in splits:
+                self.segments.extend(
+                    getsplit(x + (split+1)*period-period/2, y0, y1))
+
+            pstate = state
+            x += periods*period
+            i = k
+
+    def _drawasync(self, signal, y0):
+        ''' Draw asyncrhonous wave
+
+            Args:
+                signal: Dictionary defining the signal to draw
+                y0: Vertical position
+        '''
+        times = signal.get('async', '')
+        wave = signal.get('wave', '')
+        waverise = signal.get('risetime', None)
+        wavekwargs = ChainMap({'color': signal.get('color', None),
+                               'lw': signal.get('lw', 1)}, self.kwargs)
+        rise = waverise if waverise is not None else self.risetime
+
+        data = signal.get('data', [])
+        if not isinstance(data, list):
+            data = data.split()  # Sometimes it's a space-separated string...
+        if not isinstance(times, list):
+            times = [float(f) for f in times.split()]
+
+        if len(wave) + 1 != len(times):
+            raise ValueError('len(times) must be one more than len(wave).')
+
+        period = 2*self.yheight*signal.get('period', 1) * self.hscale
+        y1 = y0 + self.yheight
+        pstate = '-'
+        for i in range(len(wave)):
+            state = wave[i]
+            t0 = times[i]
+            t1 = times[i+1]
+            nstate = wave[i+1] if i<len(wave)-1 else '-'
+            x = t0*period
+            xend = t1*period
+            params = {'state': state,
+                      'pstate': pstate,
+                      'nstate': nstate,
+                      'plevel': state_level(pstate),
+                      'nlevel': state_level(nstate),
+                      'periods': 0,
+                      'period': period,
+                      'x0': x,
+                      'xend': xend,
+                      'y0': y0,
+                      'y1': y1,
+                      'rise': rise,
+                      'data': data,
+                      'datacolor': self.datacolor,
+                      'kwargs': wavekwargs}
+
+            wavecls = self._wavelookup.get(state, WaveV)
+            self.segments.extend(wavecls(params).segments())
+            x = xend
+            pstate = state
+
+    def _drawnodes(self, signal, y0):
+        ''' Draw nodes (labels along the wave) and define anchors for each
+
+            Args:
+                signal: Dictionary defining the signal to draw
+                y0: Vertical position
+        '''
+        nodes = signal.get('node', '')
+        period = 2*self.yheight*signal.get('period', 1) * self.hscale
+
+        y1 = y0 + self.yheight
+        for j, node in enumerate(nodes):
+            if node == '.': continue
+            w, h, _ = text_size(node, size=self.nodesize)
+            w, h = w*PTS_TO_UNITS*2.5, h*PTS_TO_UNITS*2.5
+            ycenter = (y0+y1)/2
+            xnode = j*period + self.risetime/2
+            if not node.isupper():  # Only uppercase nodes and symbols are drawn
+                self.segments.append(SegmentPoly([(xnode-w/2, ycenter-h/2), (xnode-w/2, ycenter+h/2),
+                                                  (xnode+w/2, ycenter+h/2), (xnode+w/2, ycenter-h/2)],
+                                                 color='none', fill='bg', zorder=3))
+                self.segments.append(
+                    SegmentText((xnode, ycenter), node, align=('center', 'center'),
+                                fontsize=self.nodesize, color=self.nodecolor))
+            self.anchors[f'node_{node}'] = (xnode, ycenter)
+
+    def _drawgroups(self, signals, labelwidth):
+        ''' Draw group labels
+        
+            Args:
+                signals: List of dictionaries defining the signals
+                labelwidth: Max text width (drawing units) of signal names
+        '''
         nlevels = max_depth(signals)
         edgelen = .05
         levelwidth = 0.5
         for label in getlabels(signals):
-            xval = -(labelwidth*PTS_TO_UNITS) - (nlevels-label.level)*levelwidth
-            ytop = -label.row*(yheight+ygap) + yheight - edgelen
-            ybot = ytop - label.height * (yheight+ygap) + ygap/2 + edgelen
+            xval = -(labelwidth) - (nlevels-label.level)*levelwidth
+            ytop = -label.row*(self.yheight+self.ygap) + self.yheight - edgelen
+            ybot = ytop - label.height * (self.yheight+self.ygap) + self.ygap/2 + edgelen
             ycenter = (ytop+ybot)/2
             xtext = xval - .1
             self.segments.append(
                 Segment([(xval+edgelen, ybot-edgelen), (xval, ybot),
                          (xval, ytop), (xval+edgelen, ytop+edgelen)],
-                        color=namecolor, lw=1))
+                        color=self.namecolor, lw=1))
             self.segments.append(
                 SegmentText((xtext, ycenter), label.name, rotation=90,
-                            align=('center', 'bottom'), color=namecolor,
-                            fontsize=fontsize))
+                            align=('center', 'bottom'), color=self.namecolor,
+                            fontsize=self.fontsize))
 
     @classmethod
     def from_json(cls, wave: str, **kwargs):

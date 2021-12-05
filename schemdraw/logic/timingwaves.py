@@ -252,7 +252,7 @@ class WaveV(Wave0):
             '0': [(self.xend+self.rise, self.y0), (self.xend, self.y1)],  # Fall
             'L': [(self.xend, self.y0), (self.xend, self.y1)],
             'l': [(self.xend, self.y0), (self.xend, self.y1)],
-            '1': [(self.xend, self.y0), (self.xend, self.y1)],  # Rise
+            '1': [(self.xend, self.y0), (self.xend+self.rise, self.y1)],  # Rise
             'H': [(self.xend, self.y0), (self.xend, self.y1)],
             'h': [(self.xend, self.y0), (self.xend, self.y1)],
             'z': list(zip(xcurve, [yc-(self.y1-self.y0)/2 for yc in ycurvehf])) + \
@@ -406,5 +406,5 @@ class WaveClk(Wave0):
             for p in range(periods):
                 xcenter = self.x0 + period*p
                 segments.append(SegmentArrow((xcenter, ytail), (xcenter, yhead),
-                                             headwidth=hwidth, headlength=hlength))
+                                             headwidth=hwidth, headlength=hlength, **self.kwargs))
         return segments

@@ -7,7 +7,7 @@ import tokenize
 from collections import namedtuple
 
 from ..elements import Element
-from ..segments import Segment, SegmentText
+from ..segments import Segment, SegmentText, SegmentPoly
 from ..backends.svg import text_size
 from ..types import BBox
 from .timingwaves import Wave0, Wave1, WaveL, WaveH, Wavez, WaveV, WaveU, WaveD, WaveClk, getsplit
@@ -96,8 +96,10 @@ class TimingDiagram(Element):
             ygap: Separation between two waveforms
             risetime: Rise/fall time for wave transitions
             fontsize: Size of label fonts
+            nodesize: Size of node labels
             namecolor: Color for wave names
             datacolor: Color for wave data text
+            nodecolor: Color for node text
             gridcolor: Color of background grid
     '''
     def __init__(self, waved: dict[str, str], **kwargs):
@@ -109,8 +111,10 @@ class TimingDiagram(Element):
         ygap = kwargs.pop('ygap', .3)
         risetime = kwargs.pop('risetime', .15)
         fontsize = kwargs.pop('fontsize', 12)
+        nodesize = kwargs.pop('nodesize', 8)
         namecolor = kwargs.pop('namecolor', 'blue')
         datacolor = kwargs.pop('datacolor', None)  # default: get color from theme
+        nodecolor = kwargs.pop('nodecolor', None)
         gridcolor = kwargs.pop('gridcolor', '#DDDDDD')
 
         signals = self.wave.get('signal', [])  # type: ignore
@@ -135,6 +139,7 @@ class TimingDiagram(Element):
             name = signal.get('name', '')
             wave = signal.get('wave', '')
             data = signal.get('data', [])
+            nodes = signal.get('node', [])
             phase = signal.get('phase', 0)
             period = 2*yheight*signal.get('period', 1) * hscale
             textpad = .2
@@ -197,6 +202,7 @@ class TimingDiagram(Element):
                            }.get(state, WaveV)
 
                 self.segments.extend(wavecls(params).segments())
+                
                 for split in splits:
                     self.segments.extend(
                         getsplit(x + (split+1)*period-period/2, y0, y1))
@@ -204,6 +210,24 @@ class TimingDiagram(Element):
                 pstate = state
                 x += periods*period
                 i = k
+
+            # Draw nodes and define anchors
+            x = 0
+            for j, node in enumerate(nodes):
+                if node == '.': continue
+                w, h, _ = text_size(node, size=nodesize)
+                w, h = w*PTS_TO_UNITS*2.5, h*PTS_TO_UNITS*2.5
+                ycenter = (y0+y1)/2
+                xnode = j*period + risetime/2
+                if not node.isupper():  # Only uppercase nodes and symbols are drawn
+                    self.segments.append(SegmentPoly([(xnode-w/2, ycenter-h/2), (xnode-w/2, ycenter+h/2),
+                                                      (xnode+w/2, ycenter+h/2), (xnode+w/2, ycenter-h/2)],
+                                                     color='none', fill='bg', zorder=3))
+                    self.segments.append(
+                        SegmentText((xnode, ycenter), node, align=('center', 'center'),
+                                    fontsize=nodesize, color=nodecolor))
+                self.anchors[f'node_{node}'] = (xnode, ycenter)
+
             y0 -= (yheight+ygap)
 
         # Add the group labels

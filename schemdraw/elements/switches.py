@@ -4,7 +4,7 @@ from typing import Optional, Sequence
 import math
 
 from .elements import Element, Element2Term, gap
-from ..segments import Segment, SegmentCircle, SegmentArc, SegmentArrow, SegmentPoly
+from ..segments import Segment, SegmentCircle, SegmentArc, SegmentPoly
 from ..types import Point, ActionType
 from ..util import linspace
 
@@ -240,7 +240,7 @@ class SwitchRotary(Element):
             if i == arrowcontact:
                 arrowx = arrowlen * math.cos(t)
                 arrowy = arrowlen * math.sin(t)
-                self.segments.append(SegmentArrow((0, 0), (arrowx, arrowy), zorder=2))
+                self.segments.append(Segment([(0, 0), (arrowx, arrowy)], arrow='end', zorder=2))
 
 
 class SwitchDIP(Element):

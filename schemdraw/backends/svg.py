@@ -157,9 +157,9 @@ class Figure:
         self.pxwidth = max(5, self.pxwidth)
         self.pxheight = max(5, self.pxheight)
 
-    def xform(self, x: float, y: float) -> tuple[float, float]:
+    def xform(self, x: float, y: float) -> Point:
         ''' Convert x, y in user coords to svg pixel coords '''
-        return x*self.scale, -y*self.scale
+        return Point((x*self.scale, -y*self.scale))
 
     def bgcolor(self, color: str) -> None:
         ''' Set background color of drawing '''
@@ -292,7 +292,7 @@ class Figure:
     def arrow(self, x: float, y: float, dx: float, dy: float,
               headwidth: float=.2, headlength: float=.2,
               color: str='black', lw: float=2, clip: BBox=None, zorder: int=1) -> None:
-        ''' Draw an arrow '''
+        ''' Draw an arrowhead '''
         x, y = self.xform(x, y)
         dx, dy = dx*self.scale, dy*self.scale
         headwidth = headwidth*self.scale
@@ -309,8 +309,8 @@ class Figure:
         fin2 = Point((fullen - headlength, -headwidth/2)).rotate(theta) + tail
 
         # Shrink arrow head by lw so it points right at the line
-        head = Point((head[0] - lw * math.cos(math.radians(theta)),
-                      head[1] - lw * math.sin(math.radians(theta))))
+        head = Point((head[0] - lw *2* math.cos(math.radians(theta)),
+                      head[1] - lw *2* math.sin(math.radians(theta))))
         
         et1 = ET.Element('path')
         d = f'M {head[0]} {head[1]} '
@@ -320,17 +320,63 @@ class Figure:
         et1.set('style', getstyle(color=color, lw=0, capstyle='butt',
                                   joinstyle='miter', fill=color))
 
-        et2 = ET.Element('path')
-        d = f'M {finc[0]} {finc[1]} '
-        d += f'L {tail[0]} {tail[1]} Z'
-        et2.set('d', d)
-        et2.set('style', getstyle(color=color, lw=lw, capstyle='butt',
-                                  joinstyle='miter', fill=color))
         self.addclip(et1, clip)
-        self.addclip(et2, clip)
         self.svgelements.append((zorder, et1))
-        self.svgelements.append((zorder, et2))
 
+    def bezier(self, p: Sequence[Point], color: str='black',
+               lw: float=2, ls: Linestyle='-', zorder: int=1,
+               arrow: str=None, clip: BBox=None) -> None:
+        ''' Draw a cubic or quadratic bezier '''
+        headlength = .25
+        headwidth = .15
+
+        # Keep original points for arrow head
+        # and adjust points for line so they don't extrude from arrows.
+        lpoints = [p0 for p0 in p]
+        if arrow is not None:
+            if arrow in ['start', 'both']:
+                th1 = math.atan2(p[0].y - p[1].y, p[0].x - p[1].x)
+                lpoints[0] = Point((p[0].x - math.cos(th1) * headlength/2,
+                                    p[0].y - math.sin(th1) * headlength/2))
+            if arrow in ['end', 'both']:
+                th2 = math.atan2(p[-1].y - p[-2].y, p[-1].x - p[-2].x)
+                lpoints[-1] = Point((p[-1].x - math.cos(th2) * headlength/2,
+                                    p[-1].y - math.sin(th2) * headlength/2))
+
+        lpoints = [self.xform(*p0) for p0 in lpoints]
+        points = [self.xform(*p0) for p0 in p]
+        order = 'C' if len(p) == 4 else 'Q'
+
+        et = ET.Element('path')
+        path = f'M {lpoints[0][0]} {lpoints[0][1]} {order}'
+        for p0 in lpoints[1:]:
+            path += f' {p0[0]} {p0[1]}'
+        et.set('d', path)
+        et.set('stroke', color)
+        et.set('stroke-width', str(lw))
+        et.set('stroke-linecap', 'butt')
+        et.set('fill', 'none')
+        self.addclip(et, clip)
+        self.svgelements.append((zorder, et))
+
+        if arrow is not None:
+            # Note: using untransformed bezier control points here
+
+            if arrow in ['start', 'both']:
+                delta = p[0] - p[1]
+                delta = delta / len(delta) * headlength
+                tail = p[0] - delta
+                arr = self.arrow(tail[0], tail[1], delta[0], delta[1],
+                                 color=color, lw=1, zorder=zorder, clip=clip,
+                                 headlength=headlength, headwidth=headwidth)
+            if arrow in ['end', 'both']:
+                delta = p[-1] - p[-2]
+                delta = delta / len(delta) * headlength
+                tail = p[-1] - delta
+                arr = self.arrow(tail[0], tail[1], delta[0], delta[1],
+                                 color=color, lw=1, zorder=zorder, clip=clip,
+                                 headlength=headlength, headwidth=headwidth)
+        
     def arc(self, center: Sequence[float], width: float, height: float,
             theta1: float=0, theta2: float=90, angle: float=0,
             color: str='black', lw: float=2, ls: Linestyle='-', zorder: int=1,

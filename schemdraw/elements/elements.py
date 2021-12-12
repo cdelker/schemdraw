@@ -7,7 +7,7 @@ from dataclasses import dataclass
 import warnings
 import math
 
-from ..segments import Segment, SegmentPoly, SegmentText, SegmentCircle, SegmentArc, SegmentArrow, BBox, SegmentType
+from ..segments import Segment, SegmentPoly, SegmentText, SegmentCircle, SegmentArc, BBox, SegmentType
 from ..transform import Transform
 from .. import util
 from ..util import Point

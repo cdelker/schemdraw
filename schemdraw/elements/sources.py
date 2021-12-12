@@ -4,7 +4,7 @@ import math
 
 from .elements import Element2Term, gap
 from .twoterm import resheight
-from ..segments import Segment, SegmentCircle, SegmentArrow, SegmentText
+from ..segments import Segment, SegmentCircle, SegmentText
 from .. import util
 
 
@@ -34,7 +34,7 @@ class SourceI(Source):
     ''' Current source '''
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
-        self.segments.append(SegmentArrow((.25, 0), (.75, 0)))
+        self.segments.append(Segment([(.25, 0), (.75, 0)], arrow='end'))
 
 
 class SourceSin(Source):
@@ -105,7 +105,7 @@ class SourceControlledI(SourceControlled):
     ''' Controlled current source '''
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
-        self.segments.append(SegmentArrow((.25, 0), (.75, 0)))
+        self.segments.append(Segment([(.25, 0), (.75, 0)], arrow='end'))
 
 
 batw = resheight*.75
@@ -146,9 +146,9 @@ class Solar(Source):
                                       (cellx+.2, -cellw2)]))
         self.segments.append(Segment([(0, 0), (cellx, 0), gap,
                                       (cellx+.2, 0), (1, 0)]))
-        self.segments.append(SegmentArrow((1.1, .9), (.8, .6),
+        self.segments.append(Segment([(1.1, .9), (.8, .6)], arrow='end',
                                           headwidth=.16, headlength=.2))
-        self.segments.append(SegmentArrow((1.3, .7), (1, .4),
+        self.segments.append(Segment([(1.3, .7), (1, .4)], arrow='end',
                                           headwidth=.16, headlength=.2))
 
 

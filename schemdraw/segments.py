@@ -88,6 +88,9 @@ class Segment:
             capstyle: Capstyle for the segment: 'butt', 'round', 'square', ('projecting')
             joinstyle: Joinstyle for the segment: 'round', 'miter', or 'bevel'
             fill: Color to fill if path is closed
+            arrow:
+            headwidth:
+            headlength:
             zorder: Z-order for segment
     '''
     def __init__(self, path: Sequence[XY],
@@ -97,14 +100,20 @@ class Segment:
                  capstyle: Capstyle=None,
                  joinstyle: Joinstyle=None,
                  fill: str=None,
+                 arrow: str=None,
+                 headwidth: float=0.15,
+                 headlength: float=0.25,
                  clip: BBox=None,
                  zorder: int=None):
-        self.path: Sequence[XY] = path  # Untranformed path
+        self.path: Sequence[XY] = [Point(p) for p in path]   # Untranformed path
         self.zorder = zorder
         self.color = color
         self.fill = fill
         self.lw = lw
         self.ls = ls
+        self.arrow = arrow
+        self.headwidth = headwidth
+        self.headlength = headlength
         self.clip = clip
         self.capstyle = capstyle
         self.joinstyle = joinstyle
@@ -122,6 +131,9 @@ class Segment:
                                   'fill': self.fill,
                                   'lw': self.lw,
                                   'ls': self.ls,
+                                  'arrow': self.arrow,
+                                  'headwidth': self.headwidth,
+                                  'headlength': self.headlength,
                                   'capstyle': self.capstyle,
                                   'joinstyle': self.joinstyle}
         style = {k: v for k, v in style.items() if k in params.keys()}
@@ -134,13 +146,15 @@ class Segment:
             Returns:
                 Bounding box limits: (xmin, ymin, xmax, ymax)
         '''
+        hw = self.headwidth if self.arrow else 0
         x = [p[0] for p in self.path]
         y = [p[1] for p in self.path]
-        return BBox(min(x), min(y), max(x), max(y))
+        return BBox(min(x), min(y)-hw, max(x), max(y)+hw)
 
     def doreverse(self, centerx: float) -> None:
         ''' Reverse the path (flip horizontal about the center of the path) '''
         self.path = [util.mirrorx(p, centerx) for p in self.path[::-1]]
+        self.arrow = {'start': 'end', 'end': 'start'}.get(self.arrow, self.arrow)
 
     def doflip(self) -> None:
         ''' Vertically flip the element '''
@@ -155,7 +169,7 @@ class Segment:
                 style: Default style parameters
         '''
         path = transform.transform_array(self.path)
-
+        linepath = [p for p in path]
         zorder = self.zorder if self.zorder is not None else style.get('zorder', 2)
         color = self.color if self.color else style.get('color', 'black')
         fill = self.fill if self.fill is not None else style.get('fill', None)
@@ -172,13 +186,36 @@ class Segment:
             elif fill is True:
                 fill = color
 
-        x = [p[0] for p in path]
-        y = [p[1] for p in path]
+        # Shrink line a bit so it doesn't extrude through arrowhead
+        if self.arrow in ['start', 'both']:
+            delta = path[1] - path[0]
+            th = math.atan2(delta.y, delta.x)
+            linepath[0] = Point((linepath[0].x + self.headlength * math.cos(th),
+                             linepath[0].y + self.headlength * math.sin(th)))
+        if self.arrow in ['end', 'both']:
+            delta = path[-1] - path[-2]
+            th = math.atan2(delta.y, delta.x)
+            linepath[-1] = Point((linepath[-1].x - self.headlength * math.cos(th),
+                                  linepath[-1].y - self.headlength * math.sin(th)))
+
+        x = [p[0] for p in linepath]
+        y = [p[1] for p in linepath]
         fig.plot(x, y, color=color, fill=fill,
                  ls=ls, lw=lw, capstyle=capstyle, joinstyle=joinstyle,
                  clip=self.clip, zorder=zorder)
 
+        if self.arrow in ['start', 'both']:
+            delta = path[0] - path[1]
+            delta = delta/len(delta) * self.headlength
+            fig.arrow(*(path[0]-delta), *delta, color=color, zorder=zorder, clip=self.clip,
+                      headlength=self.headlength, headwidth=self.headwidth, lw=1)
+        if self.arrow in ['end', 'both']:
+            delta = path[-1] - path[-2]
+            delta = delta/len(delta) * self.headlength
+            fig.arrow(*(path[-1]-delta), *delta, color=color, zorder=zorder, clip=self.clip,
+                     headlength=self.headlength, headwidth=self.headwidth, lw=1)
 
+        
 class SegmentText:
     ''' A text drawing segment
 
@@ -507,46 +544,38 @@ class SegmentCircle:
                    lw=lw, ls=ls, clip=self.clip, zorder=zorder)
 
 
-class SegmentArrow:
-    ''' An arrow drawing segment
+class SegmentBezier:
+    ''' Quadratic or Cubic Bezier curve segment
 
         Args:
-            tail: Start coordinate of arrow
-            head: End coordinate of arrow
-            headwidth: Width of arrowhead
-            headlength: Length of arrowhead
-            color: Color for this segment
-            lw: Line width for the segment
-            ls: Line style for the segment
-            zorder: Z-order for segment
+            p: control points (3 or 4)
+            ...###
     '''
-    def __init__(self, tail: Sequence[float], head: Sequence[float],
-                 headwidth: float=None, headlength: float=None,
-                 color: str=None, lw: float=None,
+    def __init__(self, p: Sequence[float],
+                 arrow: Arcdirection=None,
+                 color: str=None,
+                 lw: float=None,
+                 ls: Linestyle=None,
                  clip: BBox=None,
-                 ref: EndRef=None,
                  zorder: int=None):
-        self.tail = tail
-        self.head = head
-        self.zorder = zorder
-        self.headwidth = headwidth
-        self.headlength = headlength
+        self.p = p
+        self.arrow = arrow
         self.color = color
         self.lw = lw
+        self.ls = ls
         self.clip = clip
-        self.endref = ref
-
+        self.zorder = zorder
+        
     def doreverse(self, centerx: float) -> None:
         ''' Reverse the path (flip horizontal about the centerx point) '''
-        self.tail = util.mirrorx(self.tail, centerx)
-        self.head = util.mirrorx(self.head, centerx)
-        self.endref = {'start': 'end', 'end': 'start'}.get(self.endref)  # type: ignore
+        self.p = [util.mirrorx(p, centerx) for p in self.p]
+        self.arrow = {'start': 'end', 'end': 'start', 'both': 'both'}.get(self.arrow, None)  # type: ignore
 
     def doflip(self) -> None:
-        self.tail = util.flip(self.tail)
-        self.head = util.flip(self.head)
+        ''' Vertically flip the element '''
+        self.p = [util.flip(p) for p in self.p]
 
-    def xform(self, transform, **style) -> 'SegmentArrow':
+    def xform(self, transform, **style) -> 'SegmentArc':
         ''' Return a new Segment that has been transformed
             to its global position
 
@@ -554,19 +583,15 @@ class SegmentArrow:
                 transform: Transformation to apply
                 style: Style parameters from Element to apply as default
         '''
-        # See https://github.com/python/mypy/issues/5382
-        # for this weird type annotation
-        params: dict[str, Any] = {'zorder': self.zorder,
-                                  'color': self.color,
+        params: dict[str, Any] = {'color': self.color,
                                   'lw': self.lw,
-                                  'headwidth': self.headwidth,
-                                  'headlength': self.headlength,
-                                  'ref': self.endref}
+                                  'ls': self.ls,
+                                  'arrow': self.arrow,
+                                  'clip': self.clip,
+                                  'zorder': self.zorder}
         style = {k: v for k, v in style.items() if k in params.keys()}
         params.update(style)
-        return SegmentArrow(transform.transform(self.tail),
-                            transform.transform(self.head),
-                            **params)
+        return SegmentBezier(transform.transform_array(self.p), **params)
 
     def get_bbox(self) -> BBox:
         ''' Get bounding box (untransformed)
@@ -574,13 +599,8 @@ class SegmentArrow:
             Returns:
                 Bounding box limits (xmin, ymin, xmax, ymax)
         '''
-        hw = self.headwidth if self.headwidth else .1
-        xmin = min(self.tail[0], self.head[0])
-        ymin = min(self.tail[1], self.head[1])
-        xmax = max(self.tail[0], self.head[0])
-        ymax = max(self.tail[1], self.head[1])
-        return BBox(xmin, ymin-hw, xmax, ymax+hw)
-
+        return BBox(0, 0, 1, 1) ##### TODO
+    
     def draw(self, fig, transform, **style) -> None:
         ''' Draw the segment
 
@@ -589,21 +609,17 @@ class SegmentArrow:
                 transform: Transform to apply before drawing
                 style: Default style parameters
         '''
-        tail = transform.transform(self.tail)
-        head = transform.transform(self.head)
+        p = transform.transform_array(self.p)
         zorder = self.zorder if self.zorder is not None else style.get('zorder', 1)
         color = self.color if self.color else style.get('color', 'black')
+        ls = self.ls if self.ls else style.get('ls', '-')
         lw = self.lw if self.lw else style.get('lw', 2)
-        headwidth = self.headwidth if self.headwidth else style.get('headwidth', .2)
-        headlength = self.headlength if self.headlength else style.get('headlength', .2)
-
-        fig.arrow(tail[0], tail[1], head[0]-tail[0], head[1]-tail[1],
-                  headwidth=headwidth, headlength=headlength,
-                  color=color, lw=lw, clip=self.clip, zorder=zorder)
+        fig.bezier(p, color=color, lw=lw, ls=ls, clip=self.clip,
+                   zorder=zorder, arrow=self.arrow)
 
 
 class SegmentArc:
-    ''' An arc drawing segment
+    ''' An elliptical arc drawing segment
 
         Args:
             center: Center of the arc ellipse
@@ -723,5 +739,4 @@ class SegmentArc:
                 color=color, lw=lw, ls=ls, clip=self.clip, zorder=zorder, arrow=self.arrow)
 
 
-SegmentType = Union[Segment, SegmentText, SegmentPoly, SegmentArc,
-                    SegmentCircle, SegmentArrow]
+SegmentType = Union[Segment, SegmentText, SegmentPoly, SegmentArc, SegmentCircle, SegmentBezier]

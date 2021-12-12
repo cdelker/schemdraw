@@ -2,7 +2,7 @@
 
 from .elements import Element, Element2Term, gap
 from .twoterm import resheight
-from ..segments import Segment, SegmentPoly, SegmentArc, SegmentCircle, SegmentArrow
+from ..segments import Segment, SegmentPoly, SegmentArc, SegmentCircle
 
 
 class Speaker(Element):
@@ -157,8 +157,7 @@ class AudioJack(Element):
                     (0, tipy-swdy), radius, fill=fill, zorder=4))
             self.segments.append(Segment(
                 [(0, tipy-swdy), (-swlen, tipy-swdy)]))
-            self.segments.append(SegmentArrow(
-                (-swlen, tipy-swdy), (-swlen, tipy)))
+            self.segments.append(Segment([(-swlen, tipy-swdy), (-swlen, tipy)], arrow='end'))
             self.anchors['tipswitch'] = (0, tipy-swdy)
 
         if ring and ringswitch:
@@ -167,6 +166,5 @@ class AudioJack(Element):
                     (0, ringy+swdy), radius, fill=fill, zorder=4))
             self.segments.append(Segment(
                 [(0, ringy+swdy), (-swlen, ringy+swdy)]))
-            self.segments.append(SegmentArrow(
-                (-swlen, ringy+swdy), (-swlen, ringy)))
+            self.segments.append(Segment([(-swlen, ringy+swdy), (-swlen, ringy)], arrow='end'))
             self.anchors['ringswitch'] = (0, ringy+swdy)

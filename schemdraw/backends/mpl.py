@@ -6,7 +6,7 @@ import math
 
 import matplotlib  # type: ignore
 import matplotlib.pyplot as plt  # type: ignore
-from matplotlib.patches import Arc, Rectangle  # type: ignore
+from matplotlib.patches import Arc, Rectangle, PathPatch, Path  # type: ignore
 
 from .. import util
 from ..types import Capstyle, Joinstyle, Linestyle, BBox
@@ -132,7 +132,7 @@ class Figure:
     def arrow(self, x: float, y: float, dx: float, dy: float,
               headwidth: float=.2, headlength: float=.2,
               color: str='black', lw: float=2, clip: BBox=None, zorder: int=1) -> None:
-        ''' Draw an arrow '''
+        ''' Draw an arrowhead '''
         # Easier to skip Matplotlib's arrow or annotate methods and just draw a line
         # and a polygon.
         head = util.Point((x+dx, y+dy))
@@ -144,17 +144,39 @@ class Figure:
         fin1 = util.Point((fullen - headlength, headwidth/2)).rotate(theta) + tail
         fin2 = util.Point((fullen - headlength, -headwidth/2)).rotate(theta) + tail
 
-        # Shorten the line so it doesn't poke through the arrowhead
-        linehead = util.Point((dx - headlength * math.cos(math.radians(theta)) + tail.x,
-                              dy - headlength * math.sin(math.radians(theta)) + tail.y))
-
-        self.ax.plot([tail.x, linehead.x], [tail.y, linehead.y],
-                lw=lw, color=color)
         p = plt.Polygon((fin1, head, fin2), closed=True, ec='none',
                         fc=color, fill=color is not None,
                         lw=1, zorder=zorder)
         self.ax.add_patch(p)
         self.addclip(p, clip)
+
+    def bezier(self, p: Sequence[util.Point], color: str='black',
+               lw: float=2, ls: Linestyle='-', zorder: int=1,
+               arrow: bool=None, clip: BBox=None) -> None:
+        ''' Draw a cubic or quadratic bezier '''
+        if len(p) == 4:
+            codes = [Path.MOVETO, Path.CURVE4, Path.CURVE4, Path.CURVE4]
+        else:
+            codes = [Path.MOVETO, Path.CURVE3, Path.CURVE3]
+        curve = PathPatch(Path(p, codes),
+                          fc='none', ec=color, ls=ls, lw=lw,
+                          transform=self.ax.transData)
+        self.ax.add_patch(curve)
+        self.addclip(curve, clip)
+
+        if arrow is not None:
+            if arrow in ['start', 'both']:
+                delta = p[0] - p[1]
+                delta = delta / len(delta) * 0.2  # Normalize to headlength=0.2
+                tail = p[0] - delta
+                arr = self.arrow(tail[0], tail[1], delta[0], delta[1],
+                                 color=color, zorder=zorder)
+            if arrow in ['end', 'both']:
+                delta = p[-1] - p[-2]
+                delta = delta / len(delta) * 0.2  # Normalize to headlength=0.2
+                tail = p[-1] - delta
+                arr = self.arrow(tail[0], tail[1], delta[0], delta[1],
+                                 color=color, zorder=zorder)
 
     def arc(self, center: Sequence[float], width: float, height: float,
             theta1: float=0, theta2: float=90, angle: float=0,

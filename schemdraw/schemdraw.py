@@ -9,7 +9,7 @@ import math
 from .types import BBox, Backends, ImageFormat, Linestyle, Arcdirection, XY, ImageType, BilateralDirection
 from .elements import Element, _set_elm_backend
 from .elements.lines import LoopCurrent, CurrentLabel, CurrentLabelInline
-from .segments import Segment, SegmentText, SegmentArc, SegmentArrow, SegmentCircle, SegmentPoly
+from .segments import Segment, SegmentText, SegmentArc, SegmentCircle, SegmentPoly
 from .util import Point
 
 from .backends.svg import Figure as svgFigure
@@ -210,7 +210,7 @@ class Drawing:
             ymax = max(bbox.ymax, ymax)
         return BBox(xmin, ymin, xmax, ymax)
 
-    def get_segments(self) -> list['Segment' | 'SegmentText' | 'SegmentArc' | 'SegmentArrow' |
+    def get_segments(self) -> list['Segment' | 'SegmentText' | 'SegmentArc' |
                                    'SegmentCircle' | 'SegmentPoly']:
         ''' Get flattened list of all segments in the drawing '''
         segments = []

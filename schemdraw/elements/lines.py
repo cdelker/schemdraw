@@ -4,7 +4,7 @@ from __future__ import annotations
 from typing import Sequence
 import math
 
-from ..segments import Segment, SegmentArrow, SegmentCircle, SegmentArc, SegmentPoly
+from ..segments import Segment, SegmentCircle, SegmentArc, SegmentPoly
 from .elements import Element, Element2Term
 from .twoterm import gap
 from ..types import XY, Point, Arcdirection, BilateralDirection
@@ -33,43 +33,18 @@ class Arrow(Line):
         self.double = double
         self.headlength = headlength
         self.headwidth = headwidth
-        self.segments.append(SegmentArrow((-headlength, 0), (0, 0),
-                                          ref='end',
-                                          headwidth=headwidth,
-                                          headlength=headlength))
-        if self.double:
-            self.segments.append(SegmentArrow((headlength, 0), (0, 0),
-                                              ref='start',
-                                              headwidth=headwidth,
-                                              headlength=headlength))
+
         # Explicitly define center so reverses work
         self.anchors['center'] = (0, 0)
-        
-    def _place(self, xy, theta, **dwgparams):
-        ''' Shorten the underlying line so it doesn't stick out
-            from arrowhead
-        '''
-        result = super()._place(xy, theta, **dwgparams)
-        line = self.segments[0]  # The base line which needs to be shortened
-        xy1 = line.path[0]
-        xy2 = line.path[-1]
-        dx = xy2[0] - xy1[0]
-        dy = xy2[1] - xy1[1]
-        theta = math.atan2(dy, dx)
-        newhead = xy2
-        newtail = xy1
-        reverse = self._cparams.get('reverse')
 
-        if reverse or self.double:
-            newtail = (xy1[0] + self.headlength * math.cos(theta),
-                       xy1[1] + self.headlength * math.sin(theta))
-        
-        if (not reverse) or self.double:
-            newhead = (xy2[0] - self.headlength * math.cos(theta),
-                       xy2[1] - self.headlength * math.sin(theta))
-            
-        line.path[0] = newtail
-        line.path[-1] = newhead
+    def _place(self, xy, theta, **dwgparams):
+        ''' Add arrowhead to segment after it was extended '''
+        result = super()._place(xy, theta, **dwgparams)
+        line = self.segments[0]  # The base line gets arrowheads
+        reverse = self._cparams.get('reverse')
+        arrow = 'end' if not reverse else 'start'
+        arrow = 'both' if self.double else arrow
+        line.arrow = arrow
         return result
 
 
@@ -136,8 +111,8 @@ class Arrowhead(Element):
     ''' Arrowhead'''
     def __init__(self, *d, headwidth: float=.15, headlength: float=.2, **kwargs):
         super().__init__(*d, **kwargs)
-        self.segments.append(SegmentArrow(
-            (-.3, 0), (0, 0), headwidth=headwidth, headlength=headlength))
+        self.segments.append(Segment([
+            (-headlength, 0), (0, 0)], headwidth=headwidth, headlength=headlength, arrow='end'))
         self.anchors['start'] = (0, 0)
         self.anchors['center'] = (0, 0)
         self.anchors['end'] = (0, 0)
@@ -232,8 +207,7 @@ class CurrentLabel(Element):
         if reverse:
             a, b = b, a
 
-        self.segments.append(SegmentArrow(
-            a, b, headwidth=.2, headlength=.3))
+        self.segments.append(Segment((a, b), arrow='end', headwidth=.2, headlength=.3))
 
     def at(self, xy: XY | Element) -> 'Element':  # type: ignore[override]
         ''' Specify CurrentLabel position.
@@ -287,8 +261,8 @@ class CurrentLabelInline(Element):
             x = -x
             dx = -dx
 
-        self.segments.append(SegmentArrow(
-            (x, 0), (x+dx, 0), headwidth=headwidth, headlength=headlength))
+        self.segments.append(Segment(((x, 0), (x+dx, 0)), arrow='end',
+                                     headwidth=headwidth, headlength=headlength))
 
     def at(self, xy: XY | Element) -> 'Element':  # type: ignore[override]
         ''' Specify CurrentLabelInline position.

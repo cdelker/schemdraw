@@ -28,6 +28,7 @@ class Box(Element):
         self.params['lblofst'] = 0
         self.params['theta'] = -90
         self.params['drop'] = (h, 0)
+        self.anchors['center'] = (h/2, 0)
         self.anchors['W'] = (h/2, -w/2)
         self.anchors['E'] = (h/2, w/2)
         self.anchors['S'] = (h, 0)
@@ -59,6 +60,7 @@ class Subroutine(Element):
         self.params['lblofst'] = 0
         self.params['theta'] = -90
         self.params['drop'] = (h, 0)
+        self.anchors['center'] = (h/2, 0)
         self.anchors['W'] = (h/2, -w/2)
         self.anchors['E'] = (h/2, w/2)
         self.anchors['S'] = (h, 0)
@@ -87,6 +89,7 @@ class Data(Element):
         self.params['lblofst'] = 0
         self.params['theta'] = -90
         self.params['drop'] = (h, 0)
+        self.anchors['center'] = (h/2, 0)
         self.anchors['W'] = (h/2, -w/2)
         self.anchors['E'] = (h/2, w/2)
         self.anchors['S'] = (h, 0)
@@ -119,6 +122,7 @@ class Start(Element):
         self.params['lblofst'] = 0
         self.params['theta'] = -90
         self.params['drop'] = (h, 0)
+        self.anchors['center'] = (h/2, 0)
         self.anchors['W'] = (h/2, -w/2)
         self.anchors['E'] = (h/2, w/2)
         self.anchors['S'] = (h, 0)
@@ -156,6 +160,7 @@ class Decision(Element):
         self.params['lblofst'] = 0
         self.params['theta'] = -90
         self.params['drop'] = (h, 0)
+        self.anchors['center'] = (h/2, 0)
         self.anchors['W'] = (h/2, -w/2)
         self.anchors['E'] = (h/2, w/2)
         self.anchors['S'] = (h, 0)
@@ -200,7 +205,23 @@ class Connect(Element):
         self.params['lblofst'] = 0
         self.params['theta'] = -90
         self.params['drop'] = (2*r, 0)
+        self.anchors['center'] = (r, 0)
+        self.anchors['N'] = (0, 0)
         self.anchors['W'] = (r, -r)
         self.anchors['E'] = (r, r)
         self.anchors['S'] = (2*r, 0)
-        self.anchors['N'] = (0, 0)
+        rsqrt2 = r * math.sqrt(2) / 2
+        self.anchors['SE'] = (r+rsqrt2, rsqrt2)
+        self.anchors['SW'] = (r+rsqrt2, -rsqrt2)
+        self.anchors['NE'] = (r-rsqrt2, rsqrt2)
+        self.anchors['NW'] = (r-rsqrt2, -rsqrt2) 
+        r225 = r * math.cos(math.radians(22.5))
+        r675 = r * math.cos(math.radians(67.5))
+        self.anchors['NNE'] = (r-r225, r675)
+        self.anchors['ENE'] = (r-r675, r225)
+        self.anchors['ESE'] = (r+r675, r225)
+        self.anchors['SSE'] = (r+r225, r675)
+        self.anchors['NNW'] = (r-r225, -r675)
+        self.anchors['WNW'] = (r-r675, -r225)
+        self.anchors['WSW'] = (r+r675, -r225)
+        self.anchors['SSW'] = (r+r225, -r675)

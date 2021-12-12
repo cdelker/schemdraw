@@ -4,7 +4,7 @@ from typing import Sequence
 import math
 
 from .. import util
-from ..segments import Segment, SegmentPoly, SegmentText, SegmentArrow, SegmentType
+from ..segments import Segment, SegmentPoly, SegmentText, SegmentType
 
 
 def expcurve(height: float) -> tuple[Sequence[float], Sequence[float]]:
@@ -152,8 +152,8 @@ class WaveL(Wave0):
             hwidth = .12
             yhead = self.yhalf - hlength/2
             ytail = self.yhalf + hlength/2
-            segments.append(SegmentArrow((self.x0, ytail), (self.x0, yhead),
-                                         headwidth=hwidth, headlength=hlength))
+            segments.append(Segment([(self.x0, ytail), (self.x0, yhead)],
+                                    arrow='end', headwidth=hwidth, headlength=hlength))
         return segments
 
 
@@ -197,8 +197,8 @@ class WaveH(Wave1):
             hwidth = .12
             ytail = self.yhalf - hlength/2
             yhead = self.yhalf + hlength/2
-            segments.append(SegmentArrow((self.x0, ytail), (self.x0, yhead),
-                                         headwidth=hwidth, headlength=hlength))
+            segments.append(Segment([(self.x0, ytail), (self.x0, yhead)],
+                                    arrow='end', headwidth=hwidth, headlength=hlength))
         return segments
 
 
@@ -405,6 +405,6 @@ class WaveClk(Wave0):
                 yhead, ytail = ytail, yhead
             for p in range(periods):
                 xcenter = self.x0 + period*p
-                segments.append(SegmentArrow((xcenter, ytail), (xcenter, yhead),
-                                             headwidth=hwidth, headlength=hlength, **self.kwargs))
+                segments.append(Segment([(xcenter, ytail), (xcenter, yhead)],
+                                        arrow='end', headwidth=hwidth, headlength=hlength, **self.kwargs))
         return segments

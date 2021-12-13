@@ -88,9 +88,9 @@ class Segment:
             capstyle: Capstyle for the segment: 'butt', 'round', 'square', ('projecting')
             joinstyle: Joinstyle for the segment: 'round', 'miter', or 'bevel'
             fill: Color to fill if path is closed
-            arrow:
-            headwidth:
-            headlength:
+            arrow: Draw arrowhead at 'start', 'end', or 'both'
+            arrowwidth: Width of arrowhead
+            arrowlength: Length of arrowhead
             zorder: Z-order for segment
     '''
     def __init__(self, path: Sequence[XY],
@@ -101,8 +101,8 @@ class Segment:
                  joinstyle: Joinstyle=None,
                  fill: str=None,
                  arrow: str=None,
-                 headwidth: float=0.15,
-                 headlength: float=0.25,
+                 arrowwidth: float=0.15,
+                 arrowlength: float=0.25,
                  clip: BBox=None,
                  zorder: int=None):
         self.path: Sequence[XY] = [Point(p) for p in path]   # Untranformed path
@@ -112,8 +112,8 @@ class Segment:
         self.lw = lw
         self.ls = ls
         self.arrow = arrow
-        self.headwidth = headwidth
-        self.headlength = headlength
+        self.arrowwidth = arrowwidth
+        self.arrowlength = arrowlength
         self.clip = clip
         self.capstyle = capstyle
         self.joinstyle = joinstyle
@@ -132,8 +132,8 @@ class Segment:
                                   'lw': self.lw,
                                   'ls': self.ls,
                                   'arrow': self.arrow,
-                                  'headwidth': self.headwidth,
-                                  'headlength': self.headlength,
+                                  'arrowwidth': self.arrowwidth,
+                                  'arrowlength': self.arrowlength,
                                   'capstyle': self.capstyle,
                                   'joinstyle': self.joinstyle}
         style = {k: v for k, v in style.items() if k in params.keys()}
@@ -146,7 +146,7 @@ class Segment:
             Returns:
                 Bounding box limits: (xmin, ymin, xmax, ymax)
         '''
-        hw = self.headwidth if self.arrow else 0
+        hw = self.arrowwidth if self.arrow else 0
         x = [p[0] for p in self.path]
         y = [p[1] for p in self.path]
         return BBox(min(x), min(y)-hw, max(x), max(y)+hw)
@@ -190,13 +190,13 @@ class Segment:
         if self.arrow in ['start', 'both']:
             delta = path[1] - path[0]
             th = math.atan2(delta.y, delta.x)
-            linepath[0] = Point((linepath[0].x + self.headlength * math.cos(th),
-                             linepath[0].y + self.headlength * math.sin(th)))
+            linepath[0] = Point((linepath[0].x + self.arrowlength * math.cos(th),
+                             linepath[0].y + self.arrowlength * math.sin(th)))
         if self.arrow in ['end', 'both']:
             delta = path[-1] - path[-2]
             th = math.atan2(delta.y, delta.x)
-            linepath[-1] = Point((linepath[-1].x - self.headlength * math.cos(th),
-                                  linepath[-1].y - self.headlength * math.sin(th)))
+            linepath[-1] = Point((linepath[-1].x - self.arrowlength * math.cos(th),
+                                  linepath[-1].y - self.arrowlength * math.sin(th)))
 
         x = [p[0] for p in linepath]
         y = [p[1] for p in linepath]
@@ -205,15 +205,13 @@ class Segment:
                  clip=self.clip, zorder=zorder)
 
         if self.arrow in ['start', 'both']:
-            delta = path[0] - path[1]
-            delta = delta/len(delta) * self.headlength
-            fig.arrow(*(path[0]-delta), *delta, color=color, zorder=zorder, clip=self.clip,
-                      headlength=self.headlength, headwidth=self.headwidth, lw=1)
+            theta = math.degrees(math.atan2(path[0].y-path[1].y, path[0].x-path[1].x))
+            fig.arrow(path[0], theta, color=color, zorder=zorder, clip=self.clip,
+                      arrowlength=self.arrowlength, arrowwidth=self.arrowwidth, lw=1)
         if self.arrow in ['end', 'both']:
-            delta = path[-1] - path[-2]
-            delta = delta/len(delta) * self.headlength
-            fig.arrow(*(path[-1]-delta), *delta, color=color, zorder=zorder, clip=self.clip,
-                     headlength=self.headlength, headwidth=self.headwidth, lw=1)
+            theta = math.degrees(math.atan2(path[-1].y-path[-2].y, path[-1].x-path[-2].x))
+            fig.arrow(path[-1], theta, color=color, zorder=zorder, clip=self.clip,
+                     arrowlength=self.arrowlength, arrowwidth=self.arrowwidth, lw=1)
 
         
 class SegmentText:
@@ -552,10 +550,12 @@ class SegmentBezier:
             ...###
     '''
     def __init__(self, p: Sequence[float],
-                 arrow: Arcdirection=None,
                  color: str=None,
                  lw: float=None,
                  ls: Linestyle=None,
+                 arrow: Arcdirection=None,
+                 arrowlength: float=.25,
+                 arrowwidth: float=.2,
                  clip: BBox=None,
                  zorder: int=None):
         self.p = p
@@ -563,6 +563,8 @@ class SegmentBezier:
         self.color = color
         self.lw = lw
         self.ls = ls
+        self.arrowlength = arrowlength
+        self.arrowwidth = arrowwidth
         self.clip = clip
         self.zorder = zorder
         
@@ -587,6 +589,8 @@ class SegmentBezier:
                                   'lw': self.lw,
                                   'ls': self.ls,
                                   'arrow': self.arrow,
+                                  'arrowlength': self.arrowlength,
+                                  'arrowwidth': self.arrowwidth,
                                   'clip': self.clip,
                                   'zorder': self.zorder}
         style = {k: v for k, v in style.items() if k in params.keys()}
@@ -599,8 +603,11 @@ class SegmentBezier:
             Returns:
                 Bounding box limits (xmin, ymin, xmax, ymax)
         '''
-        return BBox(0, 0, 1, 1) ##### TODO
-    
+        x = [p.x for p in self.p]
+        y = [p.y for p in self.p]
+        # This Might be too big, but will enclose the curve..
+        return BBox(min(x), min(y), max(x), max(y))
+
     def draw(self, fig, transform, **style) -> None:
         ''' Draw the segment
 
@@ -615,7 +622,8 @@ class SegmentBezier:
         ls = self.ls if self.ls else style.get('ls', '-')
         lw = self.lw if self.lw else style.get('lw', 2)
         fig.bezier(p, color=color, lw=lw, ls=ls, clip=self.clip,
-                   zorder=zorder, arrow=self.arrow)
+                   zorder=zorder, arrow=self.arrow,
+                   arrowlength=self.arrowlength, arrowwidth=self.arrowwidth)
 
 
 class SegmentArc:

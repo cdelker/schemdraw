@@ -112,7 +112,7 @@ class Arrowhead(Element):
     def __init__(self, *d, headwidth: float=.15, headlength: float=.2, **kwargs):
         super().__init__(*d, **kwargs)
         self.segments.append(Segment([
-            (-headlength, 0), (0, 0)], headwidth=headwidth, headlength=headlength, arrow='end'))
+            (-headlength, 0), (0, 0)], arrowwidth=headwidth, arrowlength=headlength, arrow='end'))
         self.anchors['start'] = (0, 0)
         self.anchors['center'] = (0, 0)
         self.anchors['end'] = (0, 0)
@@ -207,7 +207,7 @@ class CurrentLabel(Element):
         if reverse:
             a, b = b, a
 
-        self.segments.append(Segment((a, b), arrow='end', headwidth=.2, headlength=.3))
+        self.segments.append(Segment((a, b), arrow='end', arrowwidth=.2, arrowlength=.3))
 
     def at(self, xy: XY | Element) -> 'Element':  # type: ignore[override]
         ''' Specify CurrentLabel position.
@@ -262,7 +262,7 @@ class CurrentLabelInline(Element):
             dx = -dx
 
         self.segments.append(Segment(((x, 0), (x+dx, 0)), arrow='end',
-                                     headwidth=headwidth, headlength=headlength))
+                                     arrowwidth=headwidth, arrowlength=headlength))
 
     def at(self, xy: XY | Element) -> 'Element':  # type: ignore[override]
         ''' Specify CurrentLabelInline position.

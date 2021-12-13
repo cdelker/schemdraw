@@ -148,12 +148,12 @@ class WaveL(Wave0):
         ''' Get segments for this wave section '''
         segments = super().segments()
         if self.params['state'] == 'L':
-            hlength = .25
-            hwidth = .12
-            yhead = self.yhalf - hlength/2
-            ytail = self.yhalf + hlength/2
+            alength = .25
+            awidth = .12
+            yhead = self.yhalf - alength/2
+            ytail = self.yhalf + alength/2
             segments.append(Segment([(self.x0, ytail), (self.x0, yhead)],
-                                    arrow='end', headwidth=hwidth, headlength=hlength))
+                                    arrow='end', arrowwidth=awidth, arrowlength=alength))
         return segments
 
 
@@ -193,12 +193,12 @@ class WaveH(Wave1):
         ''' Get segments for this wave section '''
         segments = super().segments()
         if self.params['state'] == 'H':
-            hlength = .25
-            hwidth = .12
-            ytail = self.yhalf - hlength/2
-            yhead = self.yhalf + hlength/2
+            alength = .25
+            awidth = .12
+            ytail = self.yhalf - alength/2
+            yhead = self.yhalf + alength/2
             segments.append(Segment([(self.x0, ytail), (self.x0, yhead)],
-                                    arrow='end', headwidth=hwidth, headlength=hlength))
+                                    arrow='end', arrowwidth=awidth, arrowlength=alength))
         return segments
 
 
@@ -397,14 +397,14 @@ class WaveClk(Wave0):
         if self.params['state'] in 'NP':
             period = self.params['period']
             periods = self.params['periods']
-            hlength = .25
-            hwidth = .12
-            yhead = self.yhalf - hlength/2
-            ytail = self.yhalf + hlength/2
+            alength = .25
+            awidth = .12
+            yhead = self.yhalf - alength/2
+            ytail = self.yhalf + alength/2
             if self.params['state'] == 'P':
                 yhead, ytail = ytail, yhead
             for p in range(periods):
                 xcenter = self.x0 + period*p
                 segments.append(Segment([(xcenter, ytail), (xcenter, yhead)],
-                                        arrow='end', headwidth=hwidth, headlength=hlength, **self.kwargs))
+                                        arrow='end', arrowwidth=awidth, arrowlength=alength, **self.kwargs))
         return segments

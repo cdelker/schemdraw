@@ -129,20 +129,22 @@ class Figure:
                           fill=fill is not None, lw=lw, ls=ls, zorder=zorder)
         self.ax.add_patch(circ)
 
-    def arrow(self, x: float, y: float, dx: float, dy: float,
-              headwidth: float=.2, headlength: float=.2,
+    def arrow(self, xy: Sequence[float], theta: float,
+              arrowwidth: float=.2, arrowlength: float=.2,
               color: str='black', lw: float=2, clip: BBox=None, zorder: int=1) -> None:
         ''' Draw an arrowhead '''
         # Easier to skip Matplotlib's arrow or annotate methods and just draw a line
         # and a polygon.
-        head = util.Point((x+dx, y+dy))
-        tail = util.Point((x, y))
+        dx = arrowlength/2 * math.cos(math.radians(theta))
+        dy = arrowlength/2 * math.sin(math.radians(theta))
+        x, y = xy
+        head = util.Point((x, y))
+        tail = util.Point((x-dx, y-dy))
         fullen = math.sqrt(dx**2 + dy**2)
-        theta = math.degrees(math.atan2(dy, dx))
 
         # Endpoints of the arrow fins
-        fin1 = util.Point((fullen - headlength, headwidth/2)).rotate(theta) + tail
-        fin2 = util.Point((fullen - headlength, -headwidth/2)).rotate(theta) + tail
+        fin1 = util.Point((fullen - arrowlength, arrowwidth/2)).rotate(theta) + tail
+        fin2 = util.Point((fullen - arrowlength, -arrowwidth/2)).rotate(theta) + tail
 
         p = plt.Polygon((fin1, head, fin2), closed=True, ec='none',
                         fc=color, fill=color is not None,
@@ -152,7 +154,8 @@ class Figure:
 
     def bezier(self, p: Sequence[util.Point], color: str='black',
                lw: float=2, ls: Linestyle='-', zorder: int=1,
-               arrow: bool=None, clip: BBox=None) -> None:
+               arrow: bool=None, arrowlength: float=0.2, arrowwidth: float=0.2,
+               clip: BBox=None) -> None:
         ''' Draw a cubic or quadratic bezier '''
         if len(p) == 4:
             codes = [Path.MOVETO, Path.CURVE4, Path.CURVE4, Path.CURVE4]
@@ -167,16 +170,14 @@ class Figure:
         if arrow is not None:
             if arrow in ['start', 'both']:
                 delta = p[0] - p[1]
-                delta = delta / len(delta) * 0.2  # Normalize to headlength=0.2
-                tail = p[0] - delta
-                arr = self.arrow(tail[0], tail[1], delta[0], delta[1],
-                                 color=color, zorder=zorder)
+                theta = math.degrees(math.atan2(delta.y, delta.x))
+                self.arrow(p[0], theta, arrowlength=arrowlength,
+                            arrowwidth=arrowwidth, color=color, zorder=zorder)
             if arrow in ['end', 'both']:
                 delta = p[-1] - p[-2]
-                delta = delta / len(delta) * 0.2  # Normalize to headlength=0.2
-                tail = p[-1] - delta
-                arr = self.arrow(tail[0], tail[1], delta[0], delta[1],
-                                 color=color, zorder=zorder)
+                theta = math.degrees(math.atan2(delta.y, delta.x))
+                self.arrow(p[-1], theta, arrowlength=arrowlength,
+                            arrowwidth=arrowwidth, color=color, zorder=zorder)
 
     def arc(self, center: Sequence[float], width: float, height: float,
             theta1: float=0, theta2: float=90, angle: float=0,

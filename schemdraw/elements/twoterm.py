@@ -40,7 +40,7 @@ class ResistorVarIEEE(ResistorIEEE):
         super().__init__(*d, **kwargs)
         super().__init__(**kwargs)
         self.segments.append(Segment([(1.5*reswidth, -resheight*2), (4.5*reswidth, reswidth*3.5)],
-                                     arrow='end', headwidth=.16, headlength=.2))
+                                     arrow='end', arrowwidth=.16, arrowlength=.2))
 
 
 class ResistorVarIEC(ResistorIEC):
@@ -48,7 +48,7 @@ class ResistorVarIEC(ResistorIEC):
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
         self.segments.append(Segment([(1*reswidth, -resheight*2), (5*reswidth, reswidth*3.5)],
-                                     arrow='end', headwidth=.16, headlength=.2))
+                                     arrow='end', arrowwidth=.16, arrowlength=.2))
 
 
 class Thermistor(ResistorIEC):
@@ -63,9 +63,9 @@ class PhotoresistorIEEE(ResistorIEEE):
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
         self.segments.append(Segment([(.7, .75), (.4, .4)], arrow='end',
-                                     headwidth=.16, headlength=.2))
+                                     arrowwidth=.16, arrowlength=.2))
         self.segments.append(Segment([(1, .75), (.7, .4)], arrow='end',
-                                     headwidth=.16, headlength=.2))
+                                     arrowwidth=.16, arrowlength=.2))
 
 
 class PhotoresistorIEC(ResistorIEC):
@@ -73,9 +73,9 @@ class PhotoresistorIEC(ResistorIEC):
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
         self.segments.append(Segment([(.7, .75), (.4, .4)], arrow='end', 
-                                     headwidth=.16, headlength=.2))
+                                     arrowwidth=.16, arrowlength=.2))
         self.segments.append(Segment([(1, .75), (.7, .4)], arrow='end',
-                                     headwidth=.16, headlength=.2))
+                                     arrowwidth=.16, arrowlength=.2))
 
 
 class Capacitor(Element2Term):
@@ -117,7 +117,7 @@ class CapacitorVar(Capacitor):
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
         self.segments.append(Segment([(-2*reswidth, -resheight), (3*reswidth, reswidth*2)],
-                                     arrow='end', headwidth=.2, headlength=.2))
+                                     arrow='end', arrowwidth=.2, arrowlength=.2))
 
 
 class CapacitorTrim(Capacitor):
@@ -228,9 +228,9 @@ class LED(Diode):
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
         self.segments.append(Segment([(resheight, resheight*1.5), (resheight*2, resheight*3.25)],
-                                     arrow='end', headwidth=.16, headlength=.2))
+                                     arrow='end', arrowwidth=.16, arrowlength=.2))
         self.segments.append(Segment([(resheight*.1, resheight*1.5), (resheight*1.1, resheight*3.25)],
-                                     arrow='end', headwidth=.16, headlength=.2))
+                                     arrow='end', arrowwidth=.16, arrowlength=.2))
         self.params['lblloc'] = 'bot'
 
 
@@ -251,8 +251,8 @@ class LED2(Diode):
         
         self.segments.append(Segment(p))
         self.segments.append(Segment(p2))
-        self.segments.append(Segment((p[1], pa), arrow='end', headwidth=.15, headlength=.2))
-        self.segments.append(Segment((p2[1], pa2), arrow='end', headwidth=.15, headlength=.2))
+        self.segments.append(Segment((p[1], pa), arrow='end', arrowwidth=.15, arrowlength=.2))
+        self.segments.append(Segment((p2[1], pa2), arrow='end', arrowwidth=.15, arrowlength=.2))
         self.params['lblloc'] = 'bot'
 
 
@@ -271,8 +271,8 @@ class Photodiode(Diode):
         pa2 = Point((x[-1]-.2, y[-1]-.1)).rotate(theta)
         self.segments.append(Segment(p))
         self.segments.append(Segment(p2))
-        self.segments.append(Segment((p[-2], pa), arrow='end', headwidth=.15, headlength=.2))
-        self.segments.append(Segment((p2[-2], pa2), arrow='end', headwidth=.15, headlength=.2))
+        self.segments.append(Segment((p[-2], pa), arrow='end', arrowwidth=.15, arrowlength=.2))
+        self.segments.append(Segment((p2[-2], pa2), arrow='end', arrowwidth=.15, arrowlength=.2))
         self.params['lblloc'] = 'bot'
 
 
@@ -289,7 +289,7 @@ class PotentiometerIEEE(ResistorIEEE):
         self.anchors['tap'] = (reswidth*3, potheight)
         self.params['lblloc'] = 'bot'
         self.segments.append(Segment([(reswidth*3, potheight), (reswidth*3, reswidth*1.5)],
-                                     arrow='end', headwidth=.15, headlength=.25))
+                                     arrow='end', arrowwidth=.15, arrowlength=.25))
 
 
 class PotentiometerIEC(ResistorIEC):
@@ -304,7 +304,7 @@ class PotentiometerIEC(ResistorIEC):
         self.anchors['tap'] = (reswidth*3, potheight)
         self.params['lblloc'] = 'bot'
         self.segments.append(Segment([(reswidth*3, potheight), (reswidth*3, reswidth*2)],
-                                     arrow='end', headwidth=.15, headlength=.22))
+                                     arrow='end', arrowwidth=.15, arrowlength=.22))
 
 
 class Diac(Element2Term):

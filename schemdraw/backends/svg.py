@@ -289,24 +289,25 @@ class Figure:
         self.addclip(et, clip)
         self.svgelements.append((zorder, et))
 
-    def arrow(self, x: float, y: float, dx: float, dy: float,
-              headwidth: float=.2, headlength: float=.2,
+    def arrow(self, xy: Sequence[float], theta: float,
+              arrowwidth: float=.2, arrowlength: float=.2,
               color: str='black', lw: float=2, clip: BBox=None, zorder: int=1) -> None:
         ''' Draw an arrowhead '''
-        x, y = self.xform(x, y)
-        dx, dy = dx*self.scale, dy*self.scale
-        headwidth = headwidth*self.scale
-        headlength = headlength*self.scale
+        x, y = self.xform(*xy)
+        dx = arrowlength/2 * math.cos(math.radians(theta)) * self.scale
+        dy = arrowlength/2 * math.sin(math.radians(theta)) * self.scale
+        arrowwidth = arrowwidth*self.scale
+        arrowlength = arrowlength*self.scale
 
         # Draw arrow as path
-        head = Point((x+dx, y-dy))
-        tail = Point((x, y))
+        head = Point((x, y))
+        tail = Point((x-dx, y+dy))
         fullen = math.sqrt(dx**2 + dy**2)
         theta = -math.degrees(math.atan2(dy, dx))
 
-        finc = Point((fullen - headlength, 0)).rotate(theta) + tail
-        fin1 = Point((fullen - headlength, headwidth/2)).rotate(theta) + tail
-        fin2 = Point((fullen - headlength, -headwidth/2)).rotate(theta) + tail
+        finc = Point((fullen - arrowlength, 0)).rotate(theta) + tail
+        fin1 = Point((fullen - arrowlength, arrowwidth/2)).rotate(theta) + tail
+        fin2 = Point((fullen - arrowlength, -arrowwidth/2)).rotate(theta) + tail
 
         # Shrink arrow head by lw so it points right at the line
         head = Point((head[0] - lw *2* math.cos(math.radians(theta)),
@@ -319,29 +320,25 @@ class Figure:
         et1.set('d', d)
         et1.set('style', getstyle(color=color, lw=0, capstyle='butt',
                                   joinstyle='miter', fill=color))
-
         self.addclip(et1, clip)
         self.svgelements.append((zorder, et1))
 
     def bezier(self, p: Sequence[Point], color: str='black',
                lw: float=2, ls: Linestyle='-', zorder: int=1,
-               arrow: str=None, clip: BBox=None) -> None:
+               arrow: str=None, arrowlength=.25, arrowwidth=.15, clip: BBox=None) -> None:
         ''' Draw a cubic or quadratic bezier '''
-        headlength = .25
-        headwidth = .15
-
         # Keep original points for arrow head
         # and adjust points for line so they don't extrude from arrows.
         lpoints = [p0 for p0 in p]
         if arrow is not None:
             if arrow in ['start', 'both']:
                 th1 = math.atan2(p[0].y - p[1].y, p[0].x - p[1].x)
-                lpoints[0] = Point((p[0].x - math.cos(th1) * headlength/2,
-                                    p[0].y - math.sin(th1) * headlength/2))
+                lpoints[0] = Point((p[0].x - math.cos(th1) * arrowlength/2,
+                                    p[0].y - math.sin(th1) * arrowlength/2))
             if arrow in ['end', 'both']:
                 th2 = math.atan2(p[-1].y - p[-2].y, p[-1].x - p[-2].x)
-                lpoints[-1] = Point((p[-1].x - math.cos(th2) * headlength/2,
-                                    p[-1].y - math.sin(th2) * headlength/2))
+                lpoints[-1] = Point((p[-1].x - math.cos(th2) * arrowlength/2,
+                                    p[-1].y - math.sin(th2) * arrowlength/2))
 
         lpoints = [self.xform(*p0) for p0 in lpoints]
         points = [self.xform(*p0) for p0 in p]
@@ -361,21 +358,16 @@ class Figure:
 
         if arrow is not None:
             # Note: using untransformed bezier control points here
-
             if arrow in ['start', 'both']:
                 delta = p[0] - p[1]
-                delta = delta / len(delta) * headlength
-                tail = p[0] - delta
-                arr = self.arrow(tail[0], tail[1], delta[0], delta[1],
-                                 color=color, lw=1, zorder=zorder, clip=clip,
-                                 headlength=headlength, headwidth=headwidth)
+                theta = math.degrees(math.atan2(delta.y, delta.x))
+                self.arrow(p[0], theta, color=color, lw=1, zorder=zorder,
+                           clip=clip, arrowlength=arrowlength, arrowwidth=arrowwidth)
             if arrow in ['end', 'both']:
                 delta = p[-1] - p[-2]
-                delta = delta / len(delta) * headlength
-                tail = p[-1] - delta
-                arr = self.arrow(tail[0], tail[1], delta[0], delta[1],
-                                 color=color, lw=1, zorder=zorder, clip=clip,
-                                 headlength=headlength, headwidth=headwidth)
+                theta = math.degrees(math.atan2(delta.y, delta.x))
+                self.arrow(p[-1], theta, color=color, lw=1, zorder=zorder,
+                           clip=clip, arrowlength=arrowlength, arrowwidth=arrowwidth)
         
     def arc(self, center: Sequence[float], width: float, height: float,
             theta1: float=0, theta2: float=90, angle: float=0,
@@ -438,35 +430,43 @@ class Figure:
             self.svgelements.append((zorder, et))
 
         if arrow is not None:
+            # Note: This arrowhead's TAIL is located at the endpoint of the
+            # arc curve. The arrow points beyond the arc's theta.
             # Back to user coordinates
             width, height = width/self.scale, height/self.scale
             angle = -angle
             theta1 = -math.degrees(theta1)
             theta2 = -math.degrees(theta2)
 
-            headlength = .25
-            headwidth = .15
+            arrowlength = .25
+            arrowwidth = .15
 
             x, y = math.cos(math.radians(theta2)), math.sin(math.radians(theta2))
             th2 = math.degrees(math.atan2((width/height)*y, x))
             x, y = math.cos(math.radians(theta1)), math.sin(math.radians(theta1))
             th1 = math.degrees(math.atan2((width/height)*y, x))
-            if arrow == 'ccw':
-                dx = math.cos(math.radians(th2+90)) * headlength
-                dy = math.sin(math.radians(theta2+90)) * headlength
+            if arrow in ['ccw', 'end', 'both']:
+                dx = math.cos(math.radians(th2+90)) * arrowlength
+                dy = math.sin(math.radians(th2+90)) * arrowlength
                 xy = Point((center[0] + width/2*math.cos(math.radians(th2)),
                             center[1] + height/2*math.sin(math.radians(th2))))
-            else:
-                dx = -math.cos(math.radians(th1+90)) * headlength
-                dy = -math.sin(math.radians(th1+90)) * headlength
+                xy = Point(xy).rotate(angle, center)
+                darrow = Point((dx, dy)).rotate(angle)
+                theta = math.degrees(math.atan2(darrow.y, darrow.x))
+                self.arrow(xy+darrow, theta, arrowwidth=arrowwidth,
+                           arrowlength=arrowlength, color=color, lw=1, zorder=zorder)
+
+            if arrow in ['cw', 'start', 'both']:
+                dx = -math.cos(math.radians(th1+90)) * arrowlength
+                dy = -math.sin(math.radians(th1+90)) * arrowlength
                 xy = Point((center[0] + width/2*math.cos(math.radians(th1)),
                             center[1] + height/2*math.sin(math.radians(th1))))
 
-            xy = Point(xy).rotate(angle, center)
-            darrow = Point((dx, dy)).rotate(angle)
-
-            self.arrow(xy[0], xy[1], darrow[0], darrow[1], headwidth=headwidth,
-                       headlength=headlength, color=color, lw=1, zorder=zorder)
+                xy = Point(xy).rotate(angle, center)
+                darrow = Point((dx, dy)).rotate(angle)
+                theta = math.degrees(math.atan2(darrow.y, darrow.x))
+                self.arrow(xy+darrow, theta, arrowwidth=arrowwidth,
+                           arrowlength=arrowlength, color=color, lw=1, zorder=zorder)
 
     def save(self, fname: str, **kwargs) -> None:
         ''' Save the figure to a file '''

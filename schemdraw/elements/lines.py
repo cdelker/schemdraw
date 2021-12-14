@@ -4,10 +4,11 @@ from __future__ import annotations
 from typing import Sequence
 import math
 
-from ..segments import Segment, SegmentCircle, SegmentArc, SegmentPoly
+from ..segments import Segment, SegmentCircle, SegmentArc, SegmentPoly, SegmentBezier
 from .elements import Element, Element2Term
 from .twoterm import gap
 from ..types import XY, Point, Arcdirection, BilateralDirection
+from .. import util
 
 
 class Line(Element2Term):
@@ -137,6 +138,267 @@ class DotDotDot(Element):
         self.segments.append(SegmentCircle((1, 0), radius))
         self.segments.append(SegmentCircle((1.5, 0), radius))
         self.params['drop'] = (2, 0)
+
+
+class Arc2(Element):
+    ''' Arc Element
+
+        Use `at` and `to` methods to define endpoints.
+
+        Arc2 is a quadratic Bezier curve with control point
+        halfway between the endpoints, generating a
+        symmetric 'C' curve.
+
+        Args:
+            k: Control point factor. Higher k means more curvature.
+
+        Anchors:
+            start
+            end
+            ctrl
+            mid
+    '''
+    def __init__(self, k=0.5, arrow=None, **kwargs):
+        super().__init__(**kwargs)
+        self.k = k
+        self.arrow = arrow
+
+    def to(self, xy: XY) -> 'Element':
+        ''' Specify ending position of OrthoLines '''
+        self._userparams['to'] = xy
+        return self
+
+    def _place(self, dwgxy: XY, dwgtheta: float, **dwgparams) -> tuple[Point, float]:
+        ''' Calculate absolute placement of Element '''
+        self._dwgparams = dwgparams
+        if not self._cparams:
+            self._buildparams()
+
+        self.params['lblloc'] = 'center'
+        self.params['theta'] = 0
+        xy: XY = Point(self._cparams.get('at', dwgxy))
+        to: XY = Point(self._cparams.get('to', Point((xy.x+3, xy.y))))
+        dx = to.x - xy.x
+        dy = to.y - xy.y
+        pa = Point((dx/2-dy*self.k, dy/2+dx*self.k))
+        mid = Point((dx/2-dy*self.k/2, dy/2+dx*self.k/2))
+        self.segments.append(SegmentBezier((Point((0, 0)), pa, Point((dx, dy))),
+                                          arrow=self.arrow),)
+
+        self.anchors['ctrl'] = pa
+        self.anchors['mid'] = mid
+        self.params['lblloc'] = 'mid'
+        self.anchors['start'] = Point((0, 0))
+        self.anchors['end'] = Point((dx, dy))
+        self.params['drop'] = Point((dx, dy))
+        valign = 'bottom'
+        halign = 'left'
+        if mid.y > pa.y:
+            valign = 'top'
+            self.params['lblofst'] = -.1
+        if mid.x > pa.x:
+            halign = 'right'
+        self.params['lblalign'] = (halign, valign)
+        
+        return super()._place(dwgxy, dwgtheta, **dwgparams)
+
+    
+class Arc3(Element):
+    ''' Arc Element
+
+        Use `at` and `to` methods to define endpoints.
+
+        Arc3 is a cubic Bezier curve. Control points are set
+        to extend the curve at the given angle for each endpoint.
+
+        Args:
+            k: Control point factor. Higher k means tighter curve.
+            th1: Angle of approach to start point
+            th2: Angle of approach to end point
+            arrow: 'start', 'end', or 'both' to draw an arrowhead
+            arrowlength: Length of arrowhead
+            arrowwidth: Width of arrowhead
+
+        Anchors:
+            start
+            end
+            center
+            ctrl1
+            ctrl2
+    '''
+    def __init__(self, k=0.75, th1=0, th2=180, arrow=None,
+                 arrowlength=.25, arrowwidth=.2, **kwargs):
+        super().__init__(**kwargs)
+        self._userparams.setdefault('to', Point((1, 0)))
+        self.k = k
+        self.th1 = math.radians(-th1)
+        self.th2 = math.radians(180-th2)
+        self.arrow = arrow
+        self.arrowlength = arrowlength
+        self.arrowwidth = arrowwidth
+
+    def to(self, xy: XY) -> 'Element':
+        ''' Specify ending position of OrthoLines '''
+        self._userparams['to'] = xy
+        return self
+
+    def _place(self, dwgxy: XY, dwgtheta: float, **dwgparams) -> tuple[Point, float]:
+        ''' Calculate absolute placement of Element '''
+        self._dwgparams = dwgparams
+        if not self._cparams:
+            self._buildparams()
+
+        self.params['theta'] = 0
+        xy: XY = Point(self._cparams.get('at', dwgxy))
+        to: XY = Point(self._cparams.get('to', dwgxy))
+        dx = to.x - xy.x
+        dy = to.y - xy.y
+        pa1 = Point((dx*self.k*math.cos(self.th1)*self.k,
+                     dy*self.k*math.sin(self.th1)))
+        pa2 = Point((dx-dx*self.k*math.cos(self.th2)*self.k,
+                     dy-dy*self.k*math.sin(self.th2)))
+        self.segments.append(SegmentBezier((Point((0, 0)), pa1, pa2, Point((dx, dy))),
+                                           arrow=self.arrow,
+                                           arrowlength=self.arrowlength,
+                                           arrowwidth=self.arrowwidth))
+
+        # This sets reasonable label positions for ArcZ and ArcS modes.
+        # Other Arc3 maybe not.
+        self.anchors['center'] = Point((dx/2, dy/2))
+        self.anchors['start'] = Point((0, 0))
+        self.anchors['end'] = Point((dx, dy))
+        self.anchors['ctrl1'] = pa1
+        self.anchors['ctrl2'] = pa2
+        self.params['lblloc'] = 'center'
+        self.params['drop'] = Point((dx, dy))
+        halign = 'left'
+        valign = 'bottom'
+        if dy > 0:
+            valign = 'top'
+            self.params['lblofst'] = -0.1
+        if dx <=0:
+            halign = 'right'
+        self.params['lblalign'] = (halign, valign)
+        return super()._place(dwgxy, dwgtheta, **dwgparams)
+
+
+class ArcZ(Arc3):
+    ''' Z-Curve Arc
+
+        Use `at` and `to` methods to define endpoints.
+
+        ArcZ approaches the endpoints horizontally, leading to
+        a 'Z' shaped curve
+
+        Args:
+            k: Control point factor. Higher k means tighter curve.
+            arrow: 'start', 'end', or 'both' to draw an arrowhead
+            arrowlength: Length of arrowhead
+            arrowwidth: Width of arrowhead
+    '''
+    def __init__(self, k=0.75, arrow=None, arrowlength=.25, arrowwidth=.2, **kwargs):
+        super().__init__(k=k, arrow=arrow, th1=0, th2=180, arrowlength=arrowlength, arrowwidth=arrowwidth, **kwargs)
+
+
+class ArcN(Arc3):
+    ''' N-Curve Arc
+
+        Use `at` and `to` methods to define endpoints.
+
+        ArcN approaches the endpoints vertically, leading to
+        a 'N' shaped curve
+
+        Args:
+            k: Control point factor. Higher k means tighter curve.
+            arrow: 'start', 'end', or 'both' to draw an arrowhead
+            arrowlength: Length of arrowhead
+            arrowwidth: Width of arrowhead
+    '''
+    def __init__(self, k=0.75, arrow=None, arrowlength=.25, arrowwidth=.2, **kwargs):
+        super().__init__(k=k, arrow=arrow, th1=-90, th2=90, arrowlength=arrowlength, arrowwidth=arrowwidth, **kwargs)
+
+
+class ArcLoop(Element):
+    ''' Loop Arc
+
+        Use `at` and `to` methods to define endpoints.
+
+        ArcLoop is an arc drawn as part of a circle.
+
+        Args:
+            radius: Radius of the arc
+            arrow: 'start', 'end', or 'both' to draw an arrowhead
+            arrowlength: Length of arrowhead
+            arrowwidth: Width of arrowhead
+
+        Anchors:
+            start
+            end
+            mid
+            BL
+            BR
+            TL
+            TR
+    '''
+    def __init__(self, radius: float=0.6, arrow: str=None, arrowlength=.25, arrowwidth=.2, **kwargs):
+        super().__init__(**kwargs)
+        self.radius = radius
+        self.arrow = arrow
+        self.arrowlength = arrowlength
+        self.arrowwidth = arrowwidth
+        self.params['lblloc'] = 'BR'
+
+    def to(self, xy: XY) -> 'Element':
+        ''' Specify ending position of OrthoLines '''
+        self._userparams['to'] = xy
+        return self
+
+    def _place(self, dwgxy: XY, dwgtheta: float, **dwgparams) -> tuple[Point, float]:
+        ''' Calculate placement of Element '''
+        self._dwgparams = dwgparams
+        if not self._cparams:
+            self._buildparams()
+
+        self.params['fontsize'] = 12
+        self.params['theta'] = 0
+        xy: XY = Point(self._cparams.get('at', dwgxy))
+        to: XY = Point(self._cparams.get('to', dwgxy))
+
+        dx = to.x - xy.x
+        dy = to.y - xy.y
+
+        xa = dx/2
+        ya = dy/2
+        q = math.sqrt(dx**2 + dy**2)
+        try:
+            center = Point(((xa + math.sqrt(self.radius**2 - (q/2)**2) * (-dy/q)),
+                            (ya + math.sqrt(self.radius**2 - (q/2)**2) * (dx/q))))
+        except ValueError:
+            raise ValueError(f'No solution to ArcLoop with radius {self.radius}')
+
+        da = math.sqrt(xa**2 + ya**2)
+        thetaa = math.atan2(ya, xa)
+        thda = math.acos(da/self.radius)
+        theta1 = thetaa - thda
+        theta2 = thetaa + thda
+        t = util.linspace(math.pi+theta2, theta1)
+        x = [center.x + self.radius * math.cos(ti) for ti in t]
+        y = [center.y + self.radius * math.sin(ti) for ti in t]
+        self.segments.append(Segment(list(zip(x, y)), arrow=self.arrow,
+                                     arrowlength=self.arrowlength,
+                                     arrowwidth=self.arrowwidth))
+
+        mid = len(x)//2        
+        self.anchors['start'] = Point((0, 0))
+        self.anchors['end'] = Point((x[-1], y[-1]))
+        self.anchors['mid'] = Point((x[mid], y[mid]))
+        self.anchors['BL'] = Point((min(x), min(y)))
+        self.anchors['BR'] = Point((max(x), min(y)))
+        self.anchors['TL'] = Point((min(x), max(y)))
+        self.anchors['TR'] = Point((max(x), max(y)))
+        self.params['lblloc'] = 'mid'
+        self.params['drop'] = to
+        return super()._place(dwgxy, dwgtheta, **dwgparams)
 
 
 class Label(Element):

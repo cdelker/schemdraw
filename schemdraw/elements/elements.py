@@ -466,7 +466,9 @@ class Element:
             elif loc == 'right':
                 loc = 'left'
 
-        if align is None and loc == 'center' and isinstance(label, (list, tuple)):
+        if align is None and 'lblalign' in self._cparams:
+            align = self._cparams['lblalign']
+        elif align is None and loc == 'center' and isinstance(label, (list, tuple)):
             align = ('center', 'center')
         elif align is None:
             align = (None, None)
@@ -594,7 +596,11 @@ class Element:
 
         elif isinstance(label, str):
             # Place in center
-            if loc == 'top':
+            if loc in self.anchors:
+                xy = Point(self.anchors[loc])  # type: ignore
+                ofst = Point((0, ofst)) if not isinstance(ofst, (list, tuple)) else Point(ofst)
+                xy = Point(xy)
+            elif loc == 'top':
                 ofst = Point((0, ofst)) if not isinstance(ofst, (list, tuple)) else Point(ofst)
                 xy = Point(((xmax+xmin)/2, ymax))
             elif loc == 'bottom':
@@ -609,10 +615,6 @@ class Element:
             elif loc == 'center':
                 ofst = Point((0, ofst)) if not isinstance(ofst, (list, tuple)) else Point(ofst)
                 xy = Point(((xmax+xmin)/2, (ymax+ymin)/2))
-            elif loc in self.anchors:
-                xy = Point(self.anchors[loc])  # type: ignore
-                ofst = Point((0, ofst)) if not isinstance(ofst, (list, tuple)) else Point(ofst)
-                xy = Point(xy)
             else:
                 raise ValueError('Undefined location {}'.format(loc))
             xy = xy + ofst

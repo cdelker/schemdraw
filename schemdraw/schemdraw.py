@@ -240,7 +240,6 @@ class Drawing:
             Args:
                 element: The element to add.
         '''
-        # TODO: remove kwargs when deprecated dictionary elements are removed
         if not isinstance(element, Element):
             # Instantiate it (for support of legacy add method)
             element = element(**kwargs)
@@ -285,6 +284,10 @@ class Drawing:
                 dy: change in y position
         '''
         self.here = Point((self.here[0] + dx, self.here[1] + dy))
+
+    def move_from(self, ref: Point, dx: float=0, dy: float=0) -> None:
+        ''' Move drawing position relative to the reference point '''
+        self.here = (ref.x + dx, ref.y + dy)
 
     def push(self) -> None:
         ''' Push/save the drawing state.

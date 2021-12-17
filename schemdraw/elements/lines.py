@@ -164,7 +164,7 @@ class Arc2(Element):
         self.arrow = arrow
 
     def to(self, xy: XY) -> 'Element':
-        ''' Specify ending position of OrthoLines '''
+        ''' Specify ending position '''
         self._userparams['to'] = xy
         return self
 
@@ -247,7 +247,7 @@ class Arc3(Element):
         self.arrowwidth = arrowwidth
 
     def to(self, xy: XY) -> 'Element':
-        ''' Specify ending position of OrthoLines '''
+        ''' Specify ending position '''
         self._userparams['to'] = xy
         return self
 
@@ -355,10 +355,9 @@ class ArcLoop(Element):
         self.arrow = arrow
         self.arrowlength = arrowlength
         self.arrowwidth = arrowwidth
-        self.params['lblloc'] = 'BR'
 
     def to(self, xy: XY) -> 'Element':
-        ''' Specify ending position of OrthoLines '''
+        ''' Specify ending position '''
         self._userparams['to'] = xy
         return self
 
@@ -368,7 +367,6 @@ class ArcLoop(Element):
         if not self._cparams:
             self._buildparams()
 
-        self.params['fontsize'] = 12
         self.params['theta'] = 0
         xy: XY = Point(self._cparams.get('at', dwgxy))
         to: XY = Point(self._cparams.get('to', dwgxy))
@@ -630,56 +628,3 @@ class Rect(Element):
         c2a = (corner2[0], corner1[1])
         self.segments.append(Segment([corner1, c1a, corner2, c2a, corner1], zorder=0))
         self.params['zorder'] = 0   # Put on bottom
-
-
-class Circle(Element):
-    ''' Circle Element
-
-        Args:
-            r: Radius
-
-        Anchors:
-            * N
-            * S
-            * E
-            * W
-            * NE
-            * SE
-            * SW
-            * NW
-            * NNE
-            * ENE
-            * ESE
-            * SSE
-            * SSW
-            * WSW
-            * WNW
-            * NNW
-    '''
-    def __init__(self, r=0.75, **kwargs):
-        super().__init__(**kwargs)
-        self.segments.append(SegmentCircle((r, 0), r))
-        self.params['lblloc'] = 'center'
-        self.params['lblofst'] = 0
-        self.params['theta'] = 0
-        self.params['drop'] = (2*r, 0)
-        self.anchors['center'] = (r, 0)
-        self.anchors['N'] = (0, 0)
-        self.anchors['W'] = (r, -r)
-        self.anchors['E'] = (r, r)
-        self.anchors['S'] = (2*r, 0)
-        rsqrt2 = r * math.sqrt(2) / 2
-        self.anchors['SE'] = (r+rsqrt2, rsqrt2)
-        self.anchors['SW'] = (r+rsqrt2, -rsqrt2)
-        self.anchors['NE'] = (r-rsqrt2, rsqrt2)
-        self.anchors['NW'] = (r-rsqrt2, -rsqrt2) 
-        r225 = r * math.cos(math.radians(22.5))
-        r675 = r * math.cos(math.radians(67.5))
-        self.anchors['NNE'] = (r-r225, r675)
-        self.anchors['ENE'] = (r-r675, r225)
-        self.anchors['ESE'] = (r+r675, r225)
-        self.anchors['SSE'] = (r+r225, r675)
-        self.anchors['NNW'] = (r-r225, -r675)
-        self.anchors['WNW'] = (r-r675, -r225)
-        self.anchors['WSW'] = (r+r675, -r225)
-        self.anchors['SSW'] = (r+r225, -r675)

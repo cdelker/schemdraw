@@ -153,7 +153,7 @@ class Figure:
         self.addclip(p, clip)
 
     def bezier(self, p: Sequence[util.Point], color: str='black',
-               lw: float=2, ls: Linestyle='-', zorder: int=1,
+               lw: float=2, ls: Linestyle='-', capstyle: Capstyle='round', zorder: int=1,
                arrow: bool=None, arrowlength: float=0.2, arrowwidth: float=0.2,
                clip: BBox=None) -> None:
         ''' Draw a cubic or quadratic bezier '''
@@ -163,6 +163,7 @@ class Figure:
             codes = [Path.MOVETO, Path.CURVE3, Path.CURVE3]
         curve = PathPatch(Path(p, codes),
                           fc='none', ec=color, ls=ls, lw=lw,
+                          capstyle=fix_capstyle(capstyle),
                           transform=self.ax.transData)
         self.ax.add_patch(curve)
         self.addclip(curve, clip)

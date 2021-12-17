@@ -1,4 +1,5 @@
-from .flow import Box, RoundBox, Subroutine, Data, Start, Ellipse, Decision, Connect, Circle
+from .flow import Box, RoundBox, Subroutine, Data, Start, Ellipse, Decision, Connect
+from .flow import Terminal, Circle, State, StateEnd
 from ..elements import Arrow, Arrowhead, Line, Dot
 
 

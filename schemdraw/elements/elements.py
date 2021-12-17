@@ -359,6 +359,8 @@ class Element:
         drop = self._cparams.get('drop', None)
         if drop is None or not self._cparams.get('move_cur', True):
             self.absdrop = Point(dwgxy), dwgtheta
+        elif self.params.get('droptheta', None):
+            self.absdrop = self.transform.transform(drop), self.params.get('droptheta')
         elif self.params.get('theta', None) == 0:
             # Element def specified theta = 0, don't change
             self.absdrop = self.transform.transform(drop), dwgtheta
@@ -497,29 +499,28 @@ class Element:
 
             if loc and loc in self.anchors:
                 x1, y1, x2, y2 = self.get_bbox(includetext=False)
-
-                if (math.isclose(self.anchors[loc][0], x1, abs_tol=.15) or
-                   math.isclose(self.anchors[loc][0], x2, abs_tol=.15) or
-                   math.isclose(self.anchors[loc][1], y1, abs_tol=.15) or
-                   math.isclose(self.anchors[loc][1], y2, abs_tol=.15)):
+                if (math.isclose(self.anchors[loc][0], x1, abs_tol=.3) or
+                   math.isclose(self.anchors[loc][0], x2, abs_tol=.3) or
+                   math.isclose(self.anchors[loc][1], y1, abs_tol=.3) or
+                   math.isclose(self.anchors[loc][1], y2, abs_tol=.3)):
                     # Anchor is on an edge
                     dofst = self._cparams.get('lblofst', .1)
 
                     alignH: Halign
                     alignV: Valign
-                    if math.isclose(self.anchors[loc][0], x1, abs_tol=.15):
+                    if math.isclose(self.anchors[loc][0], x1, abs_tol=.3):
                         alignH = 'right'
                         ofstx = -dofst
-                    elif math.isclose(self.anchors[loc][0], x2, abs_tol=.15):
+                    elif math.isclose(self.anchors[loc][0], x2, abs_tol=.3):
                         alignH = 'left'
                         ofstx = dofst
                     else:
                         alignH = 'center'
                         ofstx = 0
-                    if math.isclose(self.anchors[loc][1], y1, abs_tol=.15):
+                    if math.isclose(self.anchors[loc][1], y1, abs_tol=.3):
                         alignV = 'top'
                         ofsty = -dofst
-                    elif math.isclose(self.anchors[loc][1], y2, abs_tol=.15):
+                    elif math.isclose(self.anchors[loc][1], y2, abs_tol=.3):
                         alignV = 'bottom'
                         ofsty = dofst
                     else:
@@ -530,7 +531,7 @@ class Element:
                     rotalignidx = (rotalign.index(align) + round((th/360)*8)) % 8
                     if ofst is None and not isinstance(label, (tuple, list)):
                         ofst = [ofstx, ofsty]
-
+                        
             if loc == 'center':
                 align = (align[0] or 'center', align[1] or 'center')
             else:

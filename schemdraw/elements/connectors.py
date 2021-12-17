@@ -27,11 +27,12 @@ class OrthoLines(Element):
                 portion of first ortholine
     '''
     def __init__(self, *d, n: int=1, dy: float=0.6,
-                 xstart: float=None, **kwargs):
+                 xstart: float=None, arrow: str=None, **kwargs):
         super().__init__(*d, **kwargs)
         self._userparams['n'] = n
         self._userparams['dy'] = dy
         self._userparams['xstart'] = xstart
+        self._userparams['arrow'] = arrow
         self._userparams.setdefault('to', (1, 1))
 
     def to(self, xy: XY) -> 'Element':
@@ -51,6 +52,7 @@ class OrthoLines(Element):
         n = self._cparams.get('n', 1)
         ndy = self._cparams.get('dy', .6)
         xstart = self._cparams.get('xstart', None)
+        arrow = self._cparams.get('arrow', None)
         dx = to[0] - xy[0]
         dy = to[1] - xy[1]
 
@@ -61,14 +63,21 @@ class OrthoLines(Element):
         else:
             # x0 is first line to go up
             if xstart is not None:
+                self.params['lblalign'] = ('left', 'center')
                 if dy > 0:
                     x0 = dx*xstart
+                    self.anchors['mid'] = (dx*xstart+.15, dy/2)
                 else:
                     x0 = dx*xstart - ndy - ndy*(n-1)*xstart
+                    self.anchors['mid'] = (dx*xstart-ndy*2+.15, dy/2)
                     # xstart=0 --> -ndy; xstart=1 --> dx-ndy*n
             elif dx > 0:
+                self.anchors['mid'] = (dx/2+.15, dy/2)
+                self.params['lblalign'] = ('left', 'center')
                 x0 = dx/2 - (ndy*(n-1)/2)
             else:
+                self.anchors['mid'] = (dx/2-.15, dy/2)
+                self.params['lblalign'] = ('right', 'center')
                 x0 = dx/2 + (ndy*(n-1)/2)
 
             for i in range(n):
@@ -77,7 +86,8 @@ class OrthoLines(Element):
                     x = x0 + ndy*i if dx > 0 else x0 - ndy*i
                 else:
                     x = x0 + (n-i)*ndy if dx > 0 else x0 - (n-i)*ndy
-                self.segments.append(Segment([(0, y), (x, y), (x, y+dy), (dx, y+dy)]))
+                self.segments.append(Segment([(0, y), (x, y), (x, y+dy), (dx, y+dy)], arrow=arrow))
+        self.params['lblloc'] = 'mid'
         return super()._place(dwgxy, dwgtheta, **dwgparams)
 
 
@@ -95,11 +105,12 @@ class RightLines(Element):
             n: Number of parallel lines
             dy: Distance between parallel lines
     '''
-    def __init__(self, *d, n: int=1, dy: float=0.6, **kwargs):
+    def __init__(self, *d, n: int=1, dy: float=0.6, arrow: str=None, **kwargs):
         super().__init__(*d, **kwargs)
         self._userparams['n'] = n
         self._userparams['dy'] = dy
-        self._userparams.setdefault('to', (1, 1))
+        self._userparams['arrow'] = arrow
+        self._userparams.setdefault('to', (3, -2))
 
     def to(self, xy: XY) -> 'Element':
         ''' Specify ending position of OrthoLines '''
@@ -117,6 +128,7 @@ class RightLines(Element):
         to = self._cparams.get('to', (1,1))
         n = self._cparams.get('n', 1)
         ndy = self._cparams.get('dy', .6)
+        arrow = self._cparams.get('arrow', None)
         dx = to[0] - xy[0]
         dy = to[1] - xy[1]
         for i in range(n):
@@ -125,7 +137,13 @@ class RightLines(Element):
                 x = dx - i*ndy if dx < 0 else dx + i*ndy
             else:
                 x = dx + (n-i-1)*ndy if dx > 0 else dx - (n-i-1)*ndy
-            self.segments.append(Segment([(0, y), (x, y), (x, dy)]))
+            self.segments.append(Segment([(0, y), (x, y), (x, dy)], arrow=arrow))
+
+        self.anchors['mid'] = (dx/2, 0)
+        self.params['lblloc'] = 'mid'
+        self.params['drop'] = (x, dy)
+        self.params['droptheta'] = 90 if dy > 0 else -90
+    
         return super()._place(dwgxy, dwgtheta, **dwgparams)
 
 

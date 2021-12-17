@@ -553,6 +553,7 @@ class SegmentBezier:
                  color: str=None,
                  lw: float=None,
                  ls: Linestyle=None,
+                 capstyle: Capstyle=None,
                  arrow: Arcdirection=None,
                  arrowlength: float=.25,
                  arrowwidth: float=.2,
@@ -563,6 +564,7 @@ class SegmentBezier:
         self.color = color
         self.lw = lw
         self.ls = ls
+        self.capstyle = capstyle
         self.arrowlength = arrowlength
         self.arrowwidth = arrowwidth
         self.clip = clip
@@ -588,6 +590,7 @@ class SegmentBezier:
         params: dict[str, Any] = {'color': self.color,
                                   'lw': self.lw,
                                   'ls': self.ls,
+                                  'capstyle': self.capstyle,
                                   'arrow': self.arrow,
                                   'arrowlength': self.arrowlength,
                                   'arrowwidth': self.arrowwidth,
@@ -621,7 +624,8 @@ class SegmentBezier:
         color = self.color if self.color else style.get('color', 'black')
         ls = self.ls if self.ls else style.get('ls', '-')
         lw = self.lw if self.lw else style.get('lw', 2)
-        fig.bezier(p, color=color, lw=lw, ls=ls, clip=self.clip,
+        capstyle = self.capstyle if self.capstyle else style.get('capstyle', 'round')
+        fig.bezier(p, color=color, lw=lw, ls=ls, capstyle=capstyle, clip=self.clip,
                    zorder=zorder, arrow=self.arrow,
                    arrowlength=self.arrowlength, arrowwidth=self.arrowwidth)
 

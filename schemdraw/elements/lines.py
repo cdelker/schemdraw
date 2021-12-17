@@ -193,13 +193,22 @@ class Arc2(Element):
         self.params['drop'] = Point((dx, dy))
         valign = 'bottom'
         halign = 'left'
-        if mid.y > pa.y:
+        hofst = 0.1
+        vofst = 0.1
+        if math.isclose(mid.y, pa.y, abs_tol=.01):
+            valign = 'center'
+            vofst = 0
+        elif mid.y > pa.y:
             valign = 'top'
-            self.params['lblofst'] = -.1
-        if mid.x > pa.x:
+            vofst = -0.1
+        if math.isclose(mid.x, pa.x, abs_tol=.01):
+            halign = 'center'
+            hofst = 0
+        elif mid.x > pa.x:
             halign = 'right'
+            hofst = -0.1
+        self.params['lblofst'] = (hofst, vofst)
         self.params['lblalign'] = (halign, valign)
-        
         return super()._place(dwgxy, dwgtheta, **dwgparams)
 
     
@@ -213,8 +222,8 @@ class Arc3(Element):
 
         Args:
             k: Control point factor. Higher k means tighter curve.
-            th1: Angle of approach to start point
-            th2: Angle of approach to end point
+            th1: Angle at which the arc leaves start point
+            th2: Angle at which the arc leaves end point
             arrow: 'start', 'end', or 'both' to draw an arrowhead
             arrowlength: Length of arrowhead
             arrowwidth: Width of arrowhead
@@ -231,8 +240,8 @@ class Arc3(Element):
         super().__init__(**kwargs)
         self._userparams.setdefault('to', Point((1, 0)))
         self.k = k
-        self.th1 = math.radians(-th1)
-        self.th2 = math.radians(180-th2)
+        self.th1 = math.radians(th1)
+        self.th2 = math.radians(th2)
         self.arrow = arrow
         self.arrowlength = arrowlength
         self.arrowwidth = arrowwidth
@@ -253,10 +262,10 @@ class Arc3(Element):
         to: XY = Point(self._cparams.get('to', dwgxy))
         dx = to.x - xy.x
         dy = to.y - xy.y
-        pa1 = Point((dx*self.k*math.cos(self.th1)*self.k,
+        pa1 = Point((dx*self.k*math.cos(self.th1),
                      dy*self.k*math.sin(self.th1)))
-        pa2 = Point((dx-dx*self.k*math.cos(self.th2)*self.k,
-                     dy-dy*self.k*math.sin(self.th2)))
+        pa2 = Point((dx+dx*self.k*math.cos(self.th2),
+                     dy+dy*self.k*math.sin(self.th2)))
         self.segments.append(SegmentBezier((Point((0, 0)), pa1, pa2, Point((dx, dy))),
                                            arrow=self.arrow,
                                            arrowlength=self.arrowlength,
@@ -315,7 +324,7 @@ class ArcN(Arc3):
             arrowwidth: Width of arrowhead
     '''
     def __init__(self, k=0.75, arrow=None, arrowlength=.25, arrowwidth=.2, **kwargs):
-        super().__init__(k=k, arrow=arrow, th1=-90, th2=90, arrowlength=arrowlength, arrowwidth=arrowwidth, **kwargs)
+        super().__init__(k=k, arrow=arrow, th1=90, th2=-90, arrowlength=arrowlength, arrowwidth=arrowwidth, **kwargs)
 
 
 class ArcLoop(Element):
@@ -621,3 +630,56 @@ class Rect(Element):
         c2a = (corner2[0], corner1[1])
         self.segments.append(Segment([corner1, c1a, corner2, c2a, corner1], zorder=0))
         self.params['zorder'] = 0   # Put on bottom
+
+
+class Circle(Element):
+    ''' Circle Element
+
+        Args:
+            r: Radius
+
+        Anchors:
+            * N
+            * S
+            * E
+            * W
+            * NE
+            * SE
+            * SW
+            * NW
+            * NNE
+            * ENE
+            * ESE
+            * SSE
+            * SSW
+            * WSW
+            * WNW
+            * NNW
+    '''
+    def __init__(self, r=0.75, **kwargs):
+        super().__init__(**kwargs)
+        self.segments.append(SegmentCircle((r, 0), r))
+        self.params['lblloc'] = 'center'
+        self.params['lblofst'] = 0
+        self.params['theta'] = 0
+        self.params['drop'] = (2*r, 0)
+        self.anchors['center'] = (r, 0)
+        self.anchors['N'] = (0, 0)
+        self.anchors['W'] = (r, -r)
+        self.anchors['E'] = (r, r)
+        self.anchors['S'] = (2*r, 0)
+        rsqrt2 = r * math.sqrt(2) / 2
+        self.anchors['SE'] = (r+rsqrt2, rsqrt2)
+        self.anchors['SW'] = (r+rsqrt2, -rsqrt2)
+        self.anchors['NE'] = (r-rsqrt2, rsqrt2)
+        self.anchors['NW'] = (r-rsqrt2, -rsqrt2) 
+        r225 = r * math.cos(math.radians(22.5))
+        r675 = r * math.cos(math.radians(67.5))
+        self.anchors['NNE'] = (r-r225, r675)
+        self.anchors['ENE'] = (r-r675, r225)
+        self.anchors['ESE'] = (r+r675, r225)
+        self.anchors['SSE'] = (r+r225, r675)
+        self.anchors['NNW'] = (r-r225, -r675)
+        self.anchors['WNW'] = (r-r675, -r225)
+        self.anchors['WSW'] = (r+r675, -r225)
+        self.anchors['SSW'] = (r+r225, -r675)

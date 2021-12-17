@@ -324,7 +324,8 @@ class Figure:
         self.svgelements.append((zorder, et1))
 
     def bezier(self, p: Sequence[Point], color: str='black',
-               lw: float=2, ls: Linestyle='-', zorder: int=1,
+               lw: float=2, ls: Linestyle='-', capstyle: Capstyle='round',
+               joinstyle: Joinstyle='round', zorder: int=1,
                arrow: str=None, arrowlength=.25, arrowwidth=.15, clip: BBox=None) -> None:
         ''' Draw a cubic or quadratic bezier '''
         # Keep original points for arrow head
@@ -349,10 +350,8 @@ class Figure:
         for p0 in lpoints[1:]:
             path += f' {p0[0]} {p0[1]}'
         et.set('d', path)
-        et.set('stroke', color)
-        et.set('stroke-width', str(lw))
-        et.set('stroke-linecap', 'butt')
-        et.set('fill', 'none')
+        et.set('style', getstyle(color=color, ls=ls, lw=lw, capstyle=capstyle,
+                                 joinstyle=joinstyle))
         self.addclip(et, clip)
         self.svgelements.append((zorder, et))
 

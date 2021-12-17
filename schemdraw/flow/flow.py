@@ -3,7 +3,7 @@
 import math
 
 from ..util import linspace
-from ..segments import Segment, SegmentCircle, SegmentText
+from ..segments import Segment, SegmentCircle, SegmentPoly, SegmentText
 from ..elements import Element
 
 
@@ -33,6 +33,58 @@ class Box(Element):
         self.anchors['E'] = (h/2, w/2)
         self.anchors['S'] = (h, 0)
         self.anchors['N'] = (0, 0)
+        self.anchors['NW'] = (0, -w/2)
+        self.anchors['NE'] = (0, w/2)
+        self.anchors['SW'] = (h, -w/2)
+        self.anchors['SE'] = (h, w/2)
+        self.anchors['NNE'] = (0, w/3)
+        self.anchors['NNW'] = (0, -w/3)
+        self.anchors['SSE'] = (h, w/3)
+        self.anchors['SSW'] = (h, -w/3)
+        self.anchors['ENE'] = (h/3, w/2)
+        self.anchors['ESE'] = (2*h/3, w/2)
+        self.anchors['WNW'] = (h/3, -w/2)
+        self.anchors['WSW'] = (2*h/3, -w/2)
+
+
+class RoundBox(Element):
+    ''' Box with rounded corners '''
+    ''' Flowchart box
+
+        Args:
+            w: Width of box
+            h: Height of box
+
+        Anchors:
+            * N
+            * S
+            * E
+            * W
+    '''
+    def __init__(self, w: float=3, h: float=2, cornerradius=0.3, **kwargs):
+        super().__init__(**kwargs)
+        self.segments.append(SegmentPoly(
+            [(0, w/2), (h, w/2), (h, -w/2), (0, -w/2)],
+            cornerradius=cornerradius))
+        self.params['lblloc'] = 'center'
+        self.params['lblofst'] = 0
+        self.params['theta'] = -90
+        self.params['drop'] = (h, 0)
+        self.anchors['center'] = (h/2, 0)
+        self.anchors['W'] = (h/2, -w/2)
+        self.anchors['E'] = (h/2, w/2)
+        self.anchors['S'] = (h, 0)
+        self.anchors['N'] = (0, 0)
+        k = cornerradius - cornerradius*math.sqrt(2)/2
+        self.anchors['NE'] = (k, w/2-k)
+        self.anchors['NW'] = (k, -w/2+k)
+        self.anchors['SE'] = (h-k, w/2-k)
+        self.anchors['SW'] = (h-k, -w/2+k)
+
+
+class Start(RoundBox):
+    def __init__(self, w: float=3, h: float=1.25, **kwargs):
+        super().__init__(w=w, h=h, cornerradius=h/2, **kwargs)
 
 
 class Subroutine(Element):
@@ -49,6 +101,18 @@ class Subroutine(Element):
             * S
             * E
             * W
+            * NE
+            * NW
+            * SE
+            * SW
+            * NNE
+            * NNW
+            * ENE
+            * WNW
+            * SSE
+            * SSW
+            * ESE
+            * WSW
     '''
     def __init__(self, w: float=3.5, h: float=2, s: float=0.3, **kwargs):
         super().__init__(**kwargs)
@@ -65,6 +129,18 @@ class Subroutine(Element):
         self.anchors['E'] = (h/2, w/2)
         self.anchors['S'] = (h, 0)
         self.anchors['N'] = (0, 0)
+        self.anchors['NW'] = (0, -w/2)
+        self.anchors['NE'] = (0, w/2)
+        self.anchors['SW'] = (h, -w/2)
+        self.anchors['SE'] = (h, w/2)
+        self.anchors['NNE'] = (0, w/3)
+        self.anchors['NNW'] = (0, -w/3)
+        self.anchors['SSE'] = (h, w/3)
+        self.anchors['SSW'] = (h, -w/3)
+        self.anchors['ENE'] = (h/3, w/2)
+        self.anchors['ESE'] = (2*h/3, w/2)
+        self.anchors['WNW'] = (h/3, -w/2)
+        self.anchors['WSW'] = (2*h/3, -w/2)
 
 
 class Data(Element):
@@ -80,6 +156,10 @@ class Data(Element):
             * S
             * E
             * W
+            * NE
+            * NW
+            * SE
+            * SW
     '''
     def __init__(self, w: float=3, h: float=2, s: float=0.5, **kwargs):
         super().__init__(**kwargs)
@@ -94,11 +174,14 @@ class Data(Element):
         self.anchors['E'] = (h/2, w/2)
         self.anchors['S'] = (h, 0)
         self.anchors['N'] = (0, 0)
+        self.anchors['NE'] = (0, w/2+s/2)
+        self.anchors['SE'] = (h, w/2-s/2)
+        self.anchors['NW'] = (0, -w/2+s/2)
+        self.anchors['SW'] = (h, -w/2-s/2)
 
-
-class Start(Element):
-    ''' Flowchart start/stop box (ellipse)
-
+        
+class Ellipse(Element):
+    ''' Flowchart ellipse
 
         Args:
             w: Width of ellipse
@@ -108,7 +191,12 @@ class Start(Element):
             * N
             * S
             * E
-            * W    '''
+            * W
+            * NE
+            * NW
+            * SE
+            * SW
+    '''
     def __init__(self, w: float=3, h: float=2, **kwargs):
         super().__init__(**kwargs)
         # There's no ellipse Segment type, so draw one with a path Segment
@@ -127,11 +215,16 @@ class Start(Element):
         self.anchors['E'] = (h/2, w/2)
         self.anchors['S'] = (h, 0)
         self.anchors['N'] = (0, 0)
-
+        sinpi4 = math.sin(math.pi/4)
+        cospi4 = math.cos(math.pi/4)
+        self.anchors['SE'] = (h/2+h/2*sinpi4, w/2*cospi4)
+        self.anchors['SW'] = (h/2+h/2*sinpi4, -w/2*cospi4)
+        self.anchors['NW'] = (h/2-h/2*sinpi4, -w/2*cospi4)
+        self.anchors['NE'] = (h/2-h/2*sinpi4, w/2*cospi4)
+        
 
 class Decision(Element):
     ''' Flowchart decision (diamond)
-
 
         Args:
             w: Width of box
@@ -186,20 +279,31 @@ class Decision(Element):
 
 
 class Connect(Element):
-    ''' Flowchart connector (circle)
+    ''' Flowchart connector/circle
 
         Args:
-            r: Radius of box
+            r: Radius of circle
 
         Anchors:
             * N
             * S
             * E
             * W
+            * NE
+            * SE
+            * SW
+            * NW
+            * NNE
+            * ENE
+            * ESE
+            * SSE
+            * SSW
+            * WSW
+            * WNW
+            * NNW
     '''
-    def __init__(self, **kwargs):
+    def __init__(self, r: float=0.75, **kwargs):
         super().__init__(**kwargs)
-        r = kwargs.get('r', 0.75)
         self.segments.append(SegmentCircle((r, 0), r))
         self.params['lblloc'] = 'center'
         self.params['lblofst'] = 0
@@ -225,3 +329,6 @@ class Connect(Element):
         self.anchors['WNW'] = (r-r675, -r225)
         self.anchors['WSW'] = (r+r675, -r225)
         self.anchors['SSW'] = (r+r225, -r675)
+
+
+Circle = Connect

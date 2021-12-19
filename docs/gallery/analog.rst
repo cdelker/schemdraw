@@ -185,7 +185,7 @@ Also the use of newline characters inside resistor and capacitor labels.
 
 .. jupyter-execute::
     :code-below:
-    
+
     d = schemdraw.Drawing(inches_per_unit=.5, unit=3)
     d += (D1 := elm.Diode().theta(-45))
     d += elm.Dot()
@@ -196,13 +196,13 @@ Also the use of newline characters inside resistor and capacitor labels.
     d += (D4 := elm.Diode().theta(45))
     d += elm.Dot()
 
-    d += elm.Line().left().at(D3.end).length(d.unit/2)
+    d += elm.Line().left().at(D3.start).length(d.unit*1.5)
     d += elm.Dot(open=True)
     d += (G := elm.Gap().up().toy(D1.start).label(['–', 'AC IN', '+']))
     d += elm.Line().left().at(D4.end).tox(G.start)
     d += elm.Dot(open=True)
 
-    d += (top := elm.Line().right().at(D2.end).length(d.unit*3))
+    d += (top := elm.Line().right().at(D2.start).length(d.unit*3))
     d += (Q2 := elm.BjtNpn(circle=True).up().anchor('collector').label('Q2\n2n3055'))
     d += elm.Line().down().at(Q2.base).length(d.unit/2)
     d += (Q2b := elm.Dot())
@@ -218,7 +218,7 @@ Also the use of newline characters inside resistor and capacitor labels.
     d += (G := elm.Ground())
     d += elm.Line().left()
     d += elm.Dot()
-    d += elm.Capacitor(polar=True).up().reverse().label('C2\n100 μF\n50V', loc='bot')
+    d += elm.Capacitor(polar=True).up().reverse().label('C2\n100$\mu$F\n50V', loc='bot')
     d += elm.Dot()
     d.push()
     d += elm.Line().right()
@@ -228,19 +228,19 @@ Also the use of newline characters inside resistor and capacitor labels.
 
     d.move(dx=-d.unit, dy=0)
     d += elm.Dot()
-    d += elm.Capacitor(polar=True).down().toy(G.start).flip().label('C1\n 1000 μF\n50V')
+    d += elm.Capacitor(polar=True).down().toy(G.start).flip().label('C1\n 1000$\mu$F\n50V')
     d += elm.Dot()
     d += elm.Line().left().at(G.start).tox(D4.start)
     d += elm.Line().up().toy(D4.start)
 
-    d += elm.Resistor().right().at(Q2b.center).label('R2').label('56 Ω 1W', loc='bot')
+    d += elm.Resistor().right().at(Q2b.center).label('R2').label('56$\Omega$ 1W', loc='bot')
     d += elm.Dot()
     d.push()
     d += elm.Line().up().toy(top.start)
     d += elm.Dot()
     d += elm.Line().left().tox(Q2.emitter)
     d.pop()
-    d += elm.Capacitor(polar=True).down().toy(G.start).label('C3\n470 μF\n50V', loc='bot')
+    d += elm.Capacitor(polar=True).down().toy(G.start).label('C3\n470$\mu$F\n50V', loc='bot')
     d += elm.Dot()
     d += elm.Line().left().tox(G.start).hold()
     d += elm.Line().right()

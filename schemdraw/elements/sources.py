@@ -34,7 +34,7 @@ class SourceI(Source):
     ''' Current source '''
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
-        self.segments.append(Segment([(.25, 0), (.75, 0)], arrow='end'))
+        self.segments.append(Segment([(.25, 0), (.75, 0)], arrow='->'))
 
 
 class SourceSin(Source):
@@ -105,7 +105,7 @@ class SourceControlledI(SourceControlled):
     ''' Controlled current source '''
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
-        self.segments.append(Segment([(.25, 0), (.75, 0)], arrow='end'))
+        self.segments.append(Segment([(.25, 0), (.75, 0)], arrow='->'))
 
 
 batw = resheight*.75
@@ -146,9 +146,9 @@ class Solar(Source):
                                       (cellx+.2, -cellw2)]))
         self.segments.append(Segment([(0, 0), (cellx, 0), gap,
                                       (cellx+.2, 0), (1, 0)]))
-        self.segments.append(Segment([(1.1, .9), (.8, .6)], arrow='end',
+        self.segments.append(Segment([(1.1, .9), (.8, .6)], arrow='->',
                                           arrowwidth=.16, arrowlength=.2))
-        self.segments.append(Segment([(1.3, .7), (1, .4)], arrow='end',
+        self.segments.append(Segment([(1.3, .7), (1, .4)], arrow='->',
                                           arrowwidth=.16, arrowlength=.2))
 
 

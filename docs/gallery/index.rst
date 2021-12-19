@@ -12,6 +12,7 @@ Because many examples in the gallery make use of the walrus operator (`:=`), Pyt
    analog
    opamp
    logicgate
+   timing
    solidstate
    ic
    signalproc

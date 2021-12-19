@@ -331,11 +331,11 @@ class Figure:
         # and adjust points for line so they don't extrude from arrows.
         lpoints = [p0 for p0 in p]
         if arrow is not None:
-            if arrow in ['start', 'both']:
+            if '<' in arrow:
                 th1 = math.atan2(p[0].y - p[1].y, p[0].x - p[1].x)
                 lpoints[0] = Point((p[0].x - math.cos(th1) * arrowlength/2,
                                     p[0].y - math.sin(th1) * arrowlength/2))
-            if arrow in ['end', 'both']:
+            if '>' in arrow:
                 th2 = math.atan2(p[-1].y - p[-2].y, p[-1].x - p[-2].x)
                 lpoints[-1] = Point((p[-1].x - math.cos(th2) * arrowlength/2,
                                     p[-1].y - math.sin(th2) * arrowlength/2))
@@ -355,12 +355,12 @@ class Figure:
 
         if arrow is not None:
             # Note: using untransformed bezier control points here
-            if arrow in ['start', 'both']:
+            if '<' in arrow:
                 delta = p[0] - p[1]
                 theta = math.degrees(math.atan2(delta.y, delta.x))
                 self.arrow(p[0], theta, color=color, lw=1, zorder=zorder,
                            clip=clip, arrowlength=arrowlength, arrowwidth=arrowwidth)
-            if arrow in ['end', 'both']:
+            if '>' in arrow:
                 delta = p[-1] - p[-2]
                 theta = math.degrees(math.atan2(delta.y, delta.x))
                 self.arrow(p[-1], theta, color=color, lw=1, zorder=zorder,
@@ -442,7 +442,7 @@ class Figure:
             th2 = math.degrees(math.atan2((width/height)*y, x))
             x, y = math.cos(math.radians(theta1)), math.sin(math.radians(theta1))
             th1 = math.degrees(math.atan2((width/height)*y, x))
-            if arrow in ['ccw', 'end', 'both']:
+            if arrow in ['ccw', 'end', 'both'] or '>' in arrow:
                 dx = math.cos(math.radians(th2+90)) * arrowlength
                 dy = math.sin(math.radians(th2+90)) * arrowlength
                 xy = Point((center[0] + width/2*math.cos(math.radians(th2)),
@@ -453,7 +453,7 @@ class Figure:
                 self.arrow(xy+darrow, theta, arrowwidth=arrowwidth,
                            arrowlength=arrowlength, color=color, lw=1, zorder=zorder)
 
-            if arrow in ['cw', 'start', 'both']:
+            if arrow in ['cw', 'start', 'both'] or '<' in arrow:
                 dx = -math.cos(math.radians(th1+90)) * arrowlength
                 dy = -math.sin(math.radians(th1+90)) * arrowlength
                 xy = Point((center[0] + width/2*math.cos(math.radians(th1)),

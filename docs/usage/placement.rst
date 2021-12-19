@@ -9,8 +9,8 @@
 .. _placement:
 
 
-Adding circuit elements
-=======================
+Usage
+=====
 
 There are two general categories of circuit elements. Two-terminal elements, such as Resistors and Capacitors, are subclasses of :py:class:`schemdraw.elements.Element2Term` and have additional positioning methods that automatically extending the leads of the two terminals to fit a desired length.
 The standard :py:class:`schemdraw.elements.Element` class applies to all elements regardless of the number of terminals, but the leads will not extend. These include, for example, Transistors, Opamps, and Grounds.

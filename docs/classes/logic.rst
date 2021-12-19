@@ -11,3 +11,5 @@ Logic Gates
 .. autoclass:: schemdraw.logic.table.Table
 
 .. autoclass:: schemdraw.logic.kmap.Kmap
+
+.. autoclass:: schemdraw.logic.timing.TimingDiagram

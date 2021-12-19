@@ -56,28 +56,21 @@ class OrthoLines(Element):
         dx = to[0] - xy[0]
         dy = to[1] - xy[1]
 
-        if dy == 0:
+        if abs(dy) < .05:
             for i in range(n):
                 y = -i*ndy
-                self.segments.append(Segment([(0, y), (dx, y+dy)]))
+                self.segments.append(Segment([(0, y), (dx, y)]))
         else:
             # x0 is first line to go up
             if xstart is not None:
-                self.params['lblalign'] = ('left', 'center')
                 if dy > 0:
                     x0 = dx*xstart
-                    self.anchors['mid'] = (dx*xstart+.15, dy/2)
                 else:
                     x0 = dx*xstart - ndy - ndy*(n-1)*xstart
-                    self.anchors['mid'] = (dx*xstart-ndy*2+.15, dy/2)
                     # xstart=0 --> -ndy; xstart=1 --> dx-ndy*n
             elif dx > 0:
-                self.anchors['mid'] = (dx/2+.15, dy/2)
-                self.params['lblalign'] = ('left', 'center')
                 x0 = dx/2 - (ndy*(n-1)/2)
             else:
-                self.anchors['mid'] = (dx/2-.15, dy/2)
-                self.params['lblalign'] = ('right', 'center')
                 x0 = dx/2 + (ndy*(n-1)/2)
 
             for i in range(n):
@@ -87,7 +80,6 @@ class OrthoLines(Element):
                 else:
                     x = x0 + (n-i)*ndy if dx > 0 else x0 - (n-i)*ndy
                 self.segments.append(Segment([(0, y), (x, y), (x, y+dy), (dx, y+dy)], arrow=arrow))
-        self.params['lblloc'] = 'mid'
         return super()._place(dwgxy, dwgtheta, **dwgparams)
 
 

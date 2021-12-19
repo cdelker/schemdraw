@@ -104,7 +104,7 @@ class Figure:
              clip: BBox=None, zorder=3) -> None:
         ''' Add text to the figure '''
         t = self.ax.text(x, y, s, transform=self.ax.transData, color=color,
-                         fontsize=fontsize, fontfamily=fontfamily,
+                         fontsize=fontsize-1.5, fontfamily=fontfamily,
                          rotation=rotation, rotation_mode=rotation_mode,
                          horizontalalignment=halign, verticalalignment=valign,
                          zorder=zorder, clip_on=True)
@@ -157,11 +157,24 @@ class Figure:
                arrow: bool=None, arrowlength: float=0.2, arrowwidth: float=0.2,
                clip: BBox=None) -> None:
         ''' Draw a cubic or quadratic bezier '''
+        # Keep original points for arrow head
+        # and adjust points for line so they don't extrude from arrows.
+        lpoints = [p0 for p0 in p]
+        if arrow is not None:
+            if '<' in arrow:
+                th1 = math.atan2(p[0].y - p[1].y, p[0].x - p[1].x)
+                lpoints[0] = util.Point((p[0].x - math.cos(th1) * arrowlength/2,
+                                         p[0].y - math.sin(th1) * arrowlength/2))
+            if '>' in arrow:
+                th2 = math.atan2(p[-1].y - p[-2].y, p[-1].x - p[-2].x)
+                lpoints[-1] = util.Point((p[-1].x - math.cos(th2) * arrowlength/2,
+                                          p[-1].y - math.sin(th2) * arrowlength/2))
+
         if len(p) == 4:
             codes = [Path.MOVETO, Path.CURVE4, Path.CURVE4, Path.CURVE4]
         else:
             codes = [Path.MOVETO, Path.CURVE3, Path.CURVE3]
-        curve = PathPatch(Path(p, codes),
+        curve = PathPatch(Path(lpoints, codes),
                           fc='none', ec=color, ls=ls, lw=lw,
                           capstyle=fix_capstyle(capstyle),
                           transform=self.ax.transData)
@@ -169,12 +182,12 @@ class Figure:
         self.addclip(curve, clip)
 
         if arrow is not None:
-            if arrow in ['start', 'both']:
+            if '<' in arrow:
                 delta = p[0] - p[1]
                 theta = math.degrees(math.atan2(delta.y, delta.x))
                 self.arrow(p[0], theta, arrowlength=arrowlength,
                             arrowwidth=arrowwidth, color=color, zorder=zorder)
-            if arrow in ['end', 'both']:
+            if '>' in arrow:
                 delta = p[-1] - p[-2]
                 theta = math.degrees(math.atan2(delta.y, delta.x))
                 self.arrow(p[-1], theta, arrowlength=arrowlength,
@@ -196,12 +209,12 @@ class Figure:
             th2 = math.degrees(math.atan2((width/height)*y, x))
             x, y = math.cos(math.radians(theta1)), math.sin(math.radians(theta1))
             th1 = math.degrees(math.atan2((width/height)*y, x))
-            if arrow == 'ccw':
+            if arrow in ['ccw', 'both'] or '>' in arrow:
                 dx = math.cos(math.radians(th2+90)) / 100
                 dy = math.sin(math.radians(theta2+90)) / 100
                 s = util.Point((center[0] + width/2*math.cos(math.radians(th2)),
                                 center[1] + height/2*math.sin(math.radians(th2))))
-            else:
+            elif arrow in ['cw', 'both'] or '<' in arrow:
                 dx = -math.cos(math.radians(th1+90)) / 100
                 dy = -math.sin(math.radians(th1+90)) / 100
 

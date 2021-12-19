@@ -10,7 +10,7 @@
 .. _integratedcircuit:
 
 Integrated Circuits
-===================
+-------------------
 
 The :py:class:`schemdraw.elements.intcircuits.Ic` class is used to make integrated circuits, multiplexers, and other black box elements. The :py:class:`schemdraw.elements.intcircuits.IcPin` class is used to define each input/output pin before adding it to the Ic.
 

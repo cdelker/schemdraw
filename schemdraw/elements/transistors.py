@@ -40,7 +40,7 @@ class NFet(Element):
         self.params['lblloc'] = 'lft'
         if bulk:
             self.segments.append(Segment([(0, -fetl-fetw/2), (fetw, -fetl-fetw/2)],
-                                         arrow='end', arrowwidth=.2))
+                                         arrow='->', arrowwidth=.2))
             self.anchors['bulk'] = (0, -fetl-fetw/2)
 
 
@@ -73,7 +73,7 @@ class PFet(Element):
         self.params['lblloc'] = 'lft'
         if bulk:
             self.segments.append(Segment([(0, -fetl-fetw/2), (fetw, -fetl-fetw/2)],
-                                         arrow='end', arrowwidth=.2))
+                                         arrow='->', arrowwidth=.2))
             self.anchors['bulk'] = (0, -fetl-fetw/2)
 
 
@@ -118,7 +118,7 @@ class JFetN(JFet):
     def __init__(self, *d, circle: bool=False, **kwargs):
         super().__init__(*d, **kwargs)
         self.segments.append(Segment([(jfetw+.1, -fetl-jfetw), (jfetw+.3, -fetl-jfetw)],
-                                     arrow='end', arrowwidth=.3, arrowlength=.2))
+                                     arrow='->', arrowwidth=.3, arrowlength=.2))
         if circle:
             self.segments.append(SegmentCircle((jfetw/2, -fetw), fetw*1.1))
 
@@ -137,7 +137,7 @@ class JFetP(JFet):
     def __init__(self, *d, circle: bool=False, **kwargs):
         super().__init__(*d, **kwargs)
         self.segments.append(Segment([(jfetw+.25, -fetl-jfetw), (jfetw, -fetl-jfetw)],
-                                     arrow='end', arrowwidth=.3, arrowlength=.2))
+                                     arrow='->', arrowwidth=.3, arrowlength=.2))
         if circle:
             self.segments.append(SegmentCircle((jfetw/2, -fetw), fetw*1.1))
 
@@ -196,7 +196,7 @@ class BjtNpn(Bjt):
     def __init__(self, *d, circle: bool=False, **kwargs):
         super().__init__(*d, circle=circle, **kwargs)
         self.segments.append(Segment([(bjt_v, -bjt_a), (bjt_emx, -bjt_emy)],
-                                     arrow='end', arrowwidth=.2))
+                                     arrow='->', arrowwidth=.2))
 
 
 class BjtPnp(Bjt):
@@ -212,7 +212,7 @@ class BjtPnp(Bjt):
     '''
     def __init__(self, *d, circle: bool=False, **kwargs):
         super().__init__(*d, circle=circle, **kwargs)
-        self.segments.append(Segment([(bjt_emx, bjt_emy), (bjt_v, bjt_a)], arrow='end', arrowwidth=.2))
+        self.segments.append(Segment([(bjt_emx, bjt_emy), (bjt_v, bjt_a)], arrow='->', arrowwidth=.2))
         self.anchors['base'] = (0, 0)
         self.anchors['collector'] = (bjt_emx, -bjt_emy-bjt_a)
         self.anchors['emitter'] = (bjt_emx, bjt_emy+bjt_a)

@@ -11,8 +11,8 @@ Customizing Elements
     from schemdraw.segments import *    
 
 
-Reusing groups of elements
---------------------------
+Grouping Elements
+-----------------
 
 If a set of circuit elements are to be reused multiple times, they can be grouped into a single element.
 Create and populate a drawing, but don't call `draw` on it.
@@ -199,7 +199,7 @@ For even more control over customizing individual pieces of an element, the para
 Matplotlib axis
 ---------------
 
-As a final customization option, remember that by default schemdraw draws everything on a Matplotlib figure.
+When using the Matplotlib backend (the default), a final customization option is to use the Matplotlib figure and add to it.
 A :py:class:`schemdraw.Figure` is returned from the `draw` method, which contains `fig` and `ax` attributes holding the Matplotlib figure.
 
 .. jupyter-execute::

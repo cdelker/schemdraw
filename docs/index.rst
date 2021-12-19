@@ -39,21 +39,15 @@ Display the results using the `draw` method.
 
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :caption: Contents:
 
    usage/start
    usage/placement   
-   usage/customizing   
-   elements/electrical
-   elements/intcircuits
-   elements/connectors
-   elements/compound
-   elements/logic 
-   elements/dsp
-   elements/flow
-   classes/index   
+   elements/elements
    gallery/index
+   usage/customizing
+   classes/index   
    changes
 
 

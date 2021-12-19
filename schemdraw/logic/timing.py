@@ -137,6 +137,7 @@ class TimingDiagram(Element):
         self.nodecolor = kwargs.pop('nodecolor', None)
         self.gridcolor = kwargs.pop('gridcolor', '#DDDDDD')
         self.edgecolor = kwargs.pop('edgecolor', 'blue')
+        self.grid = kwargs.pop('grid', True)
         self.kwargs = kwargs
 
         signals = self.wave.get('signal', [])  # type: ignore
@@ -146,7 +147,8 @@ class TimingDiagram(Element):
 
         height = (self.yheight+self.ygap)*len(signals_flat)
         periods = max(len(w.get('wave', [])) for w in signals_flat)
-        self._drawgrid(periods, height)
+        if self.grid:
+            self._drawgrid(periods, height)
 
         # phase shifts that go off screen will be clipped by this rect
         clipbox = BBox(0, self.yheight, periods*self.yheight*2*self.hscale, -height)
@@ -248,8 +250,52 @@ class TimingDiagram(Element):
             x += periods*period
             i = k
 
+#    def _drawtimelabels(self, signal, y0):
+#        ''' Draw time labels above/below the wave
+#
+#            Args:
+#                signal: Dictionary defining the signal to draw
+#                y0: Vertical position
+#        '''
+#        caplen = .1
+#        labels = signal.get('labels', [])
+#        period = 2*self.yheight*signal.get('period', 1) * self.hscale
+#
+#        for label in labels:
+#
+#            labelstr = label.get('label', '')
+#            labelpos = label.get('position', None)
+#            if labelpos == 'above':
+#                y = y0 + self.yheight + caplen*2
+#            elif labelpos == 'below':
+#                y = y0 - caplen*2
+#            else:
+#                y = y0 + self.yheight/2
+#
+#            p0 = Point((label.get('from', 0)*period + self.risetime/2, y))
+#            pn = Point((label.get('to', 1)*period + self.risetime/2, y))
+#            if labelstr:
+#                # Break the line around text
+#                w, h, _ = text_size(labelstr, size=self.nodesize)
+#                w, h = w*PTS_TO_UNITS*2, h*PTS_TO_UNITS*2
+#                center = Point(((p0.x+pn.x)/2, y))
+#                pa = (center.x - w/2, y)
+#                pb = (center.x + w/2, y)
+#                self.segments.append(Segment((p0, pa), lw=1, color=self.edgecolor))
+#                self.segments.append(Segment((pb, pn), lw=1, color=self.edgecolor))
+#                self.segments.append(SegmentText(center, labelstr, fontsize=self.nodesize,
+#                                                 color=self.nodecolor, align=('center', 'center'),
+#                                                 zorder=4))
+#            else:    
+#                self.segments.append(Segment((p0, pn), lw=1, color=self.edgecolor))
+#
+#            cap1 = [(p0.x, y + caplen), (p0.x, y - caplen)]
+#            cap2 = [(pn.x, y + caplen), (pn.x, y - caplen)]
+#            self.segments.append(Segment(cap1, lw=1, color=self.edgecolor))
+#            self.segments.append(Segment(cap2, lw=1, color=self.edgecolor))
+        
     def _drawasync(self, signal, y0):
-        ''' Draw asyncrhonous wave
+        ''' Draw asynchronous wave
 
             Args:
                 signal: Dictionary defining the signal to draw
@@ -332,51 +378,89 @@ class TimingDiagram(Element):
     def _drawedges(self):
         edges = self.wave.get('edge', [])  # type: ignore
         chrrad = self.nodesize / 60
+        caplen = .1
+        period = 2*self.yheight * self.hscale
 
         for edge in edges:
             label = ''
             if ' ' in edge:
                 edge, label = edge.split(maxsplit=1)
-            node1 = edge[0]
-            node2 = edge[-1]
-            if f'node_{node1}' not in self.anchors:
-                raise ValueError(f'Node {node1} not defined for edge')
-            if f'node_{node2}' not in self.anchors:
-                raise ValueError(f'Node {node2} not defined for edge')
-            
-            p0 = Point(self.anchors[f'node_{node1}'])
-            pn = Point(self.anchors[f'node_{node2}'])
-            
+            style = re.findall(r'{(.*)}', edge)
+            edge = re.sub(r'{(.*)}', '', edge)
+            nodes = re.findall(r'\[(.+?)\]', edge)
+            if len(nodes) == 0:
+                # Single letter node names, WaveDrom style
+                mode = edge[1:-1]
+                p0 = Point(self.anchors[f'node_{edge[0]}'])
+                pn = Point(self.anchors[f'node_{edge[-1]}'])
+
+            else:
+                # Extended node naming
+                # [WaveNumber:Xposition]
+                assert len(nodes) == 2
+                mode = re.subn(r'\[(.+?)\]', '', edge)[0]
+                endpoints = []
+                for node in nodes:
+                    nodewave, nodet = node.split(':')
+                    nodet = float(nodet)  #periods into wave
+                    ofst = self.yheight/2
+                    if '^' in nodewave:
+                        ofst = self.yheight + caplen*2
+                    elif 'v' in nodewave:
+                        ofst = -caplen*2
+                    nodewave = nodewave.replace('^', '').replace('v', '')
+                    wavenum = int(nodewave)
+                    endpoints.append(
+                        Point((nodet*period+self.risetime/2,
+                               -wavenum*(self.yheight + self.ygap) + ofst)))
+                p0, pn = endpoints
+
+            color = self.edgecolor
+            ls = '-'
+            if style:
+                style = style[0].split(',')
+                color = style[0]
+                ls = '-' if len(style) == 1 else style[1]
+
+#            node1 = edge[0]
+#            node2 = edge[-1]
+#            if f'node_{node1}' not in self.anchors:
+#                raise ValueError(f'Node {node1} not defined for edge')
+#            if f'node_{node2}' not in self.anchors:
+#                raise ValueError(f'Node {node2} not defined for edge')
+#            
+#            p0 = Point(self.anchors[f'node_{node1}'])
+#            pn = Point(self.anchors[f'node_{node2}'])
+#            
             if '<' in edge and '>' in edge:
-                arrow = 'both'
+                arrow = '<>'
             elif '<' in edge:
-                arrow = 'start'
+                arrow = '>'
             elif '>' in edge:
-                arrow = 'end'
+                arrow = '<'
             else:
                 arrow = None
 
-            center = Point((0, 0))  ### REMOVE
-            mode = edge[1:-1].strip('<>')
+            mode = mode.strip('<>')
+            center = Point(((p0.x+pn.x)/2, (p0.y+pn.y)/2))
             if mode == '-':  # Straight line
                 center = Point(((p0.x+pn.x)/2, (p0.y+pn.y)/2))
                 th0 = math.atan2((pn.y-p0.y), (pn.x-p0.x))
                 p0 = Point((p0.x + chrrad * math.cos(th0), p0.y + chrrad * math.sin(th0)))
                 pn = Point((pn.x - chrrad * math.cos(th0), pn.y - chrrad * math.sin(th0)))
-                self.segments.append(Segment([pn, p0], lw=1, color=self.edgecolor,
+                self.segments.append(Segment([pn, p0], lw=1, ls=ls, color=color,
                                              arrow=arrow, zorder=3))
 
             elif mode == '+':  # Straight line with endcaps, full length
                 center = Point(((p0.x+pn.x)/2, (p0.y+pn.y)/2))
-                caplen = .1
                 th0 = math.atan2(-(pn.x-p0.x), (pn.y-p0.y))
-                self.segments.append(Segment((p0, pn), lw=1, color=self.edgecolor))
+                self.segments.append(Segment((p0, pn), lw=1, ls=ls, color=color))
                 cap1 = [(p0.x + caplen*math.cos(th0), p0.y + caplen*math.sin(th0)),
                         (p0.x - caplen*math.cos(th0), p0.y - caplen*math.sin(th0))]
                 cap2 = [(pn.x + caplen*math.cos(th0), pn.y + caplen*math.sin(th0)),
                         (pn.x - caplen*math.cos(th0), pn.y - caplen*math.sin(th0))]
-                self.segments.append(Segment(cap1, lw=1, color=self.edgecolor))
-                self.segments.append(Segment(cap2, lw=1, color=self.edgecolor))
+                self.segments.append(Segment(cap1, lw=1, color=color))
+                self.segments.append(Segment(cap2, lw=1, color=color))
 
             elif mode == '|-':
                 center = Point((p0.x, (p0.y+pn.y)/2))
@@ -385,7 +469,7 @@ class TimingDiagram(Element):
                 p0 = p0 - Point((0, chrrad*dy))
                 pn = pn - Point((chrrad*dx, 0))
                 p1 = Point((p0.x, pn.y))
-                self.segments.append(Segment((p0, p1, pn), lw=1, color=self.edgecolor, zorder=3, arrow=arrow))
+                self.segments.append(Segment((p0, p1, pn), lw=1, ls=ls, color=color, zorder=3, arrow=arrow))
 
             elif mode == '-|':
                 center = Point((pn.x, (p0.y+pn.y)/2))
@@ -394,7 +478,7 @@ class TimingDiagram(Element):
                 p0 = p0 - Point((chrrad*dx, 0))
                 pn = pn - Point((0, chrrad*dy))
                 p1 = Point((pn.x, p0.y))
-                self.segments.append(Segment((p0, p1, pn), lw=1, color=self.edgecolor, arrow=arrow, zorder=3))
+                self.segments.append(Segment((p0, p1, pn), lw=1, ls=ls, color=color, arrow=arrow, zorder=3))
 
             elif mode == '-|-':
                 center = (p0+pn)/2
@@ -403,9 +487,8 @@ class TimingDiagram(Element):
                 p1 = Point((center.x, p0.y))
                 p2 = Point((center.x, pn.y))
                 pn = pn - Point((chrrad*dx, 0))
-                self.segments.append(Segment((p0, p1, p2, pn), lw=1, color=self.edgecolor, arrow=arrow, zorder=3))
-                
-                
+                self.segments.append(Segment((p0, p1, p2, pn), lw=1, ls=ls, color=color, arrow=arrow, zorder=3))
+
             elif mode == '~':  # S-curve, start and end horizontally
                 center = Point(((p0.x+pn.x)/2, (p0.y+pn.y)/2))
                 p0 = p0 + Point((chrrad, 0))
@@ -413,8 +496,8 @@ class TimingDiagram(Element):
                 dx = p3.x - p0.x
                 p1 = p0 + Point((dx*.6, 0))
                 p2 = p3 - Point((dx*.6, 0))
-                self.segments.append(SegmentBezier([p0, p1, p2, p3], lw=1, color=self.edgecolor,
-                                                   arrow=arrow, zorder=3))
+                self.segments.append(SegmentBezier([p0, p1, p2, p3], lw=1, ls=ls,
+                                                   color=color, arrow=arrow, zorder=3))
 
             elif mode == '-~':  # C curve, horizontal at start
                 center = Point((p0.x+0.8*(pn.x-p0.x), p0.y + (pn.y-p0.y)/2))
@@ -424,7 +507,7 @@ class TimingDiagram(Element):
                 th2 = math.atan2((p1.y-pn.y), (p1.x-pn.x))
                 p0 = Point((p0.x + chrrad * math.cos(th0), p0.y + chrrad * math.sin(th0)))
                 pn = Point((pn.x - chrrad * math.cos(th0), pn.y + chrrad * math.sin(th2)))
-                self.segments.append(SegmentBezier([p0, p1, pn], lw=1, color=self.edgecolor,
+                self.segments.append(SegmentBezier([p0, p1, pn], lw=1, ls=ls, color=color,
                                                     arrow=arrow, zorder=3))
 
             elif mode == '~-':
@@ -435,20 +518,21 @@ class TimingDiagram(Element):
                 th2 = math.atan2((p1.y-pn.y), (p1.x-pn.x))
                 p0 = Point((p0.x + chrrad * math.cos(th0), p0.y + chrrad * math.sin(th0)))
                 pn = Point((pn.x + chrrad * math.cos(th2), pn.y + chrrad * math.sin(th2)))
-                self.segments.append(SegmentBezier([p0, p1, pn], lw=1, color=self.edgecolor,
+                self.segments.append(SegmentBezier([p0, p1, pn], lw=1, ls=ls, color=color,
                                                     arrow=arrow, zorder=3))
 
             
             if label:
                 w, h, _ = text_size(label, size=self.nodesize)
-                w, h = w*PTS_TO_UNITS*2, h*PTS_TO_UNITS*2
+                w, h = w*PTS_TO_UNITS*1.5, h*PTS_TO_UNITS*1.5
                 self.segments.append(SegmentPoly([(center.x-w/2, center.y-h/2),
                                                   (center.x-w/2, center.y+h/2),
-                                      (center.x+w/2, center.y+h/2), (center.x+w/2, center.y-h/2)],
+                                                  (center.x+w/2, center.y+h/2),
+                                                  (center.x+w/2, center.y-h/2)],
                                      color='none', fill='bg', zorder=4))
                 self.segments.append(SegmentText(center, label, fontsize=self.nodesize,
                                                  color=self.nodecolor, align=('center', 'center'),
-                                                zorder=4))
+                                                 zorder=4))
 
     def _drawgroups(self, signals, labelwidth):
         ''' Draw group labels

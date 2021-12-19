@@ -240,7 +240,7 @@ class SwitchRotary(Element):
             if i == arrowcontact:
                 arrowx = arrowlen * math.cos(t)
                 arrowy = arrowlen * math.sin(t)
-                self.segments.append(Segment([(0, 0), (arrowx, arrowy)], arrow='end', zorder=2))
+                self.segments.append(Segment([(0, 0), (arrowx, arrowy)], arrow='->', zorder=2))
 
 
 class SwitchDIP(Element):

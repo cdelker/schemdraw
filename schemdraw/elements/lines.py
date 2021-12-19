@@ -43,8 +43,8 @@ class Arrow(Line):
         result = super()._place(xy, theta, **dwgparams)
         line = self.segments[0]  # The base line gets arrowheads
         reverse = self._cparams.get('reverse')
-        arrow = 'end' if not reverse else 'start'
-        arrow = 'both' if self.double else arrow
+        arrow = '->' if not reverse else '<-'
+        arrow = '<->' if self.double else arrow
         line.arrow = arrow
         return result
 
@@ -113,7 +113,7 @@ class Arrowhead(Element):
     def __init__(self, *d, headwidth: float=.15, headlength: float=.2, **kwargs):
         super().__init__(*d, **kwargs)
         self.segments.append(Segment([
-            (-headlength, 0), (0, 0)], arrowwidth=headwidth, arrowlength=headlength, arrow='end'))
+            (-headlength, 0), (0, 0)], arrowwidth=headwidth, arrowlength=headlength, arrow='->'))
         self.anchors['start'] = (0, 0)
         self.anchors['center'] = (0, 0)
         self.anchors['end'] = (0, 0)
@@ -224,7 +224,7 @@ class Arc3(Element):
             k: Control point factor. Higher k means tighter curve.
             th1: Angle at which the arc leaves start point
             th2: Angle at which the arc leaves end point
-            arrow: 'start', 'end', or 'both' to draw an arrowhead
+            arrow: arrowhead specifier, such as '->', '<-', or '<->'
             arrowlength: Length of arrowhead
             arrowwidth: Width of arrowhead
 
@@ -301,7 +301,7 @@ class ArcZ(Arc3):
 
         Args:
             k: Control point factor. Higher k means tighter curve.
-            arrow: 'start', 'end', or 'both' to draw an arrowhead
+            arrow: arrowhead specifier, such as '->', '<-', or '<->'
             arrowlength: Length of arrowhead
             arrowwidth: Width of arrowhead
     '''
@@ -319,7 +319,7 @@ class ArcN(Arc3):
 
         Args:
             k: Control point factor. Higher k means tighter curve.
-            arrow: 'start', 'end', or 'both' to draw an arrowhead
+            arrow: arrowhead specifier, such as '->', '<-', or '<->'
             arrowlength: Length of arrowhead
             arrowwidth: Width of arrowhead
     '''
@@ -336,7 +336,7 @@ class ArcLoop(Element):
 
         Args:
             radius: Radius of the arc
-            arrow: 'start', 'end', or 'both' to draw an arrowhead
+            arrow: arrowhead specifier, such as '->', '<-', or '<->'
             arrowlength: Length of arrowhead
             arrowwidth: Width of arrowhead
 
@@ -405,6 +405,14 @@ class ArcLoop(Element):
         self.anchors['TR'] = Point((max(x), max(y)))
         self.params['lblloc'] = 'mid'
         self.params['drop'] = to
+        valign = 'bottom'
+        halign = 'left'
+        if y[mid] < y[0]:
+            valign = 'top'
+            self.params['lblofst'] = -.1
+        if x[mid] < x[0] and x[mid] < x[-1]:
+            halign = 'right'
+        self.params['lblalign'] = (halign, valign)
         return super()._place(dwgxy, dwgtheta, **dwgparams)
 
 
@@ -476,7 +484,7 @@ class CurrentLabel(Element):
         if reverse:
             a, b = b, a
 
-        self.segments.append(Segment((a, b), arrow='end', arrowwidth=.2, arrowlength=.3))
+        self.segments.append(Segment((a, b), arrow='->', arrowwidth=.2, arrowlength=.3))
 
     def at(self, xy: XY | Element) -> 'Element':  # type: ignore[override]
         ''' Specify CurrentLabel position.
@@ -530,7 +538,7 @@ class CurrentLabelInline(Element):
             x = -x
             dx = -dx
 
-        self.segments.append(Segment(((x, 0), (x+dx, 0)), arrow='end',
+        self.segments.append(Segment(((x, 0), (x+dx, 0)), arrow='->',
                                      arrowwidth=headwidth, arrowlength=headlength))
 
     def at(self, xy: XY | Element) -> 'Element':  # type: ignore[override]

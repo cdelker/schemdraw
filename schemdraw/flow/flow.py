@@ -95,6 +95,8 @@ class Terminal(RoundBox):
     def __init__(self, w: float=3, h: float=1.25, **kwargs):
         super().__init__(w=w, h=h, cornerradius=h/2, **kwargs)
         self.params['drop'] = self.anchors['S']
+        self.params['droptheta'] = -90
+        self.params['anchor'] = 'N'
 
         
 class Subroutine(Box):
@@ -284,7 +286,9 @@ class StateEnd(Connect):
         super().__init__(r, **kwargs)
         self.segments.append(SegmentCircle((r, 0), r-dr))
 
-        
+
+Process = Box
+RoundProcess = RoundBox
 Start = Terminal
 Circle = Connect
 State = Connect

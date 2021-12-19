@@ -115,6 +115,13 @@ class Element:
         self._userparams['theta'] = theta
         return self
 
+    def drop(self, drop: Union[str, Point]) -> 'Element':
+        ''' Set the drop position - where to leave the current drawing position after
+            placing this element
+        '''
+        self._userparams['drop'] = drop
+        return self
+
     def at(self, xy: XY | tuple['Element', str]) -> 'Element':
         ''' Set the element xy position
 
@@ -357,15 +364,21 @@ class Element:
         self.absanchors['xy'] = self.transform.transform((0, 0))
 
         drop = self._cparams.get('drop', None)
-        if drop is None or not self._cparams.get('move_cur', True):
+        if drop in self.anchors:
+            # User specified as anchor position
+            self.absdrop = self.transform.transform(self.anchors[drop]), theta
+        elif drop is not None and self._cparams.get('move_cur', True):            
+            if self.params.get('droptheta', None):
+                # Element-specified drop angle
+                self.absdrop = self.transform.transform(drop), self.params.get('droptheta')
+            elif self.params.get('theta', None) == 0:
+                # Element-specified theta of 0, don't change theta
+                self.absdrop = self.transform.transform(drop), dwgtheta
+            else:
+                self.absdrop = self.transform.transform(drop), theta
+            
+        else:  # drop is None:
             self.absdrop = Point(dwgxy), dwgtheta
-        elif self.params.get('droptheta', None):
-            self.absdrop = self.transform.transform(drop), self.params.get('droptheta')
-        elif self.params.get('theta', None) == 0:
-            # Element def specified theta = 0, don't change
-            self.absdrop = self.transform.transform(drop), dwgtheta
-        else:
-            self.absdrop = self.transform.transform(drop), theta
         return self.absdrop
 
     def get_bbox(self, transform=False, includetext=True):
@@ -499,28 +512,28 @@ class Element:
 
             if loc and loc in self.anchors:
                 x1, y1, x2, y2 = self.get_bbox(includetext=False)
-                if (math.isclose(self.anchors[loc][0], x1, abs_tol=.3) or
-                   math.isclose(self.anchors[loc][0], x2, abs_tol=.3) or
-                   math.isclose(self.anchors[loc][1], y1, abs_tol=.3) or
-                   math.isclose(self.anchors[loc][1], y2, abs_tol=.3)):
+                if (math.isclose(self.anchors[loc][0], x1, abs_tol=.15) or
+                   math.isclose(self.anchors[loc][0], x2, abs_tol=.15) or
+                   math.isclose(self.anchors[loc][1], y1, abs_tol=.15) or
+                   math.isclose(self.anchors[loc][1], y2, abs_tol=.15)):
                     # Anchor is on an edge
                     dofst = self._cparams.get('lblofst', .1)
 
                     alignH: Halign
                     alignV: Valign
-                    if math.isclose(self.anchors[loc][0], x1, abs_tol=.3):
+                    if math.isclose(self.anchors[loc][0], x1, abs_tol=.15):
                         alignH = 'right'
                         ofstx = -dofst
-                    elif math.isclose(self.anchors[loc][0], x2, abs_tol=.3):
+                    elif math.isclose(self.anchors[loc][0], x2, abs_tol=.15):
                         alignH = 'left'
                         ofstx = dofst
                     else:
                         alignH = 'center'
                         ofstx = 0
-                    if math.isclose(self.anchors[loc][1], y1, abs_tol=.3):
+                    if math.isclose(self.anchors[loc][1], y1, abs_tol=.15):
                         alignV = 'top'
                         ofsty = -dofst
-                    elif math.isclose(self.anchors[loc][1], y2, abs_tol=.3):
+                    elif math.isclose(self.anchors[loc][1], y2, abs_tol=.15):
                         alignV = 'bottom'
                         ofsty = dofst
                     else:

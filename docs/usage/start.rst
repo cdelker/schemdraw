@@ -169,8 +169,9 @@ Alternatively, use the SVG backend (see below).
 Backends
 --------
 
-By default, all schematics are drawn on a Matplotlib axis. Starting in version 0.9, schematics can also be drawn on a new experimental
-SVG image backend. Similar to Matplotlib's backend behavior, the SVG backend can be used for all drawings by calling:
+By default, all schematics are drawn on a Matplotlib axis.
+Schematics can also be drawn on directly to an SVG image backend.
+Similar to Matplotlib's backend behavior, the SVG backend can be used for all drawings by calling:
 
 .. code-block:: python
 

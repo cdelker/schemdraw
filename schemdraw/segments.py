@@ -88,7 +88,7 @@ class Segment:
             capstyle: Capstyle for the segment: 'butt', 'round', 'square', ('projecting')
             joinstyle: Joinstyle for the segment: 'round', 'miter', or 'bevel'
             fill: Color to fill if path is closed
-            arrow: Draw arrowhead at 'start', 'end', or 'both'
+            arrow: Arrowhead specifier, such as '->', '<-', or '<->'
             arrowwidth: Width of arrowhead
             arrowlength: Length of arrowhead
             zorder: Z-order for segment
@@ -154,7 +154,8 @@ class Segment:
     def doreverse(self, centerx: float) -> None:
         ''' Reverse the path (flip horizontal about the center of the path) '''
         self.path = [util.mirrorx(p, centerx) for p in self.path[::-1]]
-        self.arrow = {'start': 'end', 'end': 'start'}.get(self.arrow, self.arrow)
+        if self.arrow:
+            self.arrow = self.arrow.translate(self.arrow.maketrans('<>', '><'))
 
     def doflip(self) -> None:
         ''' Vertically flip the element '''
@@ -187,12 +188,12 @@ class Segment:
                 fill = color
 
         # Shrink line a bit so it doesn't extrude through arrowhead
-        if self.arrow in ['start', 'both']:
+        if self.arrow and '<' in self.arrow:
             delta = path[1] - path[0]
             th = math.atan2(delta.y, delta.x)
             linepath[0] = Point((linepath[0].x + self.arrowlength * math.cos(th),
                              linepath[0].y + self.arrowlength * math.sin(th)))
-        if self.arrow in ['end', 'both']:
+        if self.arrow and '>' in self.arrow:
             delta = path[-1] - path[-2]
             th = math.atan2(delta.y, delta.x)
             linepath[-1] = Point((linepath[-1].x - self.arrowlength * math.cos(th),
@@ -204,11 +205,11 @@ class Segment:
                  ls=ls, lw=lw, capstyle=capstyle, joinstyle=joinstyle,
                  clip=self.clip, zorder=zorder)
 
-        if self.arrow in ['start', 'both']:
+        if self.arrow and '<' in self.arrow:
             theta = math.degrees(math.atan2(path[0].y-path[1].y, path[0].x-path[1].x))
             fig.arrow(path[0], theta, color=color, zorder=zorder, clip=self.clip,
                       arrowlength=self.arrowlength, arrowwidth=self.arrowwidth, lw=1)
-        if self.arrow in ['end', 'both']:
+        if self.arrow and '>' in self.arrow:
             theta = math.degrees(math.atan2(path[-1].y-path[-2].y, path[-1].x-path[-2].x))
             fig.arrow(path[-1], theta, color=color, zorder=zorder, clip=self.clip,
                      arrowlength=self.arrowlength, arrowwidth=self.arrowwidth, lw=1)
@@ -304,7 +305,7 @@ class SegmentText:
             elif self.align[1] == 'top':
                 y -= h
 
-        return BBox(x-.1, y-.1, x+w+.2, y+h+.2)
+        return BBox(x-.2, y-.2, x+w+.4, y+h+.4)
 
     def draw(self, fig, transform, **style) -> None:
         ''' Draw the segment
@@ -554,7 +555,7 @@ class SegmentBezier:
                  lw: float=None,
                  ls: Linestyle=None,
                  capstyle: Capstyle=None,
-                 arrow: Arcdirection=None,
+                 arrow: str=None,
                  arrowlength: float=.25,
                  arrowwidth: float=.2,
                  clip: BBox=None,
@@ -573,7 +574,8 @@ class SegmentBezier:
     def doreverse(self, centerx: float) -> None:
         ''' Reverse the path (flip horizontal about the centerx point) '''
         self.p = [util.mirrorx(p, centerx) for p in self.p]
-        self.arrow = {'start': 'end', 'end': 'start', 'both': 'both'}.get(self.arrow, None)  # type: ignore
+        if self.arrow:
+            self.arrow = self.arrow.translate(self.arrow.maketrans('<>', '><'))
 
     def doflip(self) -> None:
         ''' Vertically flip the element '''

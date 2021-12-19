@@ -1,5 +1,5 @@
-Logic Gates
------------    
+Digital Logic
+-------------  
 
 .. jupyter-execute::
     :hide-code:

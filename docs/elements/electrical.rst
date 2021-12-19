@@ -1,7 +1,7 @@
 .. _electrical:
 
-Basic Circuit Elements
-======================
+Basic Elements
+==============
 
 See :ref:`elecelements` for complete class definitions for these elements.
 
@@ -42,8 +42,8 @@ See :ref:`elecelements` for complete class definitions for these elements.
         return d
 
 
-Two-terminal Elements
----------------------
+Two-terminal
+------------
 
 Two-terminal devices subclass :py:class:`schemdraw.elements.Element2Term`, and have leads that will be extended to make the element the desired length depending on the arguments.
 All two-terminal elements define `start`, `end`, and `center` anchors for placing, and a few define other anchors as shown in blue in the tables below.
@@ -131,7 +131,7 @@ Diodes
 
 
 Miscellaneous
-^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^
 
 .. jupyter-execute::
     :hide-code:
@@ -179,8 +179,8 @@ Lines and Arrows
     drawElements(elmlist, cols=2)
 
 
-Single-Terminal Elements
-------------------------
+Single-Terminal
+---------------
 
 Single terminal elements are drawn about a single point, and do not move the current drawing position.
 

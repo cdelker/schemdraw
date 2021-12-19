@@ -157,7 +157,7 @@ class AudioJack(Element):
                     (0, tipy-swdy), radius, fill=fill, zorder=4))
             self.segments.append(Segment(
                 [(0, tipy-swdy), (-swlen, tipy-swdy)]))
-            self.segments.append(Segment([(-swlen, tipy-swdy), (-swlen, tipy)], arrow='end'))
+            self.segments.append(Segment([(-swlen, tipy-swdy), (-swlen, tipy)], arrow='->'))
             self.anchors['tipswitch'] = (0, tipy-swdy)
 
         if ring and ringswitch:
@@ -166,5 +166,5 @@ class AudioJack(Element):
                     (0, ringy+swdy), radius, fill=fill, zorder=4))
             self.segments.append(Segment(
                 [(0, ringy+swdy), (-swlen, ringy+swdy)]))
-            self.segments.append(Segment([(-swlen, ringy+swdy), (-swlen, ringy)], arrow='end'))
+            self.segments.append(Segment([(-swlen, ringy+swdy), (-swlen, ringy)], arrow='->'))
             self.anchors['ringswitch'] = (0, ringy+swdy)

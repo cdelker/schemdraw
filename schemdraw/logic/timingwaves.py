@@ -25,7 +25,7 @@ def getsplit(x0: float, y0: float, y1: float, **kwargs) -> list:
     right = list(zip(rghtx, rghty))
     segments = [Segment(left, lw=1, zorder=3),
                 Segment(right, lw=1, zorder=3),
-                SegmentPoly(left+right[::-1], zorder=2, color='none',
+                SegmentPoly(left+right[::-1], zorder=3, color='none',
                             fill='bg', lw=1, closed=False)]
     return segments
 
@@ -153,7 +153,7 @@ class WaveL(Wave0):
             yhead = self.yhalf - alength/2
             ytail = self.yhalf + alength/2
             segments.append(Segment([(self.x0, ytail), (self.x0, yhead)],
-                                    arrow='end', arrowwidth=awidth, arrowlength=alength))
+                                    arrow='->', arrowwidth=awidth, arrowlength=alength))
         return segments
 
 
@@ -198,7 +198,7 @@ class WaveH(Wave1):
             ytail = self.yhalf - alength/2
             yhead = self.yhalf + alength/2
             segments.append(Segment([(self.x0, ytail), (self.x0, yhead)],
-                                    arrow='end', arrowwidth=awidth, arrowlength=alength))
+                                    arrow='->', arrowwidth=awidth, arrowlength=alength))
         return segments
 
 
@@ -406,5 +406,5 @@ class WaveClk(Wave0):
             for p in range(periods):
                 xcenter = self.x0 + period*p
                 segments.append(Segment([(xcenter, ytail), (xcenter, yhead)],
-                                        arrow='end', arrowwidth=awidth, arrowlength=alength, **self.kwargs))
+                                        arrow='->', arrowwidth=awidth, arrowlength=alength, **self.kwargs))
         return segments

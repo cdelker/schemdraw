@@ -1,5 +1,5 @@
-Logic Gates
-===========
+Digital Logic
+=============
 
 .. jupyter-execute::
     :hide-code:
@@ -92,10 +92,10 @@ Use the `gateH` and `gateW` parameters to adjust how gates line up:
     logicparse('(not a) and b or c', gateH=.5)
 
 
-Tables
-------
+Truth Tables
+------------
 
-Simple tables can be drawn using the :py:class:`schemdraw.logic.table.Table` class. This class is included in the logic module as it's primary purpose was for drawing logical truth tables.
+Simple tables can be drawn using the :py:class:`schemdraw.logic.table.Table` class. This class is included in the logic module as its primary purpose was for drawing logical truth tables.
 
 The tables are defined using typical Markdown syntax. The `colfmt` parameter works like the LaTeX tabular environment parameter for defining lines to draw between table columns: "cc|c" draws three centered columns, with a vertical line before the last column.
 Each column must be specified with a 'c', 'r', or 'l' for center, right, or left justification

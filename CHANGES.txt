@@ -1,4 +1,4 @@
-v0.13 - IN PROGRESS
+v0.13 - 19-Dec-2021
 
     - Added Digital Timing Diagram elements
     - Added Table and Kmap elements

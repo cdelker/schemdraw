@@ -42,22 +42,22 @@ class Box(Element):
         self.anchors['WNW'] = (0, h/3)
         self.anchors['WSW'] = (0, -h/3)
 
-    def _place(self, xy, theta, **dwgparams):
+    def _place(self, dwgxy, dwgtheta, **dwgparams):
         ''' Make the box flow in the current drawing direction '''
         if 'anchor' not in self._userparams and 'drop' not in self.params:
-            while theta < 0:
-                theta += 360
+            while dwgtheta < 0:
+                dwgtheta += 360
 
             # Pick closest anchor
             thetas = [0, 45, 90, 135, 180, 225, 270, 315]
             anchors = ['W', 'SW', 'S', 'SE', 'E', 'NE', 'N', 'NW']
-            idx = min(range(len(thetas)), key=lambda i: abs(thetas[i]-theta))
+            idx = min(range(len(thetas)), key=lambda i: abs(thetas[i]-dwgtheta))
             anchor = anchors[idx]
             self.params['anchor'] = anchor
             dropanchor = anchor.translate(anchor.maketrans('NESW', 'SWNE'))
             if dropanchor in self.anchors:
                 self.params['drop'] = self.anchors[dropanchor]
-        return super()._place(xy, theta, **dwgparams)
+        return super()._place(dwgxy, dwgtheta, **dwgparams)
 
 
 class RoundBox(Box):
@@ -98,7 +98,7 @@ class Terminal(RoundBox):
         self.params['droptheta'] = -90
         self.params['anchor'] = 'N'
 
-        
+
 class Subroutine(Box):
     ''' Flowchart subroutine/predefined process. Box with extra
         vertical lines near sides.
@@ -132,7 +132,7 @@ class Data(Box):
         super().__init__(w, h, **kwargs)
         self.segments = []
         self.segments.append(SegmentPoly([(0, 0), (s/2, h/2), (w+s/2, h/2),
-                                      (w-s/2, -h/2), (-s/2, -h/2)]))
+                                          (w-s/2, -h/2), (-s/2, -h/2)]))
         self.anchors['N'] = (w/2+s/2, h/2)
         self.anchors['S'] = (w/2-s/2, -h/2)
         self.anchors['NE'] = (w+s/2, h/2)
@@ -148,7 +148,7 @@ class Data(Box):
         self.anchors['NNW'] = (w/4+s/2, h/2)
         self.anchors['SSW'] = (w/4-s/2, -h/2)
 
-        
+
 class Ellipse(Box):
     ''' Flowchart ellipse
 
@@ -259,7 +259,7 @@ class Connect(Box):
         self.anchors['SE'] = (r+rsqrt2, -rsqrt2)
         self.anchors['SW'] = (r-rsqrt2, -rsqrt2)
         self.anchors['NE'] = (r+rsqrt2, rsqrt2)
-        self.anchors['NW'] = (r-rsqrt2, rsqrt2) 
+        self.anchors['NW'] = (r-rsqrt2, rsqrt2)
         r225 = r * math.cos(math.radians(22.5))
         r675 = r * math.cos(math.radians(67.5))
         self.anchors['NNE'] = (r+r675, r225)
@@ -278,7 +278,7 @@ class StateEnd(Connect):
         Args:
             r: radius
             dr: distance between circles
-            
+
         Anchors:
             * 16 compass points (N, S, E, W, NE, NNE, etc.)
     '''

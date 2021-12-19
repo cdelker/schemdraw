@@ -9,7 +9,7 @@ import math
 from .types import BBox, Backends, ImageFormat, Linestyle, Arcdirection, XY, ImageType, BilateralDirection
 from .elements import Element, _set_elm_backend
 from .elements.lines import LoopCurrent, CurrentLabel, CurrentLabelInline
-from .segments import Segment, SegmentText, SegmentArc, SegmentCircle, SegmentPoly
+from .segments import SegmentType
 from .util import Point
 
 from .backends.svg import Figure as svgFigure
@@ -45,7 +45,7 @@ def config(unit: float=3.0, inches_per_unit: float=0.5,
            lw: float=2, ls: Linestyle='-',
            fill: str=None, bgcolor: str=None) -> None:
     ''' Set global schemdraw style configuration
- 
+
         Args:
             unit: Full length of a 2-terminal element. Inner zig-zag portion
                 of a resistor is 1.0 units.
@@ -66,7 +66,7 @@ def config(unit: float=3.0, inches_per_unit: float=0.5,
     schemdrawstyle['color'] = color
     schemdrawstyle['lw'] = lw
     schemdrawstyle['ls'] = ls
-    schemdrawstyle['fill'] = fill 
+    schemdrawstyle['fill'] = fill
     if bgcolor:
         schemdrawstyle['bgcolor'] = bgcolor
 
@@ -162,7 +162,7 @@ class Drawing:
         self.elements: list[Element] = []
         self.inches_per_unit = inches_per_unit if inches_per_unit is not None else schemdrawstyle.get('inches_per_unit')
         self.unit = unit if unit is not None else schemdrawstyle.get('unit')
-        
+
         self.dwgparams: dict[str, Any] = {}
         if unit:
             self.dwgparams['unit'] = unit
@@ -210,8 +210,7 @@ class Drawing:
             ymax = max(bbox.ymax, ymax)
         return BBox(xmin, ymin, xmax, ymax)
 
-    def get_segments(self) -> list['Segment' | 'SegmentText' | 'SegmentArc' |
-                                   'SegmentCircle' | 'SegmentPoly']:
+    def get_segments(self) -> list[SegmentType]:
         ''' Get flattened list of all segments in the drawing '''
         segments = []
         for element in self.elements:
@@ -247,10 +246,9 @@ class Drawing:
             warnings.warn('kwargs to add method are ignored because element is already instantiated')
 
         dwgparams = ChainMap(self.dwgparams, schemdrawstyle)
-        self.here, self.theta = element._place(self.here, self.theta,
-                                               **dwgparams)
+        self.here, self.theta = element._place(self.here, self.theta, **dwgparams)
         self.elements.append(element)
-        
+
         if self._interactive:
             if self.fig is None:
                 self._initfig()
@@ -414,15 +412,13 @@ class Drawing:
         '''
         # Redraw only if needed. Otherwise, show/return what's already
         # been drawn on the figure
-        if (self.fig is None or
-            ax is not None or showframe != self.fig.showframe or
-            backend is not None):
+        if (self.fig is None or ax is not None or showframe != self.fig.showframe or backend is not None):
             self._initfig(ax=ax, backend=backend, showframe=showframe)
             for element in self.elements:
                 element._draw(self.fig)
 
         if show:
-            # Show figure in window if not inline/Jupyter mode            
+            # Show figure in window if not inline/Jupyter mode
             self.fig.show()  # type: ignore
         return self.fig  # Otherwise return Figure and let _repr_ display it
 

@@ -34,7 +34,7 @@ class Figure:
     def __init__(self, **kwargs):
         self.showframe = kwargs.get('showframe', False)
         self.bbox = kwargs.get('bbox', None)
-        self.inches_per_unit = kwargs.get('inches_per_unit', .5)        
+        self.inches_per_unit = kwargs.get('inches_per_unit', .5)
         if kwargs.get('ax'):
             self.ax = kwargs.get('ax')
             self.fig = self.ax.figure
@@ -81,19 +81,20 @@ class Figure:
         self.fig.set_facecolor(color)
 
     def addclip(self, patch, clip):
+        ''' Set clipping region for the patch '''
         if clip:
             cliprect = Rectangle((clip.xmin, clip.ymax),
                                  abs(clip.xmax-clip.xmin), abs(clip.ymax-clip.ymin),
                                  transform=self.ax.transData)
             patch.set_clip_path(cliprect)
-        
+
     def plot(self, x: float, y: float, color: str='black', ls: Linestyle='-',
              lw: float=2, fill: str=None, capstyle: Capstyle='round',
              joinstyle: Joinstyle='round', clip: BBox=None, zorder: int=2) -> None:
         ''' Plot a path '''
         p, = self.ax.plot(x, y, zorder=zorder, color=color, ls=ls, lw=lw,
-                     solid_capstyle=fix_capstyle(capstyle),
-                     solid_joinstyle=joinstyle)
+                          solid_capstyle=fix_capstyle(capstyle),
+                          solid_joinstyle=joinstyle)
         self.addclip(p, clip)
         if fill:
             p, = self.ax.fill(x, y, color=fill, zorder=zorder)
@@ -128,6 +129,7 @@ class Figure:
         circ = plt.Circle(xy=center, radius=radius, ec=color, fc=fill,
                           fill=fill is not None, lw=lw, ls=ls, zorder=zorder)
         self.ax.add_patch(circ)
+        self.addclip(circ, clip)
 
     def arrow(self, xy: Sequence[float], theta: float,
               arrowwidth: float=.2, arrowlength: float=.2,
@@ -148,13 +150,13 @@ class Figure:
 
         p = plt.Polygon((fin1, head, fin2), closed=True, ec='none',
                         fc=color, fill=color is not None,
-                        lw=1, zorder=zorder)
+                        lw=lw, zorder=zorder)
         self.ax.add_patch(p)
         self.addclip(p, clip)
 
     def bezier(self, p: Sequence[util.Point], color: str='black',
                lw: float=2, ls: Linestyle='-', capstyle: Capstyle='round', zorder: int=1,
-               arrow: bool=None, arrowlength: float=0.2, arrowwidth: float=0.2,
+               arrow: str=None, arrowlength: float=0.2, arrowwidth: float=0.2,
                clip: BBox=None) -> None:
         ''' Draw a cubic or quadratic bezier '''
         # Keep original points for arrow head
@@ -186,17 +188,17 @@ class Figure:
                 delta = p[0] - p[1]
                 theta = math.degrees(math.atan2(delta.y, delta.x))
                 self.arrow(p[0], theta, arrowlength=arrowlength,
-                            arrowwidth=arrowwidth, color=color, zorder=zorder)
+                           arrowwidth=arrowwidth, color=color, zorder=zorder)
             if '>' in arrow:
                 delta = p[-1] - p[-2]
                 theta = math.degrees(math.atan2(delta.y, delta.x))
                 self.arrow(p[-1], theta, arrowlength=arrowlength,
-                            arrowwidth=arrowwidth, color=color, zorder=zorder)
+                           arrowwidth=arrowwidth, color=color, zorder=zorder)
 
     def arc(self, center: Sequence[float], width: float, height: float,
             theta1: float=0, theta2: float=90, angle: float=0,
             color: str='black', lw: float=2, ls: Linestyle='-',
-            zorder: int=1, clip: BBox=None, arrow: bool=None) -> None:
+            zorder: int=1, clip: BBox=None, arrow: str=None) -> None:
         ''' Draw an arc or ellipse, with optional arrowhead '''
         arc = Arc(center, width=width, height=height, theta1=theta1,
                   theta2=theta2, angle=angle, color=color,
@@ -276,12 +278,12 @@ class Figure:
     def clear(self) -> None:
         ''' Remove everything '''
         self.ax.clear()
-    
+
     def __repr__(self):
         if plt.isinteractive():
             self.show()
         return super().__repr__()
-    
+
     def _repr_png_(self):
         ''' PNG representation for Jupyter '''
         return self.getimage('png')

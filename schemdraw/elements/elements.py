@@ -7,7 +7,7 @@ from dataclasses import dataclass
 import warnings
 import math
 
-from ..segments import Segment, SegmentPoly, SegmentText, SegmentCircle, SegmentArc, BBox, SegmentType
+from ..segments import SegmentText, BBox, SegmentType
 from ..transform import Transform
 from .. import util
 from ..util import Point
@@ -39,7 +39,7 @@ class Element:
 
         Keyword Arguments are equivalent to calling
         setter methods.
-        
+
         Args:
             d: Drawing direction ('up', 'down', 'left', 'right')
 
@@ -62,7 +62,7 @@ class Element:
         self._localshift: XY = Point((0, 0))
         self._userlabels: list[Label] = []
 
-        self.anchors: MutableMapping[str, Union[Point, tuple[float,float]]] = {}     # Untransformed anchors
+        self.anchors: MutableMapping[str, Union[Point, tuple[float, float]]] = {}  # Untransformed anchors
         self.absanchors: MutableMapping[str, Any] = {}  # Transformed, absolute anchors
         self.segments: list[SegmentType] = []
         self.transform = Transform(0, [0, 0])
@@ -97,14 +97,14 @@ class Element:
     def left(self) -> 'Element':
         ''' Set the direction to left '''
         if 'd' in self._userparams:
-            warnings.warn(f"Duplicated direction parameter in element. `{self._userparams['d']}` changed to `left`.")        
+            warnings.warn(f"Duplicated direction parameter in element. `{self._userparams['d']}` changed to `left`.")
         self._userparams['d'] = 'left'
         return self
 
     def right(self) -> 'Element':
         ''' Set the direction to right '''
         if 'd' in self._userparams:
-            warnings.warn(f"Duplicated direction parameter in element. `{self._userparams['d']}` changed to `right`.")        
+            warnings.warn(f"Duplicated direction parameter in element. `{self._userparams['d']}` changed to `right`.")
         self._userparams['d'] = 'right'
         return self
 
@@ -367,7 +367,7 @@ class Element:
         if drop in self.anchors:
             # User specified as anchor position
             self.absdrop = self.transform.transform(self.anchors[drop]), theta
-        elif drop is not None and self._cparams.get('move_cur', True):            
+        elif drop is not None and self._cparams.get('move_cur', True):
             if self.params.get('droptheta', None):
                 # Element-specified drop angle
                 self.absdrop = self.transform.transform(drop), self.params.get('droptheta')
@@ -376,7 +376,6 @@ class Element:
                 self.absdrop = self.transform.transform(drop), dwgtheta
             else:
                 self.absdrop = self.transform.transform(drop), theta
-            
         else:  # drop is None:
             self.absdrop = Point(dwgxy), dwgtheta
         return self.absdrop
@@ -544,7 +543,7 @@ class Element:
                     rotalignidx = (rotalign.index(align) + round((th/360)*8)) % 8
                     if ofst is None and not isinstance(label, (tuple, list)):
                         ofst = [ofstx, ofsty]
-                        
+
             if loc == 'center':
                 align = (align[0] or 'center', align[1] or 'center')
             else:

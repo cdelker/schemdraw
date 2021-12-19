@@ -405,6 +405,7 @@ class WaveClk(Wave0):
                 yhead, ytail = ytail, yhead
             for p in range(periods):
                 xcenter = self.x0 + period*p
-                segments.append(Segment([(xcenter, ytail), (xcenter, yhead)],
-                                        arrow='->', arrowwidth=awidth, arrowlength=alength, **self.kwargs))
+                segments.append(Segment(
+                    [(xcenter, ytail), (xcenter, yhead)], arrow='->',
+                    arrowwidth=awidth, arrowlength=alength, **self.kwargs))
         return segments

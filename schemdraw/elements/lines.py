@@ -38,9 +38,9 @@ class Arrow(Line):
         # Explicitly define center so reverses work
         self.anchors['center'] = (0, 0)
 
-    def _place(self, xy, theta, **dwgparams):
+    def _place(self, dwgxy, dwgtheta, **dwgparams):
         ''' Add arrowhead to segment after it was extended '''
-        result = super()._place(xy, theta, **dwgparams)
+        result = super()._place(dwgxy, dwgtheta, **dwgparams)
         line = self.segments[0]  # The base line gets arrowheads
         reverse = self._cparams.get('reverse')
         arrow = '->' if not reverse else '<-'
@@ -176,14 +176,14 @@ class Arc2(Element):
 
         self.params['lblloc'] = 'center'
         self.params['theta'] = 0
-        xy: XY = Point(self._cparams.get('at', dwgxy))
-        to: XY = Point(self._cparams.get('to', Point((xy.x+3, xy.y))))
+        xy: Point = Point(self._cparams.get('at', dwgxy))
+        to: Point = Point(self._cparams.get('to', Point((xy.x+3, xy.y))))
         dx = to.x - xy.x
         dy = to.y - xy.y
         pa = Point((dx/2-dy*self.k, dy/2+dx*self.k))
         mid = Point((dx/2-dy*self.k/2, dy/2+dx*self.k/2))
-        self.segments.append(SegmentBezier((Point((0, 0)), pa, Point((dx, dy))),
-                                          arrow=self.arrow),)
+        self.segments.append(SegmentBezier(
+            (Point((0, 0)), pa, Point((dx, dy))), arrow=self.arrow),)
 
         self.anchors['ctrl'] = pa
         self.anchors['mid'] = mid
@@ -211,7 +211,7 @@ class Arc2(Element):
         self.params['lblalign'] = (halign, valign)
         return super()._place(dwgxy, dwgtheta, **dwgparams)
 
-    
+
 class Arc3(Element):
     ''' Arc Element
 
@@ -258,8 +258,8 @@ class Arc3(Element):
             self._buildparams()
 
         self.params['theta'] = 0
-        xy: XY = Point(self._cparams.get('at', dwgxy))
-        to: XY = Point(self._cparams.get('to', dwgxy))
+        xy: Point = Point(self._cparams.get('at', dwgxy))
+        to: Point = Point(self._cparams.get('to', dwgxy))
         dx = to.x - xy.x
         dy = to.y - xy.y
         pa1 = Point((dx*self.k*math.cos(self.th1),
@@ -285,7 +285,7 @@ class Arc3(Element):
         if dy > 0:
             valign = 'top'
             self.params['lblofst'] = -0.1
-        if dx <=0:
+        if dx <= 0:
             halign = 'right'
         self.params['lblalign'] = (halign, valign)
         return super()._place(dwgxy, dwgtheta, **dwgparams)
@@ -368,8 +368,8 @@ class ArcLoop(Element):
             self._buildparams()
 
         self.params['theta'] = 0
-        xy: XY = Point(self._cparams.get('at', dwgxy))
-        to: XY = Point(self._cparams.get('to', dwgxy))
+        xy: Point = Point(self._cparams.get('at', dwgxy))
+        to: Point = Point(self._cparams.get('to', dwgxy))
 
         dx = to.x - xy.x
         dy = to.y - xy.y
@@ -380,8 +380,8 @@ class ArcLoop(Element):
         try:
             center = Point(((xa + math.sqrt(self.radius**2 - (q/2)**2) * (-dy/q)),
                             (ya + math.sqrt(self.radius**2 - (q/2)**2) * (dx/q))))
-        except ValueError:
-            raise ValueError(f'No solution to ArcLoop with radius {self.radius}')
+        except ValueError as err:
+            raise ValueError(f'No solution to ArcLoop with radius {self.radius}') from err
 
         da = math.sqrt(xa**2 + ya**2)
         thetaa = math.atan2(ya, xa)
@@ -394,8 +394,7 @@ class ArcLoop(Element):
         self.segments.append(Segment(list(zip(x, y)), arrow=self.arrow,
                                      arrowlength=self.arrowlength,
                                      arrowwidth=self.arrowwidth))
-
-        mid = len(x)//2        
+        mid = len(x)//2
         self.anchors['start'] = Point((0, 0))
         self.anchors['end'] = Point((x[-1], y[-1]))
         self.anchors['mid'] = Point((x[mid], y[mid]))
@@ -488,7 +487,7 @@ class CurrentLabel(Element):
 
     def at(self, xy: XY | Element) -> 'Element':  # type: ignore[override]
         ''' Specify CurrentLabel position.
-        
+
             If xy is an Element, arrow will be centered
             along element and its color will also be
             inherited.
@@ -556,7 +555,7 @@ class CurrentLabelInline(Element):
             super().at(xy.center)
             self.theta(xy.transform.theta)
             if 'color' in xy._userparams:
-                self.color(xy._userparams.get('color'))            
+                self.color(xy._userparams.get('color'))
         else:
             super().at(xy)
         return self

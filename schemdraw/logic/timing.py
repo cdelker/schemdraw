@@ -250,50 +250,6 @@ class TimingDiagram(Element):
             x += periods*period
             i = k
 
-#    def _drawtimelabels(self, signal, y0):
-#        ''' Draw time labels above/below the wave
-#
-#            Args:
-#                signal: Dictionary defining the signal to draw
-#                y0: Vertical position
-#        '''
-#        caplen = .1
-#        labels = signal.get('labels', [])
-#        period = 2*self.yheight*signal.get('period', 1) * self.hscale
-#
-#        for label in labels:
-#
-#            labelstr = label.get('label', '')
-#            labelpos = label.get('position', None)
-#            if labelpos == 'above':
-#                y = y0 + self.yheight + caplen*2
-#            elif labelpos == 'below':
-#                y = y0 - caplen*2
-#            else:
-#                y = y0 + self.yheight/2
-#
-#            p0 = Point((label.get('from', 0)*period + self.risetime/2, y))
-#            pn = Point((label.get('to', 1)*period + self.risetime/2, y))
-#            if labelstr:
-#                # Break the line around text
-#                w, h, _ = text_size(labelstr, size=self.nodesize)
-#                w, h = w*PTS_TO_UNITS*2, h*PTS_TO_UNITS*2
-#                center = Point(((p0.x+pn.x)/2, y))
-#                pa = (center.x - w/2, y)
-#                pb = (center.x + w/2, y)
-#                self.segments.append(Segment((p0, pa), lw=1, color=self.edgecolor))
-#                self.segments.append(Segment((pb, pn), lw=1, color=self.edgecolor))
-#                self.segments.append(SegmentText(center, labelstr, fontsize=self.nodesize,
-#                                                 color=self.nodecolor, align=('center', 'center'),
-#                                                 zorder=4))
-#            else:    
-#                self.segments.append(Segment((p0, pn), lw=1, color=self.edgecolor))
-#
-#            cap1 = [(p0.x, y + caplen), (p0.x, y - caplen)]
-#            cap2 = [(pn.x, y + caplen), (pn.x, y - caplen)]
-#            self.segments.append(Segment(cap1, lw=1, color=self.edgecolor))
-#            self.segments.append(Segment(cap2, lw=1, color=self.edgecolor))
-        
     def _drawasync(self, signal, y0):
         ''' Draw asynchronous wave
 
@@ -395,14 +351,13 @@ class TimingDiagram(Element):
                 pn = Point(self.anchors[f'node_{edge[-1]}'])
 
             else:
-                # Extended node naming
-                # [WaveNumber:Xposition]
+                # Extended node naming - [WaveNumber:Xposition]
                 assert len(nodes) == 2
                 mode = re.subn(r'\[(.+?)\]', '', edge)[0]
                 endpoints = []
                 for node in nodes:
                     nodewave, nodet = node.split(':')
-                    nodet = float(nodet)  #periods into wave
+                    nodet = float(nodet)  # number periods into wave
                     ofst = self.yheight/2
                     if '^' in nodewave:
                         ofst = self.yheight + caplen*2
@@ -422,16 +377,6 @@ class TimingDiagram(Element):
                 color = style[0]
                 ls = '-' if len(style) == 1 else style[1]
 
-#            node1 = edge[0]
-#            node2 = edge[-1]
-#            if f'node_{node1}' not in self.anchors:
-#                raise ValueError(f'Node {node1} not defined for edge')
-#            if f'node_{node2}' not in self.anchors:
-#                raise ValueError(f'Node {node2} not defined for edge')
-#            
-#            p0 = Point(self.anchors[f'node_{node1}'])
-#            pn = Point(self.anchors[f'node_{node2}'])
-#            
             if '<' in edge and '>' in edge:
                 arrow = '<>'
             elif '<' in edge:
@@ -507,8 +452,8 @@ class TimingDiagram(Element):
                 th2 = math.atan2((p1.y-pn.y), (p1.x-pn.x))
                 p0 = Point((p0.x + chrrad * math.cos(th0), p0.y + chrrad * math.sin(th0)))
                 pn = Point((pn.x - chrrad * math.cos(th0), pn.y + chrrad * math.sin(th2)))
-                self.segments.append(SegmentBezier([p0, p1, pn], lw=1, ls=ls, color=color,
-                                                    arrow=arrow, zorder=3))
+                self.segments.append(SegmentBezier(
+                    [p0, p1, pn], lw=1, ls=ls, color=color, arrow=arrow, zorder=3))
 
             elif mode == '~-':
                 center = Point((p0.x+0.25*(pn.x-p0.x), (p0.y+pn.y)/2))
@@ -518,10 +463,9 @@ class TimingDiagram(Element):
                 th2 = math.atan2((p1.y-pn.y), (p1.x-pn.x))
                 p0 = Point((p0.x + chrrad * math.cos(th0), p0.y + chrrad * math.sin(th0)))
                 pn = Point((pn.x + chrrad * math.cos(th2), pn.y + chrrad * math.sin(th2)))
-                self.segments.append(SegmentBezier([p0, p1, pn], lw=1, ls=ls, color=color,
-                                                    arrow=arrow, zorder=3))
+                self.segments.append(SegmentBezier(
+                    [p0, p1, pn], lw=1, ls=ls, color=color, arrow=arrow, zorder=3))
 
-            
             if label:
                 w, h, _ = text_size(label, size=self.nodesize)
                 w, h = w*PTS_TO_UNITS*1.5, h*PTS_TO_UNITS*1.5
@@ -536,7 +480,7 @@ class TimingDiagram(Element):
 
     def _drawgroups(self, signals, labelwidth):
         ''' Draw group labels
-        
+
             Args:
                 signals: List of dictionaries defining the signals
                 labelwidth: Max text width (drawing units) of signal names

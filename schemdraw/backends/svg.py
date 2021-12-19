@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import sys
 from typing import Sequence, Optional
 from xml.etree import ElementTree as ET
 
@@ -24,7 +23,7 @@ from . import svgtext
 
 textmode: TextMode = 'path' if ziamath is not None else 'text'
 svg2mode: bool = True
-    
+
 hatchpattern = '''<defs><pattern id="hatch" patternUnits="userSpaceOnUse" width="4" height="4">
 <path d="M-1,1 l2,-2 M0,4 l4,-4 M3,5 l2,-2" style="stroke:black; stroke-width:.5" /></pattern></defs>'''
 
@@ -108,7 +107,7 @@ def text_size(text: str, font: str='Arial', size: float=16) -> tuple[float, floa
             text: string to calculate
             font: Font family
             size: Font size in points
-        
+
         Returns:
             width, height, linespacing
     '''
@@ -118,7 +117,7 @@ def text_size(text: str, font: str='Arial', size: float=16) -> tuple[float, floa
 
         if font.lower() in ['sans-serif', 'Arial']:
             font = 'sans'
-        
+
         lines = text.splitlines()
         maths = []
         for line in lines:
@@ -305,14 +304,13 @@ class Figure:
         fullen = math.sqrt(dx**2 + dy**2)
         theta = -math.degrees(math.atan2(dy, dx))
 
-        finc = Point((fullen - arrowlength, 0)).rotate(theta) + tail
         fin1 = Point((fullen - arrowlength, arrowwidth/2)).rotate(theta) + tail
         fin2 = Point((fullen - arrowlength, -arrowwidth/2)).rotate(theta) + tail
 
         # Shrink arrow head by lw so it points right at the line
         head = Point((head[0] - lw *2* math.cos(math.radians(theta)),
                       head[1] - lw *2* math.sin(math.radians(theta))))
-        
+
         et1 = ET.Element('path')
         d = f'M {head[0]} {head[1]} '
         d += f'L {fin1[0]} {fin1[1]} '
@@ -329,7 +327,7 @@ class Figure:
         ''' Draw a cubic or quadratic bezier '''
         # Keep original points for arrow head
         # and adjust points for line so they don't extrude from arrows.
-        lpoints = [p0 for p0 in p]
+        lpoints = list(p)
         if arrow is not None:
             if '<' in arrow:
                 th1 = math.atan2(p[0].y - p[1].y, p[0].x - p[1].x)
@@ -341,7 +339,6 @@ class Figure:
                                     p[-1].y - math.sin(th2) * arrowlength/2))
 
         lpoints = [self.xform(*p0) for p0 in lpoints]
-        points = [self.xform(*p0) for p0 in p]
         order = 'C' if len(p) == 4 else 'Q'
 
         et = ET.Element('path')
@@ -365,11 +362,11 @@ class Figure:
                 theta = math.degrees(math.atan2(delta.y, delta.x))
                 self.arrow(p[-1], theta, color=color, lw=1, zorder=zorder,
                            clip=clip, arrowlength=arrowlength, arrowwidth=arrowwidth)
-        
+
     def arc(self, center: Sequence[float], width: float, height: float,
             theta1: float=0, theta2: float=90, angle: float=0,
             color: str='black', lw: float=2, ls: Linestyle='-', zorder: int=1,
-            arrow: bool=None, clip: BBox=None) -> None:
+            arrow: str=None, clip: BBox=None) -> None:
         ''' Draw an arc or ellipse, with optional arrowhead '''
         centerx, centery = self.xform(*center)
         width, height = width*self.scale, height*self.scale
@@ -385,13 +382,13 @@ class Figure:
         while t1 < t2:
             t1 += 2*math.pi
 
-        startx = (centerx + width/2 * math.cos(t2)*math.cos(anglerad) 
+        startx = (centerx + width/2 * math.cos(t2)*math.cos(anglerad)
                   - height/2 * math.sin(t2)*math.sin(anglerad))
-        starty = (centery + width/2 * math.cos(t2)*math.sin(anglerad) 
+        starty = (centery + width/2 * math.cos(t2)*math.sin(anglerad)
                   + height/2 * math.sin(t2)*math.cos(anglerad))
         endx = (centerx + width/2 * math.cos(t1)*math.cos(anglerad) 
                 - height/2 * math.sin(t1)*math.sin(anglerad))
-        endy = (centery + width/2 * math.cos(t1)*math.sin(anglerad) 
+        endy = (centery + width/2 * math.cos(t1)*math.sin(anglerad)
                 + height/2 * math.sin(t1)*math.cos(anglerad))
 
         startx, starty = round(startx, 2), round(starty, 2)

@@ -38,3 +38,9 @@ Element Style
 
     :param style: dictionary of {elementname: Element} to change the element module namespace. Use `elements.STYLE_US` or `elements.STYLE_IEC` to define U.S. or European/IEC element styles.
 
+
+.. autofunction:: schemdraw.config
+
+.. autofunction:: schemdraw.theme
+
+.. autofunction:: schemdraw.use

@@ -91,6 +91,7 @@ class Segment:
             arrow: Arrowhead specifier, such as '->', '<-', or '<->'
             arrowwidth: Width of arrowhead
             arrowlength: Length of arrowhead
+            clip: Bounding box to clip to
             zorder: Z-order for segment
     '''
     def __init__(self, path: Sequence[XY],
@@ -170,7 +171,7 @@ class Segment:
                 style: Default style parameters
         '''
         path = transform.transform_array(self.path)
-        linepath = [p for p in path]
+        linepath = list(path)
         zorder = self.zorder if self.zorder is not None else style.get('zorder', 2)
         color = self.color if self.color else style.get('color', 'black')
         fill = self.fill if self.fill is not None else style.get('fill', None)
@@ -192,7 +193,7 @@ class Segment:
             delta = path[1] - path[0]
             th = math.atan2(delta.y, delta.x)
             linepath[0] = Point((linepath[0].x + self.arrowlength * math.cos(th),
-                             linepath[0].y + self.arrowlength * math.sin(th)))
+                                 linepath[0].y + self.arrowlength * math.sin(th)))
         if self.arrow and '>' in self.arrow:
             delta = path[-1] - path[-2]
             th = math.atan2(delta.y, delta.x)
@@ -212,9 +213,9 @@ class Segment:
         if self.arrow and '>' in self.arrow:
             theta = math.degrees(math.atan2(path[-1].y-path[-2].y, path[-1].x-path[-2].x))
             fig.arrow(path[-1], theta, color=color, zorder=zorder, clip=self.clip,
-                     arrowlength=self.arrowlength, arrowwidth=self.arrowwidth, lw=1)
+                      arrowlength=self.arrowlength, arrowwidth=self.arrowwidth, lw=1)
 
-        
+
 class SegmentText:
     ''' A text drawing segment
 
@@ -229,6 +230,7 @@ class SegmentText:
             color: Color for this segment
             fontsize: Font size
             font: Font name/family
+            clip: Bounding box to clip to
             zorder: Z-order for segment
     '''
     def __init__(self, pos: Sequence[float], label: str,
@@ -338,9 +340,13 @@ class SegmentPoly:
             closed: Draw a closed polygon (default True)
             cornerradius: Round the corners to this radius (0 for no rounding)
             color: Color for this segment
+            fill: Color to fill if path is closed
             lw: Line width for the segment
             ls: Line style for the segment
-            fill: Color to fill if path is closed
+            hatch: Show hatch lines
+            capstyle: Capstyle for the segment: 'butt', 'round', 'square', ('projecting')
+            joinstyle: Joinstyle for the segment: 'round', 'miter', or 'bevel'
+            clip: Bounding box to clip to
             zorder: Z-order for segment
     '''
     def __init__(self, verts: Sequence[Sequence[float]],
@@ -450,6 +456,7 @@ class SegmentCircle:
             lw: Line width for the segment
             ls: Line style for the segment
             fill: Color to fill if path is closed. True -> fill with element color.
+            clip: Bounding box to clip to
             zorder: Z-order for segment
             ref: Flip reference ['start', 'end', None].
     '''
@@ -537,7 +544,7 @@ class SegmentCircle:
                 fill = None
             elif fill == 'bg':
                 fill = style.get('bgcolor', 'white')
-        
+
         fill = color if fill is True else None if fill is False else fill
         fig.circle(center, radius, color=color, fill=fill,
                    lw=lw, ls=ls, clip=self.clip, zorder=zorder)
@@ -548,9 +555,19 @@ class SegmentBezier:
 
         Args:
             p: control points (3 or 4)
-            ...###
+            color: Color for this segment
+            lw: Line width for the segment
+            ls: Line style for the segment '-', '--', ':', etc.
+            capstyle: Capstyle for the segment: 'butt', 'round', 'square', ('projecting')
+            joinstyle: Joinstyle for the segment: 'round', 'miter', or 'bevel'
+            fill: Color to fill if path is closed
+            arrow: Arrowhead specifier, such as '->', '<-', or '<->'
+            arrowwidth: Width of arrowhead
+            arrowlength: Length of arrowhead
+            clip: Bounding box to clip to
+            zorder: Z-order for segment
     '''
-    def __init__(self, p: Sequence[float],
+    def __init__(self, p: Sequence[XY],
                  color: str=None,
                  lw: float=None,
                  ls: Linestyle=None,
@@ -560,7 +577,7 @@ class SegmentBezier:
                  arrowwidth: float=.2,
                  clip: BBox=None,
                  zorder: int=None):
-        self.p = p
+        self.p = [Point(pi) for pi in p]
         self.arrow = arrow
         self.color = color
         self.lw = lw
@@ -570,18 +587,18 @@ class SegmentBezier:
         self.arrowwidth = arrowwidth
         self.clip = clip
         self.zorder = zorder
-        
+
     def doreverse(self, centerx: float) -> None:
         ''' Reverse the path (flip horizontal about the centerx point) '''
-        self.p = [util.mirrorx(p, centerx) for p in self.p]
+        self.p = [Point(util.mirrorx(p, centerx)) for p in self.p]
         if self.arrow:
             self.arrow = self.arrow.translate(self.arrow.maketrans('<>', '><'))
 
     def doflip(self) -> None:
         ''' Vertically flip the element '''
-        self.p = [util.flip(p) for p in self.p]
+        self.p = [Point(util.flip(p)) for p in self.p]
 
-    def xform(self, transform, **style) -> 'SegmentArc':
+    def xform(self, transform, **style) -> 'SegmentBezier':
         ''' Return a new Segment that has been transformed
             to its global position
 
@@ -641,12 +658,12 @@ class SegmentArc:
             height: Height of the arc ellipse
             theta1: Starting angle in degrees
             theta2: Ending angle in degrees
-            angle: Rotation of the ellipse defining the arc
             arrow: Direction of arrowhead ('cw' or 'ccw')
+            angle: Rotation of the ellipse defining the arc
             color: Color for this segment
             lw: Line width for the segment
             ls: Line style for the segment
-            fill: Color to fill if path is closed
+            clip: Bounding box to clip to
             zorder: Z-order for segment
     '''
     def __init__(self, center: Sequence[float],

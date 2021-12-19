@@ -17,7 +17,7 @@ class Kmap(Element):
             names: 2, 3, or 4-character string defining names of
                 the inputs
             truthtable: list defining values to display in each
-                box of the K-Map. First element is string of 2, 3, 
+                box of the K-Map. First element is string of 2, 3,
                 or 4 logic 0's and 1's, and last element is the string
                 to display for that input. Example: ('0000', '1')
                 displays a '1' when all inputs are 0.
@@ -35,7 +35,7 @@ class Kmap(Element):
         Anchors:
             * cellXXXX - Center of each cell in the grid, where X is 0 or 1
     '''
-    def __init__(self, 
+    def __init__(self,
                  names: str='ABCD',
                  truthtable: Sequence[Sequence[Union[int, str]]]=None,
                  groups: dict=None,

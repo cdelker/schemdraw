@@ -273,7 +273,30 @@ for times when it's useful to save the drawing state and come back to it later.
     d += elm.Diode()
     d.draw()
 
-Changing the drawing position can be accomplished by calling :py:meth:`schemdraw.Drawing.move`.
+Changing the drawing position can be accomplished by calling :py:meth:`schemdraw.Drawing.move` or :py:meth:`schemdraw.Drawing.move_from`.
+
+    
+Walrus Mode
+^^^^^^^^^^^
+
+The walrus operator (`:=`), available since Python 3.8, allows for adding elements and assigning them to a variable all in one line.
+The global position of an element is not calculated until the element is actually added to the drawing, however, so setting an `at`
+position based on another element's anchor attribute won't work. However, the `at` parameter also accepts a tuple of (Element, anchorname)
+to allow filling in the position when the element is ready to be drawn.
+
+This mode allows creating an entire schematic in a single call to Drawing.
+
+.. jupyter-execute::
+
+    # R1 can't set .at(Q1.base), because base position is not defined until Drawing is created
+    # But it can set .at((Q1, 'base')).
+    schemdraw.Drawing(
+        Q1 := elm.BjtNpn().label('$Q_1$'), 
+        elm.Resistor().left().at((Q1, 'base')).label('$R_1$').label('$V_{in}$', 'left'),
+        elm.Resistor().up().at((Q1, 'collector')).label('$R_2$').label('$V_{cc}$', 'right'),
+        elm.Ground().at((Q1, 'emitter'))
+        )
+
 
 
 Labels
@@ -450,6 +473,7 @@ Alternatively, loop current arrows can be added anywhere with any size using :py
     d += elm.LoopArrow(width=.75, height=.75).at(a.end)
 
 .. jupyter-execute::
+    :hide-code:
 
     d.draw()
 
@@ -458,26 +482,6 @@ Alternatively, loop current arrows can be added anywhere with any size using :py
 
 Styling
 -------
-
-Element styling methods include `color`, `fill`, `linewidth`, and `linestyle`. If a style method is not called when creating an Element, its value is obtained from from the drawing defaults.
-
-.. jupyter-execute::
-    :hide-output:
-    
-    # All elements are blue with lightgray fill unless specified otherwise    
-    d = schemdraw.Drawing(color='blue', fill='lightgray')
-
-    d += elm.Diode()
-    d += elm.Diode().fill('red')        # Fill overrides drawing color here
-    d += elm.Resistor().fill('purple')  # Fill has no effect on non-closed elements
-    d += elm.RBox().linestyle('--').color('orange')
-    d += elm.Resistor().linewidth(5)
-
-.. jupyter-execute::
-    :hide-code:
-
-    d.draw()
-
 
 U.S. versus European Style
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -509,6 +513,32 @@ IEC/European style, use the :py:meth:`schemdraw.elements.style` method with eith
     d.draw()
 
 
+Colors and Linetypes
+^^^^^^^^^^^^^^^^^^^^
+
+Element styling methods include `color`, `fill`, `linewidth`, and `linestyle`. If a style method is not called when creating an Element, its value is obtained from from the drawing defaults.
+
+Color and fill parameters accept any named `SVG color <https://upload.wikimedia.org/wikipedia/commons/2/2b/SVG_Recognized_color_keyword_names.svg>`_ or a hex color string such as '#6A5ACD'. Linestyle parameters may be '-', '--', ':', or '-.'.
+
+
+.. jupyter-execute::
+    :hide-output:
+    
+    # All elements are blue with lightgray fill unless specified otherwise    
+    d = schemdraw.Drawing(color='blue', fill='lightgray')
+
+    d += elm.Diode()
+    d += elm.Diode().fill('red')        # Fill overrides drawing color here
+    d += elm.Resistor().fill('purple')  # Fill has no effect on non-closed elements
+    d += elm.RBox().linestyle('--').color('orange')
+    d += elm.Resistor().linewidth(5)
+
+.. jupyter-execute::
+    :hide-code:
+
+    d.draw()
+
+
 Global styles
 ^^^^^^^^^^^^^
 
@@ -531,27 +561,48 @@ For example, the following code fills all Diode elements without adding the `fil
 
 Be careful, though, because the `style` method can overwrite existing elements in the namespace.
 
-    
-Walrus Mode
------------
+Themes
+^^^^^^
 
-Python 3.8's new walrus operator (`:=`) allows for adding elements and assigning them to a variable all in one line.
-The global position of an element is not calculated until the element is actually added to the drawing, however, so setting an `at`
-position based on another element's anchor attribute won't work. However, the `at` parameter also accepts a tuple of (Element, anchorname)
-to allow filling in the position when the element is ready to be drawn.
-
-This mode allows creating an entire schematic in a single call to Drawing.
+Schemdraw also supports themeing, to enable dark mode, for example.
+The defined themes match those in the `Jupyter Themes <https://github.com/dunovank/jupyter-themes>`_ package.
 
 .. jupyter-execute::
 
-    # R1 can't set .at(Q1.base), because base position is not defined until Drawing is created
-    # But it can set .at((Q1, 'base')).
-    schemdraw.Drawing(
-        Q1 := elm.BjtNpn().label('$Q_1$'), 
-        elm.Resistor().left().at((Q1, 'base')).label('$R_1$').label('$V_{in}$', 'left'),
-        elm.Resistor().up().at((Q1, 'collector')).label('$R_2$').label('$V_{cc}$', 'right'),
-        elm.Ground().at((Q1, 'emitter'))
-        )
+    schemdraw.theme('dark')
+    d = schemdraw.Drawing()
+    d += elm.Resistor().label('100KΩ')
+    d += elm.Capacitor().down().label('0.1μF', loc='bottom')
+    d += elm.Line().left()
+    d += elm.Ground()
+    d += elm.SourceV().up().label('10V')
+    d.draw()
+
+For more customization, the :py:meth:`schemdraw.config` method may be used to apply global themes to various parameters.
+
+.. jupyter-execute::
+    :hide-code:
+
+    schemdraw.theme('default')
+
+
+.. jupyter-execute::
+
+    schemdraw.config(lw=1, font='serif')
+    d = schemdraw.Drawing()
+    d += elm.Resistor().label('100KΩ')
+    d += elm.Capacitor().down().label('0.1μF', loc='bottom')
+    d += elm.Line().left()
+    d += elm.Ground()
+    d += elm.SourceV().up().label('10V')
+    d.draw()
+
+
+.. jupyter-execute::
+    :hide-code:
+    
+    schemdraw.config()
+
 
 
 Keyword Arguments

@@ -3,6 +3,7 @@
     Put in the logic module since logic truth tables were the first
     use case for tables.
 '''
+from __future__ import annotations
 
 import re
 

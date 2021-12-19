@@ -1,5 +1,6 @@
 ''' Define wave types and transitions for logic timing diagrams '''
 
+from __future__ import annotations
 from typing import Sequence
 import math
 

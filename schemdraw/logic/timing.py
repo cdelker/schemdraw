@@ -1,5 +1,6 @@
 ''' Timing Diagrams, based on WaveJSON format '''
 
+from __future__ import annotations
 import re
 import io
 import ast

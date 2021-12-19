@@ -6,6 +6,7 @@
 
 from __future__ import annotations
 from typing import Sequence, Any, Union
+import warnings
 import math
 
 from .types import BBox, XY, Linestyle, Capstyle, Joinstyle, Align, Arcdirection, EndRef, RotationMode
@@ -768,6 +769,23 @@ class SegmentArc:
         fig.arc(center, width=width, height=height,
                 theta1=self.theta1, theta2=self.theta2, angle=angle,
                 color=color, lw=lw, ls=ls, clip=self.clip, zorder=zorder, arrow=self.arrow)
+
+
+class SegmentArrow(Segment):
+    ''' Arrow Segment
+    
+        [DEPRECATED - use Segment with arrow parameter instead]
+    '''
+    def __init__(self, tail: Sequence[float], head: Sequence[float],
+                 headwidth: float=None, headlength: float=None,
+                 color: str=None, lw: float=None, clip: BBox=None,
+                 ref: EndRef=None, zorder: int=None):        
+        warnings.warn('SegmentArrow is deprecated. Use Segment with arrow parameter.', DeprecationWarning)
+        headwidth = 0.15 if headwidth is None else headwidth
+        headlength = 0.25 if headlength is None else headlength
+        super().__init__(path=(tail, head), arrow='->',
+                         arrowwidth=headwidth, arrowlength=headlength,
+                         color=color, lw=lw, clip=clip, zorder=zorder)
 
 
 SegmentType = Union[Segment, SegmentText, SegmentPoly, SegmentArc, SegmentCircle, SegmentBezier]

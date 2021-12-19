@@ -20,6 +20,7 @@ Instead, use the Drawing to create a new :py:class:`schemdraw.elements.ElementDr
 to add to other drawings.
     
 .. jupyter-execute::
+    :emphasize-lines: 8-10
 
     d1 = schemdraw.Drawing()
     d1 += elm.Resistor()
@@ -53,7 +54,7 @@ Therefore elements deriving from Element2Term should not define the lead extensi
 A standard resistor is 1 drawing unit long, and with default lead extension will become 3 units long.
 
 Segments include :py:class:`schemdraw.segments.Segment`, :py:class:`schemdraw.segments.SegmentPoly`,
-:py:class:`schemdraw.segments.SegmentCircle`, :py:class:`schemdraw.segments.SegmentArc`, :py:class:`schemdraw.segments.SegmentArrow`, and :py:class:`schemdraw.segments.SegmentText`.
+:py:class:`schemdraw.segments.SegmentCircle`, :py:class:`schemdraw.segments.SegmentArc`, :py:class:`schemdraw.segments.SegmentText`, and :py:class:`schemdraw.segments.SegmentBezier`.
 
 The subclassed `Element.__init__` method can be defined with extra parameters
 to help define the element options.
@@ -203,6 +204,7 @@ When using the Matplotlib backend (the default), a final customization option is
 A :py:class:`schemdraw.Figure` is returned from the `draw` method, which contains `fig` and `ax` attributes holding the Matplotlib figure.
 
 .. jupyter-execute::
+    :emphasize-lines: 4-5
 
     d = schemdraw.Drawing()
     d.add(elm.Resistor())

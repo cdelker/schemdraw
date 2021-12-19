@@ -399,7 +399,7 @@ Field-Effect Transistors
 .. jupyter-execute::
     :hide-code:
 
-    elmlist = [NFet, partial(NFet, bulk=True), partial(PFet, bulk=True),
+    elmlist = [NFet, PFet, partial(NFet, bulk=True), partial(PFet, bulk=True),
                JFet, JFetN, JFetP, partial(JFetN, circle=True), partial(JFetP, circle=True)]
     drawElements(elmlist, dx=6.5, dy=3, lblofst=[0, -.8])
 

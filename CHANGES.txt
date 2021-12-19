@@ -1,6 +1,14 @@
 v0.13 - IN PROGRESS
 
+    - Added Digital Timing Diagram elements
     - Added Table and Kmap elements
+    - Added Arc2, Arc3, ArcN, ArcZ, ArcLoop elements, useful for state machine diagrams
+    - Added drop method to Element class to specify where to leave the drawing position
+    - Added move_from method to Drawing class to move relative to another element anchor
+    - Added more anchors to all flowchart elements
+    - Improved layout of flowchart elements. **May affect layout of some existing flowchart diagrams.**
+    - Added SegmentBezier for creating elements with curves
+    - Deprecated SegmentArrow in favor of Segment with arrow parameter
 
 
 v0.12 - 05-Nov-2021

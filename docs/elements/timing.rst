@@ -70,6 +70,7 @@ Putting them together in a more realistic example:
 The `config` key, containing a dictionary with `hscale`, may be used to change the width of one period in the diagram:
 
 .. jupyter-execute::
+    :emphasize-lines: 6
 
     logic.TimingDiagram(
         {'signal': [
@@ -97,6 +98,7 @@ Signals may also be nested into different groups:
 Using the `node` key in a waveform, plus the `edge` key in the top-level dictionary, provides a way to show transitions between different edges.
 
 .. jupyter-execute::
+    :emphasize-lines: 5
 
     logic.TimingDiagram(
         {'signal': [
@@ -145,6 +147,7 @@ Asynchronous Signals
 WaveDrom does not have a means for defining asynchronous signals - all waves must transition on period boundaries. Schemdraw adds asyncrhonous signals using the `async` parameter, as a list of period multiples for each transition in the wave. Note the beginning and end time of the wave must also be specified, so the length of the `async` list must be one more than the length of `wave`.
 
 .. jupyter-execute::
+    :emphasize-lines: 4
 
     logic.TimingDiagram(
         {'signal': [
@@ -173,6 +176,7 @@ Between the two square-bracket expressions is the standard line/arrow type desig
 Some examples are shown here:
 
 .. jupyter-execute::
+    :emphasize-lines: 5-7
 
     logic.TimingDiagram(
         {'signal': [

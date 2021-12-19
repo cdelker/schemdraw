@@ -12,7 +12,7 @@ Timing Diagrams
     from schemdraw import logic
 
 
-Timing diagrams, based on `WaveDrom <https://wavedrom.com/>`_, are drawn using the :py:class:`schemdraw.logic.TimingDiagram` class.
+Timing diagrams, based on `WaveDrom <https://wavedrom.com/>`_, are drawn using the :py:class:`schemdraw.logic.timing.TimingDiagram` class.
 
 .. code-block:: python
 

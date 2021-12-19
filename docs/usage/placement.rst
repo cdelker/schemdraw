@@ -136,6 +136,24 @@ Compared to anchoring the opamp at `in2` (the noninverting input):
     d.draw()
 
 
+Drop Method
+***********
+
+Three terminal elements may not leave the drawing position where intended, so after drawing an element, the current drawing position can be set using the :py:meth:`schemdraw.elements.Element.drop` method to specify an anchor at which to place the cursor.
+This reduces the need to assign every element to a variable name.
+
+.. jupyter-execute::
+    :emphasize-lines: 6
+
+    d = schemdraw.Drawing()
+    d += elm.BjtNpn()
+    d += elm.Resistor().label('R1')
+    d.here = (5, 0)
+
+    d += elm.BjtNpn().drop('emitter')
+    d += elm.Resistor().label('R2')
+    d.draw()
+
 
 Placing 2-Terminal Elements
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -144,6 +162,7 @@ Two-terminal elements hae some other placement options because their length can 
 The `length` method sets an exact length for an element.
 
 .. jupyter-execute::
+    :emphasize-lines: 5
 
     d = schemdraw.Drawing()
     d += elm.Dot()
@@ -162,6 +181,7 @@ The starting point is still the ending location of the previous element.
 Notice the Diode is longer than the standard element length in order to fill the diagonal distance.
 
 .. jupyter-execute::
+    :emphasize-lines: 4
 
     d = schemdraw.Drawing()
     R = d.add(elm.Resistor())
@@ -179,6 +199,7 @@ Here, the Line element does not need to specify an exact length to fill the spac
 
 .. jupyter-execute::
     :hide-output:
+    :emphasize-lines: 9
 
     C = d.add(elm.Capacitor())
     d.add(elm.Diode())
@@ -208,6 +229,7 @@ Finally, exact endpoints can also be specified using the `endpoints` method.
 
 .. jupyter-execute::
     :hide-output:
+    :emphasize-lines: 5
 
     R = d.add(elm.Resistor())
     Q = d.add(elm.Diode().down().length(6))
@@ -259,6 +281,7 @@ for times when it's useful to save the drawing state and come back to it later.
     d = schemdraw.Drawing()
 
 .. jupyter-execute::
+    :emphasize-lines: 4,9
 
     d += elm.Inductor()
     d += elm.Dot()
@@ -479,7 +502,6 @@ Alternatively, loop current arrows can be added anywhere with any size using :py
 
 
 
-
 Styling
 -------
 
@@ -487,7 +509,7 @@ U.S. versus European Style
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 By default, a `Resistor` and related elements (variable resistor, photo resistor, etc.) appear in IEEE/U.S. style. To configure
-IEC/European style, use the :py:meth:`schemdraw.elements.style` method with either `elm.STYLE_IEC` or `elm.STYLE_IEEE` parameter.
+IEC/European style, use the :py:meth:`schemdraw.elements.Element.style` method with either `elm.STYLE_IEC` or `elm.STYLE_IEEE` parameter.
 
 .. jupyter-execute::
     :hide-code:
@@ -495,6 +517,7 @@ IEC/European style, use the :py:meth:`schemdraw.elements.style` method with eith
     d = schemdraw.Drawing()
 
 .. jupyter-execute::
+    :emphasize-lines: 1
 
     elm.style(elm.STYLE_IEC)
     d += elm.Resistor()
@@ -507,6 +530,7 @@ IEC/European style, use the :py:meth:`schemdraw.elements.style` method with eith
     d = schemdraw.Drawing()
 
 .. jupyter-execute::
+    :emphasize-lines: 1
 
     elm.style(elm.STYLE_IEEE)
     d += elm.Resistor()
@@ -542,12 +566,13 @@ Color and fill parameters accept any named `SVG color <https://upload.wikimedia.
 Global styles
 ^^^^^^^^^^^^^
 
-The style method :py:meth:`schemdraw.elements.style` can also be used to configure
+The style method :py:meth:`schemdraw.elements.Element.style` can also be used to configure
 global styles on individual elements. Its argument is a dictionary of {name: Element} class pairs.
 Combined with `functools.partial <https://docs.python.org/3/library/functools.html#functools.partial>`_ from the standard library, parameters to elements can be set globally.
 For example, the following code fills all Diode elements without adding the `fill()` method or `fill` keyword argument to every diode.
 
 .. jupyter-execute::
+    :emphasize-lines: 3
 
     from functools import partial
 
@@ -568,6 +593,7 @@ Schemdraw also supports themeing, to enable dark mode, for example.
 The defined themes match those in the `Jupyter Themes <https://github.com/dunovank/jupyter-themes>`_ package.
 
 .. jupyter-execute::
+    :emphasize-lines: 1
 
     schemdraw.theme('dark')
     d = schemdraw.Drawing()
@@ -587,6 +613,7 @@ For more customization, the :py:meth:`schemdraw.config` method may be used to ap
 
 
 .. jupyter-execute::
+    :emphasize-lines: 1
 
     schemdraw.config(lw=1, font='serif')
     d = schemdraw.Drawing()

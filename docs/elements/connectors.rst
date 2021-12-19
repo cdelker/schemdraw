@@ -103,6 +103,7 @@ The :py:class:`schemdraw.elements.connectors.RightLines` and :py:class:`schemdra
 
 .. jupyter-execute::
     :hide-output:
+    :emphasize-lines: 6
 
     D1 = d.add(elm.Ic(pins=[elm.IcPin(name='A', side='t', slot='1/4'),
                             elm.IcPin(name='B', side='t', slot='2/4'),
@@ -126,6 +127,7 @@ Use the `xstart` parameter, between 0 and 1, to specify the position where the f
 
 .. jupyter-execute::
     :hide-output:
+    :emphasize-lines: 6
 
     D1 = d.add(elm.Ic(pins=[elm.IcPin(name='A', side='r', slot='1/4'),
                             elm.IcPin(name='B', side='r', slot='2/4'),
@@ -157,6 +159,7 @@ BusConnect elements define anchors `start`, `end` on the endpoints of the wide b
 
 .. jupyter-execute::
     :hide-output:
+    :emphasize-lines: 2-4
 
     J = d.add(elm.Header(rows=6))
     B = d.add(elm.BusConnect(n=6).at(J.pin1))

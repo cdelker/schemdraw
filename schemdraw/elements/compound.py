@@ -1,5 +1,6 @@
 ''' Compound elements made from groups of other elements '''
 
+from typing import Sequence
 import warnings
 
 from ..import elements as elm
@@ -191,3 +192,85 @@ class Relay(ElementCompound):
                               corner1=(bbox.xmin-boxpad, bbox.ymin+.2),
                               corner2=(bbox.xmax+boxpad, bbox.ymax-.2),
                               fill=boxfill, zorder=0))
+
+
+class Wheatstone(ElementCompound):
+    ''' Wheatstone Resistor Bridge
+
+        Args:
+            vout: draw output terminals inside the bridge
+            labels: Labels to draw on each resistor
+
+        Anchors:
+            * N
+            * S
+            * E
+            * W
+            * vo1 (if vout==True)
+            * vo2 (if vout==True)
+    '''
+    def __init__(self, vout: bool=False, labels: Sequence[str]=None, **kwargs):
+        super().__init__(**kwargs)
+        A = elm.Resistor().theta(45)
+        B = elm.Resistor().theta(-45)
+        C = elm.Resistor().theta(-135)
+        D = elm.Resistor().theta(135)
+
+        locs = ['top', 'top', 'bottom', 'bottom']
+        if labels:
+            for label, r, loc in zip(labels, [A, B, C, D], locs):
+                r.label(label, loc)
+
+        self.add(A)
+        self.add(B)
+        self.add(C)
+        self.add(D)
+        if vout:
+            self.add(elm.Line().right().at(A.start).length(1))
+            vo1 = self.add(elm.Dot(open=True))
+            self.add(elm.Line().left().at(C.start).length(1))
+            vo2 = self.add(elm.Dot(open=True))
+            self.anchors['vo1'] = vo1.center
+            self.anchors['vo2'] = vo2.center
+        
+        self.anchors['W'] = A.start
+        self.anchors['N'] = B.start
+        self.anchors['E'] = C.start
+        self.anchors['S'] = D.start
+        self.params['theta'] = 0
+        
+        
+class Rectifier(ElementCompound):
+    ''' Diode Rectifier Bridge
+
+        Args:
+            fill: Fill the didoes
+            labels: Labels to draw on each resistor
+
+        Anchors:
+            * N
+            * S
+            * E
+            * W
+    '''
+    def __init__(self, fill=False, labels=None, **kwargs):
+        super().__init__(**kwargs)
+        A = elm.Diode(fill=fill).theta(45)
+        B = elm.Diode(fill=fill).theta(-45)
+        C = elm.Diode(fill=fill).theta(-135).reverse()
+        D = elm.Diode(fill=fill).theta(135).reverse()
+
+        locs = ['top', 'top', 'bottom', 'bottom']
+        if labels:
+            for label, d, loc in zip(labels, [A, B, C, D], locs):
+                d.label(label, loc)
+
+        self.add(A)
+        self.add(B)
+        self.add(C)
+        self.add(D)    
+        self.anchors['W'] = A.start
+        self.anchors['N'] = B.start
+        self.anchors['E'] = C.start
+        self.anchors['S'] = D.start
+        self.params['theta'] = 0

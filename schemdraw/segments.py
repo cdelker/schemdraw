@@ -157,7 +157,7 @@ class Segment:
         ''' Reverse the path (flip horizontal about the center of the path) '''
         self.path = [util.mirrorx(p, centerx) for p in self.path[::-1]]
         if self.arrow:
-            self.arrow = reversed(self.arrow).translate(self.arrow.maketrans('<>', '><'))
+            self.arrow = self.arrow[::-1].translate(self.arrow.maketrans('<>', '><'))
 
     def doflip(self) -> None:
         ''' Vertically flip the element '''
@@ -213,7 +213,7 @@ class Segment:
                 fig.arrow(path[0], theta, color=color, zorder=zorder, clip=self.clip,
                           arrowlength=self.arrowlength, arrowwidth=self.arrowwidth, lw=1)
             elif self.arrow.startswith('o'):
-                fig.circle(path[0], 0.075, color=color, fill=color, lw=0,
+                fig.circle(path[0], self.arrowwidth/2, color=color, fill=color, lw=lw,
                            clip=self.clip, zorder=zorder)
 
             if '>' in self.arrow:
@@ -221,7 +221,7 @@ class Segment:
                 fig.arrow(path[-1], theta, color=color, zorder=zorder, clip=self.clip,
                           arrowlength=self.arrowlength, arrowwidth=self.arrowwidth, lw=1)
             elif self.arrow.endswith('o'):
-                fig.circle(path[-1], 0.075, color=color, fill=color, lw=0,
+                fig.circle(path[-1], self.arrowwidth/2, color=color, fill=color, lw=lw,
                             clip=self.clip, zorder=zorder)
 
 
@@ -601,7 +601,7 @@ class SegmentBezier:
         ''' Reverse the path (flip horizontal about the centerx point) '''
         self.p = [Point(util.mirrorx(p, centerx)) for p in self.p]
         if self.arrow:
-            self.arrow = reversed(self.arrow).translate(self.arrow.maketrans('<>', '><'))
+            self.arrow = self.arrow[::-1].translate(self.arrow.maketrans('<>', '><'))
 
     def doflip(self) -> None:
         ''' Vertically flip the element '''

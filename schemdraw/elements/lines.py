@@ -141,17 +141,16 @@ class DotDotDot(Element):
 
 
 class Wire(Element):
-    ''' 
-    Connect the .at() and .to() positions with lines depending on shape
+    ''' Connect the .at() and .to() positions with lines depending on shape
 
-    Args:
-        shape: Determines shape of wire:
-            `-`: straight line
-            `|-`: right-angle line starting vertically
-            `-|`: right-angle line starting horizontally
-            `n`: n- or u-shaped lines
-            `c`: c- or ↄ-shaped lines
-        k: Distance before the wire changes directions in `n` and `c` shapes.
+        Args:
+            shape: Determines shape of wire:
+                `-`: straight line
+                `|-`: right-angle line starting vertically
+                `-|`: right-angle line starting horizontally
+                `n`: n- or u-shaped lines
+                `c`: c- or ↄ-shaped lines
+            k: Distance before the wire changes directions in `n` and `c` shapes.
             arrow: arrowhead specifier, such as '->', '<-', '<->', or '-o'
     '''
     def __init__(self, shape: str='-', k: float=1, arrow: str=None, **kwargs):
@@ -195,12 +194,12 @@ class Wire(Element):
             self.anchors['mid'] = (dx/2, dy/2)
         elif shape == '-|':  # Right angle, horizontal first
             self.segments.append(Segment([(0, 0), (dx, 0), (dx, dy)], arrow=arrow))
-            self.anchors['mid'] = (dx/2, dy)
+            self.anchors['mid'] = (dx, dy/2)
             self.anchors['mid2'] = (dx, dy/2)
             self.params['droptheta'] = 90 if dy > 0 else -90
         elif shape == '|-':  # Right angle, vertical first
             self.segments.append(Segment([(0, 0), (0, dy), (dx, dy)], arrow=arrow))
-            self.anchors['mid'] = (dx, dy/2)
+            self.anchors['mid'] = (dx/2, dy)
             self.anchors['mid2'] = (dx/2, dy)
             self.params['droptheta'] = 0 if dx > 0 else 180
         elif shape == 'n':   # N-shape
@@ -211,7 +210,6 @@ class Wire(Element):
             self.segments.append(Segment([(0, 0), (k, 0), (k, dy), (dx, dy)], arrow=arrow))
             self.anchors['mid'] = (k, dy/2)
             self.params['droptheta'] = 0 if dx > k else 180
-            print(dx, k, self.params['droptheta'])
         else:
             raise ValueError(f'Undefined shape parameter `{shape}`.')
 

@@ -180,29 +180,19 @@ This also demonstrates the :py:class:`schemdraw.elements.ElementDrawing` class t
 Power supply
 ^^^^^^^^^^^^
 
-Notice the diodes use the `theta` method to point them in the right directions.
-Also the use of newline characters inside resistor and capacitor labels.
+Notice the diodes could be added individually, but here the built-in `Rectifier` element is used instead.
+Also note the use of newline characters inside resistor and capacitor labels.
 
 .. jupyter-execute::
     :code-below:
 
     d = schemdraw.Drawing(inches_per_unit=.5, unit=3)
-    d += (D1 := elm.Diode().theta(-45))
-    d += elm.Dot()
-    d += (D2 := elm.Diode().theta(225).reverse())
-    d += elm.Dot()
-    d += (D3 := elm.Diode().theta(135).reverse())
-    d += elm.Dot()
-    d += (D4 := elm.Diode().theta(45))
-    d += elm.Dot()
+    d += (D := elm.Rectifier())
+    d += elm.Line().left().at(D.N).length(d.unit*1.5).dot(open=True).idot()
+    d += elm.Line().left().at(D.S).length(d.unit*1.5).dot(open=True).idot()
+    d += (G := elm.Gap().up().toy(D.N).label(['–', 'AC IN', '+']))
 
-    d += elm.Line().left().at(D3.start).length(d.unit*1.5)
-    d += elm.Dot(open=True)
-    d += (G := elm.Gap().up().toy(D1.start).label(['–', 'AC IN', '+']))
-    d += elm.Line().left().at(D4.end).tox(G.start)
-    d += elm.Dot(open=True)
-
-    d += (top := elm.Line().right().at(D2.start).length(d.unit*3))
+    d += (top := elm.Line().right().at(D.E).length(d.unit*3).idot())
     d += (Q2 := elm.BjtNpn(circle=True).up().anchor('collector').label('Q2\n2n3055'))
     d += elm.Line().down().at(Q2.base).length(d.unit/2)
     d += (Q2b := elm.Dot())
@@ -211,42 +201,31 @@ Also the use of newline characters inside resistor and capacitor labels.
     d += elm.Line().up().at(Q1.collector).toy(top.center)
     d += elm.Dot()
 
-    d += elm.Line().down().at(Q1.base).length(d.unit/2)
-    d += elm.Dot()
-    d += elm.Zener().down().reverse().label('D2\n500mA', loc='bot')
-    d += elm.Dot()
+    d += elm.Line().down().at(Q1.base).length(d.unit/2).dot()
+    d += elm.Zener().down().reverse().label('D2\n500mA', loc='bot').dot()
     d += (G := elm.Ground())
-    d += elm.Line().left()
-    d += elm.Dot()
-    d += elm.Capacitor(polar=True).up().reverse().label('C2\n100$\mu$F\n50V', loc='bot')
-    d += elm.Dot()
+    d += elm.Line().left().dot()
+    d += elm.Capacitor(polar=True).up().reverse().label('C2\n100$\mu$F\n50V', loc='bot').dot()
     d.push()
     d += elm.Line().right()
     d.pop()
-    d += elm.Resistor().up().toy(top.end).label('R1\n2.2K\n50V', loc='bot')
-    d += elm.Dot()
+    d += elm.Resistor().up().toy(top.end).label('R1\n2.2K\n50V', loc='bot').dot()
 
     d.move(dx=-d.unit, dy=0)
     d += elm.Dot()
-    d += elm.Capacitor(polar=True).down().toy(G.start).flip().label('C1\n 1000$\mu$F\n50V')
-    d += elm.Dot()
-    d += elm.Line().left().at(G.start).tox(D4.start)
-    d += elm.Line().up().toy(D4.start)
+    d += elm.Capacitor(polar=True).down().toy(G.start).flip().label('C1\n 1000$\mu$F\n50V').dot()
+    d += elm.Line().left().at(G.start).tox(D.W)
+    d += elm.Line().up().toy(D.W).dot()
 
-    d += elm.Resistor().right().at(Q2b.center).label('R2').label('56$\Omega$ 1W', loc='bot')
-    d += elm.Dot()
+    d += elm.Resistor().right().at(Q2b.center).label('R2').label('56$\Omega$ 1W', loc='bot').dot()
     d.push()
-    d += elm.Line().up().toy(top.start)
-    d += elm.Dot()
+    d += elm.Line().up().toy(top.start).dot()
     d += elm.Line().left().tox(Q2.emitter)
     d.pop()
-    d += elm.Capacitor(polar=True).down().toy(G.start).label('C3\n470$\mu$F\n50V', loc='bot')
-    d += elm.Dot()
+    d += elm.Capacitor(polar=True).down().toy(G.start).label('C3\n470$\mu$F\n50V', loc='bot').dot()
     d += elm.Line().left().tox(G.start).hold()
-    d += elm.Line().right()
-    d += elm.Dot()
-    d += elm.Resistor().up().toy(top.center).label('R3\n10K\n1W', loc='bot')
-    d += elm.Dot()
+    d += elm.Line().right().dot()
+    d += elm.Resistor().up().toy(top.center).label('R3\n10K\n1W', loc='bot').dot()
     d += elm.Line().left().hold()
     d += elm.Line().right()
     d += elm.Dot(open=True)

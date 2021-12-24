@@ -60,3 +60,31 @@ Relay
                   partial(elm.Relay, switch='dpst'),
                   partial(elm.Relay, switch='dpdt')],
                   cols=2, dy=3)
+
+
+Wheatstone
+----------
+
+:py:class:`schemdraw.elements.compound.Wheatstone` can be drawn with or without the output voltage taps.
+The `labels` argument specifies a list of labels for each resistor.
+
+
+.. jupyter-execute::
+    :hide-code:
+    
+    drawElements([elm.Wheatstone, 
+                  partial(elm.Wheatstone, vout=True)],
+                  cols=3, dy=3)
+
+
+Rectifier
+----------
+
+:py:class:`schemdraw.elements.compound.Rectifier` draws four diodes at 45 degree angles.
+The `labels` argument specifies a list of labels for each diode.
+
+
+.. jupyter-execute::
+    :hide-code:
+    
+    drawElements([elm.Rectifier], cols=3, dy=3)

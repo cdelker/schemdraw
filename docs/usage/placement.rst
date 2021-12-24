@@ -298,6 +298,35 @@ for times when it's useful to save the drawing state and come back to it later.
 
 Changing the drawing position can be accomplished by calling :py:meth:`schemdraw.Drawing.move` or :py:meth:`schemdraw.Drawing.move_from`.
 
+
+Wire Element
+^^^^^^^^^^^^
+
+The :py:class:`schemdraw.elements.lines.Wire` element is used to place multiple connecting lines in one element.
+The Wire element connects the start and end points based on its `shape` parameter.
+A shape of "-" connects with a straight line. Shapes "-\|" and "\|-" connect the endpoints with right-angle lines starting horizontally and vertically, respectively. Shapes "n" and "c" connect the endpoints with a "c" or "n" shaped set of straight lines, where the `k` parameter is used to set the distance before the wire first changes direction.
+
+.. jupyter-execute::
+    :hide-code:
+
+    d = schemdraw.Drawing()
+    d += (A := elm.Dot().label('A', halign='right', ofst=(-.1, 0)))
+    d += (B := elm.Dot().label('B').at((4, 4)))
+    d += (C := elm.Dot().label('C', ofst=(-.2, 0)).at((7, 4)))
+    d += (D := elm.Dot().label('D', ofst=(-.2, 0)).at((9, 0)))
+
+.. jupyter-execute::
+
+    d += elm.Wire('-', arrow='->').at(A.center).to(B.center).color('deeppink').label('"-"')
+    d += elm.Wire('|-', arrow='->').at(A.center).to(B.center).color('mediumblue').label('"|-"')
+    d += elm.Wire('-|', arrow='->').at(A.center).to(B.center).color('darkseagreen').label('"-|"')
+    d += elm.Wire('c', k=-1, arrow='->').at(C.center).to(D.center).color('darkorange').label('"c"', halign='left')
+    d += elm.Wire('n', arrow='->').at(C.center).to(D.center).color('orchid').label('"n"')
+
+.. jupyter-execute::
+    :hide-code:
+
+    d.draw()
     
 Walrus Mode
 ^^^^^^^^^^^

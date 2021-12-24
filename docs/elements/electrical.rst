@@ -347,7 +347,7 @@ The `Gap` is like an "invisible" element, useful for marking the voltage between
 Operational Amplifiers
 ----------------------
 
-The :py:class:`schemdraw.elements.opamp.Opamp` element defines several anchors for various inputs, including voltage supplies and offset nulls.
+The :py:class:`schemdraw.elements.opamp.Opamp` element defines several anchors for various inputs, including voltage supplies and offset nulls. Optional leads can be added using the `leads` parameter, with anchors exteded to the ends of the leads.
 
 
 .. jupyter-execute::
@@ -355,27 +355,36 @@ The :py:class:`schemdraw.elements.opamp.Opamp` element defines several anchors f
 
     d = schemdraw.Drawing(fontsize=12)
     d += (op := elm.Opamp().label('Opamp', ofst=.6))
-    d += elm.Line().at(op.in1).left().length(.5).color('blue').label('in1', color='blue', loc='left')
-    d += elm.Line().at(op.in2).left().length(.5).color('blue').label('in2', color='blue', loc='left')
-    d += elm.Line().at(op.out).right().length(.5).color('blue').label('out', color='blue', loc='right')
-    d += elm.Line().at(op.vd).up().length(.25).color('blue').label('vd', color='blue', loc='right')
-    d += elm.Line().at(op.vs).down().length(.25).color('blue').label('vs', color='blue', loc='left')
-    d += elm.Line().at(op.n2).up().length(.25).color('blue').label('n2', color='blue', loc='right')
-    d += elm.Line().at(op.n1).down().length(.25).color('blue').label('n1', color='blue', loc='left')
-    d += elm.Line().at(op.n2a).up().length(.22).color('blue').label('n2a', ofst=0, color='blue', loc='right')
-    d += elm.Line().at(op.n1a).down().length(.22).color('blue').label('n1a', ofst=0, color='blue', loc='left')   
+    d += elm.LineDot().reverse().at(op.in1).left().length(.5).color('blue').label('in1', color='blue', loc='left')
+    d += elm.LineDot().reverse().at(op.in2).left().length(.5).color('blue').label('in2', color='blue', loc='left')
+    d += elm.LineDot().reverse().at(op.out).right().length(.5).color('blue').label('out', color='blue', loc='right')
+    d += elm.LineDot().reverse().at(op.vd).up().length(.25).color('blue').label('vd', color='blue', loc='right')
+    d += elm.LineDot().reverse().at(op.vs).down().length(.25).color('blue').label('vs', color='blue', loc='left')
+    d += elm.LineDot().reverse().at(op.n2).up().length(.25).color('blue').label('n2', color='blue', loc='right')
+    d += elm.LineDot().reverse().at(op.n1).down().length(.25).color('blue').label('n1', color='blue', loc='left')
+    d += elm.LineDot().reverse().at(op.n2a).up().length(.22).color('blue').label('n2a', ofst=0, color='blue', loc='right')
+    d += elm.LineDot().reverse().at(op.n1a).down().length(.22).color('blue').label('n1a', ofst=0, color='blue', loc='left')   
 
     d += (op2 := elm.Opamp(sign=False).at([5, 0]).right().label('Opamp(sign=False)', ofst=.6))
-    d += elm.Line().at(op2.in1).left().length(.5).color('blue').label('in1', color='blue', loc='left')
-    d += elm.Line().at(op2.in2).left().length(.5).color('blue').label('in2', color='blue', loc='left')
-    d += elm.Line().at(op2.out).right().length(.5).color('blue').label('out', color='blue', loc='right')
-    d += elm.Line().at(op2.vd).up().length(.25).color('blue').label('vd', color='blue', loc='right')
-    d += elm.Line().at(op2.vs).down().length(.25).color('blue').label('vs', color='blue', loc='left')
-    d += elm.Line().at(op2.n2).up().length(.25).color('blue').label('n2', color='blue', loc='right')
-    d += elm.Line().at(op2.n1).down().length(.25).color('blue').label('n1', color='blue', loc='left')
-    d += elm.Line().at(op2.n2a).up().length(.22).color('blue').label('n2a', ofst=0, color='blue', loc='right')
-    d += elm.Line().at(op2.n1a).down().length(.22).color('blue').label('n1a', ofst=0, color='blue', loc='left')
+    d += elm.LineDot().reverse().at(op2.in1).left().length(.5).color('blue').label('in1', color='blue', loc='left')
+    d += elm.LineDot().reverse().at(op2.in2).left().length(.5).color('blue').label('in2', color='blue', loc='left')
+    d += elm.LineDot().reverse().at(op2.out).right().length(.5).color('blue').label('out', color='blue', loc='right')
+    d += elm.LineDot().reverse().at(op2.vd).up().length(.25).color('blue').label('vd', color='blue', loc='right')
+    d += elm.LineDot().reverse().at(op2.vs).down().length(.25).color('blue').label('vs', color='blue', loc='left')
+    d += elm.LineDot().reverse().at(op2.n2).up().length(.25).color('blue').label('n2', color='blue', loc='right')
+    d += elm.LineDot().reverse().at(op2.n1).down().length(.25).color('blue').label('n1', color='blue', loc='left')
+    d += elm.LineDot().reverse().at(op2.n2a).up().length(.22).color('blue').label('n2a', ofst=0, color='blue', loc='right')
+    d += elm.LineDot().reverse().at(op2.n1a).down().length(.22).color('blue').label('n1a', ofst=0, color='blue', loc='left')
+
+    d += (op:=elm.Opamp(leads=True).at([10, 0]).right().label('Opamp(leads=True)', ofst=.6)
+            .label('in1', loc='in1', halign='right', color='blue')
+            .label('in2', loc='in2', halign='right', color='blue')
+            .label('out', loc='out', halign='left', color='blue'))
+    d += elm.Dot().at(op.in1).color('blue')
+    d += elm.Dot().at(op.in2).color('blue')
+    d += elm.Dot().at(op.out).color('blue')
     d.draw()
+
 
 Transistors
 -----------

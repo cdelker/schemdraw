@@ -7,7 +7,7 @@ from dataclasses import dataclass
 import warnings
 import math
 
-from ..segments import SegmentText, BBox, SegmentType
+from ..segments import SegmentText, SegmentCircle, BBox, SegmentType
 from ..transform import Transform
 from .. import util
 from ..util import Point
@@ -709,6 +709,16 @@ class Element2Term(Element):
         self._userparams['endpts'] = (start, end)
         return self
 
+    def dot(self, open: bool=False) -> 'Element2Term':
+        ''' Add a dot to the end of the element '''
+        self._userparams['dot'] = True if not open else 'open'
+        return self
+
+    def idot(self, open: bool=False) -> 'Element2Term':
+        ''' Add a dot to the input/start of the element '''
+        self._userparams['idot'] = True if not open else 'open'
+        return self
+
     def _place(self, dwgxy: XY, dwgtheta: float, **dwgparams) -> tuple[Point, float]:
         ''' Calculate element placement, adding lead extensions '''
         self._dwgparams = dwgparams
@@ -788,6 +798,13 @@ class Element2Term(Element):
                 elif getattr(self.segments[i], 'endref', None) == 'start':
                     xform = Transform(0, start)
                     self.segments[i] = self.segments[i].xform(xform)
+
+        if self._cparams.get('dot', False):
+            fill = 'bg' if self._cparams['dot'] == 'open' else True
+            self.segments.append(SegmentCircle(end, radius=0.075, fill=fill, zorder=2))
+        if self._cparams.get('idot', False):
+            fill = 'bg' if self._cparams['idot'] == 'open' else True
+            self.segments.append(SegmentCircle(start, radius=0.075, fill=fill, zorder=2))
 
         self.anchors['start'] = Point(start)
         self.anchors['end'] = Point(end)

@@ -17,6 +17,7 @@ class Opamp(Element):
 
         Args:
             sign: Draw +/- labels at each input
+            leads: Draw short leads on input/output
 
         Anchors:
             * in1
@@ -29,7 +30,7 @@ class Opamp(Element):
             * n1a
             * n2a
     '''
-    def __init__(self, *d, sign: bool=True, **kwargs):
+    def __init__(self, *d, sign: bool=True, leads: bool=False, **kwargs):
         super().__init__(*d, **kwargs)
         self.segments.append(Segment(
             [(0, 0), (0, oa_back/2), (oa_xlen, 0), (0, -oa_back/2), (0, 0),
@@ -46,10 +47,20 @@ class Opamp(Element):
                 [(oa_lblx, -oa_back/4-oa_pluslen/2),
                  (oa_lblx, -oa_back/4+oa_pluslen/2)]))
 
+        if leads:
+            leadlen = oa_back/4
+            self.segments.append(Segment([(0, oa_back/4), (-leadlen, oa_back/4)]))
+            self.segments.append(Segment([(0, -oa_back/4), (-leadlen, -oa_back/4)]))
+            self.segments.append(Segment([(oa_xlen, 0), (oa_xlen + leadlen, 0)]))
+            self.anchors['in1'] = (-leadlen, oa_back/4)
+            self.anchors['in2'] = (-leadlen, -oa_back/4)
+            self.anchors['out'] = (oa_xlen+leadlen, 0)
+        else:
+            self.anchors['in1'] = (0, oa_back/4)
+            self.anchors['in2'] = (0, -oa_back/4)
+            self.anchors['out'] = (oa_xlen, 0)
+            
         self.anchors['center'] = (oa_xlen/2, 0)
-        self.anchors['in1'] = (0, oa_back/4)
-        self.anchors['in2'] = (0, -oa_back/4)
-        self.anchors['out'] = (oa_xlen, 0)
         self.anchors['vd'] = (oa_xlen/3, .84)
         self.anchors['vs'] = (oa_xlen/3, -.84)
         self.anchors['n1'] = (oa_xlen*2/3, -.42)

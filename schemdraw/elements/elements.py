@@ -368,7 +368,7 @@ class Element:
             # User specified as anchor position
             self.absdrop = self.transform.transform(self.anchors[drop]), theta
         elif drop is not None and self._cparams.get('move_cur', True):
-            if self.params.get('droptheta', None):
+            if self.params.get('droptheta', None) is not None:
                 # Element-specified drop angle
                 self.absdrop = self.transform.transform(drop), self.params.get('droptheta')
             elif self.params.get('theta', None) == 0:

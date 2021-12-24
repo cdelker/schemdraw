@@ -140,6 +140,86 @@ class DotDotDot(Element):
         self.params['drop'] = (2, 0)
 
 
+class Wire(Element):
+    ''' 
+    Connect the .at() and .to() positions with lines depending on shape
+
+    Args:
+        shape: Determines shape of wire:
+            `-`: straight line
+            `|-`: right-angle line starting vertically
+            `-|`: right-angle line starting horizontally
+            `n`: n- or u-shaped lines
+            `c`: c- or ↄ-shaped lines
+        k: Distance before the wire changes directions in `n` and `c` shapes.
+            arrow: arrowhead specifier, such as '->', '<-', '<->', or '-o'
+    '''
+    def __init__(self, shape: str='-', k: float=1, arrow: str=None, **kwargs):
+        super().__init__(**kwargs)
+        self._userparams['shape'] = shape
+        self._userparams['k'] = k
+        self._userparams['arrow'] = arrow
+        self._userparams.setdefault('to', (3, -2))
+
+    def to(self, xy: XY) -> 'Element':
+        ''' Specify ending position of OrthoLines '''
+        self._userparams['to'] = xy
+        return self
+
+    def delta(self, dx: float=0, dy: float=0):
+        ''' Specify ending position relative to start position '''
+        self._userparams['delta'] = Point((dx, dy))
+        return self
+
+    def _place(self, dwgxy: XY, dwgtheta: float, **dwgparams) -> tuple[Point, float]:
+        ''' Calculate absolute placement of Element '''
+        self._dwgparams = dwgparams
+        if not self._cparams:
+            self._buildparams()
+
+        self.params['theta'] = 0
+        xy = self._cparams.get('at', dwgxy)
+        to = self._cparams.get('to', None)
+        delta = self._cparams.get('delta', None)
+        arrow = self._cparams.get('arrow', None)
+        shape = self._cparams.get('shape', '-')
+        k = self._cparams.get('k', 1)
+        if delta is not None:
+            dx, dy = delta
+        else:
+            dx = to[0] - xy[0]
+            dy = to[1] - xy[1]
+
+        if shape == '-':     # Straight line
+            self.segments.append(Segment([(0, 0), (dx, dy)], arrow=arrow))
+            self.anchors['mid'] = (dx/2, dy/2)
+        elif shape == '-|':  # Right angle, horizontal first
+            self.segments.append(Segment([(0, 0), (dx, 0), (dx, dy)], arrow=arrow))
+            self.anchors['mid'] = (dx/2, dy)
+            self.anchors['mid2'] = (dx, dy/2)
+            self.params['droptheta'] = 90 if dy > 0 else -90
+        elif shape == '|-':  # Right angle, vertical first
+            self.segments.append(Segment([(0, 0), (0, dy), (dx, dy)], arrow=arrow))
+            self.anchors['mid'] = (dx, dy/2)
+            self.anchors['mid2'] = (dx/2, dy)
+            self.params['droptheta'] = 0 if dx > 0 else 180
+        elif shape == 'n':   # N-shape
+            self.segments.append(Segment([(0, 0), (0, k), (dx, k), (dx, dy)], arrow=arrow))
+            self.anchors['mid'] = (dx/2, k)
+            self.params['droptheta'] = 90 if dy > k else -90
+        elif shape == 'c':   # C-shape
+            self.segments.append(Segment([(0, 0), (k, 0), (k, dy), (dx, dy)], arrow=arrow))
+            self.anchors['mid'] = (k, dy/2)
+            self.params['droptheta'] = 0 if dx > k else 180
+            print(dx, k, self.params['droptheta'])
+        else:
+            raise ValueError(f'Undefined shape parameter `{shape}`.')
+
+        self.params['lblloc'] = 'mid'
+        self.params['drop'] = (dx, dy)
+        return super()._place(dwgxy, dwgtheta, **dwgparams)
+
+
 class Arc2(Element):
     ''' Arc Element
 
@@ -224,7 +304,7 @@ class Arc3(Element):
             k: Control point factor. Higher k means tighter curve.
             th1: Angle at which the arc leaves start point
             th2: Angle at which the arc leaves end point
-            arrow: arrowhead specifier, such as '->', '<-', or '<->'
+            arrow: arrowhead specifier, such as '->', '<-', '<->', or '-o'
             arrowlength: Length of arrowhead
             arrowwidth: Width of arrowhead
 
@@ -301,8 +381,7 @@ class ArcZ(Arc3):
 
         Args:
             k: Control point factor. Higher k means tighter curve.
-            arrow: arrowhead specifier, such as '->', '<-', or '<->'
-            arrowlength: Length of arrowhead
+            arrow: arrowhead specifier, such as '->', '<-', '<->', or '-o'            arrowlength: Length of arrowhead
             arrowwidth: Width of arrowhead
     '''
     def __init__(self, k=0.75, arrow=None, arrowlength=.25, arrowwidth=.2, **kwargs):
@@ -319,8 +398,7 @@ class ArcN(Arc3):
 
         Args:
             k: Control point factor. Higher k means tighter curve.
-            arrow: arrowhead specifier, such as '->', '<-', or '<->'
-            arrowlength: Length of arrowhead
+            arrow: arrowhead specifier, such as '->', '<-', '<->', or '-o'            arrowlength: Length of arrowhead
             arrowwidth: Width of arrowhead
     '''
     def __init__(self, k=0.75, arrow=None, arrowlength=.25, arrowwidth=.2, **kwargs):
@@ -336,8 +414,7 @@ class ArcLoop(Element):
 
         Args:
             radius: Radius of the arc
-            arrow: arrowhead specifier, such as '->', '<-', or '<->'
-            arrowlength: Length of arrowhead
+            arrow: arrowhead specifier, such as '->', '<-', '<->', or '-o'            arrowlength: Length of arrowhead
             arrowwidth: Width of arrowhead
 
         Anchors:

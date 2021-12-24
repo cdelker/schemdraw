@@ -9,7 +9,7 @@ from .misc import Speaker, Mic, Motor, AudioJack
 from .xform import Transformer
 from .cables import Coax, Triax
 from .intcircuits import IcPin, Ic, Multiplexer, IcDIP, VoltageRegulator, DFlipFlop, JKFlipFlop, Ic555, SevenSegment, sevensegdigit
-from .lines import Line, Dot, Arrowhead, Arrow, LineDot, DotDotDot, Gap, Label, Tag, CurrentLabel, CurrentLabelInline, LoopCurrent, LoopArrow, Rect, Arc2, Arc3, ArcZ, ArcN, ArcLoop
+from .lines import Line, Dot, Arrowhead, Arrow, LineDot, DotDotDot, Wire, Gap, Label, Tag, CurrentLabel, CurrentLabelInline, LoopCurrent, LoopArrow, Rect, Arc2, Arc3, ArcZ, ArcN, ArcLoop
 from .connectors import OrthoLines, RightLines, Header, Jumper, BusConnect, BusLine, DB25, DB9, CoaxConnect, Plug, Jack
 from .compound import ElementCompound, Optocoupler, Relay
 from .outlets import OutletA, OutletB, OutletC, OutletD, OutletE, OutletF, OutletG, OutletH, OutletI, OutletJ, OutletK, OutletL

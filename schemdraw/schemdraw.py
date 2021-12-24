@@ -274,7 +274,7 @@ class Drawing:
         self.fig.set_bbox(self.get_bbox())  # type: ignore
         self.fig.getimage()  # type: ignore
 
-    def move(self, dx: float, dy: float) -> None:
+    def move(self, dx: float=0, dy: float=0) -> None:
         ''' Move the current drawing position
 
             Args:

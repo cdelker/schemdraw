@@ -28,7 +28,7 @@ class Arrow(Line):
     '''
     def __init__(self, *d,
                  double: bool=False,
-                 headwidth: float=0.2, headlength: float=0.25,
+                 headwidth: float=0.15, headlength: float=0.25,
                  **kwargs):
         super().__init__(*d, **kwargs)
         self.double = double
@@ -110,7 +110,7 @@ class Dot(Element):
 
 class Arrowhead(Element):
     ''' Arrowhead'''
-    def __init__(self, *d, headwidth: float=.15, headlength: float=.2, **kwargs):
+    def __init__(self, *d, headwidth: float=.15, headlength: float=.25, **kwargs):
         super().__init__(*d, **kwargs)
         self.segments.append(Segment([
             (-headlength, 0), (0, 0)], arrowwidth=headwidth, arrowlength=headlength, arrow='->'))

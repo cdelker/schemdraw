@@ -132,7 +132,7 @@ class Figure:
         self.addclip(circ, clip)
 
     def arrow(self, xy: Sequence[float], theta: float,
-              arrowwidth: float=.2, arrowlength: float=.2,
+              arrowwidth: float=.15, arrowlength: float=.25,
               color: str='black', lw: float=2, clip: BBox=None, zorder: int=1) -> None:
         ''' Draw an arrowhead '''
         # Easier to skip Matplotlib's arrow or annotate methods and just draw a line
@@ -156,7 +156,7 @@ class Figure:
 
     def bezier(self, p: Sequence[util.Point], color: str='black',
                lw: float=2, ls: Linestyle='-', capstyle: Capstyle='round', zorder: int=1,
-               arrow: str=None, arrowlength: float=0.2, arrowwidth: float=0.2,
+               arrow: str=None, arrowlength: float=0.25, arrowwidth: float=0.15,
                clip: BBox=None) -> None:
         ''' Draw a cubic or quadratic bezier '''
         # Keep original points for arrow head
@@ -189,11 +189,18 @@ class Figure:
                 theta = math.degrees(math.atan2(delta.y, delta.x))
                 self.arrow(p[0], theta, arrowlength=arrowlength,
                            arrowwidth=arrowwidth, color=color, zorder=zorder)
+            elif arrow.startswith('o'):
+                self.circle(p[0], radius=arrowwidth/2, color=color, fill=color, lw=0,
+                           clip=clip, zorder=zorder)
+
             if '>' in arrow:
                 delta = p[-1] - p[-2]
                 theta = math.degrees(math.atan2(delta.y, delta.x))
                 self.arrow(p[-1], theta, arrowlength=arrowlength,
                            arrowwidth=arrowwidth, color=color, zorder=zorder)
+            elif arrow.endswith('o'):
+                self.circle(p[-1], radius=arrowwidth/2, color=color, fill=color, lw=0,
+                           clip=clip, zorder=zorder)
 
     def arc(self, center: Sequence[float], width: float, height: float,
             theta1: float=0, theta2: float=90, angle: float=0,

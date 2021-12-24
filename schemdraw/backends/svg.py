@@ -289,7 +289,7 @@ class Figure:
         self.svgelements.append((zorder, et))
 
     def arrow(self, xy: Sequence[float], theta: float,
-              arrowwidth: float=.2, arrowlength: float=.2,
+              arrowwidth: float=.15, arrowlength: float=.25,
               color: str='black', lw: float=2, clip: BBox=None, zorder: int=1) -> None:
         ''' Draw an arrowhead '''
         x, y = self.xform(*xy)
@@ -357,11 +357,17 @@ class Figure:
                 theta = math.degrees(math.atan2(delta.y, delta.x))
                 self.arrow(p[0], theta, color=color, lw=1, zorder=zorder,
                            clip=clip, arrowlength=arrowlength, arrowwidth=arrowwidth)
+            elif arrow.startswith('o'):
+                self.circle(p[0], radius=arrowwidth/2, color=color, fill=color, lw=0,
+                           clip=clip, zorder=zorder)
             if '>' in arrow:
                 delta = p[-1] - p[-2]
                 theta = math.degrees(math.atan2(delta.y, delta.x))
                 self.arrow(p[-1], theta, color=color, lw=1, zorder=zorder,
                            clip=clip, arrowlength=arrowlength, arrowwidth=arrowwidth)
+            elif arrow.endswith('o'):
+                self.circle(p[-1], radius=arrowwidth/2, color=color, fill=color, lw=0,
+                           clip=clip, zorder=zorder)
 
     def arc(self, center: Sequence[float], width: float, height: float,
             theta1: float=0, theta2: float=90, angle: float=0,

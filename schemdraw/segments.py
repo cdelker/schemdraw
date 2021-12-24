@@ -89,7 +89,7 @@ class Segment:
             capstyle: Capstyle for the segment: 'butt', 'round', 'square', ('projecting')
             joinstyle: Joinstyle for the segment: 'round', 'miter', or 'bevel'
             fill: Color to fill if path is closed
-            arrow: Arrowhead specifier, such as '->', '<-', or '<->'
+            arrow: Arrowhead specifier, such as '->', '<-', '<->', '-o', etc.
             arrowwidth: Width of arrowhead
             arrowlength: Length of arrowhead
             clip: Bounding box to clip to
@@ -157,7 +157,7 @@ class Segment:
         ''' Reverse the path (flip horizontal about the center of the path) '''
         self.path = [util.mirrorx(p, centerx) for p in self.path[::-1]]
         if self.arrow:
-            self.arrow = self.arrow.translate(self.arrow.maketrans('<>', '><'))
+            self.arrow = reversed(self.arrow).translate(self.arrow.maketrans('<>', '><'))
 
     def doflip(self) -> None:
         ''' Vertically flip the element '''
@@ -207,14 +207,22 @@ class Segment:
                  ls=ls, lw=lw, capstyle=capstyle, joinstyle=joinstyle,
                  clip=self.clip, zorder=zorder)
 
-        if self.arrow and '<' in self.arrow:
-            theta = math.degrees(math.atan2(path[0].y-path[1].y, path[0].x-path[1].x))
-            fig.arrow(path[0], theta, color=color, zorder=zorder, clip=self.clip,
-                      arrowlength=self.arrowlength, arrowwidth=self.arrowwidth, lw=1)
-        if self.arrow and '>' in self.arrow:
-            theta = math.degrees(math.atan2(path[-1].y-path[-2].y, path[-1].x-path[-2].x))
-            fig.arrow(path[-1], theta, color=color, zorder=zorder, clip=self.clip,
-                      arrowlength=self.arrowlength, arrowwidth=self.arrowwidth, lw=1)
+        if self.arrow:
+            if '<' in self.arrow:
+                theta = math.degrees(math.atan2(path[0].y-path[1].y, path[0].x-path[1].x))
+                fig.arrow(path[0], theta, color=color, zorder=zorder, clip=self.clip,
+                          arrowlength=self.arrowlength, arrowwidth=self.arrowwidth, lw=1)
+            elif self.arrow.startswith('o'):
+                fig.circle(path[0], 0.075, color=color, fill=color, lw=0,
+                           clip=self.clip, zorder=zorder)
+
+            if '>' in self.arrow:
+                theta = math.degrees(math.atan2(path[-1].y-path[-2].y, path[-1].x-path[-2].x))
+                fig.arrow(path[-1], theta, color=color, zorder=zorder, clip=self.clip,
+                          arrowlength=self.arrowlength, arrowwidth=self.arrowwidth, lw=1)
+            elif self.arrow.endswith('o'):
+                fig.circle(path[-1], 0.075, color=color, fill=color, lw=0,
+                            clip=self.clip, zorder=zorder)
 
 
 class SegmentText:
@@ -575,7 +583,7 @@ class SegmentBezier:
                  capstyle: Capstyle=None,
                  arrow: str=None,
                  arrowlength: float=.25,
-                 arrowwidth: float=.2,
+                 arrowwidth: float=.15,
                  clip: BBox=None,
                  zorder: int=None):
         self.p = [Point(pi) for pi in p]
@@ -593,7 +601,7 @@ class SegmentBezier:
         ''' Reverse the path (flip horizontal about the centerx point) '''
         self.p = [Point(util.mirrorx(p, centerx)) for p in self.p]
         if self.arrow:
-            self.arrow = self.arrow.translate(self.arrow.maketrans('<>', '><'))
+            self.arrow = reversed(self.arrow).translate(self.arrow.maketrans('<>', '><'))
 
     def doflip(self) -> None:
         ''' Vertically flip the element '''

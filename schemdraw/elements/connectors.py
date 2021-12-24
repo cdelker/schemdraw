@@ -11,7 +11,7 @@ from ..types import Point, XY, Valign, HeaderStyle, HeaderNumbering
 
 
 class OrthoLines(Element):
-    ''' Orthogonal connection lines
+    ''' Orthogonal multiline connectors
 
         Use `at()` and `to()` methods to specify starting and
         ending location of OrthoLines.
@@ -40,6 +40,11 @@ class OrthoLines(Element):
         self._userparams['to'] = xy
         return self
 
+    def delta(self, dx: float=0, dy: float=0):
+        ''' Specify ending position relative to start position '''
+        self._userparams['delta'] = Point((dx, dy))
+        return self
+
     def _place(self, dwgxy: XY, dwgtheta: float, **dwgparams) -> tuple[Point, float]:
         ''' Calculate absolute placement of Element '''
         self._dwgparams = dwgparams
@@ -49,12 +54,16 @@ class OrthoLines(Element):
         self.params['theta'] = 0
         xy: XY = self._cparams.get('at', dwgxy)
         to: XY = self._cparams.get('to', dwgxy)
+        delta = self._cparams.get('delta', None)
         n = self._cparams.get('n', 1)
         ndy = self._cparams.get('dy', .6)
         xstart = self._cparams.get('xstart', None)
         arrow = self._cparams.get('arrow', None)
-        dx = to[0] - xy[0]
-        dy = to[1] - xy[1]
+        if delta is not None:
+            dx, dy = delta
+        else:
+            dx = to[0] - xy[0]
+            dy = to[1] - xy[1]
 
         if abs(dy) < .05:
             for i in range(n):
@@ -84,7 +93,7 @@ class OrthoLines(Element):
 
 
 class RightLines(Element):
-    ''' Right-angle line connector
+    ''' Right-angle multi-line connectors
 
         Use `at()` and `to()` methods to specify starting and ending
         location.
@@ -109,6 +118,11 @@ class RightLines(Element):
         self._userparams['to'] = xy
         return self
 
+    def delta(self, dx: float=0, dy: float=0):
+        ''' Specify ending position relative to start position '''
+        self._userparams['delta'] = Point((dx, dy))
+        return self
+    
     def _place(self, dwgxy: XY, dwgtheta: float, **dwgparams) -> tuple[Point, float]:
         ''' Calculate absolute placement of Element '''
         self._dwgparams = dwgparams
@@ -117,12 +131,16 @@ class RightLines(Element):
 
         self.params['theta'] = 0
         xy = self._cparams.get('at', dwgxy)
-        to = self._cparams.get('to', (1,1))
+        to = self._cparams.get('to', None)
+        delta = self._cparams.get('delta', None)
         n = self._cparams.get('n', 1)
         ndy = self._cparams.get('dy', .6)
         arrow = self._cparams.get('arrow', None)
-        dx = to[0] - xy[0]
-        dy = to[1] - xy[1]
+        if delta is not None:
+            dx, dy = delta
+        else:
+            dx = to[0] - xy[0]
+            dy = to[1] - xy[1]
         for i in range(n):
             y = -i*ndy
             if dy > 0:

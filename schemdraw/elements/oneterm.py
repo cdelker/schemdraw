@@ -5,13 +5,14 @@ from .elements import Element
 from .twoterm import resheight, gap
 
 gndgap = 0.12
-gnd_lead = 0.4
+_gnd_lead = 0.4
 
 
 class Ground(Element):
     ''' Ground connection '''
-    def __init__(self, *d, **kwargs):
+    def __init__(self, *d, lead: bool=True, **kwargs):
         super().__init__(*d, **kwargs)
+        gnd_lead = _gnd_lead if lead else 0
         self.segments.append(Segment(
             [(0, 0), (0, -gnd_lead), (-resheight, -gnd_lead),
              (resheight, -gnd_lead), gap, (-resheight*.7, -gndgap-gnd_lead),
@@ -27,10 +28,12 @@ class Ground(Element):
 
 class GroundSignal(Element):
     ''' Signal ground '''
-    def __init__(self, *d, **kwargs):
+    def __init__(self, *d, lead: bool=True, **kwargs):
         super().__init__(*d, **kwargs)
+        
+        gnd_lead = _gnd_lead if lead else 0
         self.segments.append(Segment(
-            [(0, 0), (0, -gnd_lead), (-resheight, -gnd_lead), (0, -gnd_lead*2),
+            [(0, 0), (0, -gnd_lead), (-resheight, -gnd_lead), (0, -gnd_lead-resheight),
              (resheight, -gnd_lead), (0, -gnd_lead)]))
         self.params['drop'] = (0, 0)
         self.params['theta'] = 0
@@ -41,8 +44,9 @@ class GroundSignal(Element):
 
 class GroundChassis(Element):
     ''' Chassis ground '''
-    def __init__(self, *d, **kwargs):
+    def __init__(self, *d, lead: bool=True, **kwargs):
         super().__init__(*d, **kwargs)
+        gnd_lead = _gnd_lead if lead else 0
         dx = resheight*.75
         dy = resheight
         self.segments.append(Segment(
@@ -114,9 +118,10 @@ class AntennaLoop2(Element):
 
 class Vss(Element):
     ''' Vss connection '''
-    def __init__(self, *d, **kwargs):
+    def __init__(self, *d, lead: bool=True, **kwargs):
         super().__init__(*d, **kwargs)
         dx = resheight*.75
+        gnd_lead = _gnd_lead if lead else 0
         self.segments.append(Segment([(0, 0), (0, -gnd_lead)]))
         self.segments.append(Segment([(0, -gnd_lead), (-dx, -gnd_lead)]))
         self.segments.append(Segment([(0, -gnd_lead), (dx, -gnd_lead)]))
@@ -125,13 +130,15 @@ class Vss(Element):
         self.anchors['start'] = (0, 0)
         self.anchors['center'] = (0, 0)
         self.anchors['end'] = (0, 0)
+        self.params['lblloc'] = 'bottom'
 
 
 class Vdd(Element):
     ''' Vdd connection '''
-    def __init__(self, *d, **kwargs):
+    def __init__(self, *d, lead: bool=True, **kwargs):
         super().__init__(*d, **kwargs)
         dx = resheight*.75
+        gnd_lead = _gnd_lead if lead else 0
         self.segments.append(Segment([(0, 0), (0, gnd_lead)]))
         self.segments.append(Segment([(0, gnd_lead), (-dx, gnd_lead)]))
         self.segments.append(Segment([(0, gnd_lead), (dx, gnd_lead)]))

@@ -160,14 +160,30 @@ class Wire(Element):
         self._userparams['arrow'] = arrow
         self._userparams.setdefault('to', (3, -2))
 
-    def to(self, xy: XY) -> 'Element':
-        ''' Specify ending position of OrthoLines '''
-        self._userparams['to'] = xy
+    def to(self, xy: XY, dx: float=0, dy: float=0) -> 'Element':
+        ''' Specify ending position
+
+            Args:
+                xy: Ending position of element
+                dx: X-offset from xy position
+                dy: Y-offset from xy position
+        '''
+        self._userparams['to'] = Point((xy.x + dx, xy.y + dy))
         return self
 
     def delta(self, dx: float=0, dy: float=0):
         ''' Specify ending position relative to start position '''
         self._userparams['delta'] = Point((dx, dy))
+        return self
+
+    def dot(self, open: bool=False) -> 'Element2Term':
+        ''' Add a dot to the end of the element '''
+        self._userparams['dot'] = True if not open else 'open'
+        return self
+
+    def idot(self, open: bool=False) -> 'Element2Term':
+        ''' Add a dot to the input/start of the element '''
+        self._userparams['idot'] = True if not open else 'open'
         return self
 
     def _place(self, dwgxy: XY, dwgtheta: float, **dwgparams) -> tuple[Point, float]:
@@ -213,8 +229,17 @@ class Wire(Element):
         else:
             raise ValueError(f'Undefined shape parameter `{shape}`.')
 
+        if self._cparams.get('dot', False):
+            fill = 'bg' if self._cparams['dot'] == 'open' else True
+            self.segments.append(SegmentCircle((dx, dy), radius=0.075, fill=fill, zorder=3))
+        if self._cparams.get('idot', False):
+            fill = 'bg' if self._cparams['idot'] == 'open' else True
+            self.segments.append(SegmentCircle((0, 0), radius=0.075, fill=fill, zorder=3))
+
         self.params['lblloc'] = 'mid'
         self.params['drop'] = (dx, dy)
+        self.anchors['start'] = Point((0, 0))
+        self.anchors['end'] = Point((dx, dy))
         return super()._place(dwgxy, dwgtheta, **dwgparams)
 
 
@@ -241,9 +266,16 @@ class Arc2(Element):
         self.k = k
         self.arrow = arrow
 
-    def to(self, xy: XY) -> 'Element':
-        ''' Specify ending position '''
-        self._userparams['to'] = xy
+    def to(self, xy: XY, dx: float=0, dy: float=0) -> 'Element':
+        ''' Specify ending position
+        
+            Args:
+                xy: Ending position of element
+                dx: X-offset from xy position
+                dy: Y-offset from xy position
+        '''
+        xy = Point(xy)
+        self._userparams['to'] = Point((xy.x + dx, xy.y + dy))
         return self
 
     def _place(self, dwgxy: XY, dwgtheta: float, **dwgparams) -> tuple[Point, float]:
@@ -252,8 +284,6 @@ class Arc2(Element):
         if not self._cparams:
             self._buildparams()
 
-        self.params['lblloc'] = 'center'
-        self.params['theta'] = 0
         xy: Point = Point(self._cparams.get('at', dwgxy))
         to: Point = Point(self._cparams.get('to', Point((xy.x+3, xy.y))))
         dx = to.x - xy.x
@@ -261,17 +291,17 @@ class Arc2(Element):
         pa = Point((dx/2-dy*self.k, dy/2+dx*self.k))
         mid = Point((dx/2-dy*self.k/2, dy/2+dx*self.k/2))
         self.segments.append(SegmentBezier(
-            (Point((0, 0)), pa, Point((dx, dy))), arrow=self.arrow),)
+            (Point((0, 0)), pa, Point((dx, dy))), arrow=self.arrow))
 
         self.anchors['ctrl'] = pa
         self.anchors['mid'] = mid
+        self.params['theta'] = 0
         self.params['lblloc'] = 'mid'
         self.anchors['start'] = Point((0, 0))
         self.anchors['end'] = Point((dx, dy))
         self.params['drop'] = Point((dx, dy))
         valign = 'bottom'
         halign = 'left'
-        hofst = 0.1
         vofst = 0.1
         if math.isclose(mid.y, pa.y, abs_tol=.01):
             valign = 'center'
@@ -281,11 +311,9 @@ class Arc2(Element):
             vofst = -0.1
         if math.isclose(mid.x, pa.x, abs_tol=.01):
             halign = 'center'
-            hofst = 0
         elif mid.x > pa.x:
             halign = 'right'
-            hofst = -0.1
-        self.params['lblofst'] = (hofst, vofst)
+        self.params['lblofst'] = vofst
         self.params['lblalign'] = (halign, valign)
         return super()._place(dwgxy, dwgtheta, **dwgparams)
 
@@ -324,9 +352,15 @@ class Arc3(Element):
         self.arrowlength = arrowlength
         self.arrowwidth = arrowwidth
 
-    def to(self, xy: XY) -> 'Element':
-        ''' Specify ending position '''
-        self._userparams['to'] = xy
+    def to(self, xy: XY, dx: float=0, dy: float=0) -> 'Element':
+        ''' Specify ending position
+
+            Args:
+                xy: Ending position of element
+                dx: X-offset from xy position
+                dy: Y-offset from xy position
+        '''
+        self._userparams['to'] = Point((xy.x + dx, xy.y + dy))
         return self
 
     def _place(self, dwgxy: XY, dwgtheta: float, **dwgparams) -> tuple[Point, float]:
@@ -431,9 +465,15 @@ class ArcLoop(Element):
         self.arrowlength = arrowlength
         self.arrowwidth = arrowwidth
 
-    def to(self, xy: XY) -> 'Element':
-        ''' Specify ending position '''
-        self._userparams['to'] = xy
+    def to(self, xy: XY, dx: float=0, dy: float=0) -> 'Element':
+        ''' Specify ending position
+
+            Args:
+                xy: Ending position of element
+                dx: X-offset from xy position
+                dy: Y-offset from xy position
+        '''
+        self._userparams['to'] = Point((xy.x + dx, xy.y + dy))
         return self
 
     def _place(self, dwgxy: XY, dwgtheta: float, **dwgparams) -> tuple[Point, float]:
@@ -598,7 +638,7 @@ class CurrentLabelInline(Element):
                  ofst: float=0.8, start: bool=True,
                  headlength: float=0.3, headwidth: float=0.3, **kwargs):
         super().__init__(**kwargs)
-        self.params['lblofst'] = .25
+        self.params['lblofst'] = 0
         self.params['drop'] = None
         self.params['zorder'] = 4
 
@@ -710,3 +750,59 @@ class Rect(Element):
         c2a = (corner2[0], corner1[1])
         self.segments.append(Segment([corner1, c1a, corner2, c2a, corner1], zorder=0))
         self.params['zorder'] = 0   # Put on bottom
+
+
+class Encircle(Element):
+    ''' Draw ellipse around all elements in the list
+
+        Args:
+            elm_list: List of 4 elements surrounding loop, in
+                      order (top, right, bottom, left)
+            pad: Distance from elements to loop
+    '''
+    def __init__(self, elm_list: Sequence[Element]=None,
+                 pad: float=0.2, **kwargs):
+        super().__init__(**kwargs)
+        assert elm_list is not None
+        xmin = math.inf
+        xmax = -math.inf
+        ymin = math.inf
+        ymax = -math.inf
+        for element in elm_list:
+            bbox = element.get_bbox(transform=True, includetext=False)
+            xmin = min(xmin, bbox.xmin)
+            xmax = max(xmax, bbox.xmax)
+            ymin = min(ymin, bbox.ymin)
+            ymax = max(ymax, bbox.ymax)
+        xmin -= pad
+        xmax += pad
+        ymin -= pad
+        ymax += pad
+        center = (xmax+xmin)/2, (ymax+ymin)/2
+        w = xmax-xmin
+        h = ymax-ymin
+        self._userparams['at'] = center
+        self.segments.append(SegmentArc((0, 0), h, w, theta1=0, theta2=360))
+        
+        sinpi4 = math.sin(math.pi/4)
+        cospi4 = math.cos(math.pi/4)
+        sinpi8 = math.sin(math.pi/8)
+        cospi8 = math.cos(math.pi/8)
+        self.anchors['N'] = (-h/2, 0)
+        self.anchors['S'] = (h/2, 0)
+        self.anchors['E'] = (0, w/2)
+        self.anchors['W'] = (0, -w/2)
+        self.anchors['SE'] = (h/2*sinpi4, w/2*cospi4)
+        self.anchors['SW'] = (h/2*sinpi4, -w/2*cospi4)
+        self.anchors['NW'] = (-h/2*sinpi4, -w/2*cospi4)
+        self.anchors['NE'] = (-h/2*sinpi4, w/2*cospi4)
+        self.anchors['ENE'] = (-h/2*sinpi8, w/2*cospi8)
+        self.anchors['WNW'] = (-h/2*sinpi8, -w/2*cospi8)
+        self.anchors['ESE'] = (h/2*sinpi8, w/2*cospi8)
+        self.anchors['WSW'] = (h/2*sinpi8, -w/2*cospi8)
+        self.anchors['NNE'] = (-h/2*cospi8, w/2*sinpi8)
+        self.anchors['NNW'] = (-h/2*cospi8, -w/2*sinpi8)
+        self.anchors['SSE'] = (h/2*cospi8, w/2*sinpi8)
+        self.anchors['SSW'] = (h/2*cospi8, -w/2*sinpi8)
+
+        

@@ -7,7 +7,7 @@ from dataclasses import dataclass
 import warnings
 import math
 
-from ..segments import SegmentText, SegmentCircle, BBox, SegmentType
+from ..segments import Segment, SegmentText, SegmentCircle, BBox, SegmentType
 from ..transform import Transform
 from .. import util
 from ..util import Point
@@ -122,15 +122,22 @@ class Element:
         self._userparams['drop'] = drop
         return self
 
-    def at(self, xy: XY | tuple['Element', str]) -> 'Element':
+    def at(self, xy: XY | tuple['Element', str], dx: float=0, dy: float=0) -> 'Element':
         ''' Set the element xy position
 
             Args:
                 xy: (x,y) position or tuple of (Element, anchorname)
+                
         '''
+        xy = Point(xy)
         if 'at' in self._userparams:
             warnings.warn(f"Duplicate `at` parameter in element: `{self._userparams['at']}` changed to `{xy}`.")
-        self._userparams['at'] = xy
+        if isinstance(xy[1], str):
+            self._userparams['at'] = xy
+            if dx != 0 or dy != 0:
+                raise ValueError('dx and dy must be zero for anchorname XY')
+        else:
+            self._userparams['at'] = Point((xy.x + dx, xy.y + dy))
         return self
 
     def scale(self, scale: float=1) -> 'Element':
@@ -540,7 +547,10 @@ class Element:
                         ofsty = 0
 
                     align = (align[0] or alignH, align[1] or alignV)
-                    rotalignidx = (rotalign.index(align) + round((th/360)*8)) % 8
+                    try:
+                        rotalignidx = (rotalign.index(align) + round((th/360)*8)) % 8
+                    except ValueError:
+                        rotalignidx = 0
                     if ofst is None and not isinstance(label, (tuple, list)):
                         ofst = [ofstx, ofsty]
 
@@ -682,9 +692,15 @@ class Element2Term(Element):
             * center
             * end
     '''
-    def to(self, xy: XY) -> 'Element2Term':
-        ''' Sets ending position of element '''
-        self._userparams['to'] = xy
+    def to(self, xy: XY, dx: float=0, dy: float=0) -> 'Element2Term':
+        ''' Sets ending position of element
+
+            Args:
+                xy: Ending position of element
+                dx: X-offset from xy position
+                dy: Y-offset from xy position
+        '''
+        self._userparams['to'] = Point((xy.x + dx, xy.y + dy))
         return self
 
     def tox(self, x: float | XY | Element) -> 'Element2Term':
@@ -738,14 +754,14 @@ class Element2Term(Element):
         theta = self._cparams.get('theta', dwgtheta)
         if endpts is not None:
             theta = util.angle(endpts[0], endpts[1])
+        elif to is not None:
+            theta = util.angle(xy, to)
         elif self._cparams.get('d') is not None:
             d = self._cparams.get('d')
             if str(d).lstrip('-').isnumeric():
                 theta = d
             else:
                 theta = {'u': 90, 'r': 0, 'l': 180, 'd': 270}[d[0].lower()]  # type: ignore
-        elif to is not None:
-            theta = util.angle(xy, to)
 
         # Get offset to element position within drawing (global shift)
         if endpts is not None:
@@ -764,6 +780,7 @@ class Element2Term(Element):
                 x = tox[0]
             endpt = [x, xy[1]]
             totlen = util.dist(xy, endpt)
+            theta = 180 if xy.x > x else 0
         elif toy is not None:
             # Allow either full coordinate (only keeping y), or just a y value
             if isinstance(toy, (int, float)):
@@ -772,7 +789,10 @@ class Element2Term(Element):
                 y = toy[1]
             endpt = [xy[0], y]
             totlen = util.dist(xy, endpt)
+            theta = -90 if xy.y > y else 90
 
+        self.anchors['istart'] = self.segments[0].path[0]
+        self.anchors['iend'] = self.segments[0].path[-1]
         if self._cparams.get('extend', True):
             in_path = self.segments[0].path  # type: ignore
             dz = util.delta(in_path[-1], in_path[0])   # Defined delta of path
@@ -798,13 +818,16 @@ class Element2Term(Element):
                 elif getattr(self.segments[i], 'endref', None) == 'start':
                     xform = Transform(0, start)
                     self.segments[i] = self.segments[i].xform(xform)
+        else:
+            start = Point(self.segments[0].path[0])
+            end = Point(self.segments[0].path[-1])
 
         if self._cparams.get('dot', False):
             fill = 'bg' if self._cparams['dot'] == 'open' else True
-            self.segments.append(SegmentCircle(end, radius=0.075, fill=fill, zorder=2))
+            self.segments.append(SegmentCircle(end, radius=0.075, fill=fill, zorder=3))
         if self._cparams.get('idot', False):
             fill = 'bg' if self._cparams['idot'] == 'open' else True
-            self.segments.append(SegmentCircle(start, radius=0.075, fill=fill, zorder=2))
+            self.segments.append(SegmentCircle(start, radius=0.075, fill=fill, zorder=3))
 
         self.anchors['start'] = Point(start)
         self.anchors['end'] = Point(end)

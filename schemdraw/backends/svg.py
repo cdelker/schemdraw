@@ -213,8 +213,9 @@ class Figure:
             return
 
         y += fontsize/72*2/6  # A bit of baseline shift to match MPL
-        x, y = self.xform(x, y)
-
+        x0, y0 = self.xform(x, y)
+        x, y = x0, y0
+        
         if ziamath and textmode == 'path':
             texttag = ET.Element('g')
             if fontfamily.lower() in ['sans-serif', 'Arial']:
@@ -247,7 +248,7 @@ class Figure:
                 yi += dy
 
             if rotation:
-                texttag.set('transform', f'rotate({-rotation} {x} {y})')
+                texttag.set('transform', f'rotate({-rotation} {x0} {y0})')
 
         else:
             texttag = svgtext.text_tosvg(s, x, y, font=fontfamily, size=fontsize,
@@ -411,9 +412,7 @@ class Figure:
             et.set('ry', str(height/2))
             if angle != 0:
                 et.set('transform', f'rotate({angle} {centerx} {centery})')
-            et.set('stroke', color)
-            et.set('stroke-width', str(lw))
-            et.set('fill', 'none')
+            et.set('style', getstyle(color=color, ls=ls, lw=lw))
             self.addclip(et, clip)
             self.svgelements.append((zorder, et))
 
@@ -423,9 +422,7 @@ class Figure:
             d = f'M {startx} {starty}'
             d += f' a {width/2} {height/2} {angle} {flags} {dx} {dy}'
             et.set('d', d)
-            et.set('stroke', color)
-            et.set('stroke-width', str(lw))
-            et.set('fill', 'none')
+            et.set('style', getstyle(color=color, ls=ls, lw=lw))
             self.addclip(et, clip)
             self.svgelements.append((zorder, et))
 

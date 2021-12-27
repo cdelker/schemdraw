@@ -1,6 +1,6 @@
 ''' Transistor elements '''
 
-from .elements import Element
+from .elements import Element, Element2Term
 from .twoterm import reswidth
 from ..segments import Segment, SegmentCircle
 from ..types import Point
@@ -9,7 +9,7 @@ from ..types import Point
 fetw = reswidth*4
 feth = reswidth*5
 fetl = feth/2
-fetgap = reswidth*1.5
+fetgap = reswidth
 fetr = reswidth*.7  # Radius of "not" bubble
 
 
@@ -77,6 +77,63 @@ class PFet(Element):
             self.anchors['bulk'] = (0, -fetl-fetw/2)
 
 
+class NFet2T(Element2Term):
+    ''' N-type Field Effect Transistor which extends
+        source/drain leads to the desired length
+
+        Args:
+            bulk: Draw bulk contact
+
+        Anchors:
+            * source
+            * drain
+            * gate
+    '''
+    def __init__(self, *d, bulk: bool=False, **kwargs):
+        super().__init__(*d, **kwargs)
+        self.segments.append(Segment([(0, 0), (fetl, 0), (fetl, fetw),
+                                      (fetl+fetw, fetw), (fetl+fetw, 0), (2*fetl+fetw, 0)]))
+        self.segments.append(Segment([(fetl, fetw+fetgap), (fetl+fetw, fetw+fetgap)]))
+        self.segments.append(Segment([(fetl+fetw/2, fetw+fetgap), (fetl+fetw/2, fetw+fetgap+fetr+fetl)]))
+        self.anchors['source'] = (2*fetl+fetw, 0)
+        self.anchors['drain'] = (0, 0)
+        self.anchors['gate'] = (fetl+fetw/2, fetw+fetgap+fetr+fetl)
+        self.params['lblloc'] = 'bottom'
+        if bulk:
+            self.segments.append(Segment([(fetl+fetw/2, 0), (fetl+fetw/2, fetw)],
+                                         arrow='->', arrowwidth=.2))
+            self.anchors['bulk'] = (fetl+fetw/2, 0)
+
+
+class PFet2T(Element2Term):
+    ''' P-type Field Effect Transistor which extends
+        source/drain leads to the desired length
+
+        Args:
+            bulk: Draw bulk contact
+
+        Anchors:
+            * source
+            * drain
+            * gate
+    '''
+    def __init__(self, *d, bulk: bool=False, **kwargs):
+        super().__init__(*d, **kwargs)
+        self.segments.append(Segment([(0, 0), (fetl, 0), (fetl, fetw),
+                                      (fetl+fetw, fetw), (fetl+fetw, 0), (2*fetl+fetw, 0)]))
+        self.segments.append(Segment([(fetl, fetw+fetgap), (fetl+fetw, fetw+fetgap)]))
+        self.segments.append(SegmentCircle((fetl+fetw/2, fetw+fetgap+fetr), fetr))
+        self.segments.append(Segment([(fetl+fetw/2, fetw+fetgap+fetr*2), (fetl+fetw/2, fetw+fetgap+fetr+fetl)]))
+        self.anchors['source'] = (2*fetl+fetw, 0)
+        self.anchors['drain'] = (0, 0)
+        self.anchors['gate'] = (fetl+fetw/2, fetw+fetgap+fetr+fetl)
+        self.params['lblloc'] = 'bottom'
+        if bulk:
+            self.segments.append(Segment([(fetl+fetw/2, 0), (fetl+fetw/2, fetw)],
+                                         arrow='->', arrowwidth=.2))
+            self.anchors['bulk'] = (fetl+fetw/2, 0)
+
+
 # Junction FETs
 fete = fetw*.2  # JFET extension
 jfetw = reswidth*3
@@ -90,7 +147,7 @@ class JFet(Element):
             * drain
             * gate
     '''
-    def __init__(self, *d, **kwargs):
+    def __init__(self, *d, circle: bool=False, **kwargs):
         super().__init__(*d, **kwargs)
         self.segments.append(Segment(
             [(0, 0), (0, -fetl), (jfetw, -fetl), (jfetw, -fetl+fete),
@@ -102,6 +159,8 @@ class JFet(Element):
         self.anchors['drain'] = (0, 0)
         self.anchors['gate'] = (jfetw+fetl, -fetl-jfetw)
         self.params['lblloc'] = 'lft'
+        if circle:
+            self.segments.append(SegmentCircle((jfetw/2, -fetw), fetw*1.1))
 
 
 class JFetN(JFet):
@@ -116,11 +175,70 @@ class JFetN(JFet):
             * gate
     '''
     def __init__(self, *d, circle: bool=False, **kwargs):
-        super().__init__(*d, **kwargs)
+        super().__init__(*d, circle=circle, **kwargs)
         self.segments.append(Segment([(jfetw+.1, -fetl-jfetw), (jfetw+.3, -fetl-jfetw)],
-                                     arrow='->', arrowwidth=.3, arrowlength=.2))
+                                     arrow='->', arrowwidth=.2, arrowlength=.2))
+
+
+class JFet2T(Element2Term):
+    ''' Junction Field Effect Transistor (untyped) which extends
+        collector/emitter leads to the desired length
+
+        Anchors:
+            * source
+            * drain
+            * gate
+    '''
+    def __init__(self, *d, circle: bool=False, **kwargs):
+        super().__init__(*d, **kwargs)
+        self.segments.append(Segment([
+            (0, 0), (fetl, 0), (fetl, jfetw), (fetl+jfetw, jfetw),
+            (fetl+jfetw, 0), (2*fetl+jfetw, 0)]))
+        self.segments.append(Segment([(fetl-fete, jfetw), (fetl+jfetw+fete, jfetw)]))
+        self.segments.append(Segment([(fetl+jfetw, jfetw), (fetl+jfetw, jfetw+fetl)]))
+        self.anchors['source'] = (2*fetl+jfetw, 0)
+        self.anchors['drain'] = (0, 0)
+        self.anchors['gate'] = (fetl+jfetw, jfetw+fetl)
+        self.params['lblloc'] = 'bottom'
+        
         if circle:
-            self.segments.append(SegmentCircle((jfetw/2, -fetw), fetw*1.1))
+            self.segments.append(SegmentCircle((fetl+jfetw/2, jfetw/2), fetw*1.1))
+
+
+class JFetN2T(JFet2T):
+    ''' N-type Junction Field Effect Transistor which extends
+        collector/emitter leads to the desired length
+
+        Args:
+            circle: Draw circle around the transistor
+
+        Anchors:
+            * source
+            * drain
+            * gate
+    '''
+    def __init__(self, *d, circle: bool=False, **kwargs):
+        super().__init__(*d, circle=circle, **kwargs)
+        self.segments.append(Segment([(fetl+jfetw, jfetw), (fetl+jfetw, jfetw+0.3)],
+                                     arrow='->', arrowwidth=.2, arrowlength=.2))
+
+
+class JFetP2T(JFet2T):
+    ''' P-type Junction Field Effect Transistor which extends
+        collector/emitter leads to the desired length
+
+        Args:
+            circle: Draw circle around the transistor
+
+        Anchors:
+            * source
+            * drain
+            * gate
+    '''
+    def __init__(self, *d, circle: bool=False, **kwargs):
+        super().__init__(*d, circle=circle, **kwargs)
+        self.segments.append(Segment([(fetl+jfetw, jfetw+0.3), (fetl+jfetw, jfetw)],
+                                     arrow='->', arrowwidth=.2, arrowlength=.2))
 
 
 class JFetP(JFet):
@@ -135,11 +253,9 @@ class JFetP(JFet):
             * gate
     '''
     def __init__(self, *d, circle: bool=False, **kwargs):
-        super().__init__(*d, **kwargs)
+        super().__init__(*d, circle=circle, **kwargs)
         self.segments.append(Segment([(jfetw+.25, -fetl-jfetw), (jfetw, -fetl-jfetw)],
-                                     arrow='->', arrowwidth=.3, arrowlength=.2))
-        if circle:
-            self.segments.append(SegmentCircle((jfetw/2, -fetw), fetw*1.1))
+                                     arrow='->', arrowwidth=.2, arrowlength=.2))
 
 
 # BJT transistors
@@ -237,3 +353,65 @@ class BjtPnp2c(BjtPnp):
                                       (bjt_emx, -bjt_emy-bjt_2c_dy)]))
         self.anchors['C2'] = (bjt_emx, -bjt_emy-bjt_2c_dy)
         self.C2: Point
+
+
+class Bjt2T(Element2Term):
+    ''' Bipolar Junction Transistor (untyped) which extends
+        collector/emitter leads to the desired length
+
+        Args:
+            circle: Draw circle around the transistor
+
+        Anchors:
+            * collector
+            * emitter
+            * base
+    '''
+    def __init__(self, *d, circle: bool=False, **kwargs):
+        super().__init__(*d, **kwargs)
+        self.segments.append(Segment([(0, 0), (bjt_v, bjt_v), (bjt_v*2, bjt_v), (bjt_v*3, 0)]))
+        self.segments.append(Segment([(bjt_v-bjt_a, bjt_v), (bjt_v*2+bjt_a, bjt_v)]))
+        self.segments.append(Segment([(bjt_v*1.5, bjt_v), (bjt_v*1.5, bjt_v+bjt_a*2)]))
+        if circle:
+            self.segments.append(SegmentCircle((bjt_r, bjt_r/2), bjt_r))
+        self.params['lblloc'] = 'bottom'
+        self.anchors['base'] = (bjt_v*1.5, bjt_v+bjt_a*2)
+        self.anchors['collector'] = (bjt_v*3, 0)
+        self.anchors['emitter'] = (0, 0)
+
+        
+class BjtNpn2T(Bjt2T):
+    ''' NPN Bipolar Junction Transistor which extends
+        collector/emitter leads to the desired length
+
+        Args:
+            circle: Draw circle around the transistor
+
+        Anchors:
+            * collector
+            * emitter
+            * base
+    '''
+    def __init__(self, *d, circle: bool=False, **kwargs):
+        super().__init__(*d, circle=circle, **kwargs)
+        self.segments.append(Segment([(0, 0), (bjt_v, bjt_v)],
+                                     arrow='<-', arrowwidth=.2))
+
+
+class BjtPnp2T(Bjt2T):
+    ''' PNP Bipolar Junction Transistor which extends
+        collector/emitter leads to the desired length
+
+        Args:
+            circle: Draw circle around the transistor
+
+        Anchors:
+            * collector
+            * emitter
+            * base
+    '''
+    def __init__(self, *d, circle: bool=False, **kwargs):
+        super().__init__(*d, circle=circle, **kwargs)
+        self.segments.append(Segment([(bjt_v*2, bjt_v), (bjt_v*3, 0)],
+                                     arrow='<-', arrowwidth=.2))
+        self.anchors['emitter'], self.anchors['collector'] = self.anchors['collector'], self.anchors['emitter']

@@ -2,7 +2,7 @@ from .logic import And, Nand, Or, Nor, Xor, Xnor, Buf, Not, NotNot, Tgate, Schmi
 from .kmap import Kmap
 from .table import Table
 from .timing import TimingDiagram
-from ..elements import Arrow, Arrowhead, Dot, Line
+from ..elements import Arrow, Arrowhead, Dot, Line, Wire, Arc2, Arc3, ArcLoop
 
 
 from . import legacy

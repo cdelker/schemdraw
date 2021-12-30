@@ -70,7 +70,7 @@ class RoundBox(Box):
         Anchors:
             * 16 compass points (N, S, E, W, NE, NNE, etc.)
     '''
-    def __init__(self, w: float=3, h: float=2, cornerradius=0.3, **kwargs):
+    def __init__(self, w: float=3, h: float=2, cornerradius: float=0.3, **kwargs):
         super().__init__(w, h, **kwargs)
         self.segments = [SegmentPoly(
             [(0, h/2), (w, h/2), (w, -h/2), (0, -h/2)],

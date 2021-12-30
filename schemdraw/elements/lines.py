@@ -12,10 +12,14 @@ from .. import util
 
 
 class Line(Element2Term):
-    ''' Straight Line '''
-    def __init__(self, *d, **kwargs):
+    ''' Straight Line
+
+        Args:
+            arrow: arrowhead specifier, such as '->', '<-', '<->', '-o', or '\|->'
+    '''
+    def __init__(self, *d, arrow: str=None, **kwargs):
         super().__init__(*d, **kwargs)
-        self.segments.append(Segment([(0, 0)]))
+        self.segments.append(Segment([(0, 0)], arrow=arrow))
 
 
 class Arrow(Line):
@@ -170,6 +174,7 @@ class Wire(Element):
                 dx: X-offset from xy position
                 dy: Y-offset from xy position
         '''
+        xy = Point(xy)
         self._userparams['to'] = Point((xy.x + dx, xy.y + dy))
         return self
 
@@ -798,27 +803,73 @@ class Encircle(Element):
         w = xmax-xmin
         h = ymax-ymin
         self._userparams['at'] = center
-        self.segments.append(SegmentArc((0, 0), h, w, theta1=0, theta2=360))
-        
+        self.segments.append(SegmentArc((0, 0), w, h, theta1=0, theta2=360))
         sinpi4 = math.sin(math.pi/4)
         cospi4 = math.cos(math.pi/4)
         sinpi8 = math.sin(math.pi/8)
         cospi8 = math.cos(math.pi/8)
-        self.anchors['N'] = (-h/2, 0)
-        self.anchors['S'] = (h/2, 0)
-        self.anchors['E'] = (0, w/2)
-        self.anchors['W'] = (0, -w/2)
-        self.anchors['SE'] = (h/2*sinpi4, w/2*cospi4)
-        self.anchors['SW'] = (h/2*sinpi4, -w/2*cospi4)
-        self.anchors['NW'] = (-h/2*sinpi4, -w/2*cospi4)
-        self.anchors['NE'] = (-h/2*sinpi4, w/2*cospi4)
-        self.anchors['ENE'] = (-h/2*sinpi8, w/2*cospi8)
-        self.anchors['WNW'] = (-h/2*sinpi8, -w/2*cospi8)
-        self.anchors['ESE'] = (h/2*sinpi8, w/2*cospi8)
-        self.anchors['WSW'] = (h/2*sinpi8, -w/2*cospi8)
-        self.anchors['NNE'] = (-h/2*cospi8, w/2*sinpi8)
-        self.anchors['NNW'] = (-h/2*cospi8, -w/2*sinpi8)
-        self.anchors['SSE'] = (h/2*cospi8, w/2*sinpi8)
-        self.anchors['SSW'] = (h/2*cospi8, -w/2*sinpi8)
+        self.anchors['N'] = (0, h/2)
+        self.anchors['S'] = (0, -h/2)
+        self.anchors['E'] = (w/2, 0)
+        self.anchors['W'] = (-w/2, 0)
+        self.anchors['SE'] = (w/2*cospi4, -h/2*sinpi4)
+        self.anchors['SW'] = (-w/2*cospi4, -h/2*sinpi4)
+        self.anchors['NW'] = (-w/2*cospi4, h/2*sinpi4)
+        self.anchors['NE'] = (w/2*cospi4, h/2*sinpi4)
+        self.anchors['ENE'] = (w/2*cospi8, h/2*sinpi8)
+        self.anchors['WNW'] = (-w/2*cospi8, h/2*sinpi8)
+        self.anchors['ESE'] = (w/2*cospi8, -h/2*sinpi8)
+        self.anchors['WSW'] = (-w/2*cospi8, -h/2*sinpi8)
+        self.anchors['NNE'] = (w/2*sinpi8, h/2*cospi8)
+        self.anchors['NNW'] = (-w/2*sinpi8, h/2*cospi8)
+        self.anchors['SSE'] = (w/2*sinpi8, -h/2*cospi8)
+        self.anchors['SSW'] = (-w/2*sinpi8, -h/2*cospi8)
+        self.params['theta'] = 0
 
+
+class EncircleBox(Element):
+    ''' Draw rounded box around all elements in the list
+
+        Args:
+            elm_list: List of 4 elements surrounding loop, in
+                      order (top, right, bottom, left)
+            pad: Distance from elements to loop
+
+    '''
+    def __init__(self, elm_list: Sequence[Element]=None,
+                 cornerradius: float=0.3,
+                 pad: float=0.2, **kwargs):
+        super().__init__(**kwargs)
+        assert elm_list is not None
+        xmin = math.inf
+        xmax = -math.inf
+        ymin = math.inf
+        ymax = -math.inf
+        for element in elm_list:
+            bbox = element.get_bbox(transform=True, includetext=False)
+            xmin = min(xmin, bbox.xmin)
+            xmax = max(xmax, bbox.xmax)
+            ymin = min(ymin, bbox.ymin)
+            ymax = max(ymax, bbox.ymax)
+        xmin -= pad
+        xmax += pad
+        ymin -= pad
+        ymax += pad
+        center = (xmax+xmin)/2, (ymax+ymin)/2
+        w = xmax-xmin
+        h = ymax-ymin
+        self._userparams['at'] = center
+        self.segments = [SegmentPoly(
+            [(-w/2, h/2), (w/2, h/2), (w/2, -h/2), (-w/2, -h/2)],
+            cornerradius=cornerradius)]
+        k = cornerradius - cornerradius*math.sqrt(2)/2
+        self.anchors['NE'] = (w/2-k, h/2-k)
+        self.anchors['NW'] = (-w/2+k, h/2-k)
+        self.anchors['SE'] = (w/2-k, -h/2+k)
+        self.anchors['SW'] = (-w/2+k, -h/2+k)
+        self.anchors['N'] = (0, h/2)
+        self.anchors['S'] = (0, -h/2)
+        self.anchors['E'] = (w/2, 0)
+        self.anchors['W'] = (-w/2, 0)
+        self.params['theta'] = 0
         

@@ -283,9 +283,13 @@ class Drawing:
         '''
         self.here = Point((self.here[0] + dx, self.here[1] + dy))
 
-    def move_from(self, ref: Point, dx: float=0, dy: float=0) -> None:
-        ''' Move drawing position relative to the reference point '''
+    def move_from(self, ref: Point, dx: float=0, dy: float=0, theta: float=None) -> None:
+        ''' Move drawing position relative to the reference point. Change drawing
+            theta if provided.
+        '''
         self.here = (ref.x + dx, ref.y + dy)
+        if theta is not None:
+            self.theta = theta
 
     def push(self) -> None:
         ''' Push/save the drawing state.

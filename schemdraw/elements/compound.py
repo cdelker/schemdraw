@@ -22,6 +22,17 @@ class ElementCompound(elm.Element):
         self._here: Point = Point((0, 0))
         self._theta: float = 0
 
+    def move_from(self, xy: Point, dx: float=0, dy: float=0, theta: float=None) -> None:
+        ''' Move relative to xy position '''
+        xy = Point(xy)
+        self._here = Point((xy.x + dx, xy.y + dy))
+        if theta is not None:
+            self._theta = theta
+
+    def move(self, dx: float=0, dy: float=0) -> None:
+        ''' Move relative to current position '''
+        self._here = Point((self._here.x + dx, self._here.y + dy))
+
     def add(self, element: elm.Element, **kwargs) -> elm.Element:
         ''' Add an element to the segments list '''
         if not isinstance(element, elm.Element):

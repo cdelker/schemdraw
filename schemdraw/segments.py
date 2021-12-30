@@ -215,6 +215,14 @@ class Segment:
             elif self.arrow.startswith('o'):
                 fig.circle(path[0], self.arrowwidth/2, color=color, fill=color, lw=lw,
                            clip=self.clip, zorder=zorder)
+            elif self.arrow.startswith('|'):
+                theta = math.atan2(path[0].y-path[1].y, path[0].x-path[1].x) + math.pi/2
+                tailx = (path[0].x + self.arrowwidth/2 * math.cos(theta),
+                         path[0].x - self.arrowwidth/2 * math.cos(theta))
+                taily = (path[0].y + self.arrowwidth/2 * math.sin(theta),
+                         path[0].y - self.arrowwidth/2 * math.sin(theta))
+                fig.plot(tailx, taily, color=color, fill=fill, capstyle=capstyle,
+                         joinstyle=joinstyle, clip=self.clip, zorder=zorder)
 
             if '>' in self.arrow:
                 theta = math.degrees(math.atan2(path[-1].y-path[-2].y, path[-1].x-path[-2].x))
@@ -223,6 +231,14 @@ class Segment:
             elif self.arrow.endswith('o'):
                 fig.circle(path[-1], self.arrowwidth/2, color=color, fill=color, lw=lw,
                             clip=self.clip, zorder=zorder)
+            elif self.arrow.endswith('|'):
+                theta = math.atan2(path[-1].y-path[-2].y, path[-1].x-path[-2].x) + math.pi/2
+                tailx = (path[-1].x + self.arrowwidth/2 * math.cos(theta),
+                         path[-1].x - self.arrowwidth/2 * math.cos(theta))
+                taily = (path[-1].y + self.arrowwidth/2 * math.sin(theta),
+                         path[-1].y - self.arrowwidth/2 * math.sin(theta))
+                fig.plot(tailx, taily, color=color, fill=fill, capstyle=capstyle,
+                         joinstyle=joinstyle, clip=self.clip, zorder=zorder)
 
 
 class SegmentText:

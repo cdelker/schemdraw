@@ -33,6 +33,8 @@ See :ref:`elecelements` for complete class definitions for these elements.
             anchors = eplaced.absanchors.copy()
             anchors.pop('start', None)
             anchors.pop('end', None)
+            anchors.pop('istart', None)
+            anchors.pop('iend', None)
             anchors.pop('center', None)
             anchors.pop('xy', None)
 
@@ -355,26 +357,26 @@ The :py:class:`schemdraw.elements.opamp.Opamp` element defines several anchors f
 
     d = schemdraw.Drawing(fontsize=12)
     d += (op := elm.Opamp().label('Opamp', ofst=.6))
-    d += elm.LineDot().reverse().at(op.in1).left().length(.5).color('blue').label('in1', color='blue', loc='left')
-    d += elm.LineDot().reverse().at(op.in2).left().length(.5).color('blue').label('in2', color='blue', loc='left')
-    d += elm.LineDot().reverse().at(op.out).right().length(.5).color('blue').label('out', color='blue', loc='right')
-    d += elm.LineDot().reverse().at(op.vd).up().length(.25).color('blue').label('vd', color='blue', loc='right')
-    d += elm.LineDot().reverse().at(op.vs).down().length(.25).color('blue').label('vs', color='blue', loc='left')
-    d += elm.LineDot().reverse().at(op.n2).up().length(.25).color('blue').label('n2', color='blue', loc='right')
-    d += elm.LineDot().reverse().at(op.n1).down().length(.25).color('blue').label('n1', color='blue', loc='left')
-    d += elm.LineDot().reverse().at(op.n2a).up().length(.22).color('blue').label('n2a', ofst=0, color='blue', loc='right')
-    d += elm.LineDot().reverse().at(op.n1a).down().length(.22).color('blue').label('n1a', ofst=0, color='blue', loc='left')   
+    d += elm.Dot().at(op.in1).color('blue').label('in1', loc='left', valign='center')
+    d += elm.Dot().at(op.in2).color('blue').label('in2', loc='left', valign='center')
+    d += elm.Dot().at(op.out).color('blue').label('out', loc='right', valign='center')
+    d += elm.Dot().at(op.vd).color('blue').label('vd', loc='top')
+    d += elm.Dot().at(op.vs).color('blue').label('vs', loc='bottom')
+    d += elm.Dot().at(op.n1).color('blue').label('n1', loc='bottom')
+    d += elm.Dot().at(op.n2).color('blue').label('n2', loc='top')
+    d += elm.Dot().at(op.n2a).color('blue').label('n2a', loc='top')
+    d += elm.Dot().at(op.n1a).color('blue').label('n1a', loc='bottom')
 
     d += (op2 := elm.Opamp(sign=False).at([5, 0]).right().label('Opamp(sign=False)', ofst=.6))
-    d += elm.LineDot().reverse().at(op2.in1).left().length(.5).color('blue').label('in1', color='blue', loc='left')
-    d += elm.LineDot().reverse().at(op2.in2).left().length(.5).color('blue').label('in2', color='blue', loc='left')
-    d += elm.LineDot().reverse().at(op2.out).right().length(.5).color('blue').label('out', color='blue', loc='right')
-    d += elm.LineDot().reverse().at(op2.vd).up().length(.25).color('blue').label('vd', color='blue', loc='right')
-    d += elm.LineDot().reverse().at(op2.vs).down().length(.25).color('blue').label('vs', color='blue', loc='left')
-    d += elm.LineDot().reverse().at(op2.n2).up().length(.25).color('blue').label('n2', color='blue', loc='right')
-    d += elm.LineDot().reverse().at(op2.n1).down().length(.25).color('blue').label('n1', color='blue', loc='left')
-    d += elm.LineDot().reverse().at(op2.n2a).up().length(.22).color('blue').label('n2a', ofst=0, color='blue', loc='right')
-    d += elm.LineDot().reverse().at(op2.n1a).down().length(.22).color('blue').label('n1a', ofst=0, color='blue', loc='left')
+    d += elm.Dot().at(op2.in1).color('blue').label('in1', loc='left', valign='center')
+    d += elm.Dot().at(op2.in2).color('blue').label('in2', loc='left', valign='center')
+    d += elm.Dot().at(op2.out).color('blue').label('out', loc='right', valign='center')
+    d += elm.Dot().at(op2.vd).color('blue').label('vd', loc='top')
+    d += elm.Dot().at(op2.vs).color('blue').label('vs', loc='bottom')
+    d += elm.Dot().at(op2.n1).color('blue').label('n1', loc='bottom')
+    d += elm.Dot().at(op2.n2).color('blue').label('n2', loc='top')
+    d += elm.Dot().at(op2.n2a).color('blue').label('n2a', loc='top')
+    d += elm.Dot().at(op2.n1a).color('blue').label('n1a', loc='bottom')
 
     d += (op:=elm.Opamp(leads=True).at([10, 0]).right().label('Opamp(leads=True)', ofst=.6)
             .label('in1', loc='in1', halign='right', color='blue')
@@ -384,7 +386,6 @@ The :py:class:`schemdraw.elements.opamp.Opamp` element defines several anchors f
     d += elm.Dot().at(op.in2).color('blue')
     d += elm.Dot().at(op.out).color('blue')
     d.draw()
-
 
 Transistors
 -----------
@@ -412,6 +413,19 @@ Field-Effect Transistors
                JFet, JFetN, JFetP, partial(JFetN, circle=True), partial(JFetP, circle=True)]
     drawElements(elmlist, dx=6.5, dy=3, lblofst=[0, -.8])
 
+
+"Two-Terminal" Transistors
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Another set of transistor elements subclass :py:class:`schemdraw.elements.Element2Term` so they
+have emitter and collector (or source and drain) leads extended to the desired length.
+These can be easier to place centered between endpoints, for example.
+
+.. jupyter-execute::
+    :hide-code:
+
+    elmlist = [BjtNpn2T, BjtPnp2T, NFet2T, PFet2T, JFetN2T, JFetP2T]
+    drawElements(elmlist, dx=6.5, dy=3, lblofst=[0, -.8])
 
 
 Cables

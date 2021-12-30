@@ -9,7 +9,7 @@ from .misc import Speaker, Mic, Motor, AudioJack
 from .xform import Transformer
 from .cables import Coax, Triax
 from .intcircuits import IcPin, Ic, Multiplexer, IcDIP, VoltageRegulator, DFlipFlop, JKFlipFlop, Ic555, SevenSegment, sevensegdigit
-from .lines import Line, Dot, Arrowhead, Arrow, LineDot, DotDotDot, Wire, Gap, Label, Tag, CurrentLabel, CurrentLabelInline, LoopCurrent, LoopArrow, Rect, Arc2, Arc3, ArcZ, ArcN, ArcLoop, Encircle
+from .lines import Line, Dot, Arrowhead, Arrow, LineDot, DotDotDot, Wire, Gap, Label, Tag, CurrentLabel, CurrentLabelInline, LoopCurrent, LoopArrow, Rect, Arc2, Arc3, ArcZ, ArcN, ArcLoop, Encircle, EncircleBox
 from .connectors import OrthoLines, RightLines, Header, Jumper, BusConnect, BusLine, DB25, DB9, CoaxConnect, Plug, Jack
 from .compound import ElementCompound, Optocoupler, Relay, Rectifier, Wheatstone
 from .outlets import OutletA, OutletB, OutletC, OutletD, OutletE, OutletF, OutletG, OutletH, OutletI, OutletJ, OutletK, OutletL
@@ -26,13 +26,14 @@ __all__ = [
     "Source", "SourceV", "SourceI", "SourceSin", "SourcePulse", "SourceSquare", "SourceTriangle", "SourceRamp", "SourceControlled", "SourceControlledV", "SourceControlledI", "BatteryCell", "Battery", "MeterV", "MeterI", "MeterA", "MeterOhm", "Lamp", "Solar", "Neon",
     "Switch", "SwitchSpdt", "SwitchSpdt2", "SwitchDpst", "SwitchDpdt", "Button", "SwitchReed", "SwitchRotary", "SwitchDIP",
     "NFet", "PFet", "JFet", "JFetN", "JFetP", "Bjt", "BjtNpn", "BjtPnp", "BjtPnp2c",
+    "Bjt2T", "BjtNpn2T", "BjtPnp2T", "NFet2T", "PFet2T", "JFet2T", "JFetN2T", "JFetP2T",
     "Speaker", "Mic", "Motor", "AudioJack",
     "Transformer",
     "Coax", "Triax",
     "IcPin", "Ic", "Multiplexer", "IcDIP", "VoltageRegulator", "DFlipFlop", "JKFlipFlop", "Ic555", "SevenSegment", "sevensegdigit",
-    "Line", "Dot", "Arrowhead", "Arrow", "LineDot", "DotDotDot", "Gap", "Label", "Tag", "CurrentLabel", "CurrentLabelInline", "LoopCurrent", "LoopArrow", "Rect",
+    "Line", "Dot", "Arrowhead", "Arrow", "LineDot", "DotDotDot", "Wire", "Gap", "Label", "Tag", "CurrentLabel", "CurrentLabelInline", "LoopCurrent", "LoopArrow", "Rect", "Arc2", "Arc3", "ArcZ", "ArcN", "ArcLoop", "Encircle", "EncircleBox",
     "OrthoLines", "RightLines", "Header", "Jumper", "BusConnect", "BusLine", "DB25", "DB9", "CoaxConnect", "Plug", "Jack",
-    "ElementCompound", "Optocoupler", "Relay",
+    "ElementCompound", "Optocoupler", "Relay", "Rectifier", "Wheatstone",
     "OutletA", "OutletB", "OutletC", "OutletD", "OutletE", "OutletF", "OutletG", "OutletH", "OutletI", "OutletJ", "OutletK", "OutletL",
 ]
 

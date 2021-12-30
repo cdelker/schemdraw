@@ -72,9 +72,22 @@ The `labels` argument specifies a list of labels for each resistor.
 .. jupyter-execute::
     :hide-code:
     
-    drawElements([elm.Wheatstone, 
-                  partial(elm.Wheatstone, vout=True)],
-                  cols=3, dy=3)
+    d = schemdraw.Drawing()
+    d += (W:=elm.Wheatstone()
+            .label('N', loc='N', color='blue', fontsize=10)
+            .label('S', loc='S', color='blue', fontsize=10)
+            .label('E', loc='E', color='blue', fontsize=10)
+            .label('W', loc='W', color='blue', fontsize=10)
+            .label('Wheatstone', loc='S', ofst=(0, -.5)))
+    d += (W:=elm.Wheatstone(vout=True).at((7, 0))
+            .label('N', loc='N', color='blue', fontsize=10)
+            .label('S', loc='S', color='blue', fontsize=10)
+            .label('E', loc='E', color='blue', fontsize=10)
+            .label('W', loc='W', color='blue', fontsize=10)
+            .label('vo1', loc='vo1', color='blue', fontsize=10)
+            .label('vo2', loc='vo2', color='blue', fontsize=10)
+            .label('Wheatstone(vout=True)', loc='S', ofst=(0, -.5)))
+    d.draw()
 
 
 Rectifier
@@ -87,4 +100,11 @@ The `labels` argument specifies a list of labels for each diode.
 .. jupyter-execute::
     :hide-code:
     
-    drawElements([elm.Rectifier], cols=3, dy=3)
+    d = schemdraw.Drawing()
+    d += (W:=elm.Rectifier()
+            .label('N', loc='N', color='blue', fontsize=10)
+            .label('S', loc='S', color='blue', fontsize=10)
+            .label('E', loc='E', color='blue', fontsize=10)
+            .label('W', loc='W', color='blue', fontsize=10)
+            .label('Rectifier', loc='S', ofst=(0, -.5)))
+    d.draw()

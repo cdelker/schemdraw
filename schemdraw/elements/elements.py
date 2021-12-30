@@ -700,6 +700,7 @@ class Element2Term(Element):
                 dx: X-offset from xy position
                 dy: Y-offset from xy position
         '''
+        xy = Point(xy)
         self._userparams['to'] = Point((xy.x + dx, xy.y + dy))
         return self
 
@@ -748,7 +749,7 @@ class Element2Term(Element):
         toy = self._cparams.get('toy', None)
         anchor = self._cparams.get('anchor', None)
         zoom = self._cparams.get('zoom', 1)
-        xy = self._cparams.get('at', dwgxy)
+        xy = Point(self._cparams.get('at', dwgxy))
 
         # set up transformation
         theta = self._cparams.get('theta', dwgtheta)

@@ -136,29 +136,10 @@ Compared to anchoring the opamp at `in2` (the noninverting input):
     d.draw()
 
 
-Drop Method
-***********
-
-Three terminal elements may not leave the drawing position where intended, so after drawing an element, the current drawing position can be set using the :py:meth:`schemdraw.elements.Element.drop` method to specify an anchor at which to place the cursor.
-This reduces the need to assign every element to a variable name.
-
-.. jupyter-execute::
-    :emphasize-lines: 6
-
-    d = schemdraw.Drawing()
-    d += elm.BjtNpn()
-    d += elm.Resistor().label('R1')
-    d.here = (5, 0)
-
-    d += elm.BjtNpn().drop('emitter')
-    d += elm.Resistor().label('R2')
-    d.draw()
-
-
 Placing 2-Terminal Elements
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Two-terminal elements hae some other placement options because their length can grow to fit a predetermined space.
+Two-terminal elements have some other placement options because their length can grow to fit a predetermined space.
 The `length` method sets an exact length for an element.
 
 .. jupyter-execute::
@@ -174,11 +155,34 @@ The `length` method sets an exact length for an element.
 
 The inner zig-zag portion of a resistor has length of 1 unit, while the default lead extensions are 1 unit on each side,
 making the default total resistor length 3 units.
-This default size can be changed using the `unit` parameter to the :py:class:`schemdraw.Drawing` class.
+
+.. jupyter-execute::
+    :hide-code:
+
+    d = schemdraw.Drawing()
+    d += elm.Resistor()
+    d += elm.Line(arrow='|-|').at((1, .7)).to((2, .7)).label('1.0').color('royalblue')
+    d += elm.Line(arrow='|-|').at((0, -.7)).to((3, -.7)).label('Drawing.unit', 'bottom').color('royalblue')
+    d.draw()
+
+This default size can be changed using the `unit` parameter to the :py:class:`schemdraw.Drawing` class:
+
+.. code-block:: python
+
+    d = schemdraw.Drawing(unit=2)
+
+.. jupyter-execute::
+    :hide-code:
+    
+    d = schemdraw.Drawing(unit=2)
+    d += elm.Resistor()
+    d += elm.Line(arrow='|-|').at((.5, .7)).to((1.5, .7)).label('1.0').color('royalblue')
+    d += elm.Line(arrow='|-|').at((0, -.7)).to((2, -.7)).label('Drawing.unit', 'bottom').color('royalblue')
+    d.draw()
 
 The `to` method will set an exact endpoint for a 2-terminal element.
 The starting point is still the ending location of the previous element.
-Notice the Diode is longer than the standard element length in order to fill the diagonal distance.
+Notice the Diode is stretched longer than the standard element length in order to fill the diagonal distance.
 
 .. jupyter-execute::
     :emphasize-lines: 4
@@ -189,7 +193,7 @@ Notice the Diode is longer than the standard element length in order to fill the
     Q = d.add(elm.Diode().to(R.start))
     d.draw()
 
-The `tox` and `toy` methods are useful for placing 2-terminal elements to "close the loop", without requiring an exact length.
+The `tox` and `toy` methods are useful for placing 2-terminal elements to "close the loop", without requiring an exact length. These methods automatically change the drawing direction.
 Here, the Line element does not need to specify an exact length to fill the space and connect back with the Source.
 
 .. jupyter-execute::
@@ -209,7 +213,7 @@ Here, the Line element does not need to specify an exact length to fill the spac
     # to avoid having to know exactly how far to go.
     # Note we passed the [x, y] position of capacitor C,
     # but only the x value will be used.
-    d.add(elm.Line().left().tox(C.start))
+    d.add(elm.Line().tox(C.start))
     
     d.add(elm.Source().up())
 
@@ -233,8 +237,8 @@ Finally, exact endpoints can also be specified using the `endpoints` method.
 
     R = d.add(elm.Resistor())
     Q = d.add(elm.Diode().down().length(6))
-    d.add(elm.Line().left().tox(R.start))
-    d.add(elm.Capacitor().up().toy(R.start))
+    d.add(elm.Line().tox(R.start))
+    d.add(elm.Capacitor().toy(R.start))
     d.add(elm.SourceV().endpoints(Q.end, R.start))
     
 .. jupyter-execute::
@@ -299,12 +303,64 @@ for times when it's useful to save the drawing state and come back to it later.
 Changing the drawing position can be accomplished by calling :py:meth:`schemdraw.Drawing.move` or :py:meth:`schemdraw.Drawing.move_from`.
 
 
-Wire Element
-^^^^^^^^^^^^
+Drop and Hold Methods
+*********************
 
-The :py:class:`schemdraw.elements.lines.Wire` element is used to place multiple connecting lines in one element.
+To place an element without moving the drawing position, use the :py:meth:`schemdraw.elements.Element.hold` method. The element will be placed without changing the drawing state.
+
+.. jupyter-execute::
+    :hide-code:
+    
+    d = schemdraw.Drawing()
+    
+.. jupyter-execute::
+    :emphasize-lines: 5
+
+    d += elm.Diode()  # Normal placement: drawing position moves to end of element
+    d += elm.Dot().color('red')
+
+    d.here = (0, -1)
+    d += elm.Diode().hold()  # Hold method prevents position from changing
+    d += elm.Dot().color('blue')
+
+.. jupyter-execute::
+    :hide-code:
+    
+    d.draw()
+
+
+Three terminal elements may not leave the drawing position where intended, so after drawing an element, the current drawing position can be set using the :py:meth:`schemdraw.elements.Element.drop` method to specify an anchor at which to place the cursor.
+This reduces the need to assign every element to a variable name.
+
+.. jupyter-execute::
+    :hide-code:
+    
+    d = schemdraw.Drawing()
+    
+.. jupyter-execute::
+    :emphasize-lines: 6
+
+    d += elm.BjtNpn()
+    d += elm.Resistor().label('R1')
+    d.here = (5, 0)
+
+    d += elm.BjtNpn().drop('emitter')
+    d += elm.Resistor().label('R2')
+
+.. jupyter-execute::
+    :hide-code:
+    
+    d.draw()
+
+
+Connecting Elements
+^^^^^^^^^^^^^^^^^^^
+
+Typically, the :py:class:`schemdraw.elements.lines.Line` element is used to connect elements together.
+More complex line routing would require multiple Line elements.
+The :py:class:`schemdraw.elements.lines.Wire` element is used as a shortcut for placing multiple connecting lines at once.
 The Wire element connects the start and end points based on its `shape` parameter.
-A shape of "-" connects with a straight line. Shapes "-\|" and "\|-" connect the endpoints with right-angle lines starting horizontally and vertically, respectively. Shapes "n" and "c" connect the endpoints with a "c" or "n" shaped set of straight lines, where the `k` parameter is used to set the distance before the wire first changes direction.
+A shape of "-" connects with a straight line. Shapes "-\|" and "\|-" connect the endpoints with right-angle lines starting horizontally and vertically, respectively. Shapes "n" and "c" connect the endpoints with a "c" or "n" shaped set of straight lines, where the `k` parameter is used to set the distance before the wire first changes direction. Shapes "z" and "N" connect with diagonal lines starting with horizonal and vertical leads, respectively.
 
 .. jupyter-execute::
     :hide-code:
@@ -314,6 +370,8 @@ A shape of "-" connects with a straight line. Shapes "-\|" and "\|-" connect the
     d += (B := elm.Dot().label('B').at((4, 4)))
     d += (C := elm.Dot().label('C', ofst=(-.2, 0)).at((7, 4)))
     d += (D := elm.Dot().label('D', ofst=(-.2, 0)).at((9, 0)))
+    d += (E := elm.Dot().label('E', ofst=(-.2, 0)).at((11, 4)))
+    d += (F := elm.Dot().label('F', ofst=(-.2, 0)).at((13, 0)))
 
 .. jupyter-execute::
 
@@ -322,12 +380,41 @@ A shape of "-" connects with a straight line. Shapes "-\|" and "\|-" connect the
     d += elm.Wire('-|', arrow='->').at(A.center).to(B.center).color('darkseagreen').label('"-|"')
     d += elm.Wire('c', k=-1, arrow='->').at(C.center).to(D.center).color('darkorange').label('"c"', halign='left')
     d += elm.Wire('n', arrow='->').at(C.center).to(D.center).color('orchid').label('"n"')
+    d += elm.Wire('N', arrow='->').at(E.center).to(F.center).color('darkred').label('"N"', 'start', ofst=(-.1, -.75))
+    d += elm.Wire('z', k=.5, arrow='->').at(E.center).to(F.center).color('teal').label('"z"', halign='left', ofst=(0, .5))
 
 .. jupyter-execute::
     :hide-code:
 
     d.draw()
+
+Both `Line` and `Wire` elements take an `arrow` parameter, a string specification of arrowhead types at the start and end of the wire. The arrow string may contain "<", ">", for arrowheads, "\|" for an endcap, and "o" for a dot. Some examples are shown below:
+
+.. jupyter-execute::
+    :hide-code:
+
+    d = schemdraw.Drawing()
     
+.. jupyter-execute::
+
+    d += elm.Line(arrow='->').label('"->"', 'right')
+    d += elm.Line(arrow='<-').at((0, -.75)).label('"<-"', 'right')
+    d += elm.Line(arrow='<->').at((0, -1.5)).label('"<->"', 'right')
+    d += elm.Line(arrow='|->').at((0, -2.25)).label('"|->"', 'right')
+    d += elm.Line(arrow='|-o').at((0, -3.0)).label('"|-o"', 'right')
+
+.. jupyter-execute::
+    :hide-code:
+
+    d.draw()    
+
+Because dots are used to show connected wires, all two-terminal elements have `dot` and `idot` methods for quickly adding a dot at the end or beginning of the element, respectively.
+
+.. jupyter-execute::
+
+    elm.Resistor().dot()
+
+
 Walrus Mode
 ^^^^^^^^^^^
 

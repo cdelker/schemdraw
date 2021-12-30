@@ -148,6 +148,8 @@ class Wire(Element):
                 `-`: straight line
                 `|-`: right-angle line starting vertically
                 `-|`: right-angle line starting horizontally
+                'z': diagonal line with horizontal end segments
+                'N': diagonal line with vertical end segments
                 `n`: n- or u-shaped lines
                 `c`: c- or ↄ-shaped lines
             k: Distance before the wire changes directions in `n` and `c` shapes.
@@ -211,13 +213,27 @@ class Wire(Element):
         elif shape == '-|':  # Right angle, horizontal first
             self.segments.append(Segment([(0, 0), (dx, 0), (dx, dy)], arrow=arrow))
             self.anchors['mid'] = (dx, dy/2)
-            self.anchors['mid2'] = (dx, dy/2)
             self.params['droptheta'] = 90 if dy > 0 else -90
         elif shape == '|-':  # Right angle, vertical first
             self.segments.append(Segment([(0, 0), (0, dy), (dx, dy)], arrow=arrow))
             self.anchors['mid'] = (dx/2, dy)
-            self.anchors['mid2'] = (dx/2, dy)
             self.params['droptheta'] = 0 if dx > 0 else 180
+        elif shape in ['z', 'Z']:
+            if dx > 0:
+                k = abs(k)
+            else:
+                k = -abs(k)
+            self.segments.append(Segment([(0, 0), (k, 0), (dx-k, dy), (dx, dy)], arrow=arrow))
+            self.anchors['mid'] = (dx/2, dy/2)
+            self.params['droptheta'] = 0 if dx > 0 else 180
+        elif shape == 'N':
+            if dy > 0:
+                k = abs(k)
+            else:
+                k = -abs(k)
+            self.segments.append(Segment([(0, 0), (0, k), (dx, dy-k), (dx, dy)], arrow=arrow))
+            self.anchors['mid'] = (dx/2, dy/2)
+            self.params['droptheta'] = 90 if dy > 0 else -90
         elif shape == 'n':   # N-shape
             self.segments.append(Segment([(0, 0), (0, k), (dx, k), (dx, dy)], arrow=arrow))
             self.anchors['mid'] = (dx/2, k)

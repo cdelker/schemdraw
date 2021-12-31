@@ -99,20 +99,20 @@ Using the :py:class:`schemdraw.elements.lines.LoopCurrent` element to add loop c
 .. jupyter-execute::
     :code-below:
 
-    d = schemdraw.Drawing(unit=5)
-    d += (V1 := elm.SourceV().label('20V'))
-    d += (R1 := elm.Resistor().right().label('400Ω'))
-    d += elm.Dot()
-    d.push()
-    d += (R2 := elm.Resistor().down().label('100Ω', loc='bot', rotate=True))
-    d += elm.Dot()
-    d.pop()
-    d += (L1 := elm.Line())
-    d += (I1 := elm.SourceI().down().label('1A', loc='bot'))
-    d += (L2 := elm.Line().left().tox(V1.start))
-    d.loopI([R1,R2,L2,V1], '$I_1$', pad=1.25)
-    d.loopI([R1,I1,L2,R2], '$I_2$', pad=1.25)  # Use R1 as top element for both so they get the same height
-    d.draw()
+    with schemdraw.Drawing() as d:
+        d.config(unit=5)
+        d += (V1 := elm.SourceV().label('20V'))
+        d += (R1 := elm.Resistor().right().label('400Ω'))
+        d += elm.Dot()
+        d.push()
+        d += (R2 := elm.Resistor().down().label('100Ω', loc='bot', rotate=True))
+        d += elm.Dot()
+        d.pop()
+        d += (L1 := elm.Line())
+        d += (I1 := elm.SourceI().down().label('1A', loc='bot'))
+        d += (L2 := elm.Line().tox(V1.start))
+        d += elm.LoopCurrent([R1,R2,L2,V1], pad=1.25).label('$I_1$')
+        d += elm.LoopCurrent([R1,I1,L2,R2], pad=1.25).label('$I_2$')    # Use R1 as top element for both so they get the same height
 
 
 AC Loop Analysis
@@ -123,26 +123,19 @@ Another good problem for ECE students...
 .. jupyter-execute::
     :code-below:
     
-    d = schemdraw.Drawing()
-    d += (I1 := elm.SourceI().label('5∠0° A'))
-    d += elm.Dot()
-    d.push()
-    d += elm.Capacitor().right().label('-j3Ω')
-    d += elm.Dot()
-    d.push()
-    d += elm.Inductor().down().label('j2Ω')
-    d += elm.Dot()
-    d.pop()
-    d += elm.Resistor().right().label('5Ω')
-    d += elm.Dot()
-    d += (V1 := elm.SourceV().down().reverse().label('5∠-90° V', loc='bot'))
-    d += elm.Line().left().tox(I1.start)
-    d.pop()
-    d += elm.Line().up().length(d.unit*.8)
-    d += (L1 := elm.Inductor().right().tox(V1.start).label('j3Ω'))
-    d += elm.Line().down().length(d.unit*.8)
-    d.labelI(L1, '$i_g$', top=False)
-    d.draw()
+    with schemdraw.Drawing() as d:
+        d += (I1 := elm.SourceI().label('5∠0° A').dot())
+        d.push()
+        d += elm.Capacitor().right().label('-j3Ω').dot()
+        d += elm.Inductor().down().label('j2Ω').dot().hold()
+        d += elm.Resistor().right().label('5Ω').dot()
+        d += (V1 := elm.SourceV().down().reverse().label('5∠-90° V', loc='bot'))
+        d += elm.Line().tox(I1.start)
+        d.pop()
+        d += elm.Line().up().length(d.unit*.8)
+        d += (L1 := elm.Inductor().tox(V1.start).label('j3Ω'))
+        d += elm.Line().down().length(d.unit*.8)
+        d += elm.CurrentLabel(top=False).at(L1).label('$i_g$')
 
 
 Infinite Transmission Line

@@ -7,7 +7,7 @@ import warnings
 import math
 
 from .types import BBox, Backends, ImageFormat, Linestyle, Arcdirection, XY, ImageType, BilateralDirection
-from .elements import Element, _set_elm_backend
+from .elements import Element, _set_elm_backend, Dot
 from .elements.lines import LoopCurrent, CurrentLabel, CurrentLabelInline
 from .segments import SegmentType
 from .util import Point
@@ -136,16 +136,10 @@ class Drawing:
 
         Args:
             *elements: List of Element instances to add to the drawing
-            unit: Full length of a 2-terminal element. Inner zig-zag portion
-                of a resistor is 1.0 units.
-            inches_per_unit: Inches per drawing unit for setting drawing scale
-            lblofst: Default offset between element and its label
-            fontsize: Default font size for text labels
-            font: Default font family for text labels
-            color: Default color name or RGB (0-1) tuple
-            lw: Default line width for elements
-            ls: Default line style
-            fill: Deault fill color for closed elements
+            file: optional filename to save on exiting context manager
+                or calling draw method.
+            backend: 'svg' or 'matplotlib' backend. Overrides schemdraw.use.
+            show: Show the drawing after exiting context manager
 
         Attributes:
             here: (xy tuple) Current drawing position. The next element will
@@ -154,32 +148,16 @@ class Drawing:
                 element will be added with this angle unless specified
                 otherwise.
     '''
-    def __init__(self, *elements: Element, unit: float=None,
-                 inches_per_unit: float=None, lblofst: float=None,
-                 fontsize: float=None, font: str=None,
-                 color: str=None, lw: float=None, ls: Linestyle=None,
-                 fill: str=None):
+    def __init__(self, *elements: Element, file: str=None, backend: str=None, 
+                 show: bool=True, **kwargs):
+        self.outfile = file
+        self.backend = backend
+        self.show = show
         self.elements: list[Element] = []
-        self.inches_per_unit = inches_per_unit if inches_per_unit is not None else schemdrawstyle.get('inches_per_unit')
-        self.unit = unit if unit is not None else schemdrawstyle.get('unit')
 
-        self.dwgparams: dict[str, Any] = {}
-        if unit:
-            self.dwgparams['unit'] = unit
-        if font:
-            self.dwgparams['font'] = font
-        if fontsize:
-            self.dwgparams['fontsize'] = fontsize
-        if lblofst:
-            self.dwgparams['lblofst'] = lblofst
-        if color:
-            self.dwgparams['color'] = color
-        if ls:
-            self.dwgparams['ls'] = ls
-        if lw:
-            self.dwgparams['lw'] = lw
-        if fill:
-            self.dwgparams['fill'] = fill
+        self.dwgparams: dict[str, Any] = schemdrawstyle.copy()
+        self.dwgparams.update(kwargs)  # To maintain support for arguments that moved to config method
+        self.unit = kwargs.get('unit', schemdrawstyle.get('unit'))
 
         self.here: XY = Point((0, 0))
         self.theta: float = 0
@@ -189,6 +167,19 @@ class Drawing:
 
         for element in elements:
             self.add(element)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        ''' Exit context manager - save to file and display '''
+        if self.outfile is not None:
+            self.save(self.outfile)
+        if self.show:
+            try:
+                display(self.draw())
+            except NameError:  # Not in Jupyter/IPython
+                self.draw()
 
     def interactive(self, interactive: bool=True):
         ''' Enable interactive mode (matplotlib backend only). Matplotlib
@@ -245,8 +236,7 @@ class Drawing:
         elif len(kwargs) > 0:
             warnings.warn('kwargs to add method are ignored because element is already instantiated')
 
-        dwgparams = ChainMap(self.dwgparams, schemdrawstyle)
-        self.here, self.theta = element._place(self.here, self.theta, **dwgparams)
+        self.here, self.theta = element._place(self.here, self.theta, **self.dwgparams)
         self.elements.append(element)
 
         if self._interactive:
@@ -304,100 +294,55 @@ class Drawing:
         if len(self._state) > 0:
             self.here, self.theta = self._state.pop()
 
-    def loopI(self, elm_list: list[Element], label: str='',
-              d: Arcdirection='cw', theta1: float=35,
-              theta2: float=-35, pad: float=.2, color: str=None) -> Element:
-        ''' Draw an arc to indicate a loop current bordered by elements in list
-
-            [DEPRECATED - use LoopCurrent element instead]
-
-            Args:
-                elm_list: Boundary elements in order of top, right, bot, left
-                label: Text label to draw in center of loop
-                d: Arc/arrow direction
-                theta1: Start angle of arrow arc (degrees)
-                theta2: End angle of arrow arc (degrees)
-                pad: Distance between elements and arc
-                color: Color for loop arrow
-        '''
-        warnings.warn('loopI function is deprecated. Add a LoopCurrent element instead.', DeprecationWarning)
-
-        element = LoopCurrent(elm_list, theta1=theta1, theta2=theta2,
-                              direction=d, pad=pad)
-        element.label(label)
-        if color:
-            element.color(color)
-        self.add(element)
-        return element
-
-    def labelI(self, elm: Element, label: str='', arrowofst: float=0.4,
-               arrowlen: float=2, reverse: bool=False, top: bool=True,
-               color: str=None) -> Element:
-        ''' Add an arrow element along side another element
-
-            [DEPRECATED - use CurrentLabel element instead]
+    def config(self, unit: float=None, inches_per_unit: float=None,
+           lblofst: float=None, fontsize: float=None,
+           font: str=None, color: str=None,
+           lw: float=None, ls: Linestyle=None,
+           fill: str=None, bgcolor: str=None) -> None:
+        ''' Set Drawing configuration, overriding schemdraw global config.
 
             Args:
-                elm: Element to add arrow to
-                label: String or list of strings to evenly space along arrow
-                arrowofst: Distance from element to arrow
-                arrowlen: Length of arrow as multiple of Drawing.unit
-                reverse: Reverse the arrow direction
-                top: Draw arrow on top (True) or bottom (False) of element
-                color: Color for label. Defaults to color of elm.
+                unit: Full length of a 2-terminal element. Inner zig-zag portion
+                    of a resistor is 1.0 units.
+                inches_per_unit: Inches per drawing unit for setting drawing scale
+                lblofst: Default offset between element and its label
+                fontsize: Default font size for text labels
+                font: Default font family for text labels
+                color: Default color name or RGB (0-1) tuple
+                lw: Default line width for elements
+                ls: Default line style
+                fill: Deault fill color for closed elements
         '''
-        warnings.warn('labelI function is deprecated. Add a CurrentLabel element instead.', DeprecationWarning)
-        element = CurrentLabel(ofst=arrowofst, length=arrowlen,
-                               top=top, reverse=reverse)
-        element.at(elm.center).theta(elm.transform.theta)
-        element.label(label)
-        if color:
-            element.color(color)
-        self.add(element)
-        return element
-
-    def labelI_inline(self, elm: Element, label: str=None,
-                      botlabel: str=None, d: BilateralDirection='in',
-                      start: bool=True, ofst: float=.8,
-                      color: str=None) -> Element:
-        ''' Add an arrowhead for labeling current inline with leads.
-            Works on Element2Term elements.
-
-            [DEPRECATED - use CurrentLabelInline element instead]
-
-            Args:
-                elm: Element to add arrow to
-                label: Text to draw above the arrowhead
-                botlabel: Text to draw below the arrowhead
-                d: Arrowhead direction, into or out of the element
-                start: Place arrowhead near start (True) or
-                    end (False) of element
-                ofst: Offset from center of element
-                color: Color for label. Defaults to color of elm.
-        '''
-        warnings.warn('labelI_inline function is deprecated. Add a CurrentLabelInline element instead.', DeprecationWarning)
-        element = CurrentLabelInline(direction=d, ofst=ofst, start=start)
-        element.at(elm.center).theta(elm.transform.theta).zorder(3)
-        if label:
-            element.label(label)
-        if botlabel:
-            element.label(botlabel, 'bot')
-        if color:
-            element.color(color)
-        self.add(element)
-        return element
+        if unit is not None:
+            self.unit = unit
+            self.dwgparams['unit'] = unit
+        if inches_per_unit is not None:
+            self.dwgparams['inches_per_unit'] = inches_per_unit
+        if font is not None:
+            self.dwgparams['font'] = font
+        if fontsize is not None:
+            self.dwgparams['fontsize'] = fontsize
+        if color is not None:
+            self.dwgparams['color'] = color
+        if lw is not None:
+            self.dwgparams['lw'] = lw
+        if ls is not None:
+            self.dwgparams['ls'] = ls
+        if fill is not None:
+            self.dwgparams['fill'] = fill
+        if bgcolor is not None:
+            self.dwgparams['bgcolor'] = bgcolor
 
     def _initfig(self, ax=None, backend: Backends=None, showframe: bool=False) -> None:
         figclass = {'matplotlib': mplFigure,
                     'svg': svgFigure}.get(backend, Figure)  # type: ignore
         fig = figclass(ax=ax,
                        bbox=self.get_bbox(),
-                       inches_per_unit=self.inches_per_unit,
+                       inches_per_unit=self.dwgparams.get('inches_per_unit'),
                        showframe=showframe)
         
-        params = ChainMap(self.dwgparams, schemdrawstyle)
-        if 'bgcolor' in params:
-            fig.bgcolor(params['bgcolor'])
+        if 'bgcolor' in self.dwgparams:
+            fig.bgcolor(self.dwgparams['bgcolor'])
         self.fig = fig
     
     def draw(self, showframe: bool=False, show: bool=True,
@@ -414,16 +359,21 @@ class Drawing:
             Returns:
                 schemdraw Figure object
         '''
-        # Redraw only if needed. Otherwise, show/return what's already
-        # been drawn on the figure
-        if (self.fig is None or ax is not None or showframe != self.fig.showframe or backend is not None):
+        backend = backend if backend is not None else self.backend
+        if (self.fig is None or ax is not None or showframe != self.fig.showframe or backend != self.backend):
             self._initfig(ax=ax, backend=backend, showframe=showframe)
-            for element in self.elements:
-                element._draw(self.fig)
+
+        self.backend = backend
+        for element in self.elements:
+            element._draw(self.fig)
 
         if show:
             # Show figure in window if not inline/Jupyter mode
             self.fig.show()  # type: ignore
+            
+        if self.outfile is not None:
+            self.save(self.outfile)
+
         return self.fig  # Otherwise return Figure and let _repr_ display it
 
     def save(self, fname: str, transparent: bool=True, dpi: float=72) -> None:
@@ -439,7 +389,7 @@ class Drawing:
             self.draw(show=False)
         self.fig.save(fname, transparent=transparent, dpi=dpi)  # type: ignore
 
-    def get_imagedata(self, fmt: ImageFormat | ImageType) -> bytes:
+    def get_imagedata(self, fmt: ImageFormat | ImageType='svg') -> bytes:
         ''' Get image data as bytes array
 
             Args:

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 from typing import Sequence
+import warnings
 import math
 
 from ..segments import Segment, SegmentCircle, SegmentArc, SegmentPoly, SegmentBezier
@@ -64,6 +65,7 @@ class LineDot(Line):
     def __init__(self, *d, double: bool=False, radius: float=0.075,
                  fill: bool=True, **kwargs):
         super().__init__(*d, **kwargs)
+        warnings.warn("LineDot is deprecated. Use Line().dot() or Line(arrow='-o')", DeprecationWarning)
         zorder = kwargs.get('zorder', 4)
         self.params['fill'] = fill
         self.segments.append(SegmentCircle(

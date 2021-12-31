@@ -1,5 +1,5 @@
 from .dsp import Square, Circle, Sum, SumSigma, Mixer, Speaker, Amp, OscillatorBox, Oscillator, Filter, Adc, Dac, Demod
-from ..elements import Arrowhead, Antenna, Dot, Arrow, Line, LineDot, Ic, IcPin, Multiplexer
+from ..elements import Arrowhead, Antenna, Dot, Arrow, Line, LineDot, Ic, IcPin, Multiplexer, Wire
 from ..flow import Box
 
 from . import legacy

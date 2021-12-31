@@ -5,17 +5,15 @@ Schemdraw is a python package for producing high-quality electrical circuit sche
 ```python
 import schemdraw
 import schemdraw.elements as elm
-d = schemdraw.Drawing()
-d += elm.Resistor().label('100KΩ')
-d += elm.Capacitor().down().label('0.1μF', loc='bottom')
-d += elm.Line().left()
-d += elm.Ground()
-d += elm.SourceV().up().label('10V'))
-d.draw()
-d.save('schematic.svg')
+with schemdraw.Drawing(file='schematic.svg') as d:
+    d += elm.Resistor().label('100KΩ')
+    d += elm.Capacitor().down().label('0.1μF', loc='bottom')
+    d += elm.Line().left()
+    d += elm.Ground()
+    d += elm.SourceV().up().label('10V')
 ```
 
-Included are symbols for basic electrical components (resistors, capacitors, diodes, transistors, etc.), opamps, logic gates, signal processing elements, and flowchart blocks.
+Included are symbols for basic electrical components (resistors, capacitors, diodes, transistors, etc.), opamps and signal processing elements. Additionally, Schemdraw can produce digital timing diagras, state machine diagrams, and flowcharts.
 
 Documentation is available at [readthedocs](https://schemdraw.readthedocs.io)
 

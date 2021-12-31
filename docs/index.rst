@@ -15,26 +15,19 @@ For example,
 
 .. code-block:: python
 
-    d = schemdraw.Drawing()
+    with schemdraw.Drawing() as d:
+        d += elm.Resistor().right().label('1Ω')
     
-creates a new schemdraw drawing. Then using `+=` or the `d.add` method,
-
-.. code-block:: python
-
-    d += elm.Resistor().right().label('1Ω')
-
-will add a resistor, going to the right with a label of "1Ω".
+creates a new schemdraw drawing with a resistor going to the right with a label of "1Ω".
 The next element added to the drawing will start at the endpoint of the resistor.
-Display the results using the `draw` method.
 
 .. jupyter-execute::
 
-    d = schemdraw.Drawing()
-    d += elm.Resistor().right().label('1Ω')
-    d += elm.Capacitor().down().label('10μF')
-    d += elm.Line().left()
-    d += elm.SourceSin().up().label('10V')
-    d.draw()
+    with schemdraw.Drawing() as d:
+        d += elm.Resistor().right().label('1Ω')
+        d += elm.Capacitor().down().label('10μF')
+        d += elm.Line().left()
+        d += elm.SourceSin().up().label('10V')
 
 
 
@@ -43,7 +36,7 @@ Display the results using the `draw` method.
    :caption: Contents:
 
    usage/start
-   usage/placement   
+   usage/index
    elements/elements
    gallery/index
    usage/customizing

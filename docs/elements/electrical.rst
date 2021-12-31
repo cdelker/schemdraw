@@ -52,6 +52,8 @@ All two-terminal elements define `start`, `end`, and `center` anchors for placin
 Some elements have optional parameters, shown in parenthesis in the table below.
 
 
+.. _styledelements:
+
 Styled Elements
 ^^^^^^^^^^^^^^^
 
@@ -176,8 +178,7 @@ Lines and Arrows
 .. jupyter-execute::
     :hide-code:
     
-    elmlist = [Line, Arrow, partial(Arrow, double=True), LineDot,
-               partial(LineDot, double=True)]
+    elmlist = [Line, Arrow, partial(Arrow, double=True)]
     drawElements(elmlist, cols=2)
 
 
@@ -498,12 +499,12 @@ does not draw anything, but defines a named anchor to connect to.
 
 .. jupyter-execute::
 
-    d = schemdraw.Drawing(fontsize=12)
-    x = d.add(elm.Transformer(t1=4, t2=8)
-              .tap(name='B', pos=3, side='secondary'))
-    d.add(elm.Line().at(x.s1).length(d.unit/4).label('s1', 'rgt').color('blue'))
-    d.add(elm.Line().at(x.s2).length(d.unit/4).label('s2', 'rgt').color('blue'))
-    d.add(elm.Line().at(x.p1).length(d.unit/4).left().label('p1', 'lft').color('blue'))
-    d.add(elm.Line().at(x.p2).length(d.unit/4).left().label('p2', 'lft').color('blue'))
-    d.add(elm.Line().at(x.B).length(d.unit/4).right().label('B', 'rgt').color('blue'))
-    d.draw()
+    with schemdraw.Drawing() as d:
+        d.config(fontsize=12)
+        x = d.add(elm.Transformer(t1=4, t2=8)
+                  .tap(name='B', pos=3, side='secondary'))
+        d += elm.Line().at(x.s1).length(d.unit/4).label('s1', 'rgt').color('blue')
+        d += elm.Line().at(x.s2).length(d.unit/4).label('s2', 'rgt').color('blue')
+        d += elm.Line().at(x.p1).length(d.unit/4).left().label('p1', 'lft').color('blue')
+        d += elm.Line().at(x.p2).length(d.unit/4).left().label('p2', 'lft').color('blue')
+        d += elm.Line().at(x.B).length(d.unit/4).right().label('B', 'rgt').color('blue')

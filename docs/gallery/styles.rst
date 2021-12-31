@@ -19,10 +19,9 @@ Uses named colors in a loop.
 .. jupyter-execute::
     :code-below:
 
-    d = schemdraw.Drawing()
-    for i, color in enumerate(['red', 'orange', 'yellow', 'yellowgreen', 'green', 'blue', 'indigo', 'violet']):
-        d += elm.Resistor().theta(45*i+20).color(color).label('R{}'.format(i))
-    d.draw()
+    with schemdraw.Drawing() as d:
+        for i, color in enumerate(['red', 'orange', 'yellow', 'yellowgreen', 'green', 'blue', 'indigo', 'violet']):
+            d += elm.Resistor().theta(45*i+20).color(color).label('R{}'.format(i))
 
 
 Hand-drawn
@@ -36,22 +35,12 @@ And for a change of pace, activate Matplotlib's XKCD mode for "hand-drawn" look!
     import matplotlib.pyplot as plt
     plt.xkcd()
 
-    d = schemdraw.Drawing(inches_per_unit=.5)
-    d += (op := elm.Opamp())
-    d += elm.Line().left().at(op.in2).length(d.unit/4)
-    d += elm.Line().down().length(d.unit/5)
-    d += elm.Ground()
-    d += elm.Line().left().at(op.in1).length(d.unit/6)
-    d += elm.Dot()
-    d.push()
-    d += (Rin := elm.Resistor().left().at((op.in1[0]-d.unit/5, op.in1[1]))
-          .label('$R_{in}$', 'bottom')
-          .label('$v_{in}$', 'left'))
-    d.pop()
-    d += elm.Line().up().length(d.unit/2)
-    d += (Rf := elm.Resistor().right().length(d.unit).label('$R_f$'))
-    d += elm.Line().down().toy(op.out)
-    d += elm.Dot()
-    d += elm.Line().left().tox(op.out)
-    d += elm.Line().right().length(d.unit/4).label('$v_{o}$', 'right')
-    d.draw()
+    with schemdraw.Drawing() as d:
+        d += (op := elm.Opamp(leads=True))
+        d += elm.Line().down().at(op.in2).length(d.unit/4)
+        d += elm.Ground(lead=False)
+        d += (Rin := elm.Resistor().at(op.in1).left().idot().label('$R_{in}$', loc='bot').label('$v_{in}$', loc='left'))
+        d += elm.Line().up().at(op.in1).length(d.unit/2)
+        d += elm.Resistor().tox(op.out).label('$R_f$')
+        d += elm.Line().toy(op.out).dot()
+        d += elm.Line().right().at(op.out).length(d.unit/4).label('$v_{o}$', loc='right')

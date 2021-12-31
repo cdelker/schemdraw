@@ -74,13 +74,13 @@ Typical flowcharts will use `Line` or `Arrow` elements to connect the boxes. The
 
 .. jupyter-execute::
 
-    d = schemdraw.Drawing(fontsize=10, unit=.5)
-    d += flow.Terminal().label('Start')
-    d += flow.Arrow()
-    d += flow.Process().label('Do something').drop('E')
-    d += flow.Arrow().right()
-    d += flow.Process().label('Do something\nelse')
-    d.draw()
+    with schemdraw.Drawing() as d:
+        d.config(fontsize=10, unit=.5)
+        d += flow.Terminal().label('Start')
+        d += flow.Arrow()
+        d += flow.Process().label('Do something').drop('E')
+        d += flow.Arrow().right()
+        d += flow.Process().label('Do something\nelse')
 
 
 Some flow diagrams, such as State Machine diagrams, often use curved connectors between states. Several Arc connectors are available.
@@ -211,23 +211,23 @@ Otherwise, the `drop` method is useful for specifing where to begin the next arr
 
 .. jupyter-execute::
 
-    d = schemdraw.Drawing(fontsize=10, unit=.5)
-    d += flow.Terminal().label('Start')
-    d += flow.Arrow()
-    d += flow.Process().label('Step 1')
-    d += flow.Arrow()
-    d += flow.Process().label('Step 2').drop('E')
-    d += flow.Arrow().right()
-    d += flow.Connect().label('Next')
+    with schemdraw.Drawing() as d:
+        d.config(fontsize=10, unit=.5)
+        d += flow.Terminal().label('Start')
+        d += flow.Arrow()
+        d += flow.Process().label('Step 1')
+        d += flow.Arrow()
+        d += flow.Process().label('Step 2').drop('E')
+        d += flow.Arrow().right()
+        d += flow.Connect().label('Next')
 
-    d += flow.Terminal().label('Start').at((4, 0))
-    d += flow.Arrow().theta(-45)
-    d += flow.Process().label('Step 1')
-    d += flow.Arrow()
-    d += flow.Process().label('Step 2').drop('E')
-    d += flow.Arrow().right()
-    d += flow.Connect().label('Next')
-    d.draw()
+        d += flow.Terminal().label('Start').at((4, 0))
+        d += flow.Arrow().theta(-45)
+        d += flow.Process().label('Step 1')
+        d += flow.Arrow()
+        d += flow.Process().label('Step 2').drop('E')
+        d += flow.Arrow().right()
+        d += flow.Connect().label('Next')
 
 
 See the :ref:`galleryflow` Gallery for more examples.

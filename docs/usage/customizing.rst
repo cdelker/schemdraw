@@ -15,24 +15,23 @@ Grouping Elements
 -----------------
 
 If a set of circuit elements are to be reused multiple times, they can be grouped into a single element.
-Create and populate a drawing, but don't call `draw` on it.
+Create and populate a drawing, but set `show=False`.
 Instead, use the Drawing to create a new :py:class:`schemdraw.elements.ElementDrawing`, which converts the drawing into an element instance
 to add to other drawings.
     
 .. jupyter-execute::
     :emphasize-lines: 8-10
 
-    d1 = schemdraw.Drawing()
-    d1 += elm.Resistor()
-    d1.push()
-    d1 += elm.Capacitor().down()
-    d1 += elm.Line().left()
-    d1.pop()
+    with schemdraw.Drawing(show=False) as d1:
+        d1 += elm.Resistor()
+        d1.push()
+        d1 += elm.Capacitor().down()
+        d1 += elm.Line().left()
+        d1.pop()
 
-    d2 = schemdraw.Drawing()   # Add a second drawing
-    for i in range(3):
-        d2 += elm.ElementDrawing(d1)   # Add the first drawing to it 3 times
-    d2.draw()
+    with schemdraw.Drawing() as d2:  # Add a second drawing
+        for i in range(3):
+            d2 += elm.ElementDrawing(d1)   # Add the first drawing to it 3 times
     
     
 .. _customelements:
@@ -191,9 +190,13 @@ For even more control over customizing individual pieces of an element, the para
     
 .. jupyter-execute::
 
-    n = d.add(logic.Nand())
+    d += (n := logic.Nand())
     n.segments[1].color = 'red'
     n.segments[1].zorder = 5  # Put the bubble on top
+
+.. jupyter-execute::
+    :hide-code:
+
     d.draw()
 
 

@@ -301,6 +301,11 @@ class Arc2(Element):
         self._userparams['to'] = Point((xy.x + dx, xy.y + dy))
         return self
 
+    def delta(self, dx: float=0, dy: float=0) -> 'Element':
+        ''' Specify change in position '''
+        self._userparams['delta'] = Point((dx, dy))
+        return self
+
     def _place(self, dwgxy: XY, dwgtheta: float, **dwgparams) -> tuple[Point, float]:
         ''' Calculate absolute placement of Element '''
         self._dwgparams = dwgparams
@@ -309,8 +314,12 @@ class Arc2(Element):
 
         xy: Point = Point(self._cparams.get('at', dwgxy))
         to: Point = Point(self._cparams.get('to', Point((xy.x+3, xy.y))))
-        dx = to.x - xy.x
-        dy = to.y - xy.y
+        delta = self._cparams.get('delta', None)
+        if delta is not None:
+            dx, dy = delta
+        else:
+            dx = to.x - xy.x
+            dy = to.y - xy.y
         pa = Point((dx/2-dy*self.k, dy/2+dx*self.k))
         mid = Point((dx/2-dy*self.k/2, dy/2+dx*self.k/2))
         self.segments.append(SegmentBezier(
@@ -386,6 +395,11 @@ class Arc3(Element):
         self._userparams['to'] = Point((xy.x + dx, xy.y + dy))
         return self
 
+    def delta(self, dx: float=0, dy: float=0) -> 'Element':
+        ''' Specify change in position '''
+        self._userparams['delta'] = Point((dx, dy))
+        return self
+
     def _place(self, dwgxy: XY, dwgtheta: float, **dwgparams) -> tuple[Point, float]:
         ''' Calculate absolute placement of Element '''
         self._dwgparams = dwgparams
@@ -395,8 +409,12 @@ class Arc3(Element):
         self.params['theta'] = 0
         xy: Point = Point(self._cparams.get('at', dwgxy))
         to: Point = Point(self._cparams.get('to', dwgxy))
-        dx = to.x - xy.x
-        dy = to.y - xy.y
+        delta = self._cparams.get('delta', None)
+        if delta is not None:
+            dx, dy = delta
+        else:
+            dx = to.x - xy.x
+            dy = to.y - xy.y
         pa1 = Point((dx*self.k*math.cos(self.th1),
                      dy*self.k*math.sin(self.th1)))
         pa2 = Point((dx+dx*self.k*math.cos(self.th2),
@@ -405,16 +423,19 @@ class Arc3(Element):
                                            arrow=self.arrow,
                                            arrowlength=self.arrowlength,
                                            arrowwidth=self.arrowwidth))
-
-        # This sets reasonable label positions for ArcZ and ArcS modes.
-        # Other Arc3 maybe not.
         self.anchors['center'] = Point((dx/2, dy/2))
         self.anchors['start'] = Point((0, 0))
         self.anchors['end'] = Point((dx, dy))
         self.anchors['ctrl1'] = pa1
         self.anchors['ctrl2'] = pa2
-        self.params['lblloc'] = 'center'
         self.params['drop'] = Point((dx, dy))
+        self._setlabel(dx, dy)
+        return super()._place(dwgxy, dwgtheta, **dwgparams)
+
+    def _setlabel(self, dx, dy):
+        ''' Set label position/alignment '''
+        # This sets reasonable label position along center of arc.
+        self.params['lblloc'] = 'center'
         halign = 'left'
         valign = 'bottom'
         if dy > 0:
@@ -423,7 +444,51 @@ class Arc3(Element):
         if dx <= 0:
             halign = 'right'
         self.params['lblalign'] = (halign, valign)
-        return super()._place(dwgxy, dwgtheta, **dwgparams)
+
+
+class Annotate(Arc3):
+    ''' Draw a curved arrow pointing to `at` position, ending at `to`
+        position, with label location at the tail of the arrow
+        (See also `Arc3`).
+
+        Args:
+            k: Control point factor. Higher k means tighter curve.
+            th1: Angle at which the arc leaves start point
+            th2: Angle at which the arc leaves end point
+            arrow: arrowhead specifier, such as '->', '<-', '<->', or '-o'
+            arrowlength: Length of arrowhead
+            arrowwidth: Width of arrowhead
+    '''
+    def __init__(self, k=0.75, th1=75, th2=180, arrow='<-',
+                 arrowlength=.25, arrowwidth=.2, **kwargs):
+        super().__init__(k=k, th1=th1, th2=th2, arrow=arrow,
+                         arrowlength=arrowlength, arrowwidth=arrowwidth)
+        self._userparams['to'] = Point((1, 1))
+
+    def _setlabel(self, dx, dy):
+        ''' Set label position/alignment '''
+        # Attempt to align the label at the tail of the arrow.
+        self.params['lblloc'] = 'end'
+        p1, p2 = self.anchors['ctrl2'], self.anchors['end']
+        if p1 == p2:
+            th2 = -90 if dy < 0 else 90
+        else:
+            th2 = math.degrees(math.atan2(p2.y-p1.y, p2.x-p1.x))
+        while th2 < 0:
+            th2 += 360
+
+        if th2 < 45 or th2 > 315:
+            self.params['lblalign'] = ('left', 'center')
+            self.params['lblofst'] = (.1, 0)
+        elif 45 <= th2 <= 135:
+            self.params['lblalign'] = ('center', 'bottom')
+            self.params['lblofst'] = (0, .1)
+        elif 135 < th2 <= 225:
+            self.params['lblalign'] = ('right', 'center')
+            self.params['lblofst'] = (-.1, 0)
+        else:
+            self.params['lblalign'] = ('center', 'top')
+            self.params['lblofst'] = (0, -.1)
 
 
 class ArcZ(Arc3):
@@ -499,6 +564,11 @@ class ArcLoop(Element):
         self._userparams['to'] = Point((xy.x + dx, xy.y + dy))
         return self
 
+    def delta(self, dx: float=0, dy: float=0):
+        ''' Specify ending position relative to start position '''
+        self._userparams['delta'] = Point((dx, dy))
+        return self
+
     def _place(self, dwgxy: XY, dwgtheta: float, **dwgparams) -> tuple[Point, float]:
         ''' Calculate placement of Element '''
         self._dwgparams = dwgparams
@@ -508,9 +578,12 @@ class ArcLoop(Element):
         self.params['theta'] = 0
         xy: Point = Point(self._cparams.get('at', dwgxy))
         to: Point = Point(self._cparams.get('to', dwgxy))
-
-        dx = to.x - xy.x
-        dy = to.y - xy.y
+        delta = self._cparams.get('delta', None)
+        if delta is not None:
+            dx, dy = delta
+        else:
+            dx = to.x - xy.x
+            dy = to.y - xy.y
 
         xa = dx/2
         ya = dy/2
@@ -779,12 +852,12 @@ class Encircle(Element):
     ''' Draw ellipse around all elements in the list
 
         Args:
-            elm_list: List of 4 elements surrounding loop, in
-                      order (top, right, bottom, left)
-            pad: Distance from elements to loop
+            elm_list: List of elements to enclose
+            padx: Horizontal distance from elements to loop
+            pady: Vertical distance from elements to loop
     '''
     def __init__(self, elm_list: Sequence[Element]=None,
-                 pad: float=0.2, **kwargs):
+                 padx: float=0.2, pady: float=0.2, **kwargs):
         super().__init__(**kwargs)
         assert elm_list is not None
         xmin = math.inf
@@ -797,10 +870,10 @@ class Encircle(Element):
             xmax = max(xmax, bbox.xmax)
             ymin = min(ymin, bbox.ymin)
             ymax = max(ymax, bbox.ymax)
-        xmin -= pad
-        xmax += pad
-        ymin -= pad
-        ymax += pad
+        xmin -= padx
+        xmax += padx
+        ymin -= pady
+        ymax += pady
         center = (xmax+xmin)/2, (ymax+ymin)/2
         w = xmax-xmin
         h = ymax-ymin
@@ -833,14 +906,14 @@ class EncircleBox(Element):
     ''' Draw rounded box around all elements in the list
 
         Args:
-            elm_list: List of 4 elements surrounding loop, in
-                      order (top, right, bottom, left)
-            pad: Distance from elements to loop
-
+            elm_list: List elements to enclose
+            cornerraidus: radius of corner rounding
+            padx: Horizontal distance from elements to loop
+            pady: Vertical distance from elements to loop
     '''
     def __init__(self, elm_list: Sequence[Element]=None,
                  cornerradius: float=0.3,
-                 pad: float=0.2, **kwargs):
+                 padx: float=0.2, pady: float=0.2, **kwargs):
         super().__init__(**kwargs)
         assert elm_list is not None
         xmin = math.inf
@@ -853,10 +926,10 @@ class EncircleBox(Element):
             xmax = max(xmax, bbox.xmax)
             ymin = min(ymin, bbox.ymin)
             ymax = max(ymax, bbox.ymax)
-        xmin -= pad
-        xmax += pad
-        ymin -= pad
-        ymax += pad
+        xmin -= padx
+        xmax += padx
+        ymin -= pady
+        ymax += pady
         center = (xmax+xmin)/2, (ymax+ymin)/2
         w = xmax-xmin
         h = ymax-ymin

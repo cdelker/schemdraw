@@ -174,6 +174,7 @@ def mathtextsvg(text: str) -> ET.Element:
         Args:
             text: The text to convert
     '''
+    text = text.replace('>', '%gt;').replace('<', '$lt;')
     tokens = re.split(r'(\$.*?\$)', text)
     svgtext = ''
     for t in tokens:
@@ -229,7 +230,7 @@ def mathtextsvg(text: str) -> ET.Element:
                 t = t.replace(sup, f'<tspan text-decoration="overline">{sup[10:-1]}</tspan>')
         svgtext += t
         
-    svgtext = '<tspan>' + svgtext + '</tspan>'    
+    svgtext = '<tspan>' + svgtext + '</tspan>'
     return ET.fromstring(svgtext)
 
 

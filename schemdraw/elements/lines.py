@@ -20,7 +20,10 @@ class Line(Element2Term):
     '''
     def __init__(self, *d, arrow: str=None, **kwargs):
         super().__init__(*d, **kwargs)
-        self.segments.append(Segment([(0, 0)], arrow=arrow))
+        arrowwidth = kwargs.get('arrowwidth', .15)
+        arrowlength = kwargs.get('arrowlength', .25)
+        self.segments.append(Segment([(0, 0)], arrow=arrow,
+                                     arrowwidth=arrowwidth, arrowlength=arrowlength))
 
 
 class Arrow(Line):
@@ -35,7 +38,7 @@ class Arrow(Line):
                  double: bool=False,
                  headwidth: float=0.15, headlength: float=0.25,
                  **kwargs):
-        super().__init__(*d, **kwargs)
+        super().__init__(*d, arrowlength=headlength, arrowwidth=headwidth, **kwargs)
         self.double = double
         self.headlength = headlength
         self.headwidth = headwidth
@@ -673,7 +676,7 @@ class CurrentLabel(Element):
         existing element.
 
         Args:
-            ofst: Offset distance from element
+            ofst: Offset distance from centerline of element
             length: Length of the arrow
             top: Draw arrow on top or bottom of element
             reverse: Reverse the arrow direction
@@ -681,23 +684,17 @@ class CurrentLabel(Element):
     def __init__(self, ofst: float=0.4, length: float=2,
                  top: bool=True, reverse: bool=False, **kwargs):
         super().__init__(**kwargs)
-        self.params['lblofst'] = .1
-        self.params['drop'] = None  # None means don't move xy
+        self.params['lblofst'] = -.1
+        self.params['drop'] = None
         self.anchor('center')
         self.anchors['center'] = (0, 0)
-
-        if not top:
-            ofst = -ofst
-            self.params['lblloc'] = 'bot'
-        a, b = (-length/2, ofst), (length/2, ofst)
-
-        if reverse:
-            a, b = b, a
-
-        self.segments.append(Segment((a, b), arrow='->', arrowwidth=.2, arrowlength=.3))
+        self._ofst = ofst
+        self._length = length
+        self._top = top
+        self._reverse = reverse
 
     def at(self, xy: XY | Element) -> 'Element':  # type: ignore[override]
-        ''' Specify CurrentLabel position.
+        ''' Specify CurrentLabel position. 
 
             If xy is an Element, arrow will be centered
             along element and its color will also be
@@ -708,13 +705,34 @@ class CurrentLabel(Element):
                 Element instance to center the arrow over
         '''
         if isinstance(xy, Element):
-            super().at(xy.center)
-            self.theta(xy.transform.theta)
+            try:
+                pos = xy.center
+            except AttributeError:
+                bbox = xy.get_bbox()
+                pos = Point(((bbox.xmax + bbox.xmin)/2, (bbox.ymax + bbox.ymin)/2))
+            super().at(pos)
+
+            theta = xy.transform.theta
+            if (theta % 360) > 90 and (theta % 360) <= 270:
+                theta += 180  # Keeps 'top=True' labels above the element
+            self.theta(theta)
             if 'color' in xy._userparams:
                 self.color(xy._userparams.get('color'))
         else:
             super().at(xy)
         return self
+
+    def _place(self, dwgxy, dwgtheta, **dwgparams):
+        if not self._top:
+            self._ofst = -self._ofst
+            self.params['lblloc'] = 'bot'
+        a, b = (-self._length/2, self._ofst), (self._length/2, self._ofst)
+
+        if self._reverse:
+            a, b = b, a
+
+        self.segments.append(Segment((a, b), arrow='->', arrowwidth=.2, arrowlength=.3))
+        return super()._place(dwgxy, dwgtheta, **dwgparams)
 
 
 class CurrentLabelInline(Element):

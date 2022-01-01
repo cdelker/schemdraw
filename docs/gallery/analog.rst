@@ -119,7 +119,7 @@ Another good problem for ECE students...
         d += elm.Line().up().length(d.unit*.8)
         d += (L1 := elm.Inductor().tox(V1.start).label('j3Ω'))
         d += elm.Line().down().length(d.unit*.8)
-        d += elm.CurrentLabel(top=False).at(L1).label('$i_g$')
+        d += elm.CurrentLabel(top=False, ofst=.3).at(L1).label('$i_g$')
 
 
 Infinite Transmission Line

@@ -35,6 +35,10 @@ See :ref:`elecelements` for complete class definitions for these elements.
             anchors.pop('end', None)
             anchors.pop('istart', None)
             anchors.pop('iend', None)
+            anchors.pop('isource', None)
+            anchors.pop('idrain', None)
+            anchors.pop('iemitter', None)
+            anchors.pop('icollector', None)
             anchors.pop('center', None)
             anchors.pop('xy', None)
 
@@ -425,8 +429,8 @@ These can be easier to place centered between endpoints, for example.
 .. jupyter-execute::
     :hide-code:
 
-    elmlist = [BjtNpn2T, BjtPnp2T, NFet2T, PFet2T, JFetN2T, JFetP2T]
-    drawElements(elmlist, dx=6.5, dy=3, lblofst=[0, -.8])
+    elmlist = [BjtNpn2, BjtPnp2, BjtPnp2c2, NFet2, PFet2, JFetN2, JFetP2]
+    drawElements(elmlist, dx=6.5, dy=3)
 
 
 Cables

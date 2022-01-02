@@ -4,7 +4,7 @@ from .oneterm import Ground, GroundSignal, GroundChassis, Antenna, AntennaLoop, 
 from .opamp import Opamp
 from .sources import Source, SourceV, SourceI, SourceSin, SourcePulse, SourceSquare, SourceTriangle, SourceRamp, SourceControlled, SourceControlledV, SourceControlledI, BatteryCell, Battery, MeterV, MeterI, MeterA, MeterOhm, Lamp, Solar, Neon
 from .switches import Switch, SwitchSpdt, SwitchSpdt2, SwitchDpst, SwitchDpdt, Button, SwitchReed, SwitchRotary, SwitchDIP
-from .transistors import NFet, PFet, JFet, JFetN, JFetP, Bjt, BjtNpn, BjtPnp, BjtPnp2c, Bjt2T, BjtNpn2T, BjtPnp2T, NFet2T, PFet2T, JFet2T, JFetN2T, JFetP2T
+from .transistors import NFet, PFet, JFet, JFetN, JFetP, Bjt, BjtNpn, BjtPnp, BjtPnp2c, Bjt2, BjtNpn2, BjtPnp2, BjtPnp2c2, NFet2, PFet2, JFet2, JFetN2, JFetP2
 from .misc import Speaker, Mic, Motor, AudioJack
 from .xform import Transformer
 from .cables import Coax, Triax
@@ -26,7 +26,7 @@ __all__ = [
     "Source", "SourceV", "SourceI", "SourceSin", "SourcePulse", "SourceSquare", "SourceTriangle", "SourceRamp", "SourceControlled", "SourceControlledV", "SourceControlledI", "BatteryCell", "Battery", "MeterV", "MeterI", "MeterA", "MeterOhm", "Lamp", "Solar", "Neon",
     "Switch", "SwitchSpdt", "SwitchSpdt2", "SwitchDpst", "SwitchDpdt", "Button", "SwitchReed", "SwitchRotary", "SwitchDIP",
     "NFet", "PFet", "JFet", "JFetN", "JFetP", "Bjt", "BjtNpn", "BjtPnp", "BjtPnp2c",
-    "Bjt2T", "BjtNpn2T", "BjtPnp2T", "NFet2T", "PFet2T", "JFet2T", "JFetN2T", "JFetP2T",
+    "Bjt2", "BjtNpn2", "BjtPnp2", "BjtPnp2c2", "NFet2", "PFet2", "JFet2", "JFetN2", "JFetP2",
     "Speaker", "Mic", "Motor", "AudioJack",
     "Transformer",
     "Coax", "Triax",

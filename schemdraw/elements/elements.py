@@ -830,10 +830,7 @@ class Element2Term(Element):
             fill = 'bg' if self._cparams['idot'] == 'open' else True
             self.segments.append(SegmentCircle(start, radius=0.075, fill=fill, zorder=3))
 
-        self.anchors['start'] = Point(start)
-        self.anchors['end'] = Point(end)
-        self.anchors['center'] = (start+end)/2
-
+        self._place_anchors(start, end)
         if anchor is not None:
             self._localshift = self._localshift-Point(self.anchors[anchor])
         transform = Transform(theta, xy, self._localshift, zoom=zoom)
@@ -850,3 +847,9 @@ class Element2Term(Element):
 
         self.params['drop'] = end
         return super()._place(xy, theta, **dwgparams)
+
+    def _place_anchors(self, start, end):
+        ''' Allow positioning anchors before the element is placed '''
+        self.anchors['start'] = Point(start)
+        self.anchors['end'] = Point(end)
+        self.anchors['center'] = (start+end)/2

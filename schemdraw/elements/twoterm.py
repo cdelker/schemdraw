@@ -529,7 +529,16 @@ class CPE(Element2Term):
         self.segments.append(Segment([(0, 0), (-offset, -resheight), gap,
                                       (0, -resheight), gap, (capgap, 0)]))
 
-        
+
+class SparkGap(Element2Term):
+    ''' Spark Gap '''
+    def __init__(self, *d, **kwargs):
+        super().__init__(*d, **kwargs)
+        self.segments.append(Segment([(0, 0), (.3, 0), gap, (.7, 0), (1, 0)]))
+        # Arrow coords overlap a bit since default arrow is offset by linewidth
+        self.segments.append(Segment([(.3, 0), (.52, 0)], arrow='->', arrowwidth=.2))
+        self.segments.append(Segment([(.7, 0), (.48, 0)], arrow='->', arrowwidth=.2))
+
         
 # default to IEEE style
 Resistor = ResistorIEEE

@@ -111,6 +111,9 @@ class NFet2(Element2Term):
         super()._place_anchors(start, end)
         self.anchors['source'] = self.anchors['end']
         self.anchors['drain'] = self.anchors['start']
+        if self._userparams.get('reverse', False):
+            self.anchors['source'] = self.anchors['start']
+            self.anchors['drain'] = self.anchors['end']
 
 
 class PFet2(Element2Term):
@@ -148,6 +151,10 @@ class PFet2(Element2Term):
         super()._place_anchors(start, end)
         self.anchors['source'] = self.anchors['end']
         self.anchors['drain'] = self.anchors['start']
+        if self._userparams.get('reverse', False):
+            self.anchors['source'] = self.anchors['start']
+            self.anchors['drain'] = self.anchors['end']
+
 
 # Junction FETs
 fete = fetw*.2  # JFET extension
@@ -226,6 +233,9 @@ class JFet2(Element2Term):
         super()._place_anchors(start, end)
         self.anchors['source'] = self.anchors['end']
         self.anchors['drain'] = self.anchors['start']
+        if self._userparams.get('reverse', False):
+            self.anchors['source'] = self.anchors['start']
+            self.anchors['drain'] = self.anchors['end']
 
 
 class JFetN2(JFet2):
@@ -424,8 +434,11 @@ class Bjt2(Element2Term):
         super()._place_anchors(start, end)
         self.anchors['emitter'] = self.anchors['start']
         self.anchors['collector'] = self.anchors['end']
-        
-        
+        if self._userparams.get('reverse', False):
+            self.anchors['emitter'] = self.anchors['end']
+            self.anchors['collector'] = self.anchors['start']
+
+
 class BjtNpn2(Bjt2):
     ''' NPN Bipolar Junction Transistor which extends
         collector/emitter leads to the desired length
@@ -470,6 +483,9 @@ class BjtPnp2(Bjt2):
         super()._place_anchors(start, end)
         self.anchors['emitter'] = self.anchors['end']
         self.anchors['collector'] = self.anchors['start']
+        if self._userparams.get('reverse', False):
+            self.anchors['emitter'] = self.anchors['start']
+            self.anchors['collector'] = self.anchors['end']
 
 
 class BjtPnp2c2(BjtPnp2):

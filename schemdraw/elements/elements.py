@@ -714,6 +714,42 @@ class Element2Term(Element):
         self._userparams['toy'] = y
         return self
 
+    def up(self, length=None) -> 'Element':
+        ''' Set the direction to up '''
+        if 'd' in self._userparams:
+            warnings.warn(f"Duplicated direction parameter in element. `{self._userparams['d']}` changed to `up`.")
+        self._userparams['d'] = 'up'
+        if length:
+            self._userparams['l'] = length
+        return self
+
+    def down(self, length=None) -> 'Element':
+        ''' Set the direction to down '''
+        if 'd' in self._userparams:
+            warnings.warn(f"Duplicated direction parameter in element. `{self._userparams['d']}` changed to `down`.")
+        self._userparams['d'] = 'down'
+        if length:
+            self._userparams['l'] = length
+        return self
+
+    def left(self, length=None) -> 'Element':
+        ''' Set the direction to left '''
+        if 'd' in self._userparams:
+            warnings.warn(f"Duplicated direction parameter in element. `{self._userparams['d']}` changed to `left`.")
+        self._userparams['d'] = 'left'
+        if length:
+            self._userparams['l'] = length
+        return self
+
+    def right(self, length=None) -> 'Element':
+        ''' Set the direction to right '''
+        if 'd' in self._userparams:
+            warnings.warn(f"Duplicated direction parameter in element. `{self._userparams['d']}` changed to `right`.")
+        self._userparams['d'] = 'right'
+        if length:
+            self._userparams['l'] = length
+        return self
+
     def length(self, length: float) -> 'Element2Term':
         ''' Sets total length of element '''
         self._userparams['l'] = length

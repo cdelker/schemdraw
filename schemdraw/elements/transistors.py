@@ -421,7 +421,7 @@ class Bjt2(Element2Term):
         if circle:
             self.segments.append(SegmentCircle((bjt_width/2, bjt_r/2), bjt_r))
         self.params['lblloc'] = 'bottom'
-        self.params['lblofst'] = 0
+        self.params['lblofst'] = .1
         self.anchors['base'] = (bjt_width/2, bjt_base_h+bjt_base_w/2)
         self.anchors['icollector'] = (bjt_width, 0)
         self.anchors['iemitter'] = (0, 0)

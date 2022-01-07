@@ -7,13 +7,14 @@ from dataclasses import dataclass
 import warnings
 import math
 
-from ..segments import Segment, SegmentText, SegmentCircle, BBox, SegmentType
+from ..segments import SegmentText, SegmentCircle, BBox, SegmentType
 from ..transform import Transform
 from .. import util
 from ..util import Point
 from ..types import XY, Linestyle, Align, Halign, Valign, LabelLoc
 
 gap = (math.nan, math.nan)  # Put a gap in a path
+
 
 Figure = None
 def _set_elm_backend(figureclass):
@@ -714,7 +715,7 @@ class Element2Term(Element):
         self._userparams['toy'] = y
         return self
 
-    def up(self, length=None) -> 'Element':
+    def up(self, length: float=None) -> 'Element':
         ''' Set the direction to up '''
         if 'd' in self._userparams:
             warnings.warn(f"Duplicated direction parameter in element. `{self._userparams['d']}` changed to `up`.")
@@ -723,7 +724,7 @@ class Element2Term(Element):
             self._userparams['l'] = length
         return self
 
-    def down(self, length=None) -> 'Element':
+    def down(self, length: float=None) -> 'Element':
         ''' Set the direction to down '''
         if 'd' in self._userparams:
             warnings.warn(f"Duplicated direction parameter in element. `{self._userparams['d']}` changed to `down`.")
@@ -732,7 +733,7 @@ class Element2Term(Element):
             self._userparams['l'] = length
         return self
 
-    def left(self, length=None) -> 'Element':
+    def left(self, length: float=None) -> 'Element':
         ''' Set the direction to left '''
         if 'd' in self._userparams:
             warnings.warn(f"Duplicated direction parameter in element. `{self._userparams['d']}` changed to `left`.")
@@ -741,7 +742,7 @@ class Element2Term(Element):
             self._userparams['l'] = length
         return self
 
-    def right(self, length=None) -> 'Element':
+    def right(self, length: float=None) -> 'Element':
         ''' Set the direction to right '''
         if 'd' in self._userparams:
             warnings.warn(f"Duplicated direction parameter in element. `{self._userparams['d']}` changed to `right`.")
@@ -828,8 +829,8 @@ class Element2Term(Element):
             totlen = util.dist(xy, endpt)
             theta = -90 if xy.y > y else 90
 
-        self.anchors['istart'] = self.segments[0].path[0]
-        self.anchors['iend'] = self.segments[0].path[-1]
+        self.anchors['istart'] = self.segments[0].path[0]  # type: ignore
+        self.anchors['iend'] = self.segments[0].path[-1]  # type: ignore
         if self._cparams.get('extend', True):
             in_path = self.segments[0].path  # type: ignore
             dz = util.delta(in_path[-1], in_path[0])   # Defined delta of path
@@ -856,11 +857,11 @@ class Element2Term(Element):
                     xform = Transform(0, start)
                     self.segments[i] = self.segments[i].xform(xform)
         else:
-            start = Point(self.segments[0].path[0])
-            end = Point(self.segments[0].path[-1])
+            start = Point(self.segments[0].path[0])  # type: ignore
+            end = Point(self.segments[0].path[-1])  # type: ignore
 
         if self._cparams.get('dot', False):
-            fill = 'bg' if self._cparams['dot'] == 'open' else True
+            fill: Union[bool, str] = 'bg' if self._cparams['dot'] == 'open' else True
             self.segments.append(SegmentCircle(end, radius=0.075, fill=fill, zorder=3))
         if self._cparams.get('idot', False):
             fill = 'bg' if self._cparams['idot'] == 'open' else True

@@ -2,13 +2,11 @@
 
 from __future__ import annotations
 from typing import Type, Any
-from collections import ChainMap
 import warnings
 import math
 
-from .types import BBox, Backends, ImageFormat, Linestyle, Arcdirection, XY, ImageType, BilateralDirection
-from .elements import Element, _set_elm_backend, Dot
-from .elements.lines import LoopCurrent, CurrentLabel, CurrentLabelInline
+from .types import BBox, Backends, ImageFormat, Linestyle, XY, ImageType
+from .elements import Element, _set_elm_backend
 from .segments import SegmentType
 from .util import Point
 
@@ -148,7 +146,7 @@ class Drawing:
                 element will be added with this angle unless specified
                 otherwise.
     '''
-    def __init__(self, *elements: Element, file: str=None, backend: str=None, 
+    def __init__(self, *elements: Element, file: str=None, backend: Backends=None, 
                  show: bool=True, **kwargs):
         self.outfile = file
         self.backend = backend
@@ -340,11 +338,11 @@ class Drawing:
                        bbox=self.get_bbox(),
                        inches_per_unit=self.dwgparams.get('inches_per_unit'),
                        showframe=showframe)
-        
+
         if 'bgcolor' in self.dwgparams:
             fig.bgcolor(self.dwgparams['bgcolor'])
         self.fig = fig
-    
+
     def draw(self, showframe: bool=False, show: bool=True,
              ax=None, backend: Backends=None):
         ''' Draw the schematic
@@ -370,7 +368,7 @@ class Drawing:
         if show:
             # Show figure in window if not inline/Jupyter mode
             self.fig.show()  # type: ignore
-            
+
         if self.outfile is not None:
             self.save(self.outfile)
 

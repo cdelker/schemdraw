@@ -1,7 +1,7 @@
 ''' Lines, Arrows, and Labels '''
 
 from __future__ import annotations
-from typing import Sequence
+from typing import Sequence, Union
 import warnings
 import math
 
@@ -13,7 +13,7 @@ from .. import util
 
 
 class Line(Element2Term):
-    ''' Straight Line
+    r''' Straight Line
 
         Args:
             arrow: arrowhead specifier, such as '->', '<-', '<->', '-o', or '\|->'
@@ -188,12 +188,12 @@ class Wire(Element):
         self._userparams['delta'] = Point((dx, dy))
         return self
 
-    def dot(self, open: bool=False) -> 'Element2Term':
+    def dot(self, open: bool=False) -> 'Element':
         ''' Add a dot to the end of the element '''
         self._userparams['dot'] = True if not open else 'open'
         return self
 
-    def idot(self, open: bool=False) -> 'Element2Term':
+    def idot(self, open: bool=False) -> 'Element':
         ''' Add a dot to the input/start of the element '''
         self._userparams['idot'] = True if not open else 'open'
         return self
@@ -256,7 +256,7 @@ class Wire(Element):
             raise ValueError(f'Undefined shape parameter `{shape}`.')
 
         if self._cparams.get('dot', False):
-            fill = 'bg' if self._cparams['dot'] == 'open' else True
+            fill: Union[bool, str] = 'bg' if self._cparams['dot'] == 'open' else True
             self.segments.append(SegmentCircle((dx, dy), radius=0.075, fill=fill, zorder=3))
         if self._cparams.get('idot', False):
             fill = 'bg' if self._cparams['idot'] == 'open' else True
@@ -294,7 +294,7 @@ class Arc2(Element):
 
     def to(self, xy: XY, dx: float=0, dy: float=0) -> 'Element':
         ''' Specify ending position
-        
+
             Args:
                 xy: Ending position of element
                 dx: X-offset from xy position
@@ -395,6 +395,7 @@ class Arc3(Element):
                 dx: X-offset from xy position
                 dy: Y-offset from xy position
         '''
+        xy = Point(xy)
         self._userparams['to'] = Point((xy.x + dx, xy.y + dy))
         return self
 
@@ -564,6 +565,7 @@ class ArcLoop(Element):
                 dx: X-offset from xy position
                 dy: Y-offset from xy position
         '''
+        xy = Point(xy)
         self._userparams['to'] = Point((xy.x + dx, xy.y + dy))
         return self
 
@@ -694,7 +696,7 @@ class CurrentLabel(Element):
         self._reverse = reverse
 
     def at(self, xy: XY | Element) -> 'Element':  # type: ignore[override]
-        ''' Specify CurrentLabel position. 
+        ''' Specify CurrentLabel position.
 
             If xy is an Element, arrow will be centered
             along element and its color will also be
@@ -965,4 +967,3 @@ class EncircleBox(Element):
         self.anchors['E'] = (w/2, 0)
         self.anchors['W'] = (-w/2, 0)
         self.params['theta'] = 0
-        

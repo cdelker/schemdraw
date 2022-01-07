@@ -138,7 +138,7 @@ In Schemdraw, a "Two-Terminal Element" is any element that can grow to fill a gi
 All two-terminal elements subclass :py:class:`schemdraw.elements.Element2Term`.
 They have some additional methods for setting placement and length.
 
-The `length` method sets an exact length for a two-terminal element.
+The `length` method sets an exact length for a two-terminal element. Alternatively, the `up`, `down`, `left`, and `right` methods on two-terminal elements take a length parameter.
 
 .. jupyter-execute::
     :emphasize-lines: 5
@@ -204,7 +204,7 @@ Finally, exact endpoints can also be specified using the `endpoints` method.
     :emphasize-lines: 5
 
     d += (R := elm.Resistor())
-    d += (Q := elm.Diode().down().length(6))
+    d += (Q := elm.Diode().down(6))
     d += elm.Line().tox(R.start)
     d += elm.Capacitor().toy(R.start)
     d += elm.SourceV().endpoints(Q.end, R.start)

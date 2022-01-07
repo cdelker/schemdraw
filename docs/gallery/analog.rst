@@ -19,12 +19,13 @@ Shows how to connect to a switch with anchors.
     
     with schemdraw.Drawing() as d:
         d += (V1 := elm.SourceV().label('5V'))
-        d += elm.Line().right().length(d.unit*.75)
+        d += elm.Line().right(d.unit*.75)
         d += (S1 := elm.SwitchSpdt2(action='close').up().anchor('b').label('$t=0$', loc='rgt'))
-        d += elm.Line().right().at(S1.c).length(d.unit*.75)
+        d += elm.Line().right(d.unit*.75).at(S1.c)
         d += elm.Resistor().down().label('$100\Omega$').label(['+','$v_o$','-'], loc='bot')
         d += elm.Line().to(V1.start)
         d += elm.Capacitor().at(S1.a).toy(V1.start).label('1$\mu$F').dot()
+
 
 Capacitor Network
 ^^^^^^^^^^^^^^^^^
@@ -59,18 +60,18 @@ This example demonstrate use of `push()` and `pop()` and using the 'tox' and 'to
         d.push()
         d += (R1 := elm.Resistor().down().label('20Ω'))
         d += (V1 := elm.SourceV().down().reverse().label('120V'))
-        d += elm.Line().right().length(3).dot()
+        d += elm.Line().right(3).dot()
         d.pop()
-        d += elm.Line().right().length(3).dot()
+        d += elm.Line().right(3).dot()
         d += elm.SourceV().down().reverse().label('60V')
         d += elm.Resistor().label('5Ω').dot()
-        d += elm.Line().right().length(3).dot()
+        d += elm.Line().right(3).dot()
         d += elm.SourceI().up().label('36A')
         d += elm.Resistor().label('10Ω').dot()
-        d += elm.Line().left().length(3).hold()
-        d += elm.Line().right().length(3).dot()
+        d += elm.Line().left(3).hold()
+        d += elm.Line().right(3).dot()
         d += (R6 := elm.Resistor().toy(V1.end).label('6Ω').dot())
-        d += elm.Line().left().length(3).hold()
+        d += elm.Line().left(3).hold()
         d += elm.Resistor().right().at(R6.start).label('1.6Ω').dot(open=True).label('a', 'right')
         d += elm.Line().right().at(R6.end).dot(open=True).label('b', 'right')
 
@@ -116,9 +117,9 @@ Another good problem for ECE students...
         d += (V1 := elm.SourceV().down().reverse().label('5∠-90° V', loc='bot'))
         d += elm.Line().tox(I1.start)
         d.pop()
-        d += elm.Line().up().length(d.unit*.8)
+        d += elm.Line().up(d.unit*.8)
         d += (L1 := elm.Inductor().tox(V1.start).label('j3Ω'))
-        d += elm.Line().down().length(d.unit*.8)
+        d += elm.Line().down(d.unit*.8)
         d += elm.CurrentLabel(top=False, ofst=.3).at(L1).label('$i_g$')
 
 
@@ -165,19 +166,19 @@ Also note the use of newline characters inside resistor and capacitor labels.
     with schemdraw.Drawing() as d:
         d.config(inches_per_unit=.5, unit=3)
         d += (D := elm.Rectifier())
-        d += elm.Line().left().at(D.N).length(d.unit*1.5).dot(open=True).idot()
-        d += elm.Line().left().at(D.S).length(d.unit*1.5).dot(open=True).idot()
+        d += elm.Line().left(d.unit*1.5).at(D.N).dot(open=True).idot()
+        d += elm.Line().left(d.unit*1.5).at(D.S).dot(open=True).idot()
         d += (G := elm.Gap().toy(D.N).label(['–', 'AC IN', '+']))
 
-        d += (top := elm.Line().right().at(D.E).length(d.unit*3).idot())
+        d += (top := elm.Line().right(d.unit*3).at(D.E).idot())
         d += (Q2 := elm.BjtNpn(circle=True).up().anchor('collector').label('Q2\n2n3055'))
-        d += elm.Line().down().at(Q2.base).length(d.unit/2)
+        d += elm.Line().down(d.unit/2).at(Q2.base)
         d += (Q2b := elm.Dot())
-        d += elm.Line().left().length(d.unit/3)
+        d += elm.Line().left(d.unit/3)
         d += (Q1 := elm.BjtNpn(circle=True).up().anchor('emitter').label('Q1\n    2n3054'))
         d += elm.Line().at(Q1.collector).toy(top.center).dot()
 
-        d += elm.Line().down().at(Q1.base).length(d.unit/2).dot()
+        d += elm.Line().down(d.unit/2).at(Q1.base).dot()
         d += elm.Zener().down().reverse().label('D2\n500mA', loc='bot').dot()
         d += (G := elm.Ground())
         d += elm.Line().left().dot()

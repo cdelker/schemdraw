@@ -28,10 +28,10 @@ Notice the half and full adders set the drawing unit to 0.5 so the lines aren't 
     with schemdraw.Drawing() as d:
         d.config(unit=0.5)
         d += (S := logic.Xor().label('S', 'right'))
-        d += logic.Line().left().at(S.in1).length(d.unit*2).idot().label('A', 'left')
+        d += logic.Line().left(d.unit*2).at(S.in1).idot().label('A', 'left')
         d += (B := logic.Line().left().at(S.in2).dot())
         d += logic.Line().left().label('B', 'left')
-        d += logic.Line().down().at(S.in1).length(d.unit*3)
+        d += logic.Line().down(d.unit*3).at(S.in1)
         d += (C := logic.And().right().anchor('in1').label('C', 'right'))
         d += logic.Wire('|-').at(B.end).to(C.in2)
 
@@ -45,13 +45,13 @@ Full Adder
     with schemdraw.Drawing() as d:
         d.config(unit=0.5)
         d += (X1 := logic.Xor())
-        d += (A := logic.Line().left().at(X1.in1).length(d.unit*2).idot().label('A', 'left'))
+        d += (A := logic.Line().left(d.unit*2).at(X1.in1).idot().label('A', 'left'))
         d += (B := logic.Line().left().at(X1.in2).dot())
         d += logic.Line().left().label('B', 'left')
 
-        d += logic.Line().right().at(X1.out).length(d.unit).idot()
+        d += logic.Line().right().at(X1.out).idot()
         d += (X2 := logic.Xor().anchor('in1'))
-        d += (C := logic.Line().down().at(X2.in2).length(d.unit*2))
+        d += (C := logic.Line().down(d.unit*2).at(X2.in2))
         d.push()
         d += logic.Dot().at(C.center)
         d += logic.Line().tox(A.end).label('C$_{in}$', 'left')
@@ -89,17 +89,18 @@ Note the use of the LaTeX command **overline{Q}** in the label to draw a bar ove
         d += logic.Wire('N', k=.5).at(G1.in2).to(G2.out).dot()
 
         # Two back gates
-        d += logic.Line().left().at(G1.in1).length(d.unit/6)
+        d += logic.Line().left(d.unit/6).at(G1.in1)
         d += (J := logic.Nand(inputs=3).anchor('out').right())
         d += logic.Wire('n', k=.5).at(J.in1).to(G2.out, dx=1).dot()
-        d += logic.Line().left().at(J.in2).length(d.unit/4).label('J', 'left')
-        d += logic.Line().left().at(G2.in2).length(d.unit/6)
+        d += logic.Line().left(d.unit/4).at(J.in2).label('J', 'left')
+        d += logic.Line().left(d.unit/6).at(G2.in2)
         d += (K := logic.Nand(inputs=3).right().anchor('out'))
         d += logic.Wire('n', k=-.5).at(K.in3).to(G1.out, dx=.5).dot()
-        d += logic.Line().left().at(K.in2).length(d.unit/4).label('K', 'left')
+        d += logic.Line().left(d.unit/4).at(K.in2).label('K', 'left')
         d += (C := logic.Line().at(J.in3).toy(K.in1))
         d += logic.Dot().at(C.center)
-        d += logic.Line().left().length(d.unit/4).label('CLK', 'left')
+        d += logic.Line().left(d.unit/4).label('CLK', 'left')
+
 
 S-R Latch (Gates)
 ^^^^^^^^^^^^^^^^^
@@ -107,12 +108,15 @@ S-R Latch (Gates)
 .. jupyter-execute::
     :code-below:
     
-    d += (g1 := logic.Nor(leadin=.25, leadout=.75))
-    d.move_from(g1.in1, dy=-2.5)
-    d += (g2 := logic.Nor(leadin=.25, leadout=.75).anchor('in1'))
-    d += logic.Wire('N', k=.5).at(g2.in1).to(g1.out).dot()
-    d += logic.Wire('N', k=.5).at(g1.in2).to(g2.out).dot()
-    d += logic.Line().at(g1.in1).left().length(.5).label('R', 'left')
-    d += logic.Line().at(g2.in2).left().length(.5).label('S', 'left')
-    d += logic.Line().at(g1.out).right().length(.75).label('Q', 'right')
-    d += logic.Line().at(g2.out).right().length(.75).label('$\overline{Q}$', 'right')
+    with schemdraw.Drawing() as d:
+        d += (g1 := logic.Nor())
+        d.move_from(g1.in1, dy=-2.5)
+        d += (g2 := logic.Nor().anchor('in1'))
+        d += (g1out := logic.Line().right(.25).at(g1.out))
+        d += logic.Wire('N', k=.5).at(g2.in1).to(g1out.end).dot()
+        d += (g2out := logic.Line().right(.25).at(g2.out))
+        d += logic.Wire('N', k=.5).at(g1.in2).to(g2out.end).dot()
+        d += logic.Line().at(g1.in1).left(.5).label('R', 'left')
+        d += logic.Line().at(g2.in2).left(.5).label('S', 'left')
+        d += logic.Line().at(g1.out).right(.75).label('Q', 'right')
+        d += logic.Line().at(g2.out).right(.75).label('$\overline{Q}$', 'right')

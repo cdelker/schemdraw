@@ -310,7 +310,7 @@ class Element:
             self._buildparams()
 
         anchor = self._cparams.get('anchor', None)
-        zoom = self._cparams.get('zoom', 1)
+        zoom = self._cparams.get('zoom', self._cparams.get('scale', 1))
         xy = self._cparams.get('at', dwgxy)
 
         # Get bounds of element, used for positioning user labels
@@ -785,7 +785,7 @@ class Element2Term(Element):
         tox = self._cparams.get('tox', None)
         toy = self._cparams.get('toy', None)
         anchor = self._cparams.get('anchor', None)
-        zoom = self._cparams.get('zoom', 1)
+        zoom = self._cparams.get('zoom', self._cparams.get('scale', 1))
         xy = Point(self._cparams.get('at', dwgxy))
 
         # set up transformation
@@ -835,7 +835,7 @@ class Element2Term(Element):
             in_path = self.segments[0].path  # type: ignore
             dz = util.delta(in_path[-1], in_path[0])   # Defined delta of path
             in_len = math.hypot(*dz)    # Defined length of path
-            lead_len = (totlen - in_len)/2
+            lead_len = (totlen - in_len*zoom)/2 / zoom
 
             if lead_len > 0:  # Don't make element shorter
                 start = Point(in_path[0]) - Point((lead_len, 0))

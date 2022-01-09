@@ -1,3 +1,25 @@
+v0.14 - 09-Jan-2022
+
+    - Added context manager to Drawing class.
+    - Added Wire element for quick 90-degree connections
+    - Added Encircle, EncircleBox, and Annotate elements
+    - Added Wheatstone, Rectifier, SparkGap elements
+    - Added "2T" version of transistor elements for placement as as two-terminal elements
+    - `tox` and `toy` methods automatically change drawing direction, removing need to specify `right()` and `tox()`, for example.
+    - Added `istart` and `iend` anchors to 2-Terminal elements for defining inner start and end points before lead extensions
+    - Added `dot` and `idot` methods to two-terminal elements
+    - Added '-o' and '-\|' arrow types to draw dot or endcap instead of arrow at the end of lines
+    - Added `leads` parameter to OpAmp for adding lead extensions
+    - Added `lead` parameter to Grounds, Vss, and Vdd
+    - Added optional `dx` and `dy` parameters to `to` and `at` methods for quick fine-tuning of placement
+    - Added optional `length` parameter to `up`, `down`, `left`, and `right` on two-terminal elements
+    - Improved placement of CurrentLabel arrows
+    - Fix default label position on Vss element
+    - Fix positioning of switch contact bubbles
+    - Fix text rotation in svg backend and path mode
+    - The `scale` method now maintains the length of two-terminal elements
+
+
 v0.13 - 19-Dec-2021
 
     - Added Digital Timing Diagram elements

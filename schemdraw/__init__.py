@@ -9,4 +9,4 @@ __all__ = [
     "SegmentPoly", "SegmentBezier", "Transform", "ImageFormat", "settextmode"
 ]
 
-__version__ = '0.13'
+__version__ = '0.14'

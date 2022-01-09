@@ -13,7 +13,7 @@ Labels
 Labels are added to elements using the :py:meth:`schemdraw.elements.Element.label` method.
 Some unicode utf-8 characters are allowed, such as :code:`'1μF'` and :code:`'1MΩ'` if the character is included in your font set.
 Alternatively, full LaTeX math expressions can be rendered when enclosed in `$..$`
-For a description of supported math expressions, in the Matplotlib backend see `Matplotlib Mathtext <https://matplotlib.org/3.3.0/tutorials/text/mathtext.html/>`_, and the SVG backend refer to the `Ziamath <https://ziamath.readthedocs.io>`_ package.
+For a description of supported math expressions, in the Matplotlib backend see `Matplotlib Mathtext <https://matplotlib.org/stable/tutorials/text/mathtext.html>`_, and the SVG backend refer to the `Ziamath <https://ziamath.readthedocs.io>`_ package.
 Subscripts and superscripts are also added using LaTeX math mode, enclosed in `$..$`:
 
 .. jupyter-execute::
@@ -38,7 +38,7 @@ Location
 ********
 
 The label location is specified with the `loc` parameter to the `label` method.
-It can be `left`, `right`, `up`, `down`, or the name of a defined anchor within the element.
+It can be `left`, `right`, `top`, `bottom`, or the name of a defined anchor within the element.
 These directions do not depend on rotation. A label with `loc='left'` is always on the leftmost terminal of the element.
 
 .. jupyter-execute::

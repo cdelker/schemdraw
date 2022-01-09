@@ -18,3 +18,13 @@ Because many examples in the gallery make use of the walrus operator (`:=`), Pyt
    signalproc
    flowcharting
    styles
+
+
+-------
+
+Need more circuit examples? Check out the Schemdraw Examples Pack:
+
+.. raw:: html
+
+    <script src="https://gumroad.com/js/gumroad.js"></script>
+    <a class="gumroad-button" href="https://collindelker.gumroad.com/l/mlphqh">Schemdraw Examples Pack</a>   

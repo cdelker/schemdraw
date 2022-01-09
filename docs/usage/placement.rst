@@ -130,90 +130,6 @@ Compared to anchoring the opamp at `in2` (the noninverting input):
     d.draw()
 
 
-
-Two-Terminal Elements
----------------------
-
-In Schemdraw, a "Two-Terminal Element" is any element that can grow to fill a given length (this includes elements such as the Potentiometer, even though it electrically has three terminals).
-All two-terminal elements subclass :py:class:`schemdraw.elements.Element2Term`.
-They have some additional methods for setting placement and length.
-
-The `length` method sets an exact length for a two-terminal element. Alternatively, the `up`, `down`, `left`, and `right` methods on two-terminal elements take a length parameter.
-
-.. jupyter-execute::
-    :emphasize-lines: 5
-
-    with schemdraw.Drawing() as d:
-        d += elm.Dot()
-        d += elm.Resistor()
-        d += elm.Dot()
-        d += elm.Diode().length(6)
-        d += elm.Dot()
-
-The `to` method will set an exact endpoint for a 2-terminal element.
-The starting point is still the ending location of the previous element.
-Notice the Diode is stretched longer than the standard element length in order to fill the diagonal distance.
-
-.. jupyter-execute::
-    :emphasize-lines: 4
-
-    with schemdraw.Drawing() as d:
-        R = d.add(elm.Resistor())
-        C = d.add(elm.Capacitor().up())
-        Q = d.add(elm.Diode().to(R.start))
-
-The `tox` and `toy` methods are useful for placing 2-terminal elements to "close the loop", without requiring an exact length. These methods automatically change the drawing direction.
-Here, the Line element does not need to specify an exact length to fill the space and connect back with the Source.
-
-.. jupyter-execute::
-    :hide-code:
-
-    d = schemdraw.Drawing()
-
-.. jupyter-execute::
-    :hide-output:
-    :emphasize-lines: 9
-
-    d += (C := elm.Capacitor())
-    d += elm.Diode()
-    d += elm.Line().down()
-
-    # Now we want to close the loop, but can use `tox` 
-    # to avoid having to know exactly how far to go.
-    # Note we passed the [x, y] position of capacitor C,
-    # but only the x value will be used.
-    d += elm.Line().tox(C.start)
-
-    d += elm.Source().up()
-
-.. jupyter-execute::
-    :hide-code:
-
-    d.draw()
-
-
-Finally, exact endpoints can also be specified using the `endpoints` method.
-
-.. jupyter-execute::
-    :hide-code:
-    
-    d = schemdraw.Drawing()
-
-.. jupyter-execute::
-    :hide-output:
-    :emphasize-lines: 5
-
-    d += (R := elm.Resistor())
-    d += (Q := elm.Diode().down(6))
-    d += elm.Line().tox(R.start)
-    d += elm.Capacitor().toy(R.start)
-    d += elm.SourceV().endpoints(Q.end, R.start)
-
-.. jupyter-execute::
-    :hide-code:
-
-    d.draw()
-
 Dimensions
 ----------
 
@@ -248,6 +164,95 @@ This default 2-terminal length can be changed using the `unit` parameter to the 
         d += elm.Line(arrow='|-|').at((0, -.7)).to((2, -.7)).label('Drawing.unit', 'bottom').color('royalblue')
 
 
+Two-Terminal Elements
+---------------------
+
+In Schemdraw, a "Two-Terminal Element" is any element that can grow to fill a given length (this includes elements such as the Potentiometer, even though it electrically has three terminals).
+All two-terminal elements subclass :py:class:`schemdraw.elements.Element2Term`.
+They have some additional methods for setting placement and length.
+
+The `length` method sets an exact length for a two-terminal element. Alternatively, the `up`, `down`, `left`, and `right` methods on two-terminal elements take a length parameter.
+
+.. jupyter-execute::
+    :emphasize-lines: 5
+
+    with schemdraw.Drawing() as d:
+        d += elm.Dot()
+        d += elm.Resistor()
+        d += elm.Dot()
+        d += elm.Diode().length(6)
+        d += elm.Dot()
+
+The `to` method will set an exact endpoint for a 2-terminal element.
+The starting point is still the ending location of the previous element.
+Notice the Diode is stretched longer than the standard element length in order to fill the diagonal distance.
+
+.. jupyter-execute::
+    :emphasize-lines: 4
+
+    with schemdraw.Drawing() as d:
+        R = d.add(elm.Resistor())
+        C = d.add(elm.Capacitor().up())
+        Q = d.add(elm.Diode().to(R.start))
+
+The `tox` and `toy` methods are useful for placing 2-terminal elements to "close the loop", without requiring an exact length. 
+They extend the element horizontally or vertically to the x- or y- coordinate of the anchor given as the argument. 
+These methods automatically change the drawing direction.
+Here, the Line element does not need to specify an exact length to fill the space and connect back with the Source.
+
+.. jupyter-execute::
+    :hide-code:
+
+    d = schemdraw.Drawing()
+
+.. jupyter-execute::
+    :hide-output:
+    :emphasize-lines: 9
+
+    d += (C := elm.Capacitor())
+    d += elm.Diode()
+    d += elm.Line().down()
+
+    # Now we want to close the loop, but can use `tox` 
+    # to avoid having to know exactly how far to go.
+    # The Line will extend horizontally to the same x-position
+    # as the Capacitor's `start` anchor.
+    d += elm.Line().tox(C.start)
+
+    # Now close the loop by relying on the fact that all
+    # two-terminal elements (including Source and Line)
+    # are the same length by default
+    d += elm.Source().up()
+
+.. jupyter-execute::
+    :hide-code:
+
+    d.draw()
+
+
+Finally, exact endpoints can also be specified using the `endpoints` method.
+
+.. jupyter-execute::
+    :hide-code:
+    
+    d = schemdraw.Drawing()
+
+.. jupyter-execute::
+    :hide-output:
+    :emphasize-lines: 5
+
+    d += (R := elm.Resistor())
+    d += (Q := elm.Diode().down(6))
+    d += elm.Line().tox(R.start)
+    d += elm.Capacitor().toy(R.start)
+    d += elm.SourceV().endpoints(Q.end, R.start)
+
+.. jupyter-execute::
+    :hide-code:
+
+    d.draw()
+
+
 Orientation
 -----------
 
@@ -278,7 +283,7 @@ Drawing State
 
 The :py:class:`schemdraw.Drawing` maintains a drawing state that includes the current x, y position, stored in the `Drawing.here` attribute as a (x, y) tuple, and drawing direction stored in the `Drawing.theta` attribute.
 A LIFO stack of drawing states can be used, via the :py:meth:`schemdraw.Drawing.push` and :py:meth:`schemdraw.Drawing.pop` method,
-for times when it's useful to save the drawing state and come back to it later.
+for situations when it's useful to save the drawing state and come back to it later.
 
 .. jupyter-execute::
     :hide-code:
@@ -331,7 +336,7 @@ To place an element without moving the drawing position, use the :py:meth:`schem
     d.draw()
 
 
-Three-terminal elements may not leave the drawing position where intended, so after drawing an element, the current drawing position can be set using the :py:meth:`schemdraw.elements.Element.drop` method to specify an anchor at which to place the cursor.
+Three-terminal elements do not necessarily leave the drawing position where desired, so after drawing an element, the current drawing position can be set using the :py:meth:`schemdraw.elements.Element.drop` method to specify an anchor at which to place the cursor.
 This reduces the need to assign every element to a variable name.
 
 .. jupyter-execute::

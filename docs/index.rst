@@ -44,4 +44,11 @@ The next element added to the drawing will start at the endpoint of the resistor
    changes
 
 
+----------
 
+Want to support Schemdraw development? Need more circuit examples? Check out the Schemdraw Examples Pack:
+
+.. raw:: html
+
+    <script src="https://gumroad.com/js/gumroad.js"></script>
+    <a class="gumroad-button" href="https://collindelker.gumroad.com/l/mlphqh">Schemdraw Examples Pack</a>

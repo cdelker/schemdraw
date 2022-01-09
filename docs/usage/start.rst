@@ -79,6 +79,17 @@ Methods `up`, `down`, `left`, `right` specify the drawing direction, and `label`
 If not specified, elements reuse the same direction from the previous element, and begin where
 the previous element ended.
 
+Using the `with` context manager is a convenience, letting the drawing be displayed and saved upon exiting the `with` block. Schematics may also be created simply by assinging a new Drawing instance, but this requires calling `draw()` and/or `save()` explicitly:
+
+.. code-block:: python
+
+    d = schemdraw.Drawing()
+    d += elm.Resistor()
+    ...
+    d.draw()
+    d.save('my_circuit.svg')
+
+
 For full details of placing and stylizing elements, see :ref:`placement`.
 and :py:class:`schemdraw.elements.Element`.
 
@@ -92,7 +103,7 @@ Jupyter
 *******
 
 When run in a Jupyter notebook, the schematic will be drawn to the cell output after the `with` block is exited.
-If your schematics pop up in an external window, set Matplotlib to inline mode before importing schemdraw:
+If your schematics pop up in an external window, and you are using the Matplotlib backend, set Matplotlib to inline mode before importing schemdraw:
 
 .. code-block:: python
 
@@ -138,9 +149,9 @@ Then get the drawing using `d.get_imagedata()`, or `d.save()` to get the image.
 .. code-block:: python
 
     import matplotlib
-    matplotlib.use('Agg') # Set the backend here
+    matplotlib.use('Agg') # Set Matplotlib's backend here
 
-Alternatively, use the SVG backend (see :ref:`backends`).
+Alternatively, use Schemdraw's SVG backend (see :ref:`backends`).
 
 
 Saving Drawings

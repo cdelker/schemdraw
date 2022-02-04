@@ -20,7 +20,7 @@ are not 2-terminal elements that extend "leads", so they must be manually connec
 `Line` or `Arrow` elements. The square elements define anchors 'N', 'S', 'E', and 'W' for
 the four directions. Circle-based elements also includ 'NE', 'NW', 'SE', and 'SW'
 anchors.
-Directional elements, such as `Amp`, `Adc`, and `Dac` define anchors `in` and `out`.
+Directional elements, such as `Amp`, `Adc`, and `Dac` define anchors `input` and `out`.
 
 
 .. jupyter-execute::
@@ -43,7 +43,9 @@ Directional elements, such as `Amp`, `Adc`, and `Dac` define anchors `in` and `o
     elms = [dsp.Square, dsp.Circle, dsp.Sum, dsp.SumSigma, dsp.Mixer, dsp.Speaker,
             dsp.Amp, dsp.OscillatorBox, dsp.Oscillator, dsp.Filter, 
             partial(dsp.Filter, response='lp'), partial(dsp.Filter, response='bp'),
-            partial(dsp.Filter, response='hp'), dsp.Adc, dsp.Dac, dsp.Demod]
+            partial(dsp.Filter, response='hp'), dsp.Adc, dsp.Dac, dsp.Demod,
+            dsp.Circulator, dsp.Isolator, dsp.VGA
+            ]
     drawElements(elms, dx=6)
 
 

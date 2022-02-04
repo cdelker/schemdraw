@@ -10,7 +10,7 @@ import math
 from typing import Sequence
 
 from ..util import linspace
-from ..segments import Segment, SegmentCircle, SegmentText
+from ..segments import Segment, SegmentCircle, SegmentText, SegmentArc
 from ..elements import Element
 from ..types import XY
 
@@ -322,3 +322,53 @@ class Demod(Square):
         self.segments.append(Segment([(.3, .25), (.7, 0), (.3, -.25), (.3, .25)]))
         self.segments.append(Segment([(.7, .25), (.7, -.25)]))
         self.segments.append(Segment([(.7, 0), (.85, 0)]))
+
+
+class Circulator(Circle):
+    ''' Circulator (circle with an arrow in it)
+
+        Anchors:
+            * N
+            * S
+            * E
+            * W
+    '''
+    def __init__(self, *d, **kwargs):
+        super().__init__(*d, **kwargs)
+        radius = 0.5
+        self.segments.append(
+            SegmentArc((0.5, 0), 0.9 * radius, 0.9 * radius, 20, 200, "cw"))
+
+
+class Isolator(Square):
+    ''' Isolator (box with an arrow in it)
+
+        Anchors:
+            * N
+            * S
+            * E
+            * W
+    '''
+    def __init__(self, *d, **kwargs):
+        super().__init__(*d, **kwargs)
+        margin = 0.25
+        path = ((margin, 0), (1 - margin, 0))
+        self.segments.append(Segment(path, arrow="->"))
+
+
+class VGA(Amp):
+    ''' Variable Gain Amplifier (amplifier symbol with an arrow over it)
+
+        Args:
+            tuneup: Set tune above or below the symbol
+
+        Anchors:
+            * input
+            * out
+            * tune
+    '''
+    def __init__(self, tuneup: bool = True, *d, **kwargs):
+        super().__init__(*d, **kwargs)
+        path = ((-0.1, -0.5), (0.75, 0.5))
+        self.segments.append(Segment(path, arrow="->"))
+        self.anchors['tune'] = (0.325, 0.5 if tuneup else -0.5)

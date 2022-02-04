@@ -183,7 +183,7 @@ class Amp(Element):
         self.segments.append(Segment([(0, 0), (0, -amph/2), (ampl, 0),
                                       (0, amph/2), (0, 0)]))
         self.params['drop'] = (ampl, 0)
-        self.anchors['in'] = (0, 0)
+        self.anchors['input'] = (0, 0)
         self.anchors['out'] = (ampl, 0)
 
 
@@ -279,7 +279,7 @@ class Adc(Element):
         self.params['lblloc'] = 'center'
         self.params['lblofst'] = 0
         self.params['drop'] = (1.4, 0)
-        self.anchors['in'] = (0, 0)
+        self.anchors['input'] = (0, 0)
         self.anchors['out'] = (1.4, 0)
         self.anchors['E'] = (1.4, 0)
         self.anchors['W'] = (0, 0)
@@ -301,7 +301,7 @@ class Dac(Element):
         self.params['lblloc'] = 'center'
         self.params['lblofst'] = 0
         self.params['drop'] = (1.4, 0)
-        self.anchors['in'] = (0, 0)
+        self.anchors['input'] = (0, 0)
         self.anchors['out'] = (1.4, 0)
         self.anchors['E'] = (1.4, 0)
         self.anchors['W'] = (0, 0)

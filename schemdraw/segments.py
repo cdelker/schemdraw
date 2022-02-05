@@ -128,17 +128,18 @@ class Segment:
                 transform: Transformation to apply
                 style: Style parameters from Element to apply as default
         '''
-        params: dict[str, Any] = {'zorder': self.zorder,
-                                  'color': self.color,
-                                  'fill': self.fill,
-                                  'lw': self.lw,
-                                  'ls': self.ls,
-                                  'arrow': self.arrow,
-                                  'arrowwidth': self.arrowwidth,
-                                  'arrowlength': self.arrowlength,
-                                  'capstyle': self.capstyle,
-                                  'joinstyle': self.joinstyle}
-        style = {k: v for k, v in style.items() if k in params.keys()}
+        params: dict[str, Any] = {
+            'zorder': self.zorder if self.zorder is not None else style.get('zorder', None),
+            'color': self.color if self.color else style.get('color', None),
+            'fill': self.fill if self.fill is not None else style.get('fill', None),
+            'lw': self.lw if self.lw else style.get('lw', None),
+            'ls': self.ls if self.ls else style.get('ls', None),
+            'arrow': self.arrow,
+            'arrowwidth': self.arrowwidth,
+            'arrowlength': self.arrowlength,
+            'capstyle': self.capstyle if self.capstyle else style.get('capstyle', None),
+            'joinstyle': self.joinstyle if self.joinstyle else style.get('joinstyle', None)}
+        style = {k: v for k, v in style.items() if params.get(k) is not None}
         params.update(style)
         return Segment(transform.transform_array(self.path), **params)
 
@@ -294,16 +295,17 @@ class SegmentText:
                 transform: Transformation to apply
                 style: Style parameters from Element to apply as default
         '''
-        params: dict[str, Any] = {'align': self.align,
-                                  'font': self.font,
-                                  'fontsize': self.fontsize,
-                                  'color': self.color,
-                                  'rotation': self.rotation,
-                                  'rotation_mode': self.rotation_mode,
-                                  'clip': self.clip,
-                                  'zorder': self.zorder}
+        params: dict[str, Any] = {
+            'align': self.align if self.align else style.get('align', None),
+            'font': self.font if self.font else style.get('font', None),
+            'fontsize': self.fontsize if self.fontsize else style.get('fontsize', style.get('size', None)),
+            'color': self.color if self.color else style.get('color', None),
+            'rotation': self.rotation if self.rotation else style.get('rotation', None),
+            'rotation_mode': self.rotation_mode if self.rotation_mode else style.get('rotation_mode', None),
+            'clip': self.clip,
+            'zorder': self.zorder if self.zorder is not None else style.get('zorder', None)}
 
-        style = {k: v for k, v in style.items() if k in params.keys()}
+        style = {k: v for k, v in style.items() if params.get(k) is not None}
         params.update(style)
         return SegmentText(transform.transform(self.xy),
                            self.text, **params)
@@ -415,16 +417,17 @@ class SegmentPoly:
                 transform: Transformation to apply
                 style: Style parameters from Element to apply as default
         '''
-        params: dict[str, Any] = {'color': self.color,
-                                  'fill': self.fill,
-                                  'joinstyle': self.joinstyle,
-                                  'capstyle': self.capstyle,
-                                  'lw': self.lw,
-                                  'ls': self.ls,
-                                  'cornerradius': self.cornerradius,
-                                  'clip': self.clip,
-                                  'zorder': self.zorder}
-        style = {k: v for k, v in style.items() if k in params.keys()}
+        params: dict[str, Any] = {
+            'color': self.color if self.color else style.get('color', None),
+            'fill': self.fill if self.fill is not None else style.get('fill', None),
+            'joinstyle': self.joinstyle if self.joinstyle else style.get('joinstyle', None),
+            'capstyle': self.capstyle if self.capstyle else style.get('capstyle', None),
+            'lw': self.lw if self.lw else style.get('lw', None),
+            'ls': self.ls if self.ls else style.get('ls', None),
+            'cornerradius': self.cornerradius,
+            'clip': self.clip,
+            'zorder': self.zorder if self.zorder is not None else style.get('zorder', None)}
+        style = {k: v for k, v in style.items() if params.get(k) is not None}
         params.update(style)
         return SegmentPoly(transform.transform_array(self.verts), **params)
 
@@ -522,17 +525,18 @@ class SegmentCircle:
                 transform: Transformation to apply
                 style: Style parameters from Element to apply as default
         '''
-        params: dict[str, Any] = {'zorder': self.zorder,
-                                  'color': self.color,
-                                  'fill': self.fill,
-                                  'lw': self.lw,
-                                  'ls': self.ls,
-                                  'clip': self.clip,
-                                  'ref': self.endref}
-        style = {k: v for k, v in style.items() if k in params.keys()}
+        params: dict[str, Any] = {
+            'zorder': self.zorder if self.zorder is not None else style.get('zorder', None),
+            'color': self.color if self.color else style.get('color', None),
+            'fill': self.fill if self.fill is not None else style.get('fill', None),
+            'lw': self.lw if self.lw else style.get('lw', None),
+            'ls': self.ls if self.ls else style.get('ls', None),
+            'clip': self.clip,
+            'ref': self.endref}
+        style = {k: v for k, v in style.items() if params.get(k) is not None}
         params.update(style)
         return SegmentCircle(transform.transform(self.center),
-                             self.radius, **params)
+                             self.radius*transform.zoom, **params)
 
     def get_bbox(self) -> BBox:
         ''' Get bounding box (untransformed)
@@ -631,16 +635,17 @@ class SegmentBezier:
                 transform: Transformation to apply
                 style: Style parameters from Element to apply as default
         '''
-        params: dict[str, Any] = {'color': self.color,
-                                  'lw': self.lw,
-                                  'ls': self.ls,
-                                  'capstyle': self.capstyle,
-                                  'arrow': self.arrow,
-                                  'arrowlength': self.arrowlength,
-                                  'arrowwidth': self.arrowwidth,
-                                  'clip': self.clip,
-                                  'zorder': self.zorder}
-        style = {k: v for k, v in style.items() if k in params.keys()}
+        params: dict[str, Any] = {
+            'color': self.color if self.color else style.get('color', None),
+            'lw': self.lw if self.lw else style.get('lw', None),
+            'ls': self.ls if self.ls else style.get('ls', None),
+            'capstyle': self.capstyle if self.capstyle else style.get('capstyle', None),
+            'arrow': self.arrow,
+            'arrowlength': self.arrowlength,
+            'arrowwidth': self.arrowwidth,
+            'clip': self.clip,
+            'zorder': self.zorder if self.zorder is not None else style.get('zorder', None)}
+        style = {k: v for k, v in style.items() if params.get(k) is not None}
         params.update(style)
         return SegmentBezier(transform.transform_array(self.p), **params)
 
@@ -735,12 +740,13 @@ class SegmentArc:
                 style: Style parameters from Element to apply as default
         '''
         angle = self.angle + transform.theta
-        params: dict[str, Any] = {'color': self.color,
-                                  'lw': self.lw,
-                                  'ls': self.ls,
-                                  'clip': self.clip,
-                                  'zorder': self.zorder}
-        style = {k: v for k, v in style.items() if k in params.keys()}
+        params: dict[str, Any] = {
+            'color': self.color if self.color else style.get('color', None),
+            'lw': self.lw if self.lw else style.get('lw', None),
+            'ls': self.ls if self.ls else style.get('ls', None),
+            'clip': self.clip,
+            'zorder': self.zorder if self.zorder is not None else style.get('zorder', None)}
+        style = {k: v for k, v in style.items() if params.get(k) is not None}
         params.update(style)
         return SegmentArc(transform.transform(self.center),
                           self.width*transform.zoom, self.height*transform.zoom, angle=angle,

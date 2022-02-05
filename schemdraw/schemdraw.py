@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 from typing import Type, Any
+from collections import ChainMap
 import warnings
 import math
 
@@ -203,7 +204,8 @@ class Drawing:
         ''' Get flattened list of all segments in the drawing '''
         segments = []
         for element in self.elements:
-            segments.extend([s.xform(element.transform, **element._cparams)
+            params = ChainMap(element._userparams, element.params)
+            segments.extend([s.xform(element.transform, **params)
                              for s in element.segments])
         return segments
 

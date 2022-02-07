@@ -46,9 +46,8 @@ The next element added to the drawing will start at the endpoint of the resistor
 
 ----------
 
-Want to support Schemdraw development? Need more circuit examples? Check out the Schemdraw Examples Pack:
+Want to support Schemdraw development? Need more circuit examples? Pick up the Schemdraw Examples Pack on buymeacoffee.com:
 
 .. raw:: html
 
-    <script src="https://gumroad.com/js/gumroad.js"></script>
-    <a class="gumroad-button" href="https://collindelker.gumroad.com/l/mlphqh">Schemdraw Examples Pack</a>
+    <a href="https://www.buymeacoffee.com/cdelker/e/55648" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>

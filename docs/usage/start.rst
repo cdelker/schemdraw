@@ -169,12 +169,3 @@ A vector format such as `svg` is recommended for best results.
 
 The Drawing may also be saved using with the :py:meth:`schemdraw.Drawing.save` method.
 
-
-----------
-
-Want to support Schemdraw development? Need more circuit examples? Check out the Schemdraw Examples Pack:
-
-.. raw:: html
-
-    <script src="https://gumroad.com/js/gumroad.js"></script>
-    <a class="gumroad-button" href="https://collindelker.gumroad.com/l/mlphqh">Schemdraw Examples Pack</a>

@@ -256,6 +256,7 @@ class SegmentText:
             color: Color for this segment
             fontsize: Font size
             font: Font name/family
+            mathfont: Math font name/family
             clip: Bounding box to clip to
             zorder: Z-order for segment
     '''
@@ -266,12 +267,14 @@ class SegmentText:
                  color: str=None,
                  fontsize: float=14,
                  font: str=None,
+                 mathfont: str=None,
                  clip: BBox=None,
                  zorder: int=None):
         self.xy = pos
         self.text = label
         self.align = align
         self.font = font
+        self.mathfont = mathfont
         self.fontsize = fontsize
         self.color = color
         self.rotation = rotation
@@ -298,6 +301,7 @@ class SegmentText:
         params: dict[str, Any] = {
             'align': self.align if self.align else style.get('align', None),
             'font': self.font if self.font else style.get('font', None),
+            'mathfont': self.mathfont if self.mathfont else style.get('mathfont', None),
             'fontsize': self.fontsize if self.fontsize else style.get('fontsize', style.get('size', None)),
             'color': self.color if self.color else style.get('color', None),
             'rotation': self.rotation if self.rotation else style.get('rotation', None),
@@ -348,13 +352,14 @@ class SegmentText:
         color = self.color if self.color else style.get('color', 'black')
         fontsize = self.fontsize if self.fontsize else style.get('fontsize', style.get('size', 14))
         font = self.font if self.font else style.get('font', 'sans-serif')
+        mathfont = self.mathfont if self.mathfont else style.get('mathfont', None)
         align = self.align if self.align else style.get('align', ('center', 'center'))
         rotation = self.rotation if self.rotation else style.get('rotation', 0)
         rotmode = self.rotation_mode if self.rotation_mode else style.get('rotation_mode', 'anchor')
         zorder = self.zorder if self.zorder is not None else style.get('zorder', 3)
 
         fig.text(self.text, xy[0], xy[1],
-                 color=color, fontsize=fontsize, fontfamily=font,
+                 color=color, fontsize=fontsize, fontfamily=font, mathfont=mathfont,
                  rotation=rotation, rotation_mode=rotmode,
                  halign=align[0], valign=align[1], clip=self.clip, zorder=zorder)
 

@@ -32,6 +32,7 @@ class Label:
     rotate: bool | float = False  # True=same angle as element; False = 0
     fontsize: float | None = None
     font: str | None = None
+    mathfont: str | None = None
     color: str | None = None
 
 
@@ -243,6 +244,7 @@ class Element:
               rotate: bool | float=False,
               fontsize: float=None,
               font: str=None,
+              mathfont: str=None,
               color: str=None):
         ''' Add a label to the Element.
 
@@ -257,7 +259,8 @@ class Element:
                 rotate: True to rotate label with element, or specify rotation
                     angle in degrees
                 fontsize: Size of label font
-                font: Name/font-family of label
+                font: Name/font-family of label text
+                mathfont: Name/font-family of math text
                 color: Color of label
         '''
         if halign is None and valign is None:
@@ -268,7 +271,7 @@ class Element:
             rotate = 0
         elif isinstance(rotate, bool):
             rotate = True
-        self._userlabels.append(Label(label, loc, ofst, align, rotate, fontsize, font, color))
+        self._userlabels.append(Label(label, loc, ofst, align, rotate, fontsize, font, mathfont, color))
         return self
 
     def _buildparams(self) -> None:
@@ -363,7 +366,8 @@ class Element:
                 rotate = label.rotate
             self._place_label(label.label, loc=label.loc, ofst=label.ofst,
                               align=label.align, rotation=rotate,
-                              font=label.font, fontsize=label.fontsize,
+                              font=label.font, mathfont=label.mathfont,
+                              fontsize=label.fontsize,
                               color=label.color)
 
         # Add element-specific anchors
@@ -444,7 +448,7 @@ class Element:
     def _place_label(self, label: str, loc: LabelLoc=None,
                      ofst: XY | float | None=None, align: Align=(None, None),
                      rotation: float=0, fontsize: float=None,
-                     font: str=None, color: str=None) -> None:
+                     font: str=None, mathfont: str=None, color: str=None) -> None:
         ''' Adds the label Segment to the element, AFTER element placement
 
             Args:
@@ -460,6 +464,7 @@ class Element:
                 rotation: Rotation angle (degrees)
                 fontsize: Font size
                 font: Font family
+                mathfont: Math font family
                 color: Label text color
         '''
         rotation = (rotation + 360) % 360
@@ -573,12 +578,15 @@ class Element:
             args['fontsize'] = fontsize
         if font is not None:
             args['font'] = font
+        if mathfont is not None:
+            args['mathfont'] = mathfont
         if color is not None:
             args['color'] = color
 
         lblparams = dict(ChainMap(args, self._cparams))
         lblparams = {'color': lblparams.get('color'),
                      'font': lblparams.get('font'),
+                     'mathfont': lblparams.get('mathfont'),
                      'fontsize': lblparams.get('fontsize', 14),
                      'align': align,
                      'rotation': rotation}

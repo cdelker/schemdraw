@@ -29,7 +29,7 @@ setuptools.setup(
     install_requires=['typing_extensions; python_version<"3.8"'],
     extras_require={
         'matplotlib':  ['matplotlib>=3'],
-        'svgmath': ['ziafont>=0.2', 'ziamath>=0.3', 'latex2mathml']
+        'svgmath': ['ziafont>=0.3', 'ziamath>=0.5', 'latex2mathml']
     },
     package_data = {'schemdraw': ['py.typed']},
     zip_safe=False,

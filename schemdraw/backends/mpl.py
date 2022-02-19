@@ -101,11 +101,13 @@ class Figure:
             self.addclip(p, clip)
 
     def text(self, s: str, x, y, color='black', fontsize=14, fontfamily='sans-serif',
+             mathfont=None,
              rotation=0, halign='center', valign='center', rotation_mode='anchor',
              clip: BBox=None, zorder=3) -> None:
         ''' Add text to the figure '''
         t = self.ax.text(x, y, s, transform=self.ax.transData, color=color,
                          fontsize=fontsize-1.5, fontfamily=fontfamily,
+                         math_fontfamily=mathfont,
                          rotation=rotation, rotation_mode=rotation_mode,
                          horizontalalignment=halign, verticalalignment=valign,
                          zorder=zorder, clip_on=True)

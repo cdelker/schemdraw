@@ -205,6 +205,7 @@ class Figure:
 
     def text(self, s: str, x: float, y: float, color: str='black',
              fontsize: float=14, fontfamily: str='sans-serif',
+             mathfont: str=None,
              rotation: float=0, halign: Halign='center',
              valign: Valign='center',
              rotation_mode: RotationMode='anchor', clip: BBox=None, zorder: int=3) -> None:
@@ -218,34 +219,10 @@ class Figure:
         
         if ziamath and textmode == 'path':
             texttag = ET.Element('g')
-            if fontfamily.lower() in ['sans-serif', 'Arial']:
-                fontfamily = 'sans'
-
-            lines = s.splitlines()
-            maths = []
-            for i, line in enumerate(lines):
-                maths.append(ziamath.Math.fromlatextext(
-                    line, size=fontsize, mathstyle=fontfamily, textstyle=fontfamily,
-                    svg2=svg2mode))
-
-            dys = [max(m.node.bbox.ymax*1.25, 0) for m in maths]
-            if len(lines) > 1:
-                topbase = sum(dys[:-1])
-                if valign == 'bottom':
-                    y -= topbase
-                elif valign == 'center':
-                    y -= topbase/2 - fontsize/2
-                elif valign == 'top':
-                    y += topbase
-            elif valign == 'top':
-                y += dys[0]
-            elif valign == 'center':
-                y += dys[0]/2
-
-            yi = y
-            for dy, m in zip(dys, maths):
-                m.drawon(x, yi, texttag, halign=halign, valign='baseline', color=color)
-                yi += dy
+            ziamath.Text(s, textfont=fontfamily, mathfont=mathfont,
+                         size=fontsize, svg2=svg2mode,
+                         linespacing=1).drawon(texttag, x0, y0,
+                         halign=halign, valign=valign)
 
             if rotation:
                 texttag.set('transform', f'rotate({-rotation} {x0} {y0})')

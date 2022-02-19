@@ -1,3 +1,11 @@
+v0.15 - IN PROGRESS
+
+    - Added DSP elements Circulator, Isolator, VGA
+    - Changed DSP anchor names from 'in' to 'input' to avoid conflict with 'in' keyword
+    - Fixed styles with nested ElementDrawing elements
+    - Added mathfont parameter to labels for specifying different font on math labels
+
+
 v0.14 - 09-Jan-2022
 
     - Added context manager to Drawing class.

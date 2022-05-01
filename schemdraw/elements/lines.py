@@ -86,15 +86,9 @@ class Gap(Element2Term):
     '''
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
-        self.segments.append(Segment([(0, 0), gap, (1, 0)]))
+        self.segments.append(Segment([(0, 0), gap, (1, 0)], visible=False))
         self.params['lblloc'] = 'center'
         self.params['lblofst'] = 0
-
-    def _place(self, dwgxy: XY, dwgtheta: float, **dwgparams) -> tuple[Point, float]:
-        ''' Calculate element placement, adding lead extensions '''
-        result = super()._place(dwgxy, dwgtheta, **dwgparams)
-        self.segments = self.segments[1:]  # Remove line segment, but keep any text
-        return result
 
 
 class Dot(Element):

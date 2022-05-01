@@ -94,6 +94,7 @@ class Segment:
             arrowlength: Length of arrowhead
             clip: Bounding box to clip to
             zorder: Z-order for segment
+            visible: Show the segment when drawn
     '''
     def __init__(self, path: Sequence[XY],
                  color: str=None,
@@ -106,7 +107,8 @@ class Segment:
                  arrowwidth: float=0.15,
                  arrowlength: float=0.25,
                  clip: BBox=None,
-                 zorder: int=None):
+                 zorder: int=None,
+                 visible: bool=True):
         self.path: Sequence[XY] = [Point(p) for p in path]   # Untranformed path
         self.zorder = zorder
         self.color = color
@@ -119,6 +121,7 @@ class Segment:
         self.clip = clip
         self.capstyle = capstyle
         self.joinstyle = joinstyle
+        self.visible = visible
 
     def xform(self, transform, **style) -> 'Segment':
         ''' Return a new Segment that has been transformed
@@ -138,7 +141,8 @@ class Segment:
             'arrowwidth': self.arrowwidth,
             'arrowlength': self.arrowlength,
             'capstyle': self.capstyle if self.capstyle else style.get('capstyle', None),
-            'joinstyle': self.joinstyle if self.joinstyle else style.get('joinstyle', None)}
+            'joinstyle': self.joinstyle if self.joinstyle else style.get('joinstyle', None),
+            'visible': self.visible}
         style = {k: v for k, v in style.items() if params.get(k) is not None}
         params.update(style)
         return Segment(transform.transform_array(self.path), **params)
@@ -172,6 +176,8 @@ class Segment:
                 transform: Transform to apply before drawing
                 style: Default style parameters
         '''
+        if not self.visible:
+            return
         path = transform.transform_array(self.path)
         linepath = list(path)
         zorder = self.zorder if self.zorder is not None else style.get('zorder', 2)
@@ -259,6 +265,7 @@ class SegmentText:
             mathfont: Math font name/family
             clip: Bounding box to clip to
             zorder: Z-order for segment
+            visible: Show the segment when drawn
     '''
     def __init__(self, pos: Sequence[float], label: str,
                  align: Align=None,
@@ -269,7 +276,8 @@ class SegmentText:
                  font: str=None,
                  mathfont: str=None,
                  clip: BBox=None,
-                 zorder: int=None):
+                 zorder: int=None,
+                 visible: bool=True):
         self.xy = pos
         self.text = label
         self.align = align
@@ -281,6 +289,7 @@ class SegmentText:
         self.rotation_mode = rotation_mode
         self.clip = clip
         self.zorder = zorder
+        self.visible = visible
 
     def doreverse(self, centerx: float) -> None:
         ''' Reverse the path (flip horizontal about the centerx point) '''
@@ -307,7 +316,8 @@ class SegmentText:
             'rotation': self.rotation if self.rotation else style.get('rotation', None),
             'rotation_mode': self.rotation_mode if self.rotation_mode else style.get('rotation_mode', None),
             'clip': self.clip,
-            'zorder': self.zorder if self.zorder is not None else style.get('zorder', None)}
+            'zorder': self.zorder if self.zorder is not None else style.get('zorder', None),
+            'visible': self.visible}
 
         style = {k: v for k, v in style.items() if params.get(k) is not None}
         params.update(style)
@@ -348,6 +358,8 @@ class SegmentText:
                 transform: Transform to apply before drawing
                 style: Default style parameters
         '''
+        if not self.visible:
+            return
         xy = transform.transform(self.xy)
         color = self.color if self.color else style.get('color', 'black')
         fontsize = self.fontsize if self.fontsize else style.get('fontsize', style.get('size', 14))
@@ -380,6 +392,7 @@ class SegmentPoly:
             joinstyle: Joinstyle for the segment: 'round', 'miter', or 'bevel'
             clip: Bounding box to clip to
             zorder: Z-order for segment
+            visible: Show the segment when drawn
     '''
     def __init__(self, verts: Sequence[Sequence[float]],
                  closed: bool=True,
@@ -392,7 +405,8 @@ class SegmentPoly:
                  joinstyle: Joinstyle=None,
                  capstyle: Capstyle=None,
                  clip: BBox=None,
-                 zorder: int=None):
+                 zorder: int=None,
+                 visible: bool=True):
         self.verts = verts
         self.closed = closed
         self.cornerradius = cornerradius
@@ -405,6 +419,7 @@ class SegmentPoly:
         self.lw = lw
         self.ls = ls
         self.clip = clip
+        self.visible = visible
 
     def doreverse(self, centerx: float) -> None:
         ''' Reverse the path (flip horizontal about the centerx point) '''
@@ -431,7 +446,8 @@ class SegmentPoly:
             'ls': self.ls if self.ls else style.get('ls', None),
             'cornerradius': self.cornerradius,
             'clip': self.clip,
-            'zorder': self.zorder if self.zorder is not None else style.get('zorder', None)}
+            'zorder': self.zorder if self.zorder is not None else style.get('zorder', None),
+            'visible': self.visible}
         style = {k: v for k, v in style.items() if params.get(k) is not None}
         params.update(style)
         return SegmentPoly(transform.transform_array(self.verts), **params)
@@ -454,6 +470,8 @@ class SegmentPoly:
                 transform: Transform to apply before drawing
                 style: Default style parameters
         '''
+        if not self.visible:
+            return
         fill = self.fill if self.fill is not None else style.get('fill', None)
         color = self.color if self.color else style.get('color', 'black')
         if fill is not None:
@@ -492,6 +510,7 @@ class SegmentCircle:
             clip: Bounding box to clip to
             zorder: Z-order for segment
             ref: Flip reference ['start', 'end', None].
+            visible: Show the segment when drawn
     '''
     def __init__(self, center: Sequence[float], radius: float,
                  color: str=None,
@@ -500,7 +519,8 @@ class SegmentCircle:
                  fill: bool | str | None=None,
                  clip: BBox=None,
                  zorder: int=None,
-                 ref: EndRef=None):
+                 ref: EndRef=None,
+                 visible: bool=True):
         self.center = center
         self.radius = radius
         self.zorder = zorder
@@ -509,6 +529,7 @@ class SegmentCircle:
         self.lw = lw
         self.ls = ls
         self.clip = clip
+        self.visible = visible
 
         # Reference for adding things AFTER lead extensions
         self.endref = ref
@@ -537,7 +558,8 @@ class SegmentCircle:
             'lw': self.lw if self.lw else style.get('lw', None),
             'ls': self.ls if self.ls else style.get('ls', None),
             'clip': self.clip,
-            'ref': self.endref}
+            'ref': self.endref,
+            'visible': self.visible}
         style = {k: v for k, v in style.items() if params.get(k) is not None}
         params.update(style)
         return SegmentCircle(transform.transform(self.center),
@@ -563,6 +585,8 @@ class SegmentCircle:
                 transform: Transform to apply before drawing
                 style: Default style parameters
         '''
+        if not self.visible:
+            return
         center = transform.transform(self.center)
         radius = transform.zoom * self.radius
         zorder = self.zorder if self.zorder is not None else style.get('zorder', 1)
@@ -600,6 +624,7 @@ class SegmentBezier:
             arrowlength: Length of arrowhead
             clip: Bounding box to clip to
             zorder: Z-order for segment
+            visible: Show the segment when drawn
     '''
     def __init__(self, p: Sequence[XY],
                  color: str=None,
@@ -610,7 +635,8 @@ class SegmentBezier:
                  arrowlength: float=.25,
                  arrowwidth: float=.15,
                  clip: BBox=None,
-                 zorder: int=None):
+                 zorder: int=None,
+                 visible: bool=True):
         self.p = [Point(pi) for pi in p]
         self.arrow = arrow
         self.color = color
@@ -621,6 +647,7 @@ class SegmentBezier:
         self.arrowwidth = arrowwidth
         self.clip = clip
         self.zorder = zorder
+        self.visible = visible
 
     def doreverse(self, centerx: float) -> None:
         ''' Reverse the path (flip horizontal about the centerx point) '''
@@ -649,7 +676,8 @@ class SegmentBezier:
             'arrowlength': self.arrowlength,
             'arrowwidth': self.arrowwidth,
             'clip': self.clip,
-            'zorder': self.zorder if self.zorder is not None else style.get('zorder', None)}
+            'zorder': self.zorder if self.zorder is not None else style.get('zorder', None),
+            'visible': self.visible}
         style = {k: v for k, v in style.items() if params.get(k) is not None}
         params.update(style)
         return SegmentBezier(transform.transform_array(self.p), **params)
@@ -673,6 +701,8 @@ class SegmentBezier:
                 transform: Transform to apply before drawing
                 style: Default style parameters
         '''
+        if not self.visible:
+            return
         p = transform.transform_array(self.p)
         zorder = self.zorder if self.zorder is not None else style.get('zorder', 1)
         color = self.color if self.color else style.get('color', 'black')
@@ -700,6 +730,7 @@ class SegmentArc:
             ls: Line style for the segment
             clip: Bounding box to clip to
             zorder: Z-order for segment
+            visible: Show the segment when drawn
     '''
     def __init__(self, center: Sequence[float],
                  width: float, height: float,
@@ -710,7 +741,8 @@ class SegmentArc:
                  lw: float=None,
                  ls: Linestyle=None,
                  clip: BBox=None,
-                 zorder: int=None):
+                 zorder: int=None,
+                 visible: bool=True):
         self.center = center
         self.width = width
         self.height = height
@@ -723,6 +755,7 @@ class SegmentArc:
         self.ls = ls
         self.clip = clip
         self.zorder = zorder
+        self.visible = visible
 
     def doreverse(self, centerx: float) -> None:
         ''' Reverse the path (flip horizontal about the centerx point) '''
@@ -750,7 +783,8 @@ class SegmentArc:
             'lw': self.lw if self.lw else style.get('lw', None),
             'ls': self.ls if self.ls else style.get('ls', None),
             'clip': self.clip,
-            'zorder': self.zorder if self.zorder is not None else style.get('zorder', None)}
+            'zorder': self.zorder if self.zorder is not None else style.get('zorder', None),
+            'visible': self.visible}
         style = {k: v for k, v in style.items() if params.get(k) is not None}
         params.update(style)
         return SegmentArc(transform.transform(self.center),
@@ -791,6 +825,8 @@ class SegmentArc:
                 transform: Transform to apply before drawing
                 style: Default style parameters
         '''
+        if not self.visible:
+            return
         center = transform.transform(self.center)
         angle = self.angle + transform.theta
 

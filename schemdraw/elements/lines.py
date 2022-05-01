@@ -875,9 +875,12 @@ class Encircle(Element):
             elm_list: List of elements to enclose
             padx: Horizontal distance from elements to loop
             pady: Vertical distance from elements to loop
+            includelabels: Include labesl in the ellipse
     '''
     def __init__(self, elm_list: Sequence[Element]=None,
-                 padx: float=0.2, pady: float=0.2, **kwargs):
+                 padx: float=0.2, pady: float=0.2,
+                 includelabels: bool=True,
+                 **kwargs):
         super().__init__(**kwargs)
         assert elm_list is not None
         xmin = math.inf
@@ -885,7 +888,7 @@ class Encircle(Element):
         ymin = math.inf
         ymax = -math.inf
         for element in elm_list:
-            bbox = element.get_bbox(transform=True, includetext=False)
+            bbox = element.get_bbox(transform=True, includetext=includelabels)
             xmin = min(xmin, bbox.xmin)
             xmax = max(xmax, bbox.xmax)
             ymin = min(ymin, bbox.ymin)
@@ -930,10 +933,13 @@ class EncircleBox(Element):
             cornerraidus: radius of corner rounding
             padx: Horizontal distance from elements to loop
             pady: Vertical distance from elements to loop
+            includelabels: Include labels in the box
     '''
     def __init__(self, elm_list: Sequence[Element]=None,
                  cornerradius: float=0.3,
-                 padx: float=0.2, pady: float=0.2, **kwargs):
+                 padx: float=0.2, pady: float=0.2,
+                 includelabels: bool=True,
+                 **kwargs):
         super().__init__(**kwargs)
         assert elm_list is not None
         xmin = math.inf
@@ -941,7 +947,7 @@ class EncircleBox(Element):
         ymin = math.inf
         ymax = -math.inf
         for element in elm_list:
-            bbox = element.get_bbox(transform=True, includetext=False)
+            bbox = element.get_bbox(transform=True, includetext=includelabels)
             xmin = min(xmin, bbox.xmin)
             xmax = max(xmax, bbox.xmax)
             ymin = min(ymin, bbox.ymin)

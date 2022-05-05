@@ -35,6 +35,7 @@ extensions = [
     'jupyter_sphinx',
     'sphinx.ext.autodoc',
     'sphinx.ext.autodoc.typehints',
+    'sphinx.ext.imgconverter',
     'sphinx.ext.napoleon'
 ]
 
@@ -63,3 +64,14 @@ html_static_path = []
 
 master_doc = 'index'  # See https://github.com/readthedocs/readthedocs.org/issues/2569
 
+latex_elements = {
+     'preamble': r'\DeclareUnicodeCharacter{03A9}{\ensuremath{\Omega}}' +
+                 r'\DeclareUnicodeCharacter{03BC}{\ensuremath{\mu}}' +
+                 r'\DeclareUnicodeCharacter{2184}{\ensuremath{\supset}}' +
+                 r'\DeclareUnicodeCharacter{2295}{\ensuremath{\oplus}}' +
+                 r'\DeclareUnicodeCharacter{2228}{\ensuremath{\vee}}' +
+                 r'\DeclareUnicodeCharacter{22BB}{\ensuremath{\veebar}}' +
+                 r'\DeclareUnicodeCharacter{01C1}{\ensuremath{\parallel}}' +
+                 r'\DeclareUnicodeCharacter{2220}{\ensuremath{\angle}}' +
+                 r'\DeclareUnicodeCharacter{2227}{\ensuremath{\wedge}}'
+}

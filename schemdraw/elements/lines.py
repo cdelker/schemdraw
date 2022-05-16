@@ -786,6 +786,106 @@ class CurrentLabelInline(Element):
         return self
 
 
+class ZLabel(Element):
+    ''' Right-angle arrow, often used to indicate impedance
+        looking in to a node
+
+        Use `.at()` method to place the label over an
+        existing element.
+
+        Args:
+            ofst: Vertical offset from centerline of element
+            hofst: Horizontal offset from center of element
+            length: Length of the arrow tail
+            lengthtip: Length of the arrow tip
+            headlength: Arrowhead length
+            headwidth: Arrowhead width
+    '''
+    def __init__(self, ofst: float=0.5, hofst: float=0.4,
+                 length: float=1, lengthtip: float=.5,
+                 headlength: float=0.25, headwidth: float=0.15, **kwargs):
+        super().__init__(**kwargs)
+        self.params['drop'] = None
+        self.anchor('center')
+        self.anchors['center'] = (0, 0)
+        self._ofst = ofst
+        self._hofst = hofst
+        self._length = length
+        self._lengthtip = lengthtip
+        self._headlength = headlength
+        self._headwidth = headwidth
+
+    def at(self, xy: XY | Element) -> 'Element':  # type: ignore[override]
+        ''' Specify CurrentLabel position.
+
+            If xy is an Element, arrow will be centered
+            along element and its color will also be
+            inherited.
+
+            Args:
+                xy: The absolute (x, y) position or an
+                Element instance to center the arrow over
+        '''
+        if isinstance(xy, Element):
+            try:
+                pos = xy.center
+            except AttributeError:
+                bbox = xy.get_bbox()
+                pos = Point(((bbox.xmax + bbox.xmin)/2, (bbox.ymax + bbox.ymin)/2))
+            
+            super().at(pos)
+
+            theta = xy.transform.theta
+            if (theta % 360) > 90 and (theta % 360) <= 270:
+                theta += 180  # Keeps 'top=True' labels above the element
+            self.theta(theta)
+            if 'color' in xy._userparams:
+                self.color(xy._userparams.get('color'))
+        else:
+            super().at(xy)
+        return self
+
+    def _place(self, dwgxy, dwgtheta, **dwgparams):
+        self._dwgparams = dwgparams
+        if not self._cparams:
+            self._buildparams()
+
+        a = Point((-self._hofst, self._ofst))
+        b = Point((-self._hofst-self._lengthtip, self._ofst))
+        c = Point((-self._hofst-self._lengthtip, self._ofst-self._length))
+        self.anchors['head'] = a
+        self.anchors['tail'] = c
+
+        self.segments.append(Segment((c, b, a), arrow='->',
+                                     arrowwidth=self._headwidth,
+                                     arrowlength=self._headlength))
+        
+        # Attempt to align the label at the tail of the arrow.
+        self.params['lblloc'] = 'tail'
+        th = self._cparams.get('theta', 0)
+        if self._cparams.get('flip'):
+            th += 180
+
+        th -= 90  # Because arrow is at right angle
+        th = (th+360)%360
+
+        if th < 45 or th > 315:
+            self.params['lblalign'] = ('left', 'center')
+            self.params['lblofst'] = (0, -.1)
+        elif 45 <= th <= 135:
+            self.params['lblalign'] = ('center', 'bottom')
+            self.params['lblofst'] = (0, .1)
+        elif 135 < th <= 225:
+            self.params['lblalign'] = ('right', 'center')
+            self.params['lblofst'] = (0, .1)
+        else:
+            self.params['lblalign'] = ('center', 'top')
+            self.params['lblofst'] = (0, -.1)
+
+        self._cparams = None  # Clear it out to pick up flip, rotate, etc.
+        return super()._place(dwgxy, dwgtheta, **dwgparams)
+
+
 class LoopArrow(Element):
     ''' Loop arrow, for mesh analysis notation
 

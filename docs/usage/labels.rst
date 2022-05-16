@@ -245,6 +245,29 @@ Alternatively, loop current arrows can be added anywhere with any size using :py
     d.draw()
 
 
+Impedance Arrow Label
+^^^^^^^^^^^^^^^^^^^^^
+
+A right-angle arrow label, often used to indicate impedance looking into a node, is added using :py:class:`schemdraw.elements.lines.ZLabel`.
+
+.. jupyter-execute::
+    :hide-code:
+
+    d = schemdraw.Drawing()
+
+.. jupyter-execute::
+    :hide-output:
+
+    d += (R:=elm.RBox().right())
+    d += elm.ZLabel().at(R).label('$Z_{in}$')
+
+.. jupyter-execute::
+    :hide-code:
+
+    d.draw()
+
+
+
 Annotations
 ***********
 

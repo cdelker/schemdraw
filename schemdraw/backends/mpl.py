@@ -97,7 +97,7 @@ class Figure:
                           solid_joinstyle=joinstyle)
         self.addclip(p, clip)
         if fill:
-            p, = self.ax.fill(x, y, color=fill, zorder=zorder)
+            p, = self.ax.fill(x, y, color=fill, zorder=zorder-1)
             self.addclip(p, clip)
 
     def text(self, s: str, x, y, color='black', fontsize=14, fontfamily='sans-serif',

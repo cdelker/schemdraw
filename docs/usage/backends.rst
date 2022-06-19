@@ -54,20 +54,27 @@ The SVG backend can produce searchable-text SVGs by setting:
 
 .. code-block:: python
 
-    schemdraw.settextmode('text')
+    schemdraw.svgconfig.text = 'text'
 
 However, text mode does not support full Latex compatibility.
 To switch back to rendering text as SVG paths:
 
 .. code-block:: python
 
-    schemdraw.settextmode('path')
+    schemdraw.svgconfig.text = 'path'
 
 Some SVG renderers are not fully compatible with SVG2.0. For better compatibility with SVG1.x, use
 
 .. code-block:: python
 
-    schemdraw.settextmode('path', svg2=False)
+    schemdraw.svgconfig.svg2 = False
+
+The decimal precision of SVG elements can be set using
+
+.. code-block:: python
+
+    schemdraw.svgconfig.precision = 2
+
 
 
 Backend Comparison

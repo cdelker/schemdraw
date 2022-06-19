@@ -10,6 +10,7 @@ import sys
 import subprocess
 import tempfile
 import math
+import warnings
 
 try:
     import ziamath  # type: ignore
@@ -21,8 +22,58 @@ from ..util import Point
 from . import svgtext
 
 
-textmode: TextMode = 'path' if ziamath is not None else 'text'
-svg2mode: bool = True
+class Config:
+    ''' Configuration options for SVG backend '''
+    _text: TextMode = 'path' if ziamath is not None else 'text'
+
+    @property
+    def text(self) -> TextMode:
+        ''' One of 'path' or 'text'. In 'text' mode, text is drawn
+            as SVG <text> elements and will be searchable in the
+            SVG, however it may render differently on systems without
+            the same fonts installed. In 'path' mode, text is
+            converted to SVG <path> elements and will render
+            independently of any fonts on the system. Path mode
+            enables full rendering of math expressions, but also
+            requires the ziafont/ziamath packages.
+        '''
+        return self._text
+
+    @text.setter
+    def text(self, value: TextMode) -> None:
+        if value == 'path' and ziamath is None:
+            raise ValueError('Path mode requires ziamath package')
+        if value not in ['path', 'text']:
+            raise ValueError('text mode must be "path" or "text".')
+        self._text = value
+    
+    @property
+    def svg2(self) -> bool:
+        ''' Use SVG2.0. Disable for better browser compatibility
+            at the expense of SVG size.
+        '''
+        if ziamath is not None:
+            return ziamath.config.svg2
+        return None
+
+    @svg2.setter
+    def svg2(self, value: bool) -> None:
+        if ziamath is None:
+            raise ValueError('SVG2 mode requires ziamath package')
+        ziamath.config.svg2 = value
+
+    @property
+    def precision(self) -> float:
+        ''' Decimal precision for SVG coordinates '''
+        return ziamath.config.precision
+
+    @precision.setter
+    def precision(self, value: float) -> None:
+        ziamath.config.precision = value
+
+
+config = Config()
+
 
 hatchpattern = '''<defs><pattern id="hatch" patternUnits="userSpaceOnUse" width="4" height="4">
 <path d="M-1,1 l2,-2 M0,4 l4,-4 M3,5 l2,-2" style="stroke:black; stroke-width:.5" /></pattern></defs>'''
@@ -44,12 +95,9 @@ def settextmode(mode: TextMode, svg2: bool=True) -> None:
             mode: Text Mode.
             svg2: Use SVG2.0. Disable for better compatibility.
     '''
-    if mode == 'path' and ziamath is None:
-        raise ValueError('Path mode requires ziamath package')
-    global textmode
-    global svg2mode
-    textmode = mode
-    svg2mode = svg2
+    warnings.warn('settextmode is deprecated. Use schemdraw.svgconfig',  DeprecationWarning)
+    config.svg2 = svg2
+    config.mode = mode
 
 
 def isnotebook():
@@ -121,7 +169,7 @@ def text_size(text: str, font: str='Arial', size: float=16) -> tuple[float, floa
         lines = text.splitlines()
         maths = []
         for line in lines:
-            maths.append(ziamath.Math.fromlatextext(line, size=size, mathstyle=font, textstyle=font, svg2=svg2mode))
+            maths.append(ziamath.Math.fromlatextext(line, size=size, mathstyle=font, textstyle=font))
         sizes = [m.getsize() for m in maths]
         w: float = max([s[0] for s in sizes])
         h: float = sum([s[1] for s in sizes])
@@ -217,16 +265,15 @@ class Figure:
         x0, y0 = self.xform(x, y)
         x, y = x0, y0
         
-        if ziamath and textmode == 'path':
+        if ziamath and config.text == 'path':
             texttag = ET.Element('g')
-            ziamath.Text(s, textfont=fontfamily, mathfont=mathfont,
-                         size=fontsize, svg2=svg2mode,
-                         linespacing=1).drawon(texttag, x0, y0,
+            
+            # TODO: COLOR pass through...
+            ztext = ziamath.Text(s, textfont=fontfamily, mathfont=mathfont,
+                         size=fontsize, linespacing=1,
+                         rotation=rotation, rotation_mode=rotation_mode)
+            ztext.drawon(texttag, x0, y0,
                          halign=halign, valign=valign)
-
-            if rotation:
-                texttag.set('transform', f'rotate({-rotation} {x0} {y0})')
-
         else:
             texttag = svgtext.text_tosvg(s, x, y, font=fontfamily, size=fontsize,
                                          halign=halign, valign=valign, color=color,

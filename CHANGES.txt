@@ -1,9 +1,13 @@
 v0.15 - IN PROGRESS
 
     - Added DSP elements Circulator, Isolator, VGA
+    - Added ZLabel element for right-angle impedance arrow labels
     - Changed DSP anchor names from 'in' to 'input' to avoid conflict with 'in' keyword
     - Fixed styles with nested ElementDrawing elements
+    - Fixed zorder of filled elements in Matplotlib backend
     - Added mathfont parameter to labels for specifying different font on math labels
+    - Added padx and pady parameters to Encircle elements
+    - Moved SVG backend configuration to svgconfig object
 
 
 v0.14 - 09-Jan-2022

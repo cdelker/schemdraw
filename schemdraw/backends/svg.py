@@ -268,9 +268,8 @@ class Figure:
         if ziamath and config.text == 'path':
             texttag = ET.Element('g')
             
-            # TODO: COLOR pass through...
             ztext = ziamath.Text(s, textfont=fontfamily, mathfont=mathfont,
-                         size=fontsize, linespacing=1,
+                         size=fontsize, linespacing=1, color=color,
                          rotation=rotation, rotation_mode=rotation_mode)
             ztext.drawon(texttag, x0, y0,
                          halign=halign, valign=valign)

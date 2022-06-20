@@ -5,7 +5,7 @@ with open('README.md', 'r') as f:
 
 setuptools.setup(
     name = 'schemdraw',
-    version = '0.14',
+    version = '0.15',
     description = 'Electrical circuit schematic drawing',
     author = 'Collin J. Delker',
     author_email = 'schemdraw@collindelker.com',
@@ -29,7 +29,7 @@ setuptools.setup(
     install_requires=['typing_extensions; python_version<"3.8"'],
     extras_require={
         'matplotlib':  ['matplotlib>=3'],
-        'svgmath': ['ziafont>=0.3', 'ziamath>=0.5', 'latex2mathml']
+        'svgmath': ['ziafont>=0.4', 'ziamath>=0.6', 'latex2mathml']
     },
     package_data = {'schemdraw': ['py.typed']},
     zip_safe=False,
@@ -39,6 +39,7 @@ setuptools.setup(
     'Programming Language :: Python :: 3.7',
     'Programming Language :: Python :: 3.8',
     'Programming Language :: Python :: 3.9',
+    'Programming Language :: Python :: 3.10',
     'Development Status :: 4 - Beta',
     'License :: OSI Approved :: MIT License',
     'Operating System :: OS Independent',

@@ -97,7 +97,7 @@ def settextmode(mode: TextMode, svg2: bool=True) -> None:
     '''
     warnings.warn('settextmode is deprecated. Use schemdraw.svgconfig',  DeprecationWarning)
     config.svg2 = svg2
-    config.mode = mode
+    config.text = mode
 
 
 def isnotebook():

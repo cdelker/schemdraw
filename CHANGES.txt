@@ -1,4 +1,4 @@
-v0.15 - IN PROGRESS
+v0.15 - 20-Jun-2022
 
     - Added DSP elements Circulator, Isolator, VGA
     - Added ZLabel element for right-angle impedance arrow labels
@@ -7,7 +7,8 @@ v0.15 - IN PROGRESS
     - Fixed zorder of filled elements in Matplotlib backend
     - Added mathfont parameter to labels for specifying different font on math labels
     - Added padx and pady parameters to Encircle elements
-    - Moved SVG backend configuration to svgconfig object
+    - Moved SVG backend configuration to svgconfig object and deprecated 'settextmode'.
+    - Added 'visible' parameter to Segment objects 
 
 
 v0.14 - 09-Jan-2022

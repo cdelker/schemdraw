@@ -78,6 +78,20 @@ class PhotoresistorIEC(ResistorIEC):
                                      arrowwidth=.16, arrowlength=.2))
 
 
+class Rshunt(ResistorIEC):
+    ''' Shunt Resistor '''
+    def __init__(self, *d, **kwargs):
+        super().__init__(*d, **kwargs)
+        self.segments.append(Segment([(0, 0),
+                                      (-resheight*1.5, -resheight),
+                                      (-resheight*1.5, -resheight*2)]))
+        self.segments.append(Segment([(reswidth*6, 0),
+                                      (reswidth*6+resheight*1.5, -resheight),
+                                      (reswidth*6+resheight*1.5, -resheight*2)]))
+        self.anchors['v1'] = (-resheight*1.5, -resheight*2)
+        self.anchors['v2'] = (reswidth*6+resheight*1.5, -resheight*2)
+
+
 class Capacitor(Element2Term):
     ''' Capacitor (flat plates)
 

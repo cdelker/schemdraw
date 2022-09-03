@@ -107,7 +107,7 @@ Both styles of resistors are always available using these classes.
 .. jupyter-execute::
     :hide-code:
 
-    elmlist = [ResistorIEEE, ResistorIEC, ResistorVarIEEE, ResistorVarIEC, PotentiometerIEEE,
+    elmlist = [ResistorIEEE, ResistorIEC, ResistorVarIEEE, ResistorVarIEC, Rshunt, PotentiometerIEEE,
                PotentiometerIEC, FuseUS, FuseIEEE, FuseIEC]
     drawElements(elmlist, cols=2)
 

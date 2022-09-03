@@ -174,7 +174,7 @@ def mathtextsvg(text: str) -> ET.Element:
         Args:
             text: The text to convert
     '''
-    text = text.replace('>', '%gt;').replace('<', '$lt;')
+    text = text.replace('>', '&gt;').replace('<', '&lt;')
     tokens = re.split(r'(\$.*?\$)', text)
     svgtext = ''
     for t in tokens:

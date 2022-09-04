@@ -126,27 +126,21 @@ class Or(Element):
         xs = [x0 + leadin for x0 in xs]
         x2 = [x0 + leadin for x0 in x2]
 
-        if xor:
-            xs = [x0 + xorgap for x0 in xs]
-
         tip = max(xs)
         orheight = abs(min(ys))
 
         negy = [-y0 for y0 in ys]
         path = list(zip(xs, ys)) + list(zip(xs[::-1], negy[::-1]))
+        path += list(zip(x2[::-1], y2[::-1]))
 
-        if xor:
-            x2xor = [x0+xorgap for x0 in x2[::-1]]
-            y2xor = y2[::-1]
-            path += list(zip(x2xor, y2xor))
-        else:
-            path += list(zip(x2[::-1], y2[::-1]))
         self.segments.append(Segment(path))
         self.anchors['out'] = (tip+leadout, 0)
         self.anchors['end'] = self.anchors['out']
 
         if xor:
-            self.segments.append(Segment(list(zip(x2, y2))))
+            xxor = [x0-xorgap for x0 in x2]
+            self.segments.append(Segment(list(zip(xxor, y2))))
+            leadin -= xorgap
 
         if nor:
             self.segments.append(SegmentCircle((tip+notbubble, 0), notbubble))

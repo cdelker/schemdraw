@@ -1,6 +1,6 @@
 ''' Compound elements made from groups of other elements '''
 
-from typing import Sequence
+from typing import Sequence, Union
 import warnings
 
 from ..import elements as elm
@@ -134,7 +134,7 @@ class Relay(ElementCompound):
                               anchor='center', l=1))
             swleft += .1
 
-        SW: elm.Switch | elm.SwitchSpdt2 | elm.SwitchDpst | elm.SwitchDpdt
+        SW: Union[elm.Switch, elm.SwitchSpdt2, elm.SwitchDpst, elm.SwitchDpdt]
         if switch == 'spst':
             SW = elm.Switch(d='d', reverse=swreverse, flip=swflip)
             bbox = SW.get_bbox()

@@ -1,3 +1,11 @@
+v0.16 - INPROGRESS
+
+    - Added shunt resistor symbol Rshunt
+    - Fixed lead length of XOR gates to align with OR gates
+    - Fixed greater and less than symbols in SVG backend
+    - Allow font parameter to be the path of a TTF file
+
+
 v0.15 - 20-Jun-2022
 
     - Added DSP elements Circulator, Isolator, VGA

@@ -6,6 +6,7 @@ import math
 
 import matplotlib  # type: ignore
 import matplotlib.pyplot as plt  # type: ignore
+from matplotlib import font_manager
 from matplotlib.patches import Arc, Rectangle, PathPatch, Path  # type: ignore
 
 from .. import util
@@ -100,11 +101,18 @@ class Figure:
             p, = self.ax.fill(x, y, color=fill, zorder=zorder-1)
             self.addclip(p, clip)
 
-    def text(self, s: str, x, y, color='black', fontsize=14, fontfamily='sans-serif',
-             mathfont=None,
-             rotation=0, halign='center', valign='center', rotation_mode='anchor',
-             clip: BBox=None, zorder=3) -> None:
+    def text(self, s: str, x: float, y: float, color: str='black',
+             fontsize: float=14, fontfamily: str='sans-serif',
+             mathfont: str=None, rotation: float=0,
+             halign: str='center', valign: str='center',
+             rotation_mode: str='anchor', clip: BBox=None, zorder=3) -> None:
         ''' Add text to the figure '''
+        if fontfamily.endswith('.ttf') or fontfamily.endswith('otf'):
+            if fontfamily not in [f.fname for f in font_manager.fontManager.ttflist]:
+                font_manager.fontManager.addfont(fontfamily)
+            idx = [f.fname for f in font_manager.fontManager.ttflist].index(fontfamily)
+            fontfamily = font_manager.fontManager.ttflist[idx].name
+
         t = self.ax.text(x, y, s, transform=self.ax.transData, color=color,
                          fontsize=fontsize-1.5, fontfamily=fontfamily,
                          math_fontfamily=mathfont,

@@ -99,7 +99,7 @@ class Point(tuple):
         except AttributeError:
             return Point((a-self.x, a-self.y))
 
-    def __mul__(self, a: float):
+    def __mul__(self, a: float):  # type: ignore
         return Point((a*self.x, a*self.y))
 
     def __truediv__(self, a: float):
@@ -109,7 +109,7 @@ class Point(tuple):
         return Point((-self.x, -self.y))
 
     __radd__ = __add__
-    __rmul__ = __mul__
+    __rmul__ = __mul__  # type: ignore
 
     def rotate(self, angle: float, center: Sequence[float] = (0, 0)) -> 'Point':
         ''' Rotate the point by angle degrees about the center '''

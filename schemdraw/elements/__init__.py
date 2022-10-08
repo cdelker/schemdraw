@@ -20,7 +20,7 @@ import warnings
 
 __all__ = [
     "Element", "ElementDrawing", "Element2Term", 
-    "Resistor", "ResistorIEEE", "ResistorIEC", "ResistorVar", "ResistorVarIEEE", "ResistorVarIEC", "Thermistor", "Photoresistor", "PhotoresistorIEEE", "PhotoresistorIEC", "Capacitor", "Capacitor2", "CapacitorVar", "CapacitorTrim", "Diode", "Schottky", "DiodeTunnel", "DiodeShockley", "Zener", "Varactor", "LED", "LED2", "Photodiode", "Potentiometer", "PotentiometerIEEE", "PotentiometerIEC", "Diac", "Triac", "SCR", "Memristor", "Memristor2", "Josephson", "Fuse", "FuseUS", "FuseIEEE", "FuseIEC", "Inductor", "Inductor2", "Crystal", "Breaker", "ResistorVarIEC", "CPE", "SparkGap", "RBox", "RBoxVar", "PotBox", "PhotoresistorBox",
+    "Resistor", "ResistorIEEE", "ResistorIEC", "ResistorVar", "ResistorVarIEEE", "ResistorVarIEC", "Rshunt", "Thermistor", "Photoresistor", "PhotoresistorIEEE", "PhotoresistorIEC", "Capacitor", "Capacitor2", "CapacitorVar", "CapacitorTrim", "Diode", "Schottky", "DiodeTunnel", "DiodeShockley", "Zener", "Varactor", "LED", "LED2", "Photodiode", "Potentiometer", "PotentiometerIEEE", "PotentiometerIEC", "Diac", "Triac", "SCR", "Memristor", "Memristor2", "Josephson", "Fuse", "FuseUS", "FuseIEEE", "FuseIEC", "Inductor", "Inductor2", "Crystal", "Breaker", "ResistorVarIEC", "CPE", "SparkGap", "RBox", "RBoxVar", "PotBox", "PhotoresistorBox",
     "Ground", "GroundSignal", "GroundChassis", "Antenna", "AntennaLoop", "AntennaLoop2", "Vss", "Vdd",
     "Opamp",
     "Source", "SourceV", "SourceI", "SourceSin", "SourcePulse", "SourceSquare", "SourceTriangle", "SourceRamp", "SourceControlled", "SourceControlledV", "SourceControlledI", "BatteryCell", "Battery", "MeterV", "MeterI", "MeterA", "MeterOhm", "Lamp", "Solar", "Neon",

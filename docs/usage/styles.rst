@@ -139,6 +139,49 @@ To configure IEC/European style, use the `style` method with the `elm.STYLE_IEC`
 
 To see all the elements that change between IEEE and IEC, see :ref:`styledelements`.
 
+Fonts
+*****
+
+The font for label text may be set using the `font` parameter, either in the :py:meth:`schemdraw.elements.Element.label` method for a single label, or in :py:meth:`schemdraw.Drawing.config` to set the font for the entire drawing.
+The font parameter may be a string containing the name of a font installed in the system fonts path, a path to a TTF font file, or the name of a font family such as "serif" or "sans".
+These font options apply whether working in the Matplotlib or SVG backends.
+
+.. code-block:: python
+
+    with schemdraw.Drawing() as d:
+        # Default font
+        d += elm.RBox().label('R1\n500K')
+
+        # Named font in system fonts path
+        d += elm.RBox().label('R1\n500K', font='Comic Sans MS')
+
+        # Path to a TTF file
+        d += elm.RBox().label('R1\n500K', font='Peralta-Regular.ttf')
+
+        # Font family
+        d += elm.RBox().label('R1\n500K', font='serif')
+
+.. image:: fonts.svg
+  :alt: Font examples
+
+
+For typesetting math expressions, the `mathfont` parameter is used.
+In the Matplotlib backend, a limited `selection of math fonts <https://matplotlib.org/stable/tutorials/text/mathtext.html#fonts>`_ are available.
+With the SVG backend in the `path` text mode, the mathfont parameter may be the path to any TTF file that contains a MATH table (requires `Ziamath <https://ziamath.readthedocs.io>`_).
+
+.. code-block:: python
+
+    with schemdraw.Drawing(backend='svg') as d:
+        # Default math font
+        d += elm.RBox().label(r'$\sqrt{a^2+b^2}$').at((0, -2))
+
+        # Path to a TTF file with MATH font table (SVG backend only)
+        d += elm.RBox().label(r'$\sqrt{a^2+b^2}$', mathfont='Asana-Math.ttf')
+
+.. image:: mathfonts.svg
+  :alt: Math font examples
+
+
 
 Themes
 ******

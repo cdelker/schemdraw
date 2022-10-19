@@ -1,7 +1,7 @@
 ''' Schemdraw Drawing class '''
 
 from __future__ import annotations
-from typing import Type, Any
+from typing import Type, Any, MutableMapping, Union
 from collections import ChainMap
 import warnings
 import math
@@ -153,6 +153,7 @@ class Drawing:
         self.backend = backend
         self.show = show
         self.elements: list[Element] = []
+        self.anchors: MutableMapping[str, Union[Point, tuple[float, float]]] = {}  # Untransformed anchors
 
         self.dwgparams: dict[str, Any] = schemdrawstyle.copy()
         self.dwgparams.update(kwargs)  # To maintain support for arguments that moved to config method

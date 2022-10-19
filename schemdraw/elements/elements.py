@@ -689,6 +689,7 @@ class ElementDrawing(Element):
         super().__init__(**kwargs)
         self.drawing = drawing
         self.segments = self.drawing.get_segments()
+        self.anchors = self.drawing.anchors
         self.params['drop'] = self.drawing.here
 
 

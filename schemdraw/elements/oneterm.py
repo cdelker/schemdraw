@@ -147,3 +147,19 @@ class Vdd(Element):
         self.anchors['start'] = (0, 0)
         self.anchors['center'] = (0, 0)
         self.anchors['end'] = (0, 0)
+
+
+class NoConnect(Element):
+    ''' No Connection '''
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        dx = resheight*.75
+        dy = resheight*.75
+        self.segments.append(Segment([(-dx, -dy), (dx, dy)]))
+        self.segments.append(Segment([(-dx, dy), (dx, -dy)]))
+        self.params['drop'] = (0, 0)
+        self.params['theta'] = 0
+        self.anchors['start'] = (0, 0)
+        self.anchors['center'] = (0, 0)
+        self.anchors['end'] = (0, 0)
+        self.params['lblloc'] = 'bottom'

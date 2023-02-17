@@ -221,7 +221,7 @@ Connection Dots
     
     # One-terminal, don't move position
     elmlist = [Dot, partial(Dot, open=True), DotDotDot,
-               Arrowhead]
+               Arrowhead, NoConnect]
     drawElements(elmlist, dx=4, cols=3)
 
 

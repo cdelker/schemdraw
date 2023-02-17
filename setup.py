@@ -28,7 +28,7 @@ setuptools.setup(
     keywords = ['circuit', 'schematic', 'electrical', 'flowchart', 'logic'],
     install_requires=['typing_extensions; python_version<"3.8"'],
     extras_require={
-        'matplotlib':  ['matplotlib>=3'],
+        'matplotlib':  ['matplotlib>=3.4'],
         'svgmath': ['ziafont>=0.4', 'ziamath>=0.6', 'latex2mathml']
     },
     package_data = {'schemdraw': ['py.typed']},

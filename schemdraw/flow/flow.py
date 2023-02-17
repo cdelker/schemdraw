@@ -160,7 +160,7 @@ class Ellipse(Box):
             * 16 compass points (N, S, E, W, NE, NNE, etc.)
     '''
     def __init__(self, w: float=3, h: float=2, **kwargs):
-        super().__init__(**kwargs)
+        super().__init__(w, h, **kwargs)
         self.segments = []
         # There's no ellipse Segment type, so draw one with a path Segment
         t = linspace(0, math.pi*2, num=50)

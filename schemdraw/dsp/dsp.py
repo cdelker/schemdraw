@@ -67,8 +67,8 @@ class Circle(Element):
         self.anchors['W'] = (0, 0)
         self.anchors['NW'] = (rad-k, k)
         self.anchors['NE'] = (rad+k, k)
-        self.anchors['SW'] = (rad-k, k)
-        self.anchors['SE'] = (rad+k, k)
+        self.anchors['SW'] = (rad-k, -k)
+        self.anchors['SE'] = (rad+k, -k)
         self.anchors['center'] = (rad, 0)
 
 

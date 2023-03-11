@@ -222,12 +222,12 @@ class Drawing:
 
     def _repr_svg_(self):
         ''' SVG representation for Jupyter '''
-        return self.draw().getimage('svg').decode()
+        return self.draw(show=False).getimage('svg').decode()
 
     def _repr_png_(self):
         ''' PNG representation for Jupyter '''
         if self.canvas == 'matplotlib' or hasattr(self.canvas, 'plot'):
-            return self.draw().getimage('png')
+            return self.draw(show=False).getimage('png')
         return None
 
     def __iadd__(self, element: Element):

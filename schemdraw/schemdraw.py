@@ -184,7 +184,13 @@ class Drawing:
                 display(dwg)
             except NameError:  # Not in Jupyter/IPython
                 pass
-    
+
+    def __getattr__(self, name: str) -> Any:
+        ''' Allow getting anchor position as attribute '''
+        if name in vars(self).get('anchors', {}):
+            return vars(self).get('anchors')[name]  # type: ignore
+        raise AttributeError(f"'Drawing' has no attribute {name}")
+
     def interactive(self, interactive: bool=True):
         ''' Enable interactive mode (matplotlib backend only). Matplotlib
             must also be set to interactive with `plt.ion()`.
@@ -289,6 +295,10 @@ class Drawing:
         self.here = (ref.x + dx, ref.y + dy)
         if theta is not None:
             self.theta = theta
+
+    def set_anchor(self, name: str) -> None:
+        ''' Define a Drawing anchor at the current drawing position '''
+        self.anchors[name] = self.here
 
     def push(self) -> None:
         ''' Push/save the drawing state.

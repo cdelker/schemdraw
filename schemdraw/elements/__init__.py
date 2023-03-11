@@ -1,4 +1,4 @@
-from .elements import Element, ElementDrawing, Element2Term, _set_elm_backend
+from .elements import Element, ElementDrawing, Element2Term, _set_canvas
 from .twoterm import Resistor, ResistorIEEE, ResistorIEC, ResistorVar, ResistorVarIEEE, ResistorVarIEC, Thermistor, Photoresistor, PhotoresistorIEEE, PhotoresistorIEC, Rshunt, Capacitor, Capacitor2, CapacitorVar, CapacitorTrim, Diode, Schottky, DiodeTunnel, DiodeShockley, Zener, Varactor, LED, LED2, Photodiode, Potentiometer, PotentiometerIEEE, PotentiometerIEC, Diac, Triac, SCR, Memristor, Memristor2, Josephson, Fuse, FuseUS, FuseIEEE, FuseIEC, Inductor, Inductor2, Crystal, Breaker, ResistorVarIEC, CPE, SparkGap, RBox, RBoxVar, PotBox, PhotoresistorBox
 from .oneterm import Ground, GroundSignal, GroundChassis, Antenna, AntennaLoop, AntennaLoop2, Vss, Vdd, NoConnect
 from .opamp import Opamp

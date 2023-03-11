@@ -1,41 +1,38 @@
 ''' Schemdraw Drawing class '''
 
 from __future__ import annotations
-from typing import Type, Any, MutableMapping, Union
+from typing import Type, Any, MutableMapping, Union, Optional, TYPE_CHECKING
 from collections import ChainMap
 import warnings
 import math
 
 from .types import BBox, Backends, ImageFormat, Linestyle, XY, ImageType
-from .elements import Element, _set_elm_backend
+from .elements import Element, _set_canvas
 from .segments import SegmentType
 from .util import Point
-
 from .backends.svg import Figure as svgFigure
+
+if TYPE_CHECKING:
+    import xml.etree.ElementTree.Element  # type: ignore
+
 try:
     from .backends.mpl import Figure as mplFigure
+    dflt_canvas = 'matplotlib'
+    if TYPE_CHECKING:
+        import matplotlib.pyplot.Axes   # type: ignore
 except ImportError:
     mplFigure = None  # type: ignore
-
-
-Figure: Type[svgFigure] | Type[mplFigure]
-if mplFigure is None:
-    Figure = svgFigure
-else:
-    Figure = mplFigure
-_set_elm_backend(Figure)
+    dflt_canvas = 'svg'
 
 
 def use(backend: Backends='matplotlib') -> None:
     ''' Change default backend, either 'matplotlib' or 'svg' '''
-    global Figure
+    global dflt_canvas
     if backend == 'matplotlib':
         if mplFigure is None:
             raise ValueError('Could not import Matplotlib.')
-        Figure = mplFigure
-    else:
-        Figure = svgFigure
-    _set_elm_backend(Figure)
+    dflt_canvas = backend
+    _set_canvas(dflt_canvas)
 
 
 def config(unit: float=3.0, inches_per_unit: float=0.5,
@@ -134,10 +131,13 @@ class Drawing:
         See `schemdraw.config` method for argument defaults
 
         Args:
-            *elements: List of Element instances to add to the drawing
+            canvas: Canvas to draw on when using Drawing context manager.
+                Can be string 'matplotlib' or 'svg' to create new canvas
+                with these backends, or an instance of a matplotlib axis,
+                or an instance of xml.etree.ElementTree containing SVG.
+                Default is value set by schemdraw.use().
             file: optional filename to save on exiting context manager
                 or calling draw method.
-            backend: 'svg' or 'matplotlib' backend. Overrides schemdraw.use.
             show: Show the drawing after exiting context manager
 
         Attributes:
@@ -147,13 +147,19 @@ class Drawing:
                 element will be added with this angle unless specified
                 otherwise.
     '''
-    def __init__(self, *elements: Element, file: str=None, backend: Backends=None, 
-                 show: bool=True, **kwargs):
+    def __init__(self, canvas: Union[Backends, xml.etree.ElementTree.Element,
+                                     matplotlib.pyplot.Axes]=None,
+                 file: str=None, show: bool=True, **kwargs):
         self.outfile = file
-        self.backend = backend
+        self.canvas = canvas
         self.show = show
         self.elements: list[Element] = []
         self.anchors: MutableMapping[str, Union[Point, tuple[float, float]]] = {}  # Untransformed anchors
+
+        if 'backend' in kwargs:
+            self.canvas = kwargs.pop('backend')
+            warnings.warn('Use of `backend` is deprecated. Use `canvas`.',
+                          DeprecationWarning, stacklevel=2)
 
         self.dwgparams: dict[str, Any] = schemdrawstyle.copy()
         self.dwgparams.update(kwargs)  # To maintain support for arguments that moved to config method
@@ -163,10 +169,7 @@ class Drawing:
         self.theta: float = 0
         self._state: list[tuple[Point, float]] = []  # Push/Pop stack
         self._interactive = False
-        self.fig = None
-
-        for element in elements:
-            self.add(element)
+        self.fig: Optional[Union[mplFigure, svgFigure]] = None
 
     def __enter__(self):
         return self
@@ -175,12 +178,13 @@ class Drawing:
         ''' Exit context manager - save to file and display '''
         if self.outfile is not None:
             self.save(self.outfile)
-        if self.show:
+        dwg = self.draw()
+        if self.show and not hasattr(self.canvas, 'plot'):
             try:
-                display(self.draw())
+                display(dwg)
             except NameError:  # Not in Jupyter/IPython
-                self.draw()
-
+                pass
+    
     def interactive(self, interactive: bool=True):
         ''' Enable interactive mode (matplotlib backend only). Matplotlib
             must also be set to interactive with `plt.ion()`.
@@ -216,7 +220,7 @@ class Drawing:
 
     def _repr_png_(self):
         ''' PNG representation for Jupyter '''
-        if Figure == mplFigure:
+        if self.canvas == 'matplotlib' or hasattr(self.canvas, 'plot'):
             return self.draw().getimage('png')
         return None
 
@@ -242,7 +246,11 @@ class Drawing:
 
         if self._interactive:
             if self.fig is None:
-                self._initfig()
+                self.fig = mplFigure(
+                    bbox=self.get_bbox(),
+                    inches_per_unit=self.dwgparams.get('inches_per_unit'))
+                if 'bgcolor' in self.dwgparams:
+                    self.fig.bgcolor(self.dwgparams['bgcolor'])
             element._draw(self.fig)
             self.fig.set_bbox(self.get_bbox())  # type: ignore
             self.fig.getimage()  # type: ignore
@@ -334,39 +342,63 @@ class Drawing:
         if bgcolor is not None:
             self.dwgparams['bgcolor'] = bgcolor
 
-    def _initfig(self, ax=None, backend: Backends=None, showframe: bool=False) -> None:
-        figclass = {'matplotlib': mplFigure,
-                    'svg': svgFigure}.get(backend, Figure)  # type: ignore
-        fig = figclass(ax=ax,
-                       bbox=self.get_bbox(),
-                       inches_per_unit=self.dwgparams.get('inches_per_unit'),
-                       showframe=showframe)
+    def _drawelements(self):
+        ''' Draw all the elements on self.fig '''
+        for element in self.elements:
+            element._draw(self.fig)
 
+    def _drawmpl(self, ax=None, showframe=False):
+        ''' Draw on Matplotlib Axis '''
+        if self.fig is None or ax is not None:
+            self.fig = mplFigure(ax=ax, bbox=self.get_bbox(),
+                                inches_per_unit=self.dwgparams.get('inches_per_unit'),
+                                showframe=showframe)
+            if 'bgcolor' in self.dwgparams:
+                self.fig.bgcolor(self.dwgparams['bgcolor'])
+        self._drawelements()
+    
+    def _drawsvg(self, svg=None, showframe=False):
+        ''' Draw on SVG canvas '''
+        if self.fig is None or svg is not None:
+            self.fig = svgFigure(svg=svg, bbox=self.get_bbox(),
+                                 inches_per_unit=self.dwgparams.get('inches_per_unit'),
+                                 showframe=showframe)
         if 'bgcolor' in self.dwgparams:
-            fig.bgcolor(self.dwgparams['bgcolor'])
-        self.fig = fig
+            self.fig.bgcolor(self.dwgparams['bgcolor'])
+        self._drawelements()
 
     def draw(self, showframe: bool=False, show: bool=True,
-             ax=None, backend: Backends=None):
+             canvas=None, backend: Backends=None):
         ''' Draw the schematic
 
             Args:
                 showframe: Show axis frame. Useful for debugging a drawing.
                 show: Show the schematic in a GUI popup window (when
                     outside of a Jupyter inline environment)
-                ax: Existing axis to draw on. Should be set to equal
-                    aspect for best results.
+                canvas: 'matplotlib', 'svg', or Axis instance to draw on
+                backend (deprecated): 'matplotlib' or 'svg'
 
             Returns:
                 schemdraw Figure object
         '''
-        backend = backend if backend is not None else self.backend
-        if (self.fig is None or ax is not None or showframe != self.fig.showframe or backend != self.backend):
-            self._initfig(ax=ax, backend=backend, showframe=showframe)
+        if backend:
+            warnings.warn('Use of `backend` is deprecated. Use `canvas`.',
+                          DeprecationWarning, stacklevel=2)
+            canvas = backend
 
-        self.backend = backend
-        for element in self.elements:
-            element._draw(self.fig)
+        if canvas is None:
+            canvas = self.canvas
+        if canvas is None:
+            canvas = dflt_canvas
+
+        if canvas == 'matplotlib':
+            self._drawmpl(showframe=showframe)
+        elif hasattr(canvas, 'plot'):
+            self._drawmpl(ax=canvas, showframe=showframe)
+        elif canvas == 'svg':
+            self._drawsvg(showframe=showframe)
+        else:
+            self._drawsvg(canvas, showframe=showframe)
 
         if show:
             # Show figure in window if not inline/Jupyter mode
@@ -375,7 +407,7 @@ class Drawing:
         if self.outfile is not None:
             self.save(self.outfile)
 
-        return self.fig  # Otherwise return Figure and let _repr_ display it
+        return self.fig  # Return Figure and let _repr_ display it
 
     def save(self, fname: str, transparent: bool=True, dpi: float=72) -> None:
         ''' Save figure to a file
@@ -399,7 +431,7 @@ class Drawing:
             Returns:
                 Image data as bytes
         '''
-        if Figure == svgFigure and fmt.lower() != 'svg':
+        if self.canvas == 'svg' and fmt.lower() != 'svg':
             raise ValueError('Format not available in SVG backend.')
         if self.fig is None:
             self.draw(show=False)

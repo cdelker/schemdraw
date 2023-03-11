@@ -13,13 +13,20 @@ from .. import util
 from ..util import Point
 from ..types import XY, Linestyle, Align, Halign, Valign, LabelLoc
 
+from ..backends.svg import Figure as svgFigure
+try:
+    from ..backends.mpl import Figure as mplFigure
+    dflt_canvas = 'matplotlib'
+except ImportError:
+    mplFigure = None  # type: ignore
+    dflt_canvas = 'svg'
+
+def _set_canvas(canvas):
+    global dflt_canvas
+    dflt_canvas = canvas
+
+
 gap = (math.nan, math.nan)  # Put a gap in a path
-
-
-Figure = None
-def _set_elm_backend(figureclass):
-    global Figure
-    Figure = figureclass
 
 
 @dataclass
@@ -654,7 +661,10 @@ class Element:
 
     def _draw_on_figure(self):
         ''' Draw the element on a new figure. Useful for _repr_ functions. '''
-        fig = Figure(bbox=self.get_bbox(transform=True))
+        if dflt_canvas == 'matplotlib':
+            fig = mplFigure(bbox=self.get_bbox(transform=True))
+        else:
+            fig = svgFigure(bbox=self.get_bbox(transform=True))
         if not self._cparams:
             self._place((0, 0), 0)
         fig.set_bbox(self.get_bbox(transform=True))

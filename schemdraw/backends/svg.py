@@ -195,6 +195,7 @@ class Figure:
         self.scale = 64.8 * kwargs.get('inches_per_unit', .5)  # Magic scale factor that matches what MPL did
         self.set_bbox(bbox)
         self._bgcolor: Optional[str] = None
+        self.svgcanvas = kwargs.get('svg')
 
     def set_bbox(self, bbox: BBox) -> None:
         ''' Set the bounding box '''
@@ -499,14 +500,17 @@ class Figure:
         pad = 2
         x0 = self.bbox.xmin * self.scale - pad
         y0 = -self.bbox.ymax * self.scale - pad
-        svg = ET.Element('svg')
-        svg.set('xmlns', 'http://www.w3.org/2000/svg')
-        svg.set('xml:lang', 'en')
-        svg.set('height', f'{self.pxheight+2*pad}pt')
-        svg.set('width', f'{self.pxwidth+2*pad}pt')
-        svg.set('viewBox', f'{x0} {y0} {self.pxwidth+2*pad} {self.pxheight+2*pad}')
-        if self._bgcolor:
-            svg.set('style', f'background-color:{self._bgcolor};')
+        if not self.svgcanvas:
+            svg = ET.Element('svg')
+            svg.set('xmlns', 'http://www.w3.org/2000/svg')
+            svg.set('xml:lang', 'en')
+            svg.set('height', f'{self.pxheight+2*pad}pt')
+            svg.set('width', f'{self.pxwidth+2*pad}pt')
+            svg.set('viewBox', f'{x0} {y0} {self.pxwidth+2*pad} {self.pxheight+2*pad}')
+            if self._bgcolor:
+                svg.set('style', f'background-color:{self._bgcolor};')
+        else:
+            svg = self.svgcanvas
 
         if self.hatch:
             svg.append(ET.fromstring(hatchpattern))

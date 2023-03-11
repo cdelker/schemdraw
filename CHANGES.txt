@@ -1,5 +1,7 @@
 v0.16 - INPROGRESS
 
+    - Added `canvas` parameter to Drawing and draw method, and deprecated `backend` parameter.
+    - Removed `elements` argument from Drawing. Use Drawing.add_elements.
     - Added shunt resistor symbol Rshunt
     - Fixed lead length of XOR gates to align with OR gates
     - Fixed greater and less than symbols in SVG backend

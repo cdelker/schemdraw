@@ -29,8 +29,8 @@ Logic gates are shown below. Gates define anchors for `out` and `in1`, `in2`, et
             y = i//cols*-dy
             x = (i%cols) * dx
 
-            eplaced = d.add(getattr(logic, e), d='right', xy=[x, y])
-            eplaced.add_label(e, loc='rgt', ofst=.2, align=('left', 'center'))
+            eplaced = d.add(getattr(logic, e)(d='right', xy=[x, y]))
+            eplaced.label(e, loc='rgt', ofst=.2, halign='left', valign='center')
         return d
 
     elms = ['And', 'Nand', 'Or', 'Nor', 'Xor', 'Xnor',

@@ -1,7 +1,6 @@
 ''' Compound elements made from groups of other elements '''
 
 from typing import Sequence, Union
-import warnings
 
 from ..import elements as elm
 from ..types import Point
@@ -33,14 +32,8 @@ class ElementCompound(elm.Element):
         ''' Move relative to current position '''
         self._here = Point((self._here.x + dx, self._here.y + dy))
 
-    def add(self, element: elm.Element, **kwargs) -> elm.Element:
+    def add(self, element: elm.Element) -> elm.Element:
         ''' Add an element to the segments list '''
-        if not isinstance(element, elm.Element):
-            # Instantiate it (for support of legacy add method)
-            element = element(**kwargs)
-        elif len(kwargs) > 0:
-            warnings.warn('kwargs to add method are ignored because element is already instantiated')
-
         self._here, self._theta = element._place(self._here, self._theta, **self.dwgparams)
         self.segments.extend([s.xform(element.transform, **element._cparams)
                               for s in element.segments])

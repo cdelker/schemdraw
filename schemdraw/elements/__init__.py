@@ -1,5 +1,3 @@
-import warnings
-
 from .elements import Element, ElementDrawing, Element2Term
 from .twoterm import (Resistor, ResistorIEEE, ResistorIEC, ResistorVar, ResistorVarIEEE,
                       ResistorVarIEC, Thermistor, Photoresistor, PhotoresistorIEEE, PhotoresistorIEC,
@@ -22,15 +20,13 @@ from .xform import Transformer
 from .cables import Coax, Triax
 from .intcircuits import (IcPin, Ic, Multiplexer, IcDIP, VoltageRegulator, DFlipFlop, JKFlipFlop, Ic555,
                           SevenSegment, sevensegdigit)
-from .lines import (Line, Dot, Arrowhead, Arrow, LineDot, DotDotDot, Wire, Gap, Label, Tag, CurrentLabel,
+from .lines import (Line, Dot, Arrowhead, Arrow, DotDotDot, Wire, Gap, Label, Tag, CurrentLabel,
                     CurrentLabelInline, ZLabel, LoopCurrent, LoopArrow, Rect, Arc2, Arc3, ArcZ, ArcN, ArcLoop,
                     Annotate, Encircle, EncircleBox)
 from .connectors import OrthoLines, RightLines, Header, Jumper, BusConnect, BusLine, DB25, DB9, CoaxConnect, Plug, Jack
 from .compound import ElementCompound, Optocoupler, Relay, Rectifier, Wheatstone
 from .outlets import (OutletA, OutletB, OutletC, OutletD, OutletE, OutletF, OutletG, OutletH, OutletI, OutletJ,
                       OutletK, OutletL)
-
-from . import legacy
 
 
 __all__ = [
@@ -49,20 +45,12 @@ __all__ = [
     "Bjt", "BjtNpn", "BjtPnp", "BjtPnp2c", "Bjt2", "BjtNpn2", "BjtPnp2", "BjtPnp2c2", "NFet2", "PFet2", "JFet2",
     "JFetN2", "JFetP2", "Speaker", "Mic", "Motor", "AudioJack", "Transformer", "Coax", "Triax",
     "IcPin", "Ic", "Multiplexer", "IcDIP", "VoltageRegulator", "DFlipFlop", "JKFlipFlop", "Ic555", "SevenSegment",
-    "sevensegdigit", "Line", "Dot", "Annotate", "ZLabel", "Arrowhead", "Arrow", "LineDot", "DotDotDot", "Wire",
+    "sevensegdigit", "Line", "Dot", "Annotate", "ZLabel", "Arrowhead", "Arrow", "DotDotDot", "Wire",
     "Gap", "Label", "Tag", "CurrentLabel", "CurrentLabelInline", "LoopCurrent", "LoopArrow", "Rect",
     "Arc2", "Arc3", "ArcZ", "ArcN", "ArcLoop", "Encircle", "EncircleBox", "OrthoLines", "RightLines", "Header",
     "Jumper", "BusConnect", "BusLine", "DB25", "DB9", "CoaxConnect", "Plug", "Jack", "ElementCompound", "Optocoupler",
     "Relay", "Rectifier", "Wheatstone", "OutletA", "OutletB", "OutletC", "OutletD", "OutletE", "OutletF", "OutletG",
     "OutletH", "OutletI", "OutletJ", "OutletK", "OutletL"]
-
-
-def __getattr__(name):
-    e = getattr(legacy, name, None)
-    if e is None:
-        raise AttributeError('Element `{}` not found.'.format(name))
-    warnings.warn('Dictionary-based elements are deprecated. Update to class-based elements or import from schemdraw.elements.legacy.', DeprecationWarning)
-    return e
 
 
 STYLE_IEEE = {'Resistor': ResistorIEEE,

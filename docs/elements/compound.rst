@@ -21,8 +21,8 @@ Several compound elements defined based on other basic elements.
             if hasattr(e, 'keywords'):  # partials have keywords attribute
                 args = ', '.join(['{}={}'.format(k, v) for k, v in e.keywords.items()])
                 name = '{}({})'.format(name, args)
-            eplaced = d.add(e, d='right', xy=[x, y])
-            eplaced.add_label(name, loc='rgt', align=('left', 'center'))
+            eplaced = d.add(e(d='right', xy=[x, y]))
+            eplaced.label(name, loc='rgt', halign='left', valign='center')
             anchors = eplaced.absanchors.copy()
             anchors.pop('start', None)
             anchors.pop('end', None)
@@ -31,7 +31,7 @@ Several compound elements defined based on other basic elements.
 
             if len(anchors) > 0:
                 for aname, apos in anchors.items():
-                    eplaced.add_label(aname, loc=aname, color='blue', fontsize=10)
+                    eplaced.label(aname, loc=aname, color='blue', fontsize=10)
         return d
     
 

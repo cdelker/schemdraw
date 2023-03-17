@@ -427,32 +427,6 @@ class Element:
 
         return BBox(xmin, ymin, xmax, ymax)
 
-    def add_label(self, label, loc='top', ofst=None, align=None,
-                  rotation=0, fontsize=None, size=None, font=None, color=None):
-        ''' Add a label to the element, after element placement
-
-            Args:
-                label: Text to add. If list, list items will be evenly spaced
-                    along the element.
-                loc: Location for text relative to element, either
-                    ['top', 'bot', 'lft', 'rgt'] or name of an anchor
-                ofst: Offset between text and element. Defaults to
-                    Element.lblofst. Can be list of [x, y] offets.
-                align: Tuple of (horizontal, vertical) alignment where
-                    horizontal is ['center', 'left', 'right'] and vertical
-                    is ['center', 'top', 'bottom']
-                rotation: Rotation angle (degrees)
-                fontsize: Font size
-                font: Font family
-                color: Label text color
-         '''
-        warnings.warn('`add_label` is deprecated. Use `label` instead.', DeprecationWarning)
-        if align is None:
-            align = (None, None)
-        fontsize = fontsize if fontsize else size
-        self._place_label(label, loc, ofst, align=align, rotation=rotation,
-                          fontsize=fontsize, font=font, color=color)
-
     def _place_label(self, label: str, loc: LabelLoc = None,
                      ofst: XY | float | None = None, align: Align = (None, None),
                      rotation: float = 0, fontsize: float = None,

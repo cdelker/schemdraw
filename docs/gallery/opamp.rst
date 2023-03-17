@@ -127,7 +127,7 @@ Triaxial Cable Driver
         d += elm.Line().at(smu.out).length(.3)
         d.push()
         d += elm.Line().length(d.unit/4)
-        d += (triax := elm.triax(length=5, shieldofststart=.75))
+        d += (triax := elm.Triax(length=5, shieldofststart=.75))
         d.pop()
         d += elm.Resistor().up().scale(0.6).idot()
         d += elm.Line().left().dot()

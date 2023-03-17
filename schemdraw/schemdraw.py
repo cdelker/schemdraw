@@ -234,18 +234,12 @@ class Drawing:
         self.add(element)
         return self
 
-    def add(self, element: Element | Type[Element], **kwargs) -> Element:
+    def add(self, element: Element | Type[Element]) -> Element:
         ''' Add an element to the drawing.
 
             Args:
                 element: The element to add.
         '''
-        if not isinstance(element, Element):
-            # Instantiate it (for support of legacy add method)
-            element = element(**kwargs)
-        elif len(kwargs) > 0:
-            warnings.warn('kwargs to add method are ignored because element is already instantiated')
-
         self.here, self.theta = element._place(self.here, self.theta, **self.dwgparams)
         self.elements.append(element)
 

@@ -17,4 +17,4 @@ Included are symbols for basic electrical components (resistors, capacitors, dio
 
 Documentation is available at [readthedocs](https://schemdraw.readthedocs.io)
 
-The most current version can be found in the [source code git repository](https://bitbucket.org/cdelker/schemdraw).
+The most current version can be found in the [source code git repository](https://github.com/cdelker/schemdraw).

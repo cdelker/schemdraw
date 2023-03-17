@@ -58,29 +58,6 @@ class Arrow(Line):
         return result
 
 
-class LineDot(Line):
-    ''' Line with a dot at the end
-
-        Args:
-            double: Show dot on both ends
-            radius: Radius of the dot
-            fill: Color to fill the dot, or `True` to fill with element color
-    '''
-    def __init__(self, *d, double: bool = False, radius: float = 0.075,
-                 fill: bool = True, **kwargs):
-        super().__init__(*d, **kwargs)
-        warnings.warn("LineDot is deprecated. Use Line().dot() or Line(arrow='-o')", DeprecationWarning)
-        zorder = kwargs.get('zorder', 4)
-        self.params['fill'] = fill
-        self.segments.append(SegmentCircle(
-            (0, 0), radius, ref='end', zorder=zorder))
-        if double:
-            self.segments.append(SegmentCircle((0, 0), radius,
-                                               ref='start', zorder=zorder))
-        # Explicitly define center so reverses work
-        self.anchors['center'] = (0, 0)
-
-
 class Gap(Element2Term):
     ''' Gap for labeling port voltages, for example. Draws nothing,
         but provides place to attach a label such as ('+', 'V', '-').

@@ -130,12 +130,12 @@ def drawlogic(tree, gateH=.7, gateW=2, outlabel=None):
         g = drawing.add(elm(d='r', at=(x, y), anchor='end',
                             l=gateW, inputs=len(root.children)))
         if outlabel:
-            g.add_label(outlabel, loc='end')
+            g.label(outlabel, loc='end')
 
         for i, child in enumerate(root.children):
             anchorname = 'start' if elm in [logic.Not, logic.Buf] else f'in{i+1}'
             if child.node not in elmdefs:
-                g.add_label(child.node, loc=anchorname)
+                g.label(child.node, loc=anchorname)
             else:
                 childelm = drawit(child, depth+1)  # recursive
                 drawing.add(RightLines(at=(g, anchorname), to=childelm.end))

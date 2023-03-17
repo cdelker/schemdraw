@@ -26,7 +26,7 @@ Align = Tuple[Optional[Halign], Optional[Valign]]
 Arcdirection = Literal['cw', 'ccw']
 Side = Literal['top', 'bot', 'lft', 'rgt', 'bottom', 'left', 'right', 'L', 'R', 'T', 'B']
 LabelLoc = Union[Side, str]
-XY = Union[tuple[float, float], Point]
+XY = Union[Tuple[float, float], Point]
 RotationMode = Literal['anchor', 'default']
 TextMode = Literal['path', 'text']
 

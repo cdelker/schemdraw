@@ -159,8 +159,8 @@ Saving Drawings
 
 To save the schematic to a file, add the `file` parameter when setting up the Drawing.
 The image type is determined from the file extension.
-Options include `svg`, `eps`, `png`, `pdf`, and `jpg`.
-A vector format such as `svg` is recommended for best results.
+Options include `svg`, `eps`, `png`, `pdf`, and `jpg` when using the Matplotlib backend, and `svg` when using the SVG backend.
+A vector format such as `svg` is recommended for best image quality.
 
 .. code-block:: python
 

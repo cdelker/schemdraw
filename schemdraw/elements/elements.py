@@ -679,6 +679,8 @@ class Element:
 
     def _repr_png_(self):
         ''' PNG representation for Jupyter '''
+        if default_canvas.default_canvas == 'svg':
+            return None
         fig = self._draw_on_figure()
         return fig.getimage(ext='png')
 

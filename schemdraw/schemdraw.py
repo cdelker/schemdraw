@@ -421,8 +421,9 @@ class Drawing:
         ''' Save figure to a file
 
             Args:
-                fname: Filename to save. File type automatically determined
-                    from extension (png, svg, jpg)
+                fname: Filename to save. In Matplotlib backend, the file
+                    type is automatically determined from extension
+                    (png, svg, jpg). SVG backend only supports saving SVG format.
                 transparent: Save as transparent background, if available
                 dpi: Dots-per-inch for raster formats
         '''
@@ -434,7 +435,8 @@ class Drawing:
         ''' Get image data as bytes array
 
             Args:
-                fmt: Format or file extension of the image type
+                fmt: Format or file extension of the image type. SVG backend
+                    only supports 'svg' format.
 
             Returns:
                 Image data as bytes

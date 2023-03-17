@@ -493,11 +493,17 @@ class Figure:
     def save(self, fname: str, **kwargs) -> None:
         ''' Save the figure to a file '''
         svg = self.getimage().decode()
-        with open(fname, 'w') as f:
+        ext = os.path.splitext(fname)[1]
+        if ext.lower() != '.svg':
+            raise ValueError('SVG backend only supports saving SVG format figures.')
+        with open(fname, 'w', encoding='utf-8') as f:
             f.write(svg)
 
     def getimage(self, ext: str = 'svg') -> bytes:
         ''' Get the image as SVG or PNG bytes array '''
+        if ext.lower() != 'svg':
+            raise ValueError('SVG backend only supports generating SVG format figures.')
+
         pad = 2
         x0 = self.bbox.xmin * self.scale - pad
         y0 = -self.bbox.ymax * self.scale - pad

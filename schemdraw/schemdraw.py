@@ -6,8 +6,9 @@ from collections import ChainMap
 import warnings
 import math
 
+from . import default_canvas
 from .types import BBox, Backends, ImageFormat, Linestyle, XY, ImageType
-from .elements import Element, _set_canvas
+from .elements import Element
 from .segments import SegmentType
 from .util import Point
 from .backends.svg import Figure as svgFigure
@@ -17,29 +18,27 @@ if TYPE_CHECKING:
 
 try:
     from .backends.mpl import Figure as mplFigure
-    dflt_canvas = 'matplotlib'
+    default_canvas.default_canvas = 'matplotlib'
     if TYPE_CHECKING:
         import matplotlib.pyplot.Axes   # type: ignore
 except ImportError:
     mplFigure = None  # type: ignore
-    dflt_canvas = 'svg'
+    default_canvas.default_canvas = 'svg'
 
 
-def use(backend: Backends='matplotlib') -> None:
+def use(backend: Backends = 'matplotlib') -> None:
     ''' Change default backend, either 'matplotlib' or 'svg' '''
-    global dflt_canvas
     if backend == 'matplotlib':
         if mplFigure is None:
             raise ValueError('Could not import Matplotlib.')
-    dflt_canvas = backend
-    _set_canvas(dflt_canvas)
+    default_canvas.default_canvas = backend
 
 
-def config(unit: float=3.0, inches_per_unit: float=0.5,
-           lblofst: float=0.1, fontsize: float=14,
-           font: str='sans-serif', color: str='black',
-           lw: float=2, ls: Linestyle='-',
-           fill: str=None, bgcolor: str=None) -> None:
+def config(unit: float = 3.0, inches_per_unit: float = 0.5,
+           lblofst: float = 0.1, fontsize: float = 14.,
+           font: str = 'sans-serif', color: str = 'black',
+           lw: float = 2., ls: Linestyle = '-',
+           fill: str = None, bgcolor: str = None) -> None:
     ''' Set global schemdraw style configuration
 
         Args:
@@ -148,8 +147,8 @@ class Drawing:
                 otherwise.
     '''
     def __init__(self, canvas: Union[Backends, xml.etree.ElementTree.Element,
-                                     matplotlib.pyplot.Axes]=None,
-                 file: str=None, show: bool=True, **kwargs):
+                                     matplotlib.pyplot.Axes] = None,
+                 file: str = None, show: bool = True, **kwargs):
         self.outfile = file
         self.canvas = canvas
         self.show = show
@@ -178,7 +177,7 @@ class Drawing:
         ''' Exit context manager - save to file and display '''
         if self.outfile is not None:
             self.save(self.outfile)
-        dwg = self.draw()
+        dwg = self.draw(show=False)
         if self.show and not hasattr(self.canvas, 'plot'):
             try:
                 display(dwg)
@@ -191,7 +190,7 @@ class Drawing:
             return vars(self).get('anchors')[name]  # type: ignore
         raise AttributeError(f"'Drawing' has no attribute {name}")
 
-    def interactive(self, interactive: bool=True):
+    def interactive(self, interactive: bool = True):
         ''' Enable interactive mode (matplotlib backend only). Matplotlib
             must also be set to interactive with `plt.ion()`.
         '''
@@ -279,7 +278,7 @@ class Drawing:
         self.fig.set_bbox(self.get_bbox())  # type: ignore
         self.fig.getimage()  # type: ignore
 
-    def move(self, dx: float=0, dy: float=0) -> None:
+    def move(self, dx: float = 0, dy: float = 0) -> None:
         ''' Move the current drawing position
 
             Args:
@@ -288,7 +287,7 @@ class Drawing:
         '''
         self.here = Point((self.here[0] + dx, self.here[1] + dy))
 
-    def move_from(self, ref: Point, dx: float=0, dy: float=0, theta: float=None) -> None:
+    def move_from(self, ref: Point, dx: float = 0, dy: float = 0, theta: float = None) -> None:
         ''' Move drawing position relative to the reference point. Change drawing
             theta if provided.
         '''
@@ -313,18 +312,16 @@ class Drawing:
         if len(self._state) > 0:
             self.here, self.theta = self._state.pop()
 
-    def config(self, unit: float=None, inches_per_unit: float=None,
-           lblofst: float=None, fontsize: float=None,
-           font: str=None, color: str=None,
-           lw: float=None, ls: Linestyle=None,
-           fill: str=None, bgcolor: str=None) -> None:
+    def config(self, unit: float = None, inches_per_unit: float = None,
+               fontsize: float = None, font: str = None,
+               color: str = None, lw: float = None, ls: Linestyle = None,
+               fill: str = None, bgcolor: str = None) -> None:
         ''' Set Drawing configuration, overriding schemdraw global config.
 
             Args:
                 unit: Full length of a 2-terminal element. Inner zig-zag portion
                     of a resistor is 1.0 units.
                 inches_per_unit: Inches per drawing unit for setting drawing scale
-                lblofst: Default offset between element and its label
                 fontsize: Default font size for text labels
                 font: Default font family for text labels
                 color: Default color name or RGB (0-1) tuple
@@ -360,13 +357,14 @@ class Drawing:
     def _drawmpl(self, ax=None, showframe=False):
         ''' Draw on Matplotlib Axis '''
         if self.fig is None or ax is not None:
-            self.fig = mplFigure(ax=ax, bbox=self.get_bbox(),
-                                inches_per_unit=self.dwgparams.get('inches_per_unit'),
-                                showframe=showframe)
+            self.fig = mplFigure(ax=ax,
+                                 bbox=self.get_bbox(),
+                                 inches_per_unit=self.dwgparams.get('inches_per_unit'),
+                                 showframe=showframe)
             if 'bgcolor' in self.dwgparams:
                 self.fig.bgcolor(self.dwgparams['bgcolor'])
         self._drawelements()
-    
+
     def _drawsvg(self, svg=None, showframe=False):
         ''' Draw on SVG canvas '''
         if self.fig is None or svg is not None:
@@ -377,8 +375,8 @@ class Drawing:
             self.fig.bgcolor(self.dwgparams['bgcolor'])
         self._drawelements()
 
-    def draw(self, showframe: bool=False, show: bool=True,
-             canvas=None, backend: Backends=None):
+    def draw(self, showframe: bool = False, show: bool = True,
+             canvas=None, backend: Backends = None):
         ''' Draw the schematic
 
             Args:
@@ -399,7 +397,7 @@ class Drawing:
         if canvas is None:
             canvas = self.canvas
         if canvas is None:
-            canvas = dflt_canvas
+            canvas = default_canvas.default_canvas
 
         if canvas == 'matplotlib':
             self._drawmpl(showframe=showframe)
@@ -419,7 +417,7 @@ class Drawing:
 
         return self.fig  # Return Figure and let _repr_ display it
 
-    def save(self, fname: str, transparent: bool=True, dpi: float=72) -> None:
+    def save(self, fname: str, transparent: bool = True, dpi: float = 72) -> None:
         ''' Save figure to a file
 
             Args:
@@ -432,7 +430,7 @@ class Drawing:
             self.draw(show=False)
         self.fig.save(fname, transparent=transparent, dpi=dpi)  # type: ignore
 
-    def get_imagedata(self, fmt: ImageFormat | ImageType='svg') -> bytes:
+    def get_imagedata(self, fmt: ImageFormat | ImageType = 'svg') -> bytes:
         ''' Get image data as bytes array
 
             Args:

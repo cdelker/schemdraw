@@ -64,7 +64,8 @@ class Table(Element):
             \| 1 \| 0 \| 0 \|
             \| 1 \| 1 \| 0 \|
     '''
-    def __init__(self, table:str, colfmt:str=None, fontsize:float=12, font:str='sans', **kwargs):
+    def __init__(self, table: str, colfmt: str = None,
+                 fontsize: float = 12, font: str = 'sans', **kwargs):
         super().__init__(**kwargs)
         self.table = table
 

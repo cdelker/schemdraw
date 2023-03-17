@@ -6,6 +6,7 @@ from __future__ import annotations
 from typing import Sequence
 
 from .util import Point
+from .types import XY
 
 
 class Transform:
@@ -17,18 +18,17 @@ class Transform:
             localshift: Local X-Y shift (applied before zoom and rotation)
             zoom: Zoom factor
     '''
-    def __init__(self, theta: float, globalshift: Sequence[float],
-                 localshift: Sequence[float]=(0, 0), zoom: float=1):
+    def __init__(self, theta: float, globalshift: XY,
+                 localshift: XY = (0, 0), zoom: float = 1):
         self.theta = theta
         self.shift = Point(globalshift)
         self.localshift = Point(localshift)
         self.zoom = zoom
 
     def __repr__(self):
-        return 'Transform: xy={}; theta={}; scale={}; lshift={}'.format(
-            self.shift, self.theta, self.zoom, self.localshift)
+        return f'Transform: xy={self.shift}; theta={self.theta}; scale={self.zoom}; lshift={self.localshift}'
 
-    def transform(self, pt: Sequence[float]) -> Point:
+    def transform(self, pt: XY) -> Point:
         ''' Apply the transform to the point
 
             Args:
@@ -39,7 +39,7 @@ class Transform:
         '''
         return ((Point(pt) + self.localshift) * self.zoom).rotate(self.theta) + self.shift
 
-    def transform_array(self, pts: list[Sequence[float]]) -> list[Point]:
+    def transform_array(self, pts: Sequence[XY]) -> list[Point]:
         ''' Apply the transform to multiple points
 
             Args:

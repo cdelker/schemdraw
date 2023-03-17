@@ -42,7 +42,7 @@ class Doublesigmoid:
             gap: Separation between the two sigmoids
     '''
     def __init__(self, x0: float, y0: float, y1: float,
-                 extend: float=0.1, gap: float=.2, **kwargs):
+                 extend: float = 0.1, gap: float = 0.2, **kwargs):
         self.x0 = x0  # Center
         self.y0 = y0
         self.y1 = y1
@@ -66,8 +66,8 @@ class Doublesigmoid:
         segments.append(Segment(list(zip(x, y)), **self.kwargs))
         return segments
 
-    def curve(self, side: str='left', crop: bool=False,
-              ofst: float=0) -> tuple[Sequence[float], Sequence[float]]:
+    def curve(self, side: str = 'left', crop: bool = False,
+              ofst: float = 0) -> tuple[Sequence[float], Sequence[float]]:
         ''' Get sigmoid curve points
 
             Args:
@@ -256,8 +256,8 @@ class WaveV(Wave0):
             '1': [(self.xend, self.y0), (self.xend+self.rise, self.y1)],  # Rise
             'H': [(self.xend, self.y0), (self.xend, self.y1)],
             'h': [(self.xend, self.y0), (self.xend, self.y1)],
-            'z': list(zip(xcurve, [yc-(self.y1-self.y0)/2 for yc in ycurvehf])) + \
-                 list(zip(xcurve[::-1], [yc+(self.y1-self.y0)/2 for yc in ycurveh[::-1]])),
+            'z': (list(zip(xcurve, [yc-(self.y1-self.y0)/2 for yc in ycurvehf])) +
+                  list(zip(xcurve[::-1], [yc+(self.y1-self.y0)/2 for yc in ycurveh[::-1]]))),
             'V': [(self.xend, self.y0), (self.xend+self.rise/2, self.yhalf), (self.xend, self.y1)],
             'd': list(zip(xcurve, ycurve))[::-1],
             'u': list(zip(xcurve, ycurvef)),
@@ -353,8 +353,8 @@ class WaveD(Wave0):
                  '0': [(self.x0, self.y0)],
                  '1': list(zip(xcurve, ycurve)),
                  'z': list(zip(xcurve, ycurveh)),
-                 'V': [(self.x0, self.y0)],
-                }.get(self.plevel, [])
+                 'V': [(self.x0, self.y0)]
+                 }.get(self.plevel, [])
         return verts
 
     def segments(self) -> list[SegmentType]:
@@ -373,7 +373,8 @@ class WaveClk(Wave0):
         state = self.params['state']
         period = self.params['period']
         yh, yl = self.y1, self.y0
-        if state in 'nN': yh, yl = yl, yh
+        if state in 'nN':
+            yh, yl = yl, yh
 
         verts = []
         for p in range(self.params['periods']):
@@ -381,7 +382,7 @@ class WaveClk(Wave0):
                           (self.x0+period*p+period/2, yh),
                           (self.x0+period*p+period/2, yl)])
         if ((self.params['state'] in 'nN' and self.params['pstate'] in 'lL') or
-            (self.params['state'] in 'pP' and self.params['pstate'] in 'hH')):
+           (self.params['state'] in 'pP' and self.params['pstate'] in 'hH')):
             verts = verts[1:]  # No blip at beginning
         return verts
 

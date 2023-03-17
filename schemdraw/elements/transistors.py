@@ -24,7 +24,7 @@ class NFet(Element):
             * drain
             * gate
     '''
-    def __init__(self, *d, bulk: bool=False, **kwargs):
+    def __init__(self, *d, bulk: bool = False, **kwargs):
         super().__init__(*d, **kwargs)
         self.segments.append(Segment([(0, 0), (0, -fetl), (fetw, -fetl),
                                       (fetw, -fetl-fetw), (0, -fetl-fetw),
@@ -55,7 +55,7 @@ class PFet(Element):
             drain
             gate
     '''
-    def __init__(self, *d, bulk: bool=False, **kwargs):
+    def __init__(self, *d, bulk: bool = False, **kwargs):
         super().__init__(*d, **kwargs)
         self.segments.append(Segment([(0, 0), (0, -fetl), (fetw, -fetl),
                                       (fetw, -fetl-fetw), (0, -fetl-fetw),
@@ -89,7 +89,7 @@ class NFet2(Element2Term):
             * drain
             * gate
     '''
-    def __init__(self, *d, bulk: bool=False, **kwargs):
+    def __init__(self, *d, bulk: bool = False, **kwargs):
         super().__init__(*d, **kwargs)
         self.segments.append(Segment([(0, 0), (fetl, 0), (fetl, fetw),
                                       (fetl+fetw, fetw), (fetl+fetw, 0), (2*fetl+fetw, 0)]))
@@ -128,7 +128,7 @@ class PFet2(Element2Term):
             * drain
             * gate
     '''
-    def __init__(self, *d, bulk: bool=False, **kwargs):
+    def __init__(self, *d, bulk: bool = False, **kwargs):
         super().__init__(*d, **kwargs)
         self.segments.append(Segment([(0, 0), (fetl, 0), (fetl, fetw),
                                       (fetl+fetw, fetw), (fetl+fetw, 0), (2*fetl+fetw, 0)]))
@@ -169,7 +169,7 @@ class JFet(Element):
             * drain
             * gate
     '''
-    def __init__(self, *d, circle: bool=False, **kwargs):
+    def __init__(self, *d, circle: bool = False, **kwargs):
         super().__init__(*d, **kwargs)
         self.segments.append(Segment(
             [(0, 0), (0, -fetl), (jfetw, -fetl), (jfetw, -fetl+fete),
@@ -196,7 +196,7 @@ class JFetN(JFet):
             * drain
             * gate
     '''
-    def __init__(self, *d, circle: bool=False, **kwargs):
+    def __init__(self, *d, circle: bool = False, **kwargs):
         super().__init__(*d, circle=circle, **kwargs)
         self.segments.append(Segment([(jfetw+.1, -fetl-jfetw), (jfetw+.3, -fetl-jfetw)],
                                      arrow='->', arrowwidth=.2, arrowlength=.2))
@@ -211,7 +211,7 @@ class JFet2(Element2Term):
             * drain
             * gate
     '''
-    def __init__(self, *d, circle: bool=False, **kwargs):
+    def __init__(self, *d, circle: bool = False, **kwargs):
         super().__init__(*d, **kwargs)
         self.segments.append(Segment([
             (0, 0), (fetl, 0), (fetl, jfetw), (fetl+jfetw, jfetw),
@@ -222,7 +222,7 @@ class JFet2(Element2Term):
         self.anchors['idrain'] = (0, 0)
         self.anchors['gate'] = (fetl+jfetw, jfetw+fetl)
         self.params['lblloc'] = 'bottom'
-        
+
         if circle:
             self.segments.append(SegmentCircle((fetl+jfetw/2, jfetw/2), fetw*1.1))
 
@@ -250,7 +250,7 @@ class JFetN2(JFet2):
             * drain
             * gate
     '''
-    def __init__(self, *d, circle: bool=False, **kwargs):
+    def __init__(self, *d, circle: bool = False, **kwargs):
         super().__init__(*d, circle=circle, **kwargs)
         self.segments.append(Segment([(fetl+jfetw, jfetw), (fetl+jfetw, jfetw+0.3)],
                                      arrow='->', arrowwidth=.2, arrowlength=.2))
@@ -268,7 +268,7 @@ class JFetP2(JFet2):
             * drain
             * gate
     '''
-    def __init__(self, *d, circle: bool=False, **kwargs):
+    def __init__(self, *d, circle: bool = False, **kwargs):
         super().__init__(*d, circle=circle, **kwargs)
         self.segments.append(Segment([(fetl+jfetw, jfetw+0.3), (fetl+jfetw, jfetw)],
                                      arrow='->', arrowwidth=.2, arrowlength=.2))
@@ -285,7 +285,7 @@ class JFetP(JFet):
             * drain
             * gate
     '''
-    def __init__(self, *d, circle: bool=False, **kwargs):
+    def __init__(self, *d, circle: bool = False, **kwargs):
         super().__init__(*d, circle=circle, **kwargs)
         self.segments.append(Segment([(jfetw+.25, -fetl-jfetw), (jfetw, -fetl-jfetw)],
                                      arrow='->', arrowwidth=.2, arrowlength=.2))
@@ -311,7 +311,7 @@ class Bjt(Element):
             * emitter
             * base
     '''
-    def __init__(self, *d, circle: bool=False, **kwargs):
+    def __init__(self, *d, circle: bool = False, **kwargs):
         super().__init__(*d, **kwargs)
         self.segments.append(Segment([(0, 0), (bjt_v, 0)]))
         self.segments.append(Segment([(bjt_v, bjt_v_len/2), (bjt_v, -bjt_v_len/2)]))
@@ -342,7 +342,7 @@ class BjtNpn(Bjt):
             * emitter
             * base
     '''
-    def __init__(self, *d, circle: bool=False, **kwargs):
+    def __init__(self, *d, circle: bool = False, **kwargs):
         super().__init__(*d, circle=circle, **kwargs)
         self.segments.append(Segment([(bjt_v, -bjt_a), (bjt_emx, -bjt_emy)],
                                      arrow='->', arrowwidth=.2))
@@ -359,7 +359,7 @@ class BjtPnp(Bjt):
             * emitter
             * base
     '''
-    def __init__(self, *d, circle: bool=False, **kwargs):
+    def __init__(self, *d, circle: bool = False, **kwargs):
         super().__init__(*d, circle=circle, **kwargs)
         self.segments.append(Segment([(bjt_emx, bjt_emy), (bjt_v, bjt_a)], arrow='->', arrowwidth=.2))
         self.anchors['base'] = (0, 0)
@@ -379,7 +379,7 @@ class BjtPnp2c(BjtPnp):
             * base
             * C2
     '''
-    def __init__(self, *d, circle: bool=False, **kwargs):
+    def __init__(self, *d, circle: bool = False, **kwargs):
         super().__init__(*d, circle=circle, **kwargs)
         bjt_2c_dy = -.25
         self.segments.append(Segment([(bjt_v, -bjt_a-bjt_2c_dy),
@@ -390,7 +390,7 @@ class BjtPnp2c(BjtPnp):
 
 bjt_r = .55  # BJT circle radius
 bjt_lead_dflt = 0.18  # Default lead length
-bjt_diag_ofst = 0.2  # Distance from base to diagonals 
+bjt_diag_ofst = 0.2  # Distance from base to diagonals
 bjt_base_w = .75  # Length of base bar
 bjt_base_h = .42  # Height of base bar above leads
 bjt_width = 1.1   # Distance between leads
@@ -408,7 +408,7 @@ class Bjt2(Element2Term):
             * emitter
             * base
     '''
-    def __init__(self, *d, circle: bool=False, **kwargs):
+    def __init__(self, *d, circle: bool = False, **kwargs):
         super().__init__(*d, **kwargs)
         self.segments.append(Segment(((0, 0),
                                       (bjt_width/2-bjt_diag_ofst, bjt_base_h),
@@ -451,7 +451,7 @@ class BjtNpn2(Bjt2):
             * emitter
             * base
     '''
-    def __init__(self, *d, circle: bool=False, **kwargs):
+    def __init__(self, *d, circle: bool = False, **kwargs):
         super().__init__(*d, circle=circle, **kwargs)
         self.segments.append(Segment([(0, 0), (bjt_width/2-bjt_diag_ofst, bjt_base_h)],
                                      arrow='<-', arrowwidth=.2))
@@ -469,7 +469,7 @@ class BjtPnp2(Bjt2):
             * emitter
             * base
     '''
-    def __init__(self, *d, circle: bool=False, **kwargs):
+    def __init__(self, *d, circle: bool = False, **kwargs):
         super().__init__(*d, circle=circle, **kwargs)
         self.segments.append(Segment([(bjt_width/2+bjt_diag_ofst, bjt_base_h),
                                       (bjt_width, 0)],
@@ -501,7 +501,7 @@ class BjtPnp2c2(BjtPnp2):
             * base
             * C2
     '''
-    def __init__(self, *d, circle: bool=False, **kwargs):
+    def __init__(self, *d, circle: bool = False, **kwargs):
         super().__init__(*d, circle=circle, **kwargs)
         bjt_2c_dy = .25
         self.segments.append(Segment([(bjt_2c_dy, 0),

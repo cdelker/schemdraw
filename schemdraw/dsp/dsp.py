@@ -1,15 +1,15 @@
 ''' Signal processing elements '''
 
 import sys
+import math
+from typing import Sequence
+
 if sys.version_info >= (3, 8):
     from typing import Literal
 else:
     from typing_extensions import Literal
 
-import math
-from typing import Sequence
-
-from ..util import linspace
+from ..util import linspace, Point
 from ..segments import Segment, SegmentCircle, SegmentText, SegmentArc
 from ..elements import Element
 from ..types import XY
@@ -132,8 +132,8 @@ class Mixer(Circle):
             * SW
             * SE
     '''
-    def __init__(self, *d, N: str=None, E: str=None, S: str=None, W: str=None,
-                 font: str=None, fontsize: float=10, **kwargs):
+    def __init__(self, *d, N: str = None, E: str = None, S: str = None, W: str = None,
+                 font: str = None, fontsize: float = 10, **kwargs):
         super().__init__(*d, **kwargs)
         rad = .5
         k = rad*math.sqrt(2)/2  # Diagonal distance
@@ -242,11 +242,11 @@ class Filter(Square):
             * E
             * W
     '''
-    def __init__(self, *d, response: FilterType=None, **kwargs):
+    def __init__(self, *d, response: FilterType = None, **kwargs):
         super().__init__(*d, **kwargs)
         path = _makesine()
-        path1 = [[p[0], p[1]+.25] for p in path]
-        path2 = [[p[0], p[1]-.25] for p in path]
+        path1 = [Point((p[0], p[1]+.25)) for p in path]
+        path2 = [Point((p[0], p[1]-.25)) for p in path]
         self.segments.append(Segment(path))
         self.segments.append(Segment(path1))
         self.segments.append(Segment(path2))

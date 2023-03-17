@@ -15,7 +15,7 @@ from .util import Point
 from .backends import svg
 
 
-def roundcorners(verts: Sequence[XY], radius: float=.5) -> Sequence[XY]:
+def roundcorners(verts: Sequence[XY], radius: float = .5) -> Sequence[XY]:
     ''' Round the corners of polygon defined by verts.
         Works for convex polygons assuming radius fits inside.
 
@@ -97,18 +97,18 @@ class Segment:
             visible: Show the segment when drawn
     '''
     def __init__(self, path: Sequence[XY],
-                 color: str=None,
-                 lw: float=None,
-                 ls: Linestyle=None,
-                 capstyle: Capstyle=None,
-                 joinstyle: Joinstyle=None,
-                 fill: str=None,
-                 arrow: str=None,
-                 arrowwidth: float=0.15,
-                 arrowlength: float=0.25,
-                 clip: BBox=None,
-                 zorder: int=None,
-                 visible: bool=True):
+                 color: str = None,
+                 lw: float = None,
+                 ls: Linestyle = None,
+                 capstyle: Capstyle = None,
+                 joinstyle: Joinstyle = None,
+                 fill: str = None,
+                 arrow: str = None,
+                 arrowwidth: float = 0.15,
+                 arrowlength: float = 0.25,
+                 clip: BBox = None,
+                 zorder: int = None,
+                 visible: bool = True):
         self.path: Sequence[XY] = [Point(p) for p in path]   # Untranformed path
         self.zorder = zorder
         self.color = color
@@ -237,7 +237,7 @@ class Segment:
                           arrowlength=self.arrowlength, arrowwidth=self.arrowwidth, lw=1)
             elif self.arrow.endswith('o'):
                 fig.circle(path[-1], self.arrowwidth/2, color=color, fill=color, lw=lw,
-                            clip=self.clip, zorder=zorder)
+                           clip=self.clip, zorder=zorder)
             elif self.arrow.endswith('|'):
                 theta = math.atan2(path[-1].y-path[-2].y, path[-1].x-path[-2].x) + math.pi/2
                 tailx = (path[-1].x + self.arrowwidth/2 * math.cos(theta),
@@ -267,17 +267,17 @@ class SegmentText:
             zorder: Z-order for segment
             visible: Show the segment when drawn
     '''
-    def __init__(self, pos: Sequence[float], label: str,
-                 align: Align=None,
-                 rotation: float=None,
-                 rotation_mode: RotationMode=None,
-                 color: str=None,
-                 fontsize: float=14,
-                 font: str=None,
-                 mathfont: str=None,
-                 clip: BBox=None,
-                 zorder: int=None,
-                 visible: bool=True):
+    def __init__(self, pos: XY, label: str,
+                 align: Align = None,
+                 rotation: float = None,
+                 rotation_mode: RotationMode = None,
+                 color: str = None,
+                 fontsize: float = 14,
+                 font: str = None,
+                 mathfont: str = None,
+                 clip: BBox = None,
+                 zorder: int = None,
+                 visible: bool = True):
         self.xy = pos
         self.text = label
         self.align = align
@@ -394,19 +394,19 @@ class SegmentPoly:
             zorder: Z-order for segment
             visible: Show the segment when drawn
     '''
-    def __init__(self, verts: Sequence[Sequence[float]],
-                 closed: bool=True,
-                 cornerradius: float=0,
-                 color: str=None,
-                 fill: str=None,
-                 lw: float=None,
-                 ls: Linestyle=None,
-                 hatch: bool=False,
-                 joinstyle: Joinstyle=None,
-                 capstyle: Capstyle=None,
-                 clip: BBox=None,
-                 zorder: int=None,
-                 visible: bool=True):
+    def __init__(self, verts: Sequence[XY],
+                 closed: bool = True,
+                 cornerradius: float = 0,
+                 color: str = None,
+                 fill: str = None,
+                 lw: float = None,
+                 ls: Linestyle = None,
+                 hatch: bool = False,
+                 joinstyle: Joinstyle = None,
+                 capstyle: Capstyle = None,
+                 clip: BBox = None,
+                 zorder: int = None,
+                 visible: bool = True):
         self.verts = verts
         self.closed = closed
         self.cornerradius = cornerradius
@@ -512,15 +512,16 @@ class SegmentCircle:
             ref: Flip reference ['start', 'end', None].
             visible: Show the segment when drawn
     '''
-    def __init__(self, center: Sequence[float], radius: float,
-                 color: str=None,
-                 lw: float=None,
-                 ls: Linestyle=None,
-                 fill: bool | str | None=None,
-                 clip: BBox=None,
-                 zorder: int=None,
-                 ref: EndRef=None,
-                 visible: bool=True):
+    def __init__(self, center: XY,
+                 radius: float,
+                 color: str = None,
+                 lw: float = None,
+                 ls: Linestyle = None,
+                 fill: bool | str | None = None,
+                 clip: BBox = None,
+                 zorder: int = None,
+                 ref: EndRef = None,
+                 visible: bool = True):
         self.center = center
         self.radius = radius
         self.zorder = zorder
@@ -627,16 +628,16 @@ class SegmentBezier:
             visible: Show the segment when drawn
     '''
     def __init__(self, p: Sequence[XY],
-                 color: str=None,
-                 lw: float=None,
-                 ls: Linestyle=None,
-                 capstyle: Capstyle=None,
-                 arrow: str=None,
-                 arrowlength: float=.25,
-                 arrowwidth: float=.15,
-                 clip: BBox=None,
-                 zorder: int=None,
-                 visible: bool=True):
+                 color: str = None,
+                 lw: float = None,
+                 ls: Linestyle = None,
+                 capstyle: Capstyle = None,
+                 arrow: str = None,
+                 arrowlength: float = .25,
+                 arrowwidth: float = .15,
+                 clip: BBox = None,
+                 zorder: int = None,
+                 visible: bool = True):
         self.p = [Point(pi) for pi in p]
         self.arrow = arrow
         self.color = color
@@ -732,17 +733,17 @@ class SegmentArc:
             zorder: Z-order for segment
             visible: Show the segment when drawn
     '''
-    def __init__(self, center: Sequence[float],
+    def __init__(self, center: XY,
                  width: float, height: float,
-                 theta1: float=35, theta2: float=-35,
-                 arrow: Arcdirection=None,
-                 angle: float=0,
-                 color: str=None,
-                 lw: float=None,
-                 ls: Linestyle=None,
-                 clip: BBox=None,
-                 zorder: int=None,
-                 visible: bool=True):
+                 theta1: float = 35, theta2: float = -35,
+                 arrow: Arcdirection = None,
+                 angle: float = 0,
+                 color: str = None,
+                 lw: float = None,
+                 ls: Linestyle = None,
+                 clip: BBox = None,
+                 zorder: int = None,
+                 visible: bool = True):
         self.center = center
         self.width = width
         self.height = height
@@ -844,13 +845,13 @@ class SegmentArc:
 
 class SegmentArrow(Segment):
     ''' Arrow Segment
-    
+
         [DEPRECATED - use Segment with arrow parameter instead]
     '''
-    def __init__(self, tail: Sequence[float], head: Sequence[float],
-                 headwidth: float=None, headlength: float=None,
-                 color: str=None, lw: float=None, clip: BBox=None,
-                 ref: EndRef=None, zorder: int=None):        
+    def __init__(self, tail: XY, head: XY,
+                 headwidth: float = None, headlength: float = None,
+                 color: str = None, lw: float = None, clip: BBox = None,
+                 ref: EndRef = None, zorder: int = None):        
         warnings.warn('SegmentArrow is deprecated. Use Segment with arrow parameter.', DeprecationWarning)
         headwidth = 0.15 if headwidth is None else headwidth
         headlength = 0.25 if headlength is None else headlength

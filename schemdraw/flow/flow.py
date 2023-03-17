@@ -17,7 +17,7 @@ class Box(Element):
         Anchors:
             * 16 compass points (N, S, E, W, NE, NNE, etc.)
     '''
-    def __init__(self, w: float=3, h: float=2, **kwargs):
+    def __init__(self, w: float = 3, h: float = 2, **kwargs):
         super().__init__(**kwargs)
         self.segments.append(Segment([(0, 0), (0, h/2), (w, h/2),
                                       (w, -h/2), (0, -h/2), (0, 0)]))
@@ -70,7 +70,7 @@ class RoundBox(Box):
         Anchors:
             * 16 compass points (N, S, E, W, NE, NNE, etc.)
     '''
-    def __init__(self, w: float=3, h: float=2, cornerradius: float=0.3, **kwargs):
+    def __init__(self, w: float = 3, h: float = 2, cornerradius: float = 0.3, **kwargs):
         super().__init__(w, h, **kwargs)
         self.segments = [SegmentPoly(
             [(0, h/2), (w, h/2), (w, -h/2), (0, -h/2)],
@@ -92,7 +92,7 @@ class Terminal(RoundBox):
         Anchors:
             * 16 compass points (N, S, E, W, NE, NNE, etc.)
     '''
-    def __init__(self, w: float=3, h: float=1.25, **kwargs):
+    def __init__(self, w: float = 3, h: float = 1.25, **kwargs):
         super().__init__(w=w, h=h, cornerradius=h/2, **kwargs)
         self.params['drop'] = self.anchors['S']
         self.params['droptheta'] = -90
@@ -111,7 +111,7 @@ class Subroutine(Box):
         Anchors:
             * 16 compass points (N, S, E, W, NE, NNE, etc.)
     '''
-    def __init__(self, w: float=3.5, h: float=2, s: float=0.3, **kwargs):
+    def __init__(self, w: float = 3.5, h: float = 2, s: float = 0.3, **kwargs):
         super().__init__(w, h, **kwargs)
         self.segments.append(Segment([(w-s, h/2), (w-s, -h/2)]))
         self.segments.append(Segment([(s, h/2), (s, -h/2)]))
@@ -128,7 +128,7 @@ class Data(Box):
         Anchors:
             * 16 compass points (N, S, E, W, NE, NNE, etc.)
     '''
-    def __init__(self, w: float=3, h: float=2, s: float=0.5, **kwargs):
+    def __init__(self, w: float = 3, h: float = 2, s: float = 0.5, **kwargs):
         super().__init__(w, h, **kwargs)
         self.segments = []
         self.segments.append(SegmentPoly([(0, 0), (s/2, h/2), (w+s/2, h/2),
@@ -159,7 +159,7 @@ class Ellipse(Box):
         Anchors:
             * 16 compass points (N, S, E, W, NE, NNE, etc.)
     '''
-    def __init__(self, w: float=3, h: float=2, **kwargs):
+    def __init__(self, w: float = 3, h: float = 2, **kwargs):
         super().__init__(w, h, **kwargs)
         self.segments = []
         # There's no ellipse Segment type, so draw one with a path Segment
@@ -203,9 +203,9 @@ class Decision(Box):
         Anchors:
             * 16 compass points (N, S, E, W, NE, NNE, etc.)
     '''
-    def __init__(self, w: float=4, h: float=2,
-                 N: str=None, E: str=None, S: str=None, W: str=None,
-                 font: str=None, fontsize: float=14,
+    def __init__(self, w: float = 4, h: float = 2,
+                 N: str = None, E: str = None, S: str = None, W: str = None,
+                 font: str = None, fontsize: float = 14,
                  **kwargs):
         super().__init__(w, h, **kwargs)
         self.segments = []
@@ -251,7 +251,7 @@ class Connect(Box):
         Anchors:
             * 16 compass points (N, S, E, W, NE, NNE, etc.)
     '''
-    def __init__(self, r: float=0.75, **kwargs):
+    def __init__(self, r: float = 0.75, **kwargs):
         super().__init__(w=r*2, h=r*2, **kwargs)
         self.segments = []
         self.segments.append(SegmentCircle((r, 0), r))
@@ -282,7 +282,7 @@ class StateEnd(Connect):
         Anchors:
             * 16 compass points (N, S, E, W, NE, NNE, etc.)
     '''
-    def __init__(self, r: float=0.75, dr=.15, **kwargs):
+    def __init__(self, r: float = 0.75, dr=.15, **kwargs):
         super().__init__(r, **kwargs)
         self.segments.append(SegmentCircle((r, 0), r-dr))
 

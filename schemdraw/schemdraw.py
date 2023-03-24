@@ -234,7 +234,7 @@ class Drawing:
         self.add(element)
         return self
 
-    def add(self, element: Element | Type[Element]) -> Element:
+    def add(self, element: Element) -> Element:
         ''' Add an element to the drawing.
 
             Args:

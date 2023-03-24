@@ -187,6 +187,11 @@ class Figure:
             inches_per_unit: Scale for the drawing
             showframe: Show frame around entire drawing
     '''
+
+    # Keep track of clipid's across all figures so they don't conflict
+    # when multiple figures are in one Jupyter notebook/html file.
+    total_clips = 0
+
     def __init__(self, bbox: BBox, **kwargs):
         self.svgelements: list[tuple[int, ET.Element]] = []  # (zorder, element)
         self.hatch: bool = False
@@ -219,13 +224,14 @@ class Figure:
             if bbox in self.clips:
                 clipid = self.clips[bbox]
             else:
-                clipid = str(len(self.clips))
+                clipid = Figure.total_clips
+                Figure.total_clips += 1
                 self.clips[bbox] = clipid
 
                 x0, y0 = self.xform(bbox.xmin, bbox.ymin)
                 x1, y1 = self.xform(bbox.xmax, bbox.ymax)
-                clip = ET.fromstring(f'''<defs>
-    <clipPath id="clip{clipid}"><rect x="{x0-1}" y="{y0-1}" width="{x1-x0+2}" height="{y1-y0+2}" /></clipPath></defs>''')
+                clip = ET.fromstring(f'''<defs><clipPath id="clip{clipid}"><rect x="{x0-1}" y="{y0-1}"'''
+                                     f''' width="{x1-x0+2}" height="{y1-y0+2}" /></clipPath></defs>''')
                 self.svgelements.append((0, clip))
             et.set('clip-path', f'url(#clip{clipid})')
 

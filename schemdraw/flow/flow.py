@@ -76,15 +76,18 @@ class RoundBox(Box):
             [(0, h/2), (w, h/2), (w, -h/2), (0, -h/2)],
             cornerradius=cornerradius)]
         k = cornerradius - cornerradius*math.sqrt(2)/2
-        k2 = cornerradius - cornerradius*math.sqrt(3)/2
         self.anchors['NE'] = (w-k, h/2-k)
         self.anchors['NW'] = (k, h/2-k)
         self.anchors['SE'] = (w-k, -h/2+k)
         self.anchors['SW'] = (k, -h/2+k)
-        self.anchors['ENE'] = (w-k2/2, 3*k2)
-        self.anchors['ESE'] = (w-k2/2, -3*k2)
-        self.anchors['WNW'] = (k2/2, 3*k2)
-        self.anchors['WSW'] = (k2/2, -3*k2)
+        self.anchors['NNE'] = (3*w/4 if cornerradius < w/4 else w-cornerradius, h/2)
+        self.anchors['NNW'] = (w/4 if cornerradius < w/4 else cornerradius, h/2)
+        self.anchors['SSE'] = (3*w/4 if cornerradius < w/4 else w-cornerradius, -h/2)
+        self.anchors['SSW'] = (w/4 if cornerradius < w/4 else cornerradius, -h/2)
+        self.anchors['ENE'] = (w, h/4 if cornerradius < h/4 else h/2-cornerradius)
+        self.anchors['ESE'] = (w, -h/4 if cornerradius < h/4 else -h/2+cornerradius)
+        self.anchors['WNW'] = (0, h/4 if cornerradius < h/4 else h/2-cornerradius)
+        self.anchors['WSW'] = (0, -h/4 if cornerradius < h/4 else -h/2+cornerradius)
 
 
 class Terminal(RoundBox):

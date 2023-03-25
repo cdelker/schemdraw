@@ -76,10 +76,15 @@ class RoundBox(Box):
             [(0, h/2), (w, h/2), (w, -h/2), (0, -h/2)],
             cornerradius=cornerradius)]
         k = cornerradius - cornerradius*math.sqrt(2)/2
+        k2 = cornerradius - cornerradius*math.sqrt(3)/2
         self.anchors['NE'] = (w-k, h/2-k)
         self.anchors['NW'] = (k, h/2-k)
         self.anchors['SE'] = (w-k, -h/2+k)
         self.anchors['SW'] = (k, -h/2+k)
+        self.anchors['ENE'] = (w-k2/2, 3*k2)
+        self.anchors['ESE'] = (w-k2/2, -3*k2)
+        self.anchors['WNW'] = (k2/2, 3*k2)
+        self.anchors['WSW'] = (k2/2, -3*k2)
 
 
 class Terminal(RoundBox):

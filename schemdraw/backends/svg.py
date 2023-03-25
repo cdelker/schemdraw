@@ -195,7 +195,7 @@ class Figure:
     def __init__(self, bbox: BBox, **kwargs):
         self.svgelements: list[tuple[int, ET.Element]] = []  # (zorder, element)
         self.hatch: bool = False
-        self.clips: dict[BBox, str] = {}
+        self.clips: dict[BBox, int] = {}
         self.showframe = kwargs.get('showframe', False)
         self.scale = 64.8 * kwargs.get('inches_per_unit', .5)  # Magic scale factor that matches what MPL did
         self.set_bbox(bbox)

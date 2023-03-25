@@ -1,4 +1,4 @@
 pyparsing
 matplotlib
-schemdraw
+ipykernel
 jupyter_sphinx

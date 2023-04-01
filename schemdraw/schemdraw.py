@@ -246,7 +246,6 @@ class Drawing:
         if self._interactive:
             if self.fig is None:
                 self.fig = mplFigure(
-                    bbox=self.get_bbox(),
                     inches_per_unit=self.dwgparams.get('inches_per_unit'))
                 if 'bgcolor' in self.dwgparams:
                     self.fig.bgcolor(self.dwgparams['bgcolor'])
@@ -352,7 +351,6 @@ class Drawing:
         ''' Draw on Matplotlib Axis '''
         if self.fig is None or ax is not None:
             self.fig = mplFigure(ax=ax,
-                                 bbox=self.get_bbox(),
                                  inches_per_unit=self.dwgparams.get('inches_per_unit'),
                                  showframe=showframe)
             if 'bgcolor' in self.dwgparams:

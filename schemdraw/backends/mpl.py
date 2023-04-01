@@ -61,7 +61,6 @@ class Figure:
                 self.ax.axes.get_xaxis().set_visible(False)
                 self.ax.axes.get_yaxis().set_visible(False)
                 self.ax.set_frame_on(False)
-        self.ax.autoscale_view(True)  # This autoscales all the shapes too
 
     def set_bbox(self, bbox: BBox):
         ''' Set bounding box, to override Matplotlib's autoscale '''
@@ -118,7 +117,7 @@ class Figure:
                          math_fontfamily=mathfont,
                          rotation=rotation, rotation_mode=rotation_mode,
                          horizontalalignment=halign, verticalalignment=valign,
-                         zorder=zorder, clip_on=True)
+                         zorder=zorder, clip_on=False)
         self.addclip(t, clip)
 
     def poly(self, verts: Sequence[XY], closed: bool = True,
@@ -256,21 +255,9 @@ class Figure:
     def getfig(self):
         ''' Get the Matplotlib figure '''
         if not self.userfig:
-            if self.bbox is None or math.inf in self.bbox or -math.inf in self.bbox:
-                # Use MPL's bbox, which sometimes clips things like arrowheads
-                x1, x2 = self.ax.get_xlim()
-                y1, y2 = self.ax.get_ylim()
-            else:
-                x1, y1, x2, y2 = self.bbox
-            x1 -= .1  # Add a bit to account for line widths getting cut off
-            x2 += .1
-            y1 -= .1
-            y2 += .1
-            try:
-                self.ax.set_xlim(x1, x2)
-                self.ax.set_ylim(y1, y2)
-            except ValueError:
-                pass  # No elements
+            self.ax.autoscale_view()
+            x1, x2 = self.ax.get_xlim()
+            y1, y2 = self.ax.get_ylim()
             w = x2-x1
             h = y2-y1
 

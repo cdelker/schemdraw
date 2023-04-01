@@ -637,7 +637,7 @@ class Element:
     def _draw_on_figure(self):
         ''' Draw the element on a new figure. Useful for _repr_ functions. '''
         if default_canvas.default_canvas == 'matplotlib':
-            fig = mplFigure(bbox=self.get_bbox(transform=True))
+            fig = mplFigure()
         else:
             fig = svgFigure(bbox=self.get_bbox(transform=True))
         if not self._cparams:

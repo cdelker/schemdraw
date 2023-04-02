@@ -654,9 +654,12 @@ class CurrentLabel(Element):
             length: Length of the arrow
             top: Draw arrow on top or bottom of element
             reverse: Reverse the arrow direction
+            headlength: Length of arrowhead
+            headwidth: Width of arrowhead
     '''
     def __init__(self, ofst: float = 0.4, length: float = 2,
-                 top: bool = True, reverse: bool = False, **kwargs):
+                 top: bool = True, reverse: bool = False,
+                 headlength: float = 0.3, headwidth: float = 0.2, **kwargs):
         super().__init__(**kwargs)
         self.params['lblofst'] = -.1
         self.params['drop'] = None
@@ -666,6 +669,8 @@ class CurrentLabel(Element):
         self._length = length
         self._top = top
         self._reverse = reverse
+        self._headlength = headlength
+        self._headwidth = headwidth
 
     def at(self, xy: XY | Element) -> 'Element':  # type: ignore[override]
         ''' Specify CurrentLabel position.
@@ -705,7 +710,7 @@ class CurrentLabel(Element):
         if self._reverse:
             a, b = b, a
 
-        self.segments.append(Segment((a, b), arrow='->', arrowwidth=.2, arrowlength=.3))
+        self.segments.append(Segment((a, b), arrow='->', arrowwidth=self._headwidth, arrowlength=self._headlength))
         return super()._place(dwgxy, dwgtheta, **dwgparams)
 
 

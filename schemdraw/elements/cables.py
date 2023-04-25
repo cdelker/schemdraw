@@ -24,7 +24,7 @@ class Coax(Element2Term):
             * shieldcenter
             * shieldcenter_top
     '''
-    def __init__(self, *d, length: float=3, radius: float=0.3, leadlen: float=0.6, **kwargs):
+    def __init__(self, *d, length: float = 3, radius: float = 0.3, leadlen: float = 0.6, **kwargs):
         super().__init__(*d, **kwargs)
         self.segments.append(Segment(    # Center conductor
                 [(0, 0), (leadlen, 0), gap, (length-leadlen+radius/2, 0),
@@ -78,12 +78,12 @@ class Triax(Element2Term):
             * guardend_top
     '''
     def __init__(self, *d,
-                 length: float=3,
-                 leadlen: float=0.6,
-                 radiusinner: float=0.3,
-                 radiusouter: float=0.6,
-                 shieldofststart: float=0.3,
-                 shieldofstend: float=0.3,
+                 length: float = 3,
+                 leadlen: float = 0.6,
+                 radiusinner: float = 0.3,
+                 radiusouter: float = 0.6,
+                 shieldofststart: float = 0.3,
+                 shieldofstend: float = 0.3,
                  **kwargs):
         super().__init__(*d, **kwargs)
         if radiusouter < radiusinner:

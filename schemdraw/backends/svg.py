@@ -17,7 +17,7 @@ try:
 except ImportError:
     ziamath = None  # type: ignore
 
-from ..types import Capstyle, Joinstyle, Linestyle, BBox, Halign, Valign, RotationMode, TextMode
+from ..types import Capstyle, Joinstyle, Linestyle, BBox, Halign, Valign, RotationMode, TextMode, XY
 from ..util import Point
 from . import svgtext
 
@@ -46,7 +46,7 @@ class Config:
         if value not in ['path', 'text']:
             raise ValueError('text mode must be "path" or "text".')
         self._text = value
-    
+
     @property
     def svg2(self) -> bool:
         ''' Use SVG2.0. Disable for better browser compatibility
@@ -54,7 +54,7 @@ class Config:
         '''
         if ziamath is not None:
             return ziamath.config.svg2
-        return None
+        return True
 
     @svg2.setter
     def svg2(self, value: bool) -> None:
@@ -79,7 +79,7 @@ hatchpattern = '''<defs><pattern id="hatch" patternUnits="userSpaceOnUse" width=
 <path d="M-1,1 l2,-2 M0,4 l4,-4 M3,5 l2,-2" style="stroke:black; stroke-width:.5" /></pattern></defs>'''
 
 
-def settextmode(mode: TextMode, svg2: bool=True) -> None:
+def settextmode(mode: TextMode, svg2: bool = True) -> None:
     ''' Set the mode for rendering text in the SVG backend.
 
         In 'text' mode, text is drawn as SVG <text> elements
@@ -112,9 +112,9 @@ def isnotebook():
 inline = isnotebook()
 
 
-def getstyle(color: str=None, ls: Linestyle=None, lw: float=None,
-             capstyle: Capstyle=None, joinstyle: Joinstyle=None,
-             fill: str=None, hatch: bool=False) -> str:
+def getstyle(color: str = None, ls: Linestyle = None, lw: float = None,
+             capstyle: Capstyle = None, joinstyle: Joinstyle = None,
+             fill: str = None, hatch: bool = False) -> str:
     ''' Get style for svg element. Leave empty if property matches default '''
     # Note: styles are added to every SVG element, rather than in a global <style>
     # tag, since multiple images in one HTML page may share <styles>.
@@ -146,7 +146,7 @@ def getstyle(color: str=None, ls: Linestyle=None, lw: float=None,
     return s
 
 
-def text_size(text: str, font: str='Arial', size: float=16) -> tuple[float, float, float]:
+def text_size(text: str, font: str = 'Arial', size: float = 16) -> tuple[float, float, float]:
     ''' Get size of text. Size will be exact bounding box if ziamath installed and
         using path text mode. Otherwise size will be estimated based on character
         widths.
@@ -187,14 +187,20 @@ class Figure:
             inches_per_unit: Scale for the drawing
             showframe: Show frame around entire drawing
     '''
+
+    # Keep track of clipid's across all figures so they don't conflict
+    # when multiple figures are in one Jupyter notebook/html file.
+    total_clips = 0
+
     def __init__(self, bbox: BBox, **kwargs):
         self.svgelements: list[tuple[int, ET.Element]] = []  # (zorder, element)
         self.hatch: bool = False
-        self.clips: dict[BBox, str] = {}
+        self.clips: dict[BBox, int] = {}
         self.showframe = kwargs.get('showframe', False)
         self.scale = 64.8 * kwargs.get('inches_per_unit', .5)  # Magic scale factor that matches what MPL did
         self.set_bbox(bbox)
         self._bgcolor: Optional[str] = None
+        self.svgcanvas = kwargs.get('svg')
 
     def set_bbox(self, bbox: BBox) -> None:
         ''' Set the bounding box '''
@@ -218,20 +224,21 @@ class Figure:
             if bbox in self.clips:
                 clipid = self.clips[bbox]
             else:
-                clipid = str(len(self.clips))
+                clipid = Figure.total_clips
+                Figure.total_clips += 1
                 self.clips[bbox] = clipid
 
                 x0, y0 = self.xform(bbox.xmin, bbox.ymin)
                 x1, y1 = self.xform(bbox.xmax, bbox.ymax)
-                clip = ET.fromstring(f'''<defs>
-    <clipPath id="clip{clipid}"><rect x="{x0-1}" y="{y0-1}" width="{x1-x0+2}" height="{y1-y0+2}" /></clipPath></defs>''')
+                clip = ET.fromstring(f'''<defs><clipPath id="clip{clipid}"><rect x="{x0-1}" y="{y0-1}"'''
+                                     f''' width="{x1-x0+2}" height="{y1-y0+2}" /></clipPath></defs>''')
                 self.svgelements.append((0, clip))
             et.set('clip-path', f'url(#clip{clipid})')
 
-    def plot(self, x: Sequence[float], y: Sequence[float],
-             color: str='black', ls: Linestyle='-', lw: float=2,
-             fill: str='none', capstyle: Capstyle='round',
-             joinstyle: Joinstyle='round', clip: BBox=None, zorder: int=2) -> None:
+    def plot(self, x: XY, y: XY,
+             color: str = 'black', ls: Linestyle = '-', lw: float = 2,
+             fill: str = 'none', capstyle: Capstyle = 'round',
+             joinstyle: Joinstyle = 'round', clip: BBox = None, zorder: int = 2) -> None:
         ''' Plot a path '''
         et = ET.Element('path')
         d = 'M {},{} '.format(*self.xform(x[0], y[0]))
@@ -242,7 +249,7 @@ class Figure:
             elif not d.endswith('M '):
                 d += 'L '
             xx, yy = self.xform(xx, yy)
-            d += '{},{} '.format(xx, yy)
+            d += f'{xx},{yy} '
 
         d = d.strip()
         et.set('d', d)
@@ -251,12 +258,12 @@ class Figure:
         self.addclip(et, clip)
         self.svgelements.append((zorder, et))
 
-    def text(self, s: str, x: float, y: float, color: str='black',
-             fontsize: float=14, fontfamily: str='sans-serif',
-             mathfont: str=None,
-             rotation: float=0, halign: Halign='center',
-             valign: Valign='center',
-             rotation_mode: RotationMode='anchor', clip: BBox=None, zorder: int=3) -> None:
+    def text(self, s: str, x: float, y: float, color: str = 'black',
+             fontsize: float = 14, fontfamily: str = 'sans-serif',
+             mathfont: str = None,
+             rotation: float = 0, halign: Halign = 'center',
+             valign: Valign = 'center',
+             rotation_mode: RotationMode = 'anchor', clip: BBox = None, zorder: int = 3) -> None:
         ''' Add text to the figure '''
         if s == '':
             return
@@ -264,13 +271,13 @@ class Figure:
         y += fontsize/72*2/6  # A bit of baseline shift to match MPL
         x0, y0 = self.xform(x, y)
         x, y = x0, y0
-        
+
         if ziamath and config.text == 'path':
             texttag = ET.Element('g')
-            
+
             ztext = ziamath.Text(s, textfont=fontfamily, mathfont=mathfont,
-                         size=fontsize, linespacing=1, color=color,
-                         rotation=rotation, rotation_mode=rotation_mode)
+                                 size=fontsize, linespacing=1, color=color,
+                                 rotation=rotation, rotation_mode=rotation_mode)
             ztext.drawon(texttag, x0, y0,
                          halign=halign, valign=valign)
         else:
@@ -281,16 +288,16 @@ class Figure:
         self.addclip(texttag, clip)
         self.svgelements.append((zorder, texttag))
 
-    def poly(self, verts: Sequence[Sequence[float]], closed: bool=True,
-             color: str='black', fill: str='none', lw: float=2,
-             ls: Linestyle='-', hatch: bool=False, capstyle: Capstyle='round',
-             joinstyle: Joinstyle='round', clip: BBox=None, zorder: int=1) -> None:
+    def poly(self, verts: Sequence[XY], closed: bool = True,
+             color: str = 'black', fill: str = 'none', lw: float = 2,
+             ls: Linestyle = '-', hatch: bool = False, capstyle: Capstyle = 'round',
+             joinstyle: Joinstyle = 'round', clip: BBox = None, zorder: int = 1) -> None:
         ''' Draw a polygon '''
         et = ET.Element('polyline') if not closed else ET.Element('polygon')
         points = ''
         for xx, yy in verts:
             xx, yy = self.xform(xx, yy)
-            points += '{},{} '.format(xx, yy)
+            points += f'{xx},{yy} '
         et.set('points', points)
         et.set('style', getstyle(color=color, ls=ls, lw=lw, capstyle=capstyle,
                                  joinstyle=joinstyle, fill=fill, hatch=hatch))
@@ -299,8 +306,9 @@ class Figure:
         if hatch:
             self.hatch = True
 
-    def circle(self, center: Sequence[float], radius: float, color: str='black',
-               fill: str='none', lw: float=2, ls: Linestyle='-', clip: BBox=None, zorder: int=1) -> None:
+    def circle(self, center: XY, radius: float, color: str = 'black',
+               fill: str = 'none', lw: float = 2, ls: Linestyle = '-',
+               clip: BBox = None, zorder: int = 1) -> None:
         ''' Draw a circle '''
         x, y = self.xform(*center)
         radius = radius * self.scale
@@ -312,9 +320,9 @@ class Figure:
         self.addclip(et, clip)
         self.svgelements.append((zorder, et))
 
-    def arrow(self, xy: Sequence[float], theta: float,
-              arrowwidth: float=.15, arrowlength: float=.25,
-              color: str='black', lw: float=2, clip: BBox=None, zorder: int=1) -> None:
+    def arrow(self, xy: XY, theta: float,
+              arrowwidth: float = .15, arrowlength: float = .25,
+              color: str = 'black', lw: float = 2, clip: BBox = None, zorder: int = 1) -> None:
         ''' Draw an arrowhead '''
         x, y = self.xform(*xy)
         dx = arrowlength/2 * math.cos(math.radians(theta)) * self.scale
@@ -332,8 +340,8 @@ class Figure:
         fin2 = Point((fullen - arrowlength, -arrowwidth/2)).rotate(theta) + tail
 
         # Shrink arrow head by lw so it points right at the line
-        head = Point((head[0] - lw *2* math.cos(math.radians(theta)),
-                      head[1] - lw *2* math.sin(math.radians(theta))))
+        head = Point((head[0] - lw * 2 * math.cos(math.radians(theta)),
+                      head[1] - lw * 2 * math.sin(math.radians(theta))))
 
         et1 = ET.Element('path')
         d = f'M {head[0]} {head[1]} '
@@ -345,9 +353,9 @@ class Figure:
         self.addclip(et1, clip)
         self.svgelements.append((zorder, et1))
 
-    def bezier(self, p: Sequence[Point], color: str='black',
-               lw: float=2, ls: Linestyle='-', capstyle: Capstyle='round', zorder: int=1,
-               arrow: str=None, arrowlength=.25, arrowwidth=.15, clip: BBox=None) -> None:
+    def bezier(self, p: Sequence[Point], color: str = 'black',
+               lw: float = 2, ls: Linestyle = '-', capstyle: Capstyle = 'round', zorder: int = 1,
+               arrow: str = None, arrowlength=.25, arrowwidth=.15, clip: BBox = None) -> None:
         ''' Draw a cubic or quadratic bezier '''
         # Keep original points for arrow head
         # and adjust points for line so they don't extrude from arrows.
@@ -383,7 +391,7 @@ class Figure:
                            clip=clip, arrowlength=arrowlength, arrowwidth=arrowwidth)
             elif arrow.startswith('o'):
                 self.circle(p[0], radius=arrowwidth/2, color=color, fill=color, lw=0,
-                           clip=clip, zorder=zorder)
+                            clip=clip, zorder=zorder)
             if '>' in arrow:
                 delta = p[-1] - p[-2]
                 theta = math.degrees(math.atan2(delta.y, delta.x))
@@ -391,12 +399,12 @@ class Figure:
                            clip=clip, arrowlength=arrowlength, arrowwidth=arrowwidth)
             elif arrow.endswith('o'):
                 self.circle(p[-1], radius=arrowwidth/2, color=color, fill=color, lw=0,
-                           clip=clip, zorder=zorder)
+                            clip=clip, zorder=zorder)
 
-    def arc(self, center: Sequence[float], width: float, height: float,
-            theta1: float=0, theta2: float=90, angle: float=0,
-            color: str='black', lw: float=2, ls: Linestyle='-', zorder: int=1,
-            arrow: str=None, clip: BBox=None) -> None:
+    def arc(self, center: XY, width: float, height: float,
+            theta1: float = 0, theta2: float = 90, angle: float = 0,
+            color: str = 'black', lw: float = 2, ls: Linestyle = '-', zorder: int = 1,
+            arrow: str = None, clip: BBox = None) -> None:
         ''' Draw an arc or ellipse, with optional arrowhead '''
         centerx, centery = self.xform(*center)
         width, height = width*self.scale, height*self.scale
@@ -416,7 +424,7 @@ class Figure:
                   - height/2 * math.sin(t2)*math.sin(anglerad))
         starty = (centery + width/2 * math.cos(t2)*math.sin(anglerad)
                   + height/2 * math.sin(t2)*math.cos(anglerad))
-        endx = (centerx + width/2 * math.cos(t1)*math.cos(anglerad) 
+        endx = (centerx + width/2 * math.cos(t1)*math.cos(anglerad)
                 - height/2 * math.sin(t1)*math.sin(anglerad))
         endy = (centery + width/2 * math.cos(t1)*math.sin(anglerad)
                 + height/2 * math.sin(t1)*math.cos(anglerad))
@@ -491,22 +499,31 @@ class Figure:
     def save(self, fname: str, **kwargs) -> None:
         ''' Save the figure to a file '''
         svg = self.getimage().decode()
-        with open(fname, 'w') as f:
+        ext = os.path.splitext(fname)[1]
+        if ext.lower() != '.svg':
+            raise ValueError('SVG backend only supports saving SVG format figures.')
+        with open(fname, 'w', encoding='utf-8') as f:
             f.write(svg)
 
-    def getimage(self, ext: str='svg') -> bytes:
+    def getimage(self, ext: str = 'svg') -> bytes:
         ''' Get the image as SVG or PNG bytes array '''
+        if ext.lower() != 'svg':
+            raise ValueError('SVG backend only supports generating SVG format figures.')
+
         pad = 2
         x0 = self.bbox.xmin * self.scale - pad
         y0 = -self.bbox.ymax * self.scale - pad
-        svg = ET.Element('svg')
-        svg.set('xmlns', 'http://www.w3.org/2000/svg')
-        svg.set('xml:lang', 'en')
-        svg.set('height', f'{self.pxheight+2*pad}pt')
-        svg.set('width', f'{self.pxwidth+2*pad}pt')
-        svg.set('viewBox', f'{x0} {y0} {self.pxwidth+2*pad} {self.pxheight+2*pad}')
-        if self._bgcolor:
-            svg.set('style', f'background-color:{self._bgcolor};')
+        if not self.svgcanvas:
+            svg = ET.Element('svg')
+            svg.set('xmlns', 'http://www.w3.org/2000/svg')
+            svg.set('xml:lang', 'en')
+            svg.set('height', f'{self.pxheight+2*pad}pt')
+            svg.set('width', f'{self.pxwidth+2*pad}pt')
+            svg.set('viewBox', f'{x0} {y0} {self.pxwidth+2*pad} {self.pxheight+2*pad}')
+            if self._bgcolor:
+                svg.set('style', f'background-color:{self._bgcolor};')
+        else:
+            svg = self.svgcanvas
 
         if self.hatch:
             svg.append(ET.fromstring(hatchpattern))
@@ -549,5 +566,5 @@ class Figure:
                 cmd = 'open' if sys.platform == 'darwin' else 'xdg-open'
                 try:
                     subprocess.call([cmd, path])
-                except FileNotFoundError:  # Some linux without display may not have xdg-open
+                except (OSError, FileNotFoundError):  # Some linux without display may not have xdg-open
                     pass

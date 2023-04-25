@@ -85,12 +85,12 @@ class AudioJack(Element):
             * tipswitch
     '''
     def __init__(self, *d,
-                 radius: float=0.075,
-                 ring: bool=False,
-                 ringswitch: bool=False,
-                 dots: bool=True,
-                 switch: bool=False,
-                 open: bool=True,
+                 radius: float = 0.075,
+                 ring: bool = False,
+                 ringswitch: bool = False,
+                 dots: bool = True,
+                 switch: bool = False,
+                 open: bool = True,
                  **kwargs):
         super().__init__(*d, **kwargs)
         fill = 'bg' if open else None

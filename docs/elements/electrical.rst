@@ -44,7 +44,7 @@ See :ref:`elecelements` for complete class definitions for these elements.
 
             if len(anchors) > 0:
                 for aname, apos in anchors.items():
-                    eplaced.add_label(aname, loc=aname, color='blue', fontsize=10)
+                    eplaced.label(aname, loc=aname, color='blue', fontsize=10)
         return d
 
 
@@ -221,7 +221,7 @@ Connection Dots
     
     # One-terminal, don't move position
     elmlist = [Dot, partial(Dot, open=True), DotDotDot,
-               Arrowhead]
+               Arrowhead, NoConnect]
     drawElements(elmlist, dx=4, cols=3)
 
 

@@ -36,10 +36,10 @@ class Kmap(Element):
             * cellXXXX - Center of each cell in the grid, where X is 0 or 1
     '''
     def __init__(self,
-                 names: str='ABCD',
-                 truthtable: Sequence[Sequence[Union[int, str]]]=None,
-                 groups: dict=None,
-                 default: str='0',
+                 names: str = 'ABCD',
+                 truthtable: Sequence[Sequence[Union[int, str]]] = None,
+                 groups: dict = None,
+                 default: str = '0',
                  **kwargs):
         super().__init__(**kwargs)
         truthtable = [] if truthtable is None else truthtable
@@ -59,7 +59,7 @@ class Kmap(Element):
         w = cols * boxw
         h = rows * boxw
         order = [0, 1, 3, 2]  # 00, 01, 11, 10
-        
+
         # Frame
         self.segments.append(Segment([(0, 0), (w, 0), (w, h), (0, h), (0, 0)], **kwargs))
         for row in range(rows):
@@ -68,7 +68,7 @@ class Kmap(Element):
             self.segments.append(Segment([(col*boxw, 0), (col*boxw, h)], **kwargs))
         diag = boxw / math.sqrt(2)
         self.segments.append(Segment([(0, h), (-diag, h+diag)], **kwargs))
-        
+
         # Labels
         rowfmt = '02b' if rows > 2 else '01b'
         colfmt = '02b' if cols > 2 else '01b'
@@ -129,10 +129,14 @@ class Kmap(Element):
                          [(x1+gpad, h+gpad), (x2-gpad, h+gpad), (x2-gpad, h-boxw+gpad), (x1+gpad, h-boxw+gpad)]]
             else:
                 # Wrap four corners
-                verts = [[(x1+gpad, y1-gpad), (x1+boxw+gpad, y1-gpad), (x1+boxw+gpad, y1-boxw-gpad), (x1+gpad, y1-boxw-gpad)],
-                         [(-gpad, y1-gpad), (boxw-gpad, y1-gpad), (boxw-gpad, y1-boxw-gpad), (-gpad, y1-boxw-gpad)],
-                         [(-gpad, h+gpad), (boxw-gpad, h+gpad), (boxw-gpad, h-boxw+gpad), (-gpad, h-boxw+gpad)],
-                         [(x1+gpad, h+gpad), (x1+boxw+gpad, h+gpad), (x1+boxw+gpad, h-boxw+gpad), (x1+gpad, h-boxw+gpad)]]
+                verts = [[(x1+gpad, y1-gpad), (x1+boxw+gpad, y1-gpad),
+                          (x1+boxw+gpad, y1-boxw-gpad), (x1+gpad, y1-boxw-gpad)],
+                         [(-gpad, y1-gpad), (boxw-gpad, y1-gpad), (boxw-gpad, y1-boxw-gpad),
+                          (-gpad, y1-boxw-gpad)],
+                         [(-gpad, h+gpad), (boxw-gpad, h+gpad), (boxw-gpad, h-boxw+gpad),
+                          (-gpad, h-boxw+gpad)],
+                         [(x1+gpad, h+gpad), (x1+boxw+gpad, h+gpad),
+                          (x1+boxw+gpad, h-boxw+gpad), (x1+gpad, h-boxw+gpad)]]
 
             style.setdefault('lw', 1)
             for vert in verts:

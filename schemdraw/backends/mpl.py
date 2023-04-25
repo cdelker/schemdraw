@@ -10,7 +10,7 @@ from matplotlib import font_manager
 from matplotlib.patches import Arc, Rectangle, PathPatch, Path  # type: ignore
 
 from .. import util
-from ..types import Capstyle, Joinstyle, Linestyle, BBox
+from ..types import Capstyle, Joinstyle, Linestyle, BBox, XY
 
 inline = 'inline' in matplotlib.get_backend()
 
@@ -61,7 +61,6 @@ class Figure:
                 self.ax.axes.get_xaxis().set_visible(False)
                 self.ax.axes.get_yaxis().set_visible(False)
                 self.ax.set_frame_on(False)
-        self.ax.autoscale_view(True)  # This autoscales all the shapes too
 
     def set_bbox(self, bbox: BBox):
         ''' Set bounding box, to override Matplotlib's autoscale '''
@@ -89,9 +88,9 @@ class Figure:
                                  transform=self.ax.transData)
             patch.set_clip_path(cliprect)
 
-    def plot(self, x: float, y: float, color: str='black', ls: Linestyle='-',
-             lw: float=2, fill: str=None, capstyle: Capstyle='round',
-             joinstyle: Joinstyle='round', clip: BBox=None, zorder: int=2) -> None:
+    def plot(self, x: float, y: float, color: str = 'black', ls: Linestyle = '-',
+             lw: float = 2, fill: str = None, capstyle: Capstyle = 'round',
+             joinstyle: Joinstyle = 'round', clip: BBox = None, zorder: int = 2) -> None:
         ''' Plot a path '''
         p, = self.ax.plot(x, y, zorder=zorder, color=color, ls=ls, lw=lw,
                           solid_capstyle=fix_capstyle(capstyle),
@@ -101,11 +100,11 @@ class Figure:
             p, = self.ax.fill(x, y, color=fill, zorder=zorder-1)
             self.addclip(p, clip)
 
-    def text(self, s: str, x: float, y: float, color: str='black',
-             fontsize: float=14, fontfamily: str='sans-serif',
-             mathfont: str=None, rotation: float=0,
-             halign: str='center', valign: str='center',
-             rotation_mode: str='anchor', clip: BBox=None, zorder=3) -> None:
+    def text(self, s: str, x: float, y: float, color: str = 'black',
+             fontsize: float = 14, fontfamily: str = 'sans-serif',
+             mathfont: str = None, rotation: float = 0,
+             halign: str = 'center', valign: str = 'center',
+             rotation_mode: str = 'anchor', clip: BBox = None, zorder=3) -> None:
         ''' Add text to the figure '''
         if fontfamily.endswith('.ttf') or fontfamily.endswith('otf'):
             if fontfamily not in [f.fname for f in font_manager.fontManager.ttflist]:
@@ -118,12 +117,12 @@ class Figure:
                          math_fontfamily=mathfont,
                          rotation=rotation, rotation_mode=rotation_mode,
                          horizontalalignment=halign, verticalalignment=valign,
-                         zorder=zorder, clip_on=True)
+                         zorder=zorder, clip_on=False)
         self.addclip(t, clip)
 
-    def poly(self, verts: Sequence[Sequence[float]], closed: bool=True,
-             color: str='black', fill: str=None, lw: float=2, ls: Linestyle='-', hatch: bool=False,
-             capstyle: Capstyle='round', joinstyle: Joinstyle='round', clip: BBox=None, zorder: int=1) -> None:
+    def poly(self, verts: Sequence[XY], closed: bool = True,
+             color: str = 'black', fill: str = None, lw: float = 2, ls: Linestyle = '-', hatch: bool = False,
+             capstyle: Capstyle = 'round', joinstyle: Joinstyle = 'round', clip: BBox = None, zorder: int = 1) -> None:
         ''' Draw a polynomial '''
         h = '///////' if hatch else None
         p = plt.Polygon(verts, closed=closed, ec=color,
@@ -133,17 +132,17 @@ class Figure:
         self.ax.add_patch(p)
         self.addclip(p, clip)
 
-    def circle(self, center: Sequence[float], radius: float, color: str='black', fill: str=None,
-               lw: float=2, ls: Linestyle='-', clip: BBox=None, zorder: int=1) -> None:
+    def circle(self, center: XY, radius: float, color: str = 'black', fill: str = None,
+               lw: float = 2, ls: Linestyle = '-', clip: BBox = None, zorder: int = 1) -> None:
         ''' Draw a circle '''
         circ = plt.Circle(xy=center, radius=radius, ec=color, fc=fill,
                           fill=fill is not None, lw=lw, ls=ls, zorder=zorder)
         self.ax.add_patch(circ)
         self.addclip(circ, clip)
 
-    def arrow(self, xy: Sequence[float], theta: float,
-              arrowwidth: float=.15, arrowlength: float=.25,
-              color: str='black', lw: float=2, clip: BBox=None, zorder: int=1) -> None:
+    def arrow(self, xy: XY, theta: float,
+              arrowwidth: float = .15, arrowlength: float = .25,
+              color: str = 'black', lw: float = 2, clip: BBox = None, zorder: int = 1) -> None:
         ''' Draw an arrowhead '''
         # Easier to skip Matplotlib's arrow or annotate methods and just draw a line
         # and a polygon.
@@ -164,10 +163,10 @@ class Figure:
         self.ax.add_patch(p)
         self.addclip(p, clip)
 
-    def bezier(self, p: Sequence[util.Point], color: str='black',
-               lw: float=2, ls: Linestyle='-', capstyle: Capstyle='round', zorder: int=1,
-               arrow: str=None, arrowlength: float=0.25, arrowwidth: float=0.15,
-               clip: BBox=None) -> None:
+    def bezier(self, p: Sequence[util.Point], color: str = 'black',
+               lw: float = 2, ls: Linestyle = '-', capstyle: Capstyle = 'round', zorder: int = 1,
+               arrow: str = None, arrowlength: float = 0.25, arrowwidth: float = 0.15,
+               clip: BBox = None) -> None:
         ''' Draw a cubic or quadratic bezier '''
         # Keep original points for arrow head
         # and adjust points for line so they don't extrude from arrows.
@@ -201,7 +200,7 @@ class Figure:
                            arrowwidth=arrowwidth, color=color, zorder=zorder)
             elif arrow.startswith('o'):
                 self.circle(p[0], radius=arrowwidth/2, color=color, fill=color, lw=0,
-                           clip=clip, zorder=zorder)
+                            clip=clip, zorder=zorder)
 
             if '>' in arrow:
                 delta = p[-1] - p[-2]
@@ -210,12 +209,12 @@ class Figure:
                            arrowwidth=arrowwidth, color=color, zorder=zorder)
             elif arrow.endswith('o'):
                 self.circle(p[-1], radius=arrowwidth/2, color=color, fill=color, lw=0,
-                           clip=clip, zorder=zorder)
+                            clip=clip, zorder=zorder)
 
-    def arc(self, center: Sequence[float], width: float, height: float,
-            theta1: float=0, theta2: float=90, angle: float=0,
-            color: str='black', lw: float=2, ls: Linestyle='-',
-            zorder: int=1, clip: BBox=None, arrow: str=None) -> None:
+    def arc(self, center: XY, width: float, height: float,
+            theta1: float = 0, theta2: float = 90, angle: float = 0,
+            color: str = 'black', lw: float = 2, ls: Linestyle = '-',
+            zorder: int = 1, clip: BBox = None, arrow: str = None) -> None:
         ''' Draw an arc or ellipse, with optional arrowhead '''
         arc = Arc(center, width=width, height=height, theta1=theta1,
                   theta2=theta2, angle=angle, color=color,
@@ -247,7 +246,7 @@ class Figure:
                               head_length=.25, color=color, zorder=zorder)
             self.addclip(a, clip)
 
-    def save(self, fname: str, transparent: bool=True, dpi: float=72) -> None:
+    def save(self, fname: str, transparent: bool = True, dpi: float = 72) -> None:
         ''' Save the figure to a file '''
         fig = self.getfig()
         fig.savefig(fname, bbox_inches='tight', transparent=transparent, dpi=dpi,
@@ -256,21 +255,9 @@ class Figure:
     def getfig(self):
         ''' Get the Matplotlib figure '''
         if not self.userfig:
-            if self.bbox is None or math.inf in self.bbox or -math.inf in self.bbox:
-                # Use MPL's bbox, which sometimes clips things like arrowheads
-                x1, x2 = self.ax.get_xlim()
-                y1, y2 = self.ax.get_ylim()
-            else:
-                x1, y1, x2, y2 = self.bbox
-            x1 -= .1  # Add a bit to account for line widths getting cut off
-            x2 += .1
-            y1 -= .1
-            y2 += .1
-            try:
-                self.ax.set_xlim(x1, x2)
-                self.ax.set_ylim(y1, y2)
-            except ValueError:
-                pass  # No elements
+            self.ax.autoscale_view()
+            x1, x2 = self.ax.get_xlim()
+            y1, y2 = self.ax.get_ylim()
             w = x2-x1
             h = y2-y1
 

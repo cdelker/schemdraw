@@ -20,7 +20,7 @@ LabelInfo = namedtuple('LabelInfo', ['name', 'row', 'height', 'level'])
 PTS_TO_UNITS = 2/72
 
 
-def state_level(state: str, ud: bool=False, np: bool=False) -> str:
+def state_level(state: str, ud: bool = False, np: bool = False) -> str:
     ''' Get level of wave state (0, 1, V, z, -) '''
     state = re.sub(r'[2-9]|\=|x', 'V', state)
     state = re.sub('u', '1', state)
@@ -59,7 +59,7 @@ def get_nrows(sig) -> int:
     return 0
 
 
-def getlabels(sig, row: int=0, level: int=0) -> list[LabelInfo]:
+def getlabels(sig, row: int = 0, level: int = 0) -> list[LabelInfo]:
     ''' Get a list of group label info '''
     if isinstance(sig, dict) or sig == []:
         return []
@@ -318,7 +318,8 @@ class TimingDiagram(Element):
 
         y1 = y0 + self.yheight
         for j, node in enumerate(nodes):
-            if node == '.': continue
+            if node == '.':
+                continue
             w, h, _ = text_size(node, size=self.nodesize)
             w, h = w*PTS_TO_UNITS*2.5, h*PTS_TO_UNITS*2.5
             ycenter = (y0+y1)/2

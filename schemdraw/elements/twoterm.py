@@ -33,7 +33,6 @@ class ResistorIEC(Element2Term):
              gap, (reswidth*6, 0)]))
 
 
-
 class ResistorVarIEEE(ResistorIEEE):
     ''' Variable resistor (U.S. style) '''
     def __init__(self, *d, **kwargs):
@@ -72,7 +71,7 @@ class PhotoresistorIEC(ResistorIEC):
     ''' Photo-resistor (European style) '''
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
-        self.segments.append(Segment([(.7, .75), (.4, .4)], arrow='->', 
+        self.segments.append(Segment([(.7, .75), (.4, .4)], arrow='->',
                                      arrowwidth=.16, arrowlength=.2))
         self.segments.append(Segment([(1, .75), (.7, .4)], arrow='->',
                                      arrowwidth=.16, arrowlength=.2))
@@ -98,7 +97,7 @@ class Capacitor(Element2Term):
         Args:
             polar: Add polarity + sign
     '''
-    def __init__(self, *d, polar: bool=False, **kwargs):
+    def __init__(self, *d, polar: bool = False, **kwargs):
         super().__init__(*d, **kwargs)
         capgap = 0.18
         self.segments.append(Segment([(0, 0), gap, (0, resheight), (0, -resheight), gap,
@@ -114,7 +113,7 @@ class Capacitor2(Element2Term):
         Args:
             polar: Add polarity + sign
     '''
-    def __init__(self, *d, polar: bool=False, **kwargs):
+    def __init__(self, *d, polar: bool = False, **kwargs):
         super().__init__(*d, **kwargs)
         capgap = 0.18
         self.segments.append(Segment([(0, 0), gap, (0, resheight),
@@ -228,7 +227,7 @@ class Varactor(Element2Term):
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
         capgap = .13
-        self.segments.append(Segment([(0, 0), gap, 
+        self.segments.append(Segment([(0, 0), gap,
                                      (resheight*1.4, resheight), (resheight*1.4, -resheight),
                                      gap,
                                      (resheight*1.4+capgap, resheight), (resheight*1.4+capgap, -resheight),
@@ -255,14 +254,14 @@ class LED2(Diode):
         x = linspace(-1, 1)
         y = [-x0*(x0-.7)*(x0+.7)/2 + resheight*2.5 for x0 in x]
         x = linspace(resheight*.75, resheight*1.25)
-        
+
         theta = 20
         p = [Point((x0, y0)).rotate(theta) for x0, y0 in zip(x, y)]
         p2 = [Point((x0-.2, y0)).rotate(theta) for x0, y0 in zip(x, y)]
-        
+
         pa = Point((x[0], y[0]+.1)).rotate(theta)
         pa2 = Point((x[0]-.2, y[0]+.1)).rotate(theta)
-        
+
         self.segments.append(Segment(p))
         self.segments.append(Segment(p2))
         self.segments.append(Segment((p[1], pa), arrow='->', arrowwidth=.15, arrowlength=.2))
@@ -406,7 +405,7 @@ class FuseUS(Element2Term):
         Args:
             dots: Show dots on connections to fuse
     '''
-    def __init__(self, *d, dots: bool=True, **kwargs):
+    def __init__(self, *d, dots: bool = True, **kwargs):
         super().__init__(*d, **kwargs)
         fuser = .12
         fusex = linspace(fuser*2, 1+fuser)
@@ -416,7 +415,7 @@ class FuseUS(Element2Term):
         if dots:
             self.fill(kwargs.get('fill', 'bg'))
 
-    def fill(self, color: bool | str=True) -> 'Element':
+    def fill(self, color: bool | str = True) -> 'Element':
         ''' Set element fill '''
         fuser = .12
         self.segments.append(SegmentCircle(
@@ -441,7 +440,7 @@ class FuseIEC(ResistorIEC):
         dx = resheight*.66
         self.segments.append(Segment([(dx, resheight), (dx, -resheight)]))
         self.segments.append(Segment([(6*reswidth-dx, resheight),
-                                      (6*reswidth-dx, -resheight)]))            
+                                      (6*reswidth-dx, -resheight)]))
 
 
 class Breaker(Element2Term):
@@ -450,7 +449,7 @@ class Breaker(Element2Term):
         Args:
             dots: Show connection dots
     '''
-    def __init__(self, *d, dots: bool=True, **kwargs):
+    def __init__(self, *d, dots: bool = True, **kwargs):
         super().__init__(*d, **kwargs)
         theta1 = 25 if dots else 10
         theta2 = 155 if dots else 170
@@ -464,10 +463,10 @@ class Breaker(Element2Term):
             self.segments.append(SegmentCircle((1-rad, 0), rad, zorder=4))
 
 
-def cycloid(loops: int=4, ofst: Sequence[float]=(0, 0),
-            a:float=.06, b:float=.19, norm:bool=True,
-            vertical:bool=False,
-            flip:bool=False) -> list[tuple[float, float]]:
+def cycloid(loops: int = 4, ofst: Sequence[float] = (0, 0),
+            a: float = .06, b: float = .19, norm: bool = True,
+            vertical: bool = False,
+            flip: bool = False) -> list[tuple[float, float]]:
     ''' Generate a prolate cycloid (inductor spiral) that
         will always start and end at y=0.
 
@@ -523,7 +522,7 @@ class Inductor2(Element2Term):
         Args:
             loops: Number of inductor loops
     '''
-    def __init__(self, *d, loops: int=4, **kwargs):
+    def __init__(self, *d, loops: int = 4, **kwargs):
         super().__init__(*d, **kwargs)
         self.segments.append(Segment(cycloid(loops=loops)))
 
@@ -553,7 +552,7 @@ class SparkGap(Element2Term):
         self.segments.append(Segment([(.3, 0), (.52, 0)], arrow='->', arrowwidth=.2))
         self.segments.append(Segment([(.7, 0), (.48, 0)], arrow='->', arrowwidth=.2))
 
-        
+
 # default to IEEE style
 Resistor = ResistorIEEE
 ResistorVar = ResistorVarIEEE

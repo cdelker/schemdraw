@@ -11,7 +11,7 @@ class Transformer(Element):
 
         Add taps to the windings on either side using
         the `.taps` method.
-        
+
         Args:
             t1: Turns on primary (left) side
             t2: Turns on secondary (right) side
@@ -26,8 +26,8 @@ class Transformer(Element):
             * Other anchors defined by `taps` method
     '''
     def __init__(self, *d,
-                 t1: int=4, t2: int=4, core: bool=True,
-                 loop: bool=False, **kwargs):
+                 t1: int = 4, t2: int = 4, core: bool = True,
+                 loop: bool = False, **kwargs):
         super().__init__(*d, **kwargs)
         ind_w = .4
         lbot = 0.
@@ -59,11 +59,11 @@ class Transformer(Element):
         else:
             for i in range(t1):
                 self.segments.append(SegmentArc(
-                    [0, ltop-(i*ind_w+ind_w/2)],
+                    (0, ltop-(i*ind_w+ind_w/2)),
                     theta1=270, theta2=90, width=ind_w, height=ind_w))
             for i in range(t2):
                 self.segments.append(SegmentArc(
-                    [ind_gap, rtop-(i*ind_w+ind_w/2)],
+                    (ind_gap, rtop-(i*ind_w+ind_w/2)),
                     theta1=90, theta2=270, width=ind_w, height=ind_w))
         # Add the core
         if core:
@@ -94,7 +94,7 @@ class Transformer(Element):
             for name, pos in kwargs['rtaps'].items():
                 self.tap(name, pos, 'secondary')
 
-    def tap(self, name: str, pos: int, side: XformTap='primary'):
+    def tap(self, name: str, pos: int, side: XformTap = 'primary'):
         ''' Add a tap
 
             A tap is simply a named anchor definition along one side

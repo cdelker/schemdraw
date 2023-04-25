@@ -1,9 +1,15 @@
-v0.16 - INPROGRESS
+v0.16 - 25-Mar-2023
 
+    - Added `canvas` parameter to Drawing and draw method, and deprecated `backend` parameter.
+    - Removed `elements` argument from Drawing. Use Drawing.add_elements.
+    - Added `Drawing.set_anchor` to define anchor points, useful for ElementDrawing instances.
     - Added shunt resistor symbol Rshunt
     - Fixed lead length of XOR gates to align with OR gates
     - Fixed greater and less than symbols in SVG backend
+    - Fixed some anchor positions on flowchart symbols
     - Allow font parameter to be the path of a TTF file
+    - Removed old deprecations
+    - Replaced setup.py with setup.cfg
 
 
 v0.15 - 20-Jun-2022

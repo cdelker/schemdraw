@@ -30,12 +30,12 @@ class Opamp(Element):
             * n1a
             * n2a
     '''
-    def __init__(self, *d, sign: bool=True, leads: bool=False, **kwargs):
+    def __init__(self, *d, sign: bool = True, leads: bool = False, **kwargs):
         super().__init__(*d, **kwargs)
 
         leadlen = oa_back/4
         x = 0 if not leads else leadlen
-        
+
         self.segments.append(Segment(
             [(x, 0), (x, oa_back/2), (x+oa_xlen, 0), (x, -oa_back/2), (x, 0),
              gap, (x+oa_xlen, 0)]))

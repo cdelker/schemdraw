@@ -4,7 +4,7 @@ import schemdraw.elements as elm
 
 schemdraw.use('svg')
 
-with schemdraw.Drawing(backend='svg', file='testcircuit.svg', show=False) as d:
+with schemdraw.Drawing(file='testcircuit.svg', show=False) as d:
     d.add(elm.Resistor().label('1K'))
     d.add(elm.Capacitor().down())
 print(d.get_imagedata('svg'))

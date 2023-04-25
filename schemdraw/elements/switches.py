@@ -1,6 +1,6 @@
 ''' Switches and buttons '''
 
-from typing import Optional, Sequence
+from typing import Sequence
 import math
 
 from .elements import Element, Element2Term, gap
@@ -17,7 +17,7 @@ class Switch(Element2Term):
         Args:
             action: action arrow ('open' or 'close')
     '''
-    def __init__(self, *d, action: ActionType=None, **kwargs):
+    def __init__(self, *d, action: ActionType = None, **kwargs):
         super().__init__(*d, **kwargs)
         self.segments.append(Segment(
             [(0, 0), gap, (sw_dot_r*2, .1), (.8, .45), gap, (1, 0)]))
@@ -44,7 +44,7 @@ class SwitchSpdt(Switch):
             * b
             * c
     '''
-    def __init__(self, *d, action: ActionType=None, **kwargs):
+    def __init__(self, *d, action: ActionType = None, **kwargs):
         super().__init__(*d, action=action, **kwargs)
         self.segments.append(SegmentCircle((1-sw_dot_r, .7), sw_dot_r, fill='bg', zorder=3))
         self.anchors['a'] = Point((sw_dot_r, 0))
@@ -63,7 +63,7 @@ class SwitchSpdt2(Element):
             * b
             * c
     '''
-    def __init__(self, *d, action: ActionType=None, **kwargs):
+    def __init__(self, *d, action: ActionType = None, **kwargs):
         super().__init__(*d, action=action, **kwargs)
         self.segments.append(Segment([(0, 0), gap, (sw_dot_r*2, .1),
                                       (.7, .25), gap, (1, .4)]))
@@ -91,7 +91,7 @@ class Button(Element2Term):
         Args:
             nc: Normally closed
     '''
-    def __init__(self, *d, nc: bool=False, **kwargs):
+    def __init__(self, *d, nc: bool = False, **kwargs):
         super().__init__(*d, **kwargs)
         if nc:
             self.segments.append(Segment(
@@ -119,7 +119,7 @@ class SwitchDpst(Element):
             * t1
             * t2
     '''
-    def __init__(self, *d, link: bool=True, **kwargs):
+    def __init__(self, *d, link: bool = True, **kwargs):
         super().__init__(*d, **kwargs)
         yofst = -1
         self.segments.append(Segment([(0, 0), gap, (sw_dot_r*2, .1),
@@ -153,7 +153,7 @@ class SwitchDpdt(Element):
             * t3
             * t4
     '''
-    def __init__(self, *d, link: bool=True, **kwargs):
+    def __init__(self, *d, link: bool = True, **kwargs):
         super().__init__(*d, **kwargs)
         yofst = -1.4
         self.segments.append(Segment([(0, 0), gap, (sw_dot_r*2, .1),
@@ -183,18 +183,18 @@ class SwitchReed(Element2Term):
         super().__init__(*d, **kwargs)
         self.segments.append(Segment(
             [(0, 0), (.85, .15), gap, (.8, 0)]))
-        
+
         r = .3
         th = linspace(-math.pi/2, math.pi/2)
         x1 = [-r * math.cos(t) for t in th]  # Left semicircle
         y1 = [r * math.sin(t) for t in th]
-        x2 = [1-k for k in x1]  # Right semicircle        
+        x2 = [1-k for k in x1]  # Right semicircle
 
         x = x1 + x2 + [x1[0]]   # Combined
         y = y1 + y1[::-1] + [y1[0]]
         self.segments.append(Segment(list(zip(x, y))))
 
-        
+
 class SwitchRotary(Element):
     ''' Rotary Switch
 
@@ -208,15 +208,15 @@ class SwitchRotary(Element):
 
         Values for dtheta and theta will be calculated based on `n`
         if not provided.
-        
+
         Anchors:
             * P
             * T[x] for each contact (starting at 1)
     '''
-    def __init__(self, *d, 
-                 n: int=4, dtheta: float=None, theta0: float=None,
-                 radius: float=1, arrowlen: float=0.75,
-                 arrowcontact: int=0,
+    def __init__(self, *d,
+                 n: int = 4, dtheta: float = None, theta0: float = None,
+                 radius: float = 1, arrowlen: float = 0.75,
+                 arrowcontact: int = 0,
                  **kwargs):
         super().__init__(*d, **kwargs)
         self.params['fill'] = 'bg'
@@ -226,7 +226,7 @@ class SwitchRotary(Element):
 
         if dtheta is None:
             dtheta = min(35, 360/(n+1))
-        
+
         dtheta = math.radians(dtheta)
         if theta0 is None:
             theta0 = -dtheta * (n-1)/2
@@ -237,7 +237,7 @@ class SwitchRotary(Element):
             y = radius * math.sin(t)
             self.segments.append(SegmentCircle((x, y), sw_dot_r))
             self.anchors[f'T{i+1}'] = (x, y)
-        
+
             if i == arrowcontact:
                 arrowx = arrowlen * math.cos(t)
                 arrowy = arrowlen * math.sin(t)
@@ -254,14 +254,18 @@ class SwitchDIP(Element):
             swidth: Width of one switch
             spacing: Spacing between switches
     '''
-    def __init__(self, *d, n: int=3, pattern: Sequence[bool]=None, switchcolor:str ='#333333', 
-                 swidth: float=0.4, spacing: float=0.2,
+    def __init__(self, *d,
+                 n: int = 3,
+                 pattern: Sequence[bool] = None,
+                 switchcolor: str = '#333333',
+                 swidth: float = 0.4,
+                 spacing: float = 0.2,
                  **kwargs):
         super().__init__(*d, **kwargs)
-        
+
         width = swidth * n + spacing*(n+1)
         height = swidth*2 + spacing * 2
-        
+
         self.segments.append(SegmentPoly(((0, 0), (width, 0), (width, height), (0, height))))
         for i in range(n):
             x = spacing * (i+1) + swidth * i
@@ -269,9 +273,9 @@ class SwitchDIP(Element):
             down = pattern and not pattern[i]
             self.segments.append(SegmentPoly(((x, spacing+swidth), (x+swidth, spacing+swidth),
                                               (x+swidth, spacing+swidth*2), (x, spacing+swidth*2)),
-                                              fill=switchcolor if up else None))  # Upper
+                                             fill=switchcolor if up else None))  # Upper
             self.segments.append(SegmentPoly(((x, spacing), (x+swidth, spacing),
                                               (x+swidth, spacing+swidth), (x, spacing+swidth)),
-                                              fill=switchcolor if down else None))  # Lower
+                                             fill=switchcolor if down else None))  # Lower
             self.anchors[f'a{i+1}'] = (x + swidth/2, 0)
             self.anchors[f'b{i+1}'] = (x + swidth/2, height)

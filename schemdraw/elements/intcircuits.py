@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import sys
 from typing import Optional, Sequence, cast
 import math
 from dataclasses import dataclass
@@ -74,8 +73,8 @@ class Ic(Element):
         does not conflict with other attributes).
     '''
     def __init__(self,
-                 size: XY=None,
-                 pins: list[IcPin]=None,
+                 size: XY = None,
+                 pins: Sequence[IcPin] = None,
                  pinspacing: float = 0.6,
                  edgepadH: float = 0.25,
                  edgepadW: float = 0.25,
@@ -85,8 +84,8 @@ class Ic(Element):
                  plblofst: float = 0.05,
                  plblsize: float = 11,
                  slant: float = 0,
-                 w: float=None,
-                 h: float=None,
+                 w: float = None,
+                 h: float = None,
                  **kwargs):
         super().__init__(**kwargs)
 
@@ -142,7 +141,7 @@ class Ic(Element):
             paths = [[Point((0, 0)), Point((w, 0)), Point((w, h)), Point((0, h)), Point((0, 0))]]
 
         # Add each pin
-        for side in sidepins.keys():
+        for side, sidepin in sidepins.items():
             if side in ['L', 'R']:
                 sidelen = h-edgepadH*2
             else:
@@ -151,14 +150,14 @@ class Ic(Element):
             leadext = {'L': Point((-leadlen, 0)),
                        'R': Point((leadlen, 0)),
                        'T': Point((0, leadlen)),
-                       'B': Point((0, -leadlen))}.get(side, Point((0,0)))
+                       'B': Point((0, -leadlen))}.get(side, Point((0, 0)))
 
-            for i, pin in enumerate(sidepins[side]):
+            for i, pin in enumerate(sidepin):
                 # Determine pin position
                 if pin.pos is not None:
                     z = pin.pos * sidelen
                 elif pin.slot is None:
-                    pin.slot = '{}/{}'.format(i+1, len(sidepins[side]))
+                    pin.slot = '{}/{}'.format(i+1, len(sidepin))
 
                 if pin.slot is not None:
                     num, tot = [int(k) for k in pin.slot.split('/')]
@@ -171,7 +170,7 @@ class Ic(Element):
                 pinxy = {'L': Point((0, z+edgepadH)),
                          'R': Point((w, z+edgepadH)),
                          'T': Point((z+edgepadW, h)),
-                         'B': Point((z+edgepadW, 0))}.get(side, Point((0,0)))
+                         'B': Point((z+edgepadW, 0))}.get(side, Point((0, 0)))
 
                 # Adjust pin position for slant
                 if side == 'T' and slant > 0:
@@ -217,8 +216,7 @@ class Ic(Element):
                                          fontsize=pin.lblsize if pin.lblsize is not None else plblsize,
                                          color=pin.color,
                                          rotation=pin.rotation,
-                                         rotation_mode='default')
-                                        )
+                                         rotation_mode='default'))
 
                 # Add pin number outside the IC
                 if pin.pin and pin.pin != '':
@@ -237,8 +235,7 @@ class Ic(Element):
                     self.segments.append(SegmentText(pos=pinxy+pofst,
                                                      label=pin.pin,
                                                      align=align,
-                                                     fontsize=pin.lblsize if pin.lblsize is not None else plblsize
-                                                    ))
+                                                     fontsize=pin.lblsize if pin.lblsize is not None else plblsize))
 
                 # Draw leads
                 if leadlen > 0:
@@ -248,7 +245,7 @@ class Ic(Element):
                         invertofst = {'L': Point((-invertradius, 0)),
                                       'R': Point((invertradius, 0)),
                                       'T': Point((0, invertradius)),
-                                      'B': Point((0, -invertradius))}.get(side, Point((0,0)))
+                                      'B': Point((0, -invertradius))}.get(side, Point((0, 0)))
 
                         self.segments.append(SegmentCircle(
                             pinxy+invertofst, invertradius))
@@ -258,7 +255,7 @@ class Ic(Element):
 
                 # Define anchors
                 anchorpos = pinxy+leadext
-                self.anchors['in{}{}'.format(side[0].upper(), i+1)] = anchorpos
+                self.anchors[f'in{side[0].upper()}{i+1}'] = anchorpos
                 if pin.anchorname:
                     self.anchors[pin.anchorname] = anchorpos
                 elif pin.name:
@@ -266,7 +263,7 @@ class Ic(Element):
                         self.anchors['CLK'] = anchorpos
                     self.anchors[pin.name] = anchorpos
                 if pin.pin:
-                    self.anchors['pin{}'.format(pin.pin)] = anchorpos
+                    self.anchors[f'pin{pin.pin}'] = anchorpos
 
         for p in paths:
             self.segments.append(Segment(p))
@@ -305,8 +302,8 @@ class Multiplexer(Ic):
     '''
     def __init__(self,
                  demux: bool = False,
-                 size: XY=None,
-                 pins: list[IcPin]=None,
+                 size: XY = None,
+                 pins: Sequence[IcPin] = None,
                  pinspacing: float = 0.6,
                  edgepadH: float = 0.25,
                  edgepadW: float = 0.25,
@@ -353,15 +350,15 @@ class IcDIP(Element):
         If signal names are provided, they will also be added as anchors
         along with _in inside variants.
     '''
-    def __init__(self, *d, pins: int=8, 
-                 names: Sequence[str]=None,
-                 notch: bool=True,
-                 width: float=3,
-                 pinw: float=0.6,
-                 spacing: float=0.5,
-                 number: bool=True,
-                 fontsize: float=12,
-                 pfontsize: float=10,         
+    def __init__(self, *d, pins: int = 8, 
+                 names: Sequence[str] = None,
+                 notch: bool = True,
+                 width: float = 3,
+                 pinw: float = 0.6,
+                 spacing: float = 0.5,
+                 number: bool = True,
+                 fontsize: float = 12,
+                 pfontsize: float = 10,
                  **kwargs):
         super().__init__(*d, **kwargs)
         if pins % 2 == 1:
@@ -369,7 +366,7 @@ class IcDIP(Element):
 
         height = pins/2*pinw + spacing*(pins/2+1)    
         self.segments.append(SegmentPoly(((0, 0), (width, 0), (width, height), (0, height))))
-        
+
         if notch:
             c = width/2
             theta = linspace(-math.pi, 0)
@@ -377,7 +374,7 @@ class IcDIP(Element):
             notchx = [c + notchr * math.cos(t) for t in theta]
             notchy = [height + notchr * math.sin(t) for t in theta]
             self.segments.append(Segment(list(zip(notchx, notchy))))
-        
+
         for i in range(pins//2):
             y1 = spacing + spacing*i+i*pinw
             y2 = spacing + spacing*i+(i+1)*pinw
@@ -391,10 +388,11 @@ class IcDIP(Element):
             if number:
                 self.segments.append(SegmentText((-pinw/2, ymid), str(pnum), fontsize=pfontsize))
             if names:
-                self.segments.append(SegmentText((.1, ymid), names[pnum-1], align=('left', 'center'), fontsize=fontsize))
+                self.segments.append(SegmentText(
+                    (.1, ymid), names[pnum-1], align=('left', 'center'), fontsize=fontsize))
                 self.anchors[names[pnum-1]] = (-pinw, ymid)
                 self.anchors[f'{names[pnum-1]}_in'] = (0, ymid)
-                
+
             # Right
             self.segments.append(SegmentPoly(((width, y1), (width, y2), (width+pinw, y2), (width+pinw, y1))))
             pnum = pins//2 + i + 1
@@ -403,7 +401,8 @@ class IcDIP(Element):
             if number:
                 self.segments.append(SegmentText((width+pinw/2, ymid), str(pnum), fontsize=pfontsize))
             if names:
-                self.segments.append(SegmentText((width-.1, ymid), names[pnum-1], align=('right', 'center'), fontsize=fontsize))
+                self.segments.append(SegmentText(
+                    (width-.1, ymid), names[pnum-1], align=('right', 'center'), fontsize=fontsize))
                 self.anchors[names[pnum-1]] = (width+pinw, ymid)
                 self.anchors[f'{names[pnum-1]}_in'] = (width, ymid)
 
@@ -424,18 +423,18 @@ class DFlipFlop(Ic):
             * PRE
             * CLR
     '''
-    def __init__(self, *d, preclr: bool=False, preclrinvert: bool=True, size=(2, 3), **kwargs):
-        pins=[IcPin('D', side='left', slot='2/2'),
-              IcPin('>', side='left', slot='1/2'),
-              IcPin('Q', side='right', slot='2/2'),
-              IcPin('$\overline{Q}$', side='right', slot='1/2', anchorname='Qbar')]
+    def __init__(self, *d, preclr: bool = False, preclrinvert: bool = True, size=(2, 3), **kwargs):
+        pins = [IcPin('D', side='left', slot='2/2'),
+                IcPin('>', side='left', slot='1/2'),
+                IcPin('Q', side='right', slot='2/2'),
+                IcPin('$\overline{Q}$', side='right', slot='1/2', anchorname='Qbar')]
 
         if preclr:
             pins.extend([IcPin('PRE', side='top', invert=preclrinvert),
                          IcPin('CLR', side='bottom', invert=preclrinvert)])
 
         super().__init__(pins=pins, size=size)
-        
+
 
 class JKFlipFlop(Ic):
     ''' J-K Flip Flop
@@ -454,12 +453,12 @@ class JKFlipFlop(Ic):
             * PRE
             * CLR
     '''
-    def __init__(self, *d, preclr: bool=False, preclrinvert: bool=True, size=(2, 3), **kwargs):
-        pins=[IcPin('J', side='left', slot='3/3'),
-              IcPin('>', side='left', slot='2/3'),
-              IcPin('K', side='left', slot='1/3'),
-              IcPin('Q', side='right', slot='3/3'),
-              IcPin('$\overline{Q}$', side='right', slot='1/3', anchorname='Qbar')]
+    def __init__(self, *d, preclr: bool = False, preclrinvert: bool = True, size=(2, 3), **kwargs):
+        pins = [IcPin('J', side='left', slot='3/3'),
+                IcPin('>', side='left', slot='2/3'),
+                IcPin('K', side='left', slot='1/3'),
+                IcPin('Q', side='right', slot='3/3'),
+                IcPin('$\overline{Q}$', side='right', slot='1/3', anchorname='Qbar')]
 
         if preclr:
             pins.extend([IcPin('PRE', side='top', invert=preclrinvert),
@@ -480,37 +479,37 @@ class VoltageRegulator(Ic):
             * gnd
     '''
     def __init__(self, *d, size=(2, 1.5), **kwargs):
-        pins=[IcPin('in', side='left', slot='3/3'),
-              IcPin('out', side='right', slot='3/3'),
-              IcPin('gnd', side='bottom')]
+        pins = [IcPin('in', side='left', slot='3/3'),
+                IcPin('out', side='right', slot='3/3'),
+                IcPin('gnd', side='bottom')]
         super().__init__(pins=pins, size=size)
 
 
 class Ic555(Ic):
     def __init__(self, *d, **kwargs):
-        pins=[IcPin(name='TRG', side='left', pin='2'),
-              IcPin(name='THR', side='left', pin='6'),
-              IcPin(name='DIS', side='left', pin='7'),
-              IcPin(name='CTL', side='right', pin='5'),
-              IcPin(name='OUT', side='right', pin='3'),
-              IcPin(name='RST', side='top', pin='4'),
-              IcPin(name='Vcc', side='top', pin='8'),
-              IcPin(name='GND', side='bot', pin='1')]
+        pins = [IcPin(name='TRG', side='left', pin='2'),
+                IcPin(name='THR', side='left', pin='6'),
+                IcPin(name='DIS', side='left', pin='7'),
+                IcPin(name='CTL', side='right', pin='5'),
+                IcPin(name='OUT', side='right', pin='3'),
+                IcPin(name='RST', side='top', pin='4'),
+                IcPin(name='Vcc', side='top', pin='8'),
+                IcPin(name='GND', side='bot', pin='1')]
         super().__init__(pins=pins,
                          edgepadW=.5,
                          edgepadH=1,
                          pinspacing=1.5,
                          leadlen=1,
                          label='555')
-        
-        
-def sevensegdigit(bottom: float=0, left: float=0,
-                  seglen: float=1.5, segw: float=0.3, spacing: float=0.12,                  
-                  decimal: bool=False, digit: int | str=8, 
-                  segcolor: str='red', tilt: float=10, labelsegments: bool=True) -> list[SegmentType]:
+
+
+def sevensegdigit(bottom: float = 0, left: float = 0,
+                  seglen: float = 1.5, segw: float = 0.3, spacing: float = 0.12,
+                  decimal: bool = False, digit: int | str = 8,
+                  segcolor: str = 'red', tilt: float = 10, labelsegments: bool = True) -> list[SegmentType]:
     ''' Generate drawing segments for a 7-segment display digit. Use for
         building new elements incorporating a 7-segment display.
-    
+
         Args:
             bottom: Location of bottom of digit
             left: Location of left side of digit
@@ -529,7 +528,7 @@ def sevensegdigit(bottom: float=0, left: float=0,
         Returns:
             List of Segments making the digit
     '''
-    halfw = segw/2 # Half segment width
+    halfw = segw/2  # Half segment width
     halfspace = spacing/2
     tilt = math.radians(tilt)
 
@@ -580,7 +579,7 @@ def sevensegdigit(bottom: float=0, left: float=0,
         segClabel = shiftlabel(segClabel)
         segElabel = shiftlabel(segElabel)
         segFlabel = shiftlabel(segFlabel)
-        left -= lam*seglen    
+        left -= lam*seglen
 
     # Translate to final position
     segDx = [k + left for k in segDx]
@@ -663,29 +662,29 @@ class SevenSegment(Ic):
             * cathode
             * anode
     '''
-    def __init__(self, *d, decimal: bool=False,
-                 digit: int | str=8, 
-                 segcolor: str='red',
-                 tilt: float=10,
-                 labelsegments: bool=True,
-                 anode: bool=False,
-                 cathode: bool=False,
+    def __init__(self, *d, decimal: bool = False,
+                 digit: int | str = 8,
+                 segcolor: str = 'red',
+                 tilt: float = 10,
+                 labelsegments: bool = True,
+                 anode: bool = False,
+                 cathode: bool = False,
                  size=(2, 1.5), **kwargs):
-        
+
         if decimal:
             slots = '8'
             boxheight = 5.9
         else:
             slots = '7'
             boxheight = 5.3
-        
-        pins=[IcPin(pin='a', side='left', slot=f'{7+decimal}/{slots}', anchorname='a'),
-              IcPin(pin='b', side='left', slot=f'{6+decimal}/{slots}', anchorname='b'),
-              IcPin(pin='c', side='left', slot=f'{5+decimal}/{slots}', anchorname='c'),
-              IcPin(pin='d', side='left', slot=f'{4+decimal}/{slots}', anchorname='d'),
-              IcPin(pin='e', side='left', slot=f'{3+decimal}/{slots}', anchorname='e'),
-              IcPin(pin='f', side='left', slot=f'{2+decimal}/{slots}', anchorname='f'),
-              IcPin(pin='g', side='left', slot=f'{1+decimal}/{slots}', anchorname='g')]
+
+        pins = [IcPin(pin='a', side='left', slot=f'{7+decimal}/{slots}', anchorname='a'),
+                IcPin(pin='b', side='left', slot=f'{6+decimal}/{slots}', anchorname='b'),
+                IcPin(pin='c', side='left', slot=f'{5+decimal}/{slots}', anchorname='c'),
+                IcPin(pin='d', side='left', slot=f'{4+decimal}/{slots}', anchorname='d'),
+                IcPin(pin='e', side='left', slot=f'{3+decimal}/{slots}', anchorname='e'),
+                IcPin(pin='f', side='left', slot=f'{2+decimal}/{slots}', anchorname='f'),
+                IcPin(pin='g', side='left', slot=f'{1+decimal}/{slots}', anchorname='g')]
         if decimal:
             pins.append(IcPin(pin='dp', side='left', slot=f'1/{slots}', anchorname='dp'))
         if anode:
@@ -698,7 +697,7 @@ class SevenSegment(Ic):
         left = 0.8
         seglen = 1.5
         bot = (boxheight-seglen*2)/2
-        
-        segments = sevensegdigit(left=0.8, bottom=bot, decimal=decimal, digit=digit,
+
+        segments = sevensegdigit(left=left, bottom=bot, decimal=decimal, digit=digit,
                                  segcolor=segcolor, tilt=tilt, labelsegments=labelsegments)
         self.segments.extend(segments)

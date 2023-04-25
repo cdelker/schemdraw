@@ -30,8 +30,8 @@ A :py:class:`schemdraw.elements.connectors.Header` is a generic Header block wit
             if hasattr(e, 'keywords'):  # partials have keywords attribute
                 args = ', '.join(['{}={}'.format(k, v) for k, v in e.keywords.items()])
                 name = '{}({})'.format(name, args)
-            eplaced = d.add(e, d='right', xy=[x, y])
-            eplaced.add_label(name, loc='rgt', align=('left', 'center'))
+            eplaced = d.add(e(d='right', xy=[x, y]))
+            eplaced.label(name, loc='rgt', halign='left', valign='center')
         return d
 
     elmlist = [elm.Header,

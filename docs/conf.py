@@ -18,8 +18,8 @@ import pkg_resources
 
 # -- Project information -----------------------------------------------------
 
-project = 'SchemDraw'
-copyright = '2022, Collin J. Delker'
+project = 'Schemdraw'
+copyright = '2023, Collin J. Delker'
 author = 'Collin J. Delker'
 
 # The full version, including alpha/beta/rc tags

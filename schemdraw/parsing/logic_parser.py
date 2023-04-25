@@ -15,7 +15,7 @@ from .buchheim import buchheim
 
 class LogicTree():
     ''' Organize the logic gates into tree structure '''
-    def __init__(self, node='and', *children):
+    def __init__(self, node, *children):
         self.node = node
         self.children = children if children else []
 
@@ -23,9 +23,11 @@ class LogicTree():
         if isinstance(key, (int, slice)):
             return self.children[key]
 
-    def __iter__(self): return self.children.__iter__()
+    def __iter__(self):
+        return self.children.__iter__()
 
-    def __len__(self): return len(self.children)
+    def __len__(self):
+        return len(self.children)
 
 
 def parse_string(logicstr):
@@ -48,11 +50,8 @@ def parse_string(logicstr):
     expr = pyparsing.Forward()
 
     identifier = ~(and_ | or_ | nand_ | nor_ | not_ | true_ | false_) + \
-                  pyparsing.Word('$' + pyparsing.alphas + '_', pyparsing.alphanums + '_' + '$')
+        pyparsing.Word('$' + pyparsing.alphas + '_', pyparsing.alphanums + '_' + '$')
 
-    atom = identifier | pyparsing.Group('(' + expr + ')')
-    factor = pyparsing.Group(pyparsing.ZeroOrMore(not_op) + atom)
-    term = pyparsing.Group(factor + pyparsing.ZeroOrMore(and_op + factor))
     expr = pyparsing.infixNotation(true_ | false_ | identifier,
                                    [(not_op, 1, pyparsing.opAssoc.RIGHT),
                                     (and_op, 2, pyparsing.opAssoc.LEFT),
@@ -131,12 +130,12 @@ def drawlogic(tree, gateH=.7, gateW=2, outlabel=None):
         g = drawing.add(elm(d='r', at=(x, y), anchor='end',
                             l=gateW, inputs=len(root.children)))
         if outlabel:
-            g.add_label(outlabel, loc='end')
+            g.label(outlabel, loc='end')
 
         for i, child in enumerate(root.children):
             anchorname = 'start' if elm in [logic.Not, logic.Buf] else f'in{i+1}'
-            if child.node not in elmdefs.keys():
-                g.add_label(child.node, loc=anchorname)
+            if child.node not in elmdefs:
+                g.label(child.node, loc=anchorname)
             else:
                 childelm = drawit(child, depth+1)  # recursive
                 drawing.add(RightLines(at=(g, anchorname), to=childelm.end))
@@ -146,8 +145,8 @@ def drawlogic(tree, gateH=.7, gateW=2, outlabel=None):
     return drawing
 
 
-def logicparse(expr: str, gateW: float=2, gateH: float=.75,
-               outlabel: str=None) -> schemdraw.Drawing:
+def logicparse(expr: str, gateW: float = 2, gateH: float = .75,
+               outlabel: str = None) -> schemdraw.Drawing:
     ''' Parse a logic string expression and draw the gates in a schemdraw Drawing
 
         Logic expression is defined by string using 'and', 'or', 'not', etc.

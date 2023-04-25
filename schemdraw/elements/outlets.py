@@ -21,7 +21,7 @@ class OutletA(Element):
             * hot
             * neutral
     '''
-    def __init__(self, *d, plug: bool=False, **kwargs):
+    def __init__(self, *d, plug: bool = False, **kwargs):
         super().__init__(*d, **kwargs)
         self._outletrad = 1.5
         th = linspace(math.pi*3/4, math.pi*5/4)
@@ -66,7 +66,7 @@ class OutletB(OutletA):
             * neutral
             * ground
     '''
-    def __init__(self, *d, plug: bool=False, **kwargs):
+    def __init__(self, *d, plug: bool = False, **kwargs):
         super().__init__(*d, plug=plug, **kwargs)
         gndw = self._outletrad/4
         gndy = -self._outletrad/2.5
@@ -98,7 +98,7 @@ class OutletC(Element):
             * hot
             * neutral
     '''
-    def __init__(self, *d, plug: bool=False, **kwargs):
+    def __init__(self, *d, plug: bool = False, **kwargs):
         super().__init__(*d, **kwargs)
         fill = 'black' if plug else 'bg'
         self.segments.append(SegmentCircle((0, 0), _outletrad))
@@ -109,6 +109,7 @@ class OutletC(Element):
         self.anchors['hot'] = (x, 0)
         self.anchors['neutral'] = (-x, 0)
         self.params['drop'] = self.anchors['hot']
+
 
 class OutletD(Element):
     ''' Outlet Style D (India)
@@ -121,7 +122,7 @@ class OutletD(Element):
             * neutral
             * ground
     '''
-    def __init__(self, *d, plug: bool=False, **kwargs):
+    def __init__(self, *d, plug: bool = False, **kwargs):
         super().__init__(*d, **kwargs)
         fill = 'black' if plug else 'bg'
         self.segments.append(SegmentCircle((0, 0), _outletrad))
@@ -149,7 +150,7 @@ class OutletE(Element):
             * neutral
             * ground
     '''
-    def __init__(self, *d, plug: bool=False, **kwargs):
+    def __init__(self, *d, plug: bool = False, **kwargs):
         super().__init__(*d, **kwargs)
         fill = 'black' if plug else 'bg'
         self.segments.append(SegmentCircle((0, 0), _outletrad))
@@ -176,18 +177,18 @@ class OutletF(OutletC):
             * hot
             * neutral
     '''
-    def __init__(self, *d, plug: bool=False, **kwargs):
+    def __init__(self, *d, plug: bool = False, **kwargs):
         super().__init__(*d, plug=plug, **kwargs)
         fill = 'black' if plug else 'bg'
         notchw = _outletrad/8
-        notchH = _outletrad/6
+        notchh = _outletrad/6
         y = _outletrad - .05
         y2 = -_outletrad + .05
-        self.segments.append(Segment(((-notchw, y), (-notchw, y-notchH),
-                                      (notchw, y-notchH), (notchw, y)),
+        self.segments.append(Segment(((-notchw, y), (-notchw, y-notchh),
+                                      (notchw, y-notchh), (notchw, y)),
                                      fill=fill, zorder=3))
-        self.segments.append(Segment(((-notchw, y2), (-notchw, y2+notchH),
-                                      (notchw, y2+notchH), (notchw, y2)),
+        self.segments.append(Segment(((-notchw, y2), (-notchw, y2+notchh),
+                                      (notchw, y2+notchh), (notchw, y2)),
                                      fill=fill, zorder=3))
 
 
@@ -202,7 +203,7 @@ class OutletG(Element):
             * neutral
             * ground
     '''
-    def __init__(self, *d, plug: bool=False, **kwargs):
+    def __init__(self, *d, plug: bool = False, **kwargs):
         super().__init__(*d, **kwargs)
         fill = 'black' if plug else 'bg'
         self.segments.append(SegmentCircle((0, 0), _outletrad))
@@ -215,7 +216,7 @@ class OutletG(Element):
         fill = 'black' if plug else 'bg'
         self.segments.append(SegmentPoly(((-gndw/2, gndtop), (-gndw/2, gndtop-pinh),
                                           (gndw/2, gndtop-pinh), (gndw/2, gndtop)),
-                                        fill=fill, zorder=3))
+                                         fill=fill, zorder=3))
         self.segments.append(SegmentPoly(((-pinleft, y), (-pinleft, y-pinw),
                                           (-pinleft-pinh, y-pinw), (-pinleft-pinh, y)),
                                          fill=fill, zorder=3))
@@ -239,7 +240,7 @@ class OutletH(Element):
             * neutral
             * ground
     '''
-    def __init__(self, *d, plug: bool=False, **kwargs):
+    def __init__(self, *d, plug: bool = False, **kwargs):
         super().__init__(*d, **kwargs)
         fill = 'black' if plug else 'bg'
         self.segments.append(SegmentCircle((0, 0), _outletrad))
@@ -252,8 +253,8 @@ class OutletH(Element):
         self.segments.append(SegmentPoly(verts, fill=fill, zorder=3))
         self.segments.append(SegmentPoly(hotverts, fill=fill, zorder=3))
         self.segments.append(SegmentPoly(neutverts, fill=fill, zorder=3))
-        self.anchors['hot'] = (hotverts[1])
-        self.anchors['neutral'] = (neutverts[2])
+        self.anchors['hot'] = hotverts[1]
+        self.anchors['neutral'] = neutverts[2]
         self.anchors['ground'] = (0, gndtop-pinh)
         self.params['drop'] = self.anchors['hot']
 
@@ -269,7 +270,7 @@ class OutletI(OutletH):
             * neutral
             * ground
     '''
-    def __init__(self, *d, plug: bool=False, **kwargs):
+    def __init__(self, *d, plug: bool = False, **kwargs):
         super().__init__(*d, plug=plug, **kwargs)
         hotcenter = (.4, .3)
         neutcenter = (-.4, .3)
@@ -290,7 +291,7 @@ class OutletJ(Element):
             * neutral
             * ground
     '''
-    def __init__(self, *d, plug: bool=False, **kwargs):
+    def __init__(self, *d, plug: bool = False, **kwargs):
         super().__init__(*d, **kwargs)
         fill = 'black' if plug else 'bg'
         fullh = _outletrad*1.5
@@ -321,7 +322,7 @@ class OutletK(Element):
             * neutral
             * ground
     '''
-    def __init__(self, *d, plug: bool=False, **kwargs):
+    def __init__(self, *d, plug: bool = False, **kwargs):
         super().__init__(*d, **kwargs)
         fill = 'black' if plug else 'bg'
         self.segments.append(SegmentCircle((0, 0), _outletrad))
@@ -356,7 +357,7 @@ class OutletL(Element):
             * neutral
             * ground
     '''
-    def __init__(self, *d, plug: bool=False, **kwargs):
+    def __init__(self, *d, plug: bool = False, **kwargs):
         super().__init__(*d, **kwargs)
         fill = 'black' if plug else 'bg'
         fullh = _outletrad*1.2

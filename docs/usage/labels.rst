@@ -236,7 +236,7 @@ Alternatively, loop current arrows can be added anywhere with any size using :py
 .. jupyter-execute::
     :hide-output:
     
-    d += (a:=elm.LineDot())
+    d += (a:=elm.Line().dot())
     d += elm.LoopArrow(width=.75, height=.75).at(a.end)
 
 .. jupyter-execute::

@@ -11,7 +11,8 @@ Matplotlib Backend
 
 By default, all schematics are drawn on a Matplotlib axis.
 A new Matplotlib Figure and Axis will be created, with no frame or borders.
-A schematic may be added to an existing Axis by using the :py:meth:`schemdraw.Drawing.save` method.
+A schematic may be added to an existing Axis by using the :py:meth:`schemdraw.Drawing.draw` method and setting
+the `canvas` parameter to an existing Axis instance.
 
 The Matplotlib backend renders text labels as primative lines and arcs rather than text elements by default.
 This has the downside that SVG editors, such as Inkscape, cannot perform textual searches on the SVGs.

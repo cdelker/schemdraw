@@ -29,8 +29,8 @@ class And(Element):
             out
             in[X] - for each input
     '''
-    def __init__(self, *d, inputs: int=2, nand: bool=False, inputnots: Sequence[int]=None,
-                 leadin: float=0.35, leadout: float=0.35, **kwargs):
+    def __init__(self, *d, inputs: int = 2, nand: bool = False, inputnots: Sequence[int] = None,
+                 leadin: float = 0.35, leadout: float = 0.35, **kwargs):
         super().__init__(*d, **kwargs)
         rad = gateh/2
         theta = linspace(math.radians(-90), math.radians(90), num=50)
@@ -84,7 +84,6 @@ class And(Element):
         self.params['drop'] = self.segments[-1].path[-1]  # type: ignore
 
 
-
 Nand = partial(And, nand=True)
 
 
@@ -103,9 +102,9 @@ class Or(Element):
             out
             in[X] - for each input
     '''
-    def __init__(self, *d, inputs: int=2, nor: bool=False,
-                 xor: bool=False, inputnots: Sequence[int]=None,
-                 leadin: float=0.35, leadout: float=0.35, **kwargs):
+    def __init__(self, *d, inputs: int = 2, nor: bool = False,
+                 xor: bool = False, inputnots: Sequence[int] = None,
+                 leadin: float = 0.35, leadout: float = 0.35, **kwargs):
         super().__init__(*d, **kwargs)
         # Define OR path
         orflat = .5
@@ -305,7 +304,7 @@ class SchmittAnd(And):
             in2
             out
     '''
-    def __init__(self, *d, leadin: float=0.35, leadout: float=0.35, **kwargs):
+    def __init__(self, *d, leadin: float = 0.35, leadout: float = 0.35, **kwargs):
         super().__init__(*d, leadin=leadin, leadout=leadout, **kwargs)
         xofst = leadin+gatel/2
         self.segments.append(Segment([(xofst+.07, -.15), (xofst+.25, -.15),

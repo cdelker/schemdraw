@@ -18,7 +18,7 @@ class Line(Element2Term):
         Args:
             arrow: arrowhead specifier, such as '->', '<-', '<->', '-o', or '\|->'
     '''
-    def __init__(self, *d, arrow: str=None, **kwargs):
+    def __init__(self, *d, arrow: str = None, **kwargs):
         super().__init__(*d, **kwargs)
         arrowwidth = kwargs.get('arrowwidth', .15)
         arrowlength = kwargs.get('arrowlength', .25)
@@ -35,8 +35,9 @@ class Arrow(Line):
             headlength: Length of arrow head
     '''
     def __init__(self, *d,
-                 double: bool=False,
-                 headwidth: float=0.15, headlength: float=0.25,
+                 double: bool = False,
+                 headwidth: float = 0.15,
+                 headlength: float = 0.25,
                  **kwargs):
         super().__init__(*d, arrowlength=headlength, arrowwidth=headwidth, **kwargs)
         self.double = double
@@ -57,29 +58,6 @@ class Arrow(Line):
         return result
 
 
-class LineDot(Line):
-    ''' Line with a dot at the end
-
-        Args:
-            double: Show dot on both ends
-            radius: Radius of the dot
-            fill: Color to fill the dot, or `True` to fill with element color
-    '''
-    def __init__(self, *d, double: bool=False, radius: float=0.075,
-                 fill: bool=True, **kwargs):
-        super().__init__(*d, **kwargs)
-        warnings.warn("LineDot is deprecated. Use Line().dot() or Line(arrow='-o')", DeprecationWarning)
-        zorder = kwargs.get('zorder', 4)
-        self.params['fill'] = fill
-        self.segments.append(SegmentCircle(
-            (0, 0), radius, ref='end', zorder=zorder))
-        if double:
-            self.segments.append(SegmentCircle((0, 0), radius,
-                                               ref='start', zorder=zorder))
-        # Explicitly define center so reverses work
-        self.anchors['center'] = (0, 0)
-
-
 class Gap(Element2Term):
     ''' Gap for labeling port voltages, for example. Draws nothing,
         but provides place to attach a label such as ('+', 'V', '-').
@@ -98,7 +76,7 @@ class Dot(Element):
             radius: Radius of dot
             open: Draw as an open circle
     '''
-    def __init__(self, *d, radius: float=0.075, open: bool=False, **kwargs):
+    def __init__(self, *d, radius: float = 0.075, open: bool = False, **kwargs):
         super().__init__(*d, **kwargs)
         fill = 'bg' if open else True
         self.anchors['start'] = (0, 0)
@@ -113,7 +91,7 @@ class Dot(Element):
 
 class Arrowhead(Element):
     ''' Arrowhead'''
-    def __init__(self, *d, headwidth: float=.15, headlength: float=.25, **kwargs):
+    def __init__(self, *d, headwidth: float = .15, headlength: float = .25, **kwargs):
         super().__init__(*d, **kwargs)
         self.segments.append(Segment([
             (-headlength, 0), (0, 0)], arrowwidth=headwidth, arrowlength=headlength, arrow='->'))
@@ -133,7 +111,7 @@ class DotDotDot(Element):
         "Ellipsis" is a reserved keyword in Python used for slicing,
         thus the name DotDotDot.
     '''
-    def __init__(self, *d, radius: float=0.075, open: bool=False, **kwargs):
+    def __init__(self, *d, radius: float = 0.075, open: bool = False, **kwargs):
         super().__init__(*d, **kwargs)
         fill = 'bg' if open else True
         self.params['fill'] = fill
@@ -158,14 +136,14 @@ class Wire(Element):
             k: Distance before the wire changes directions in `n` and `c` shapes.
             arrow: arrowhead specifier, such as '->', '<-', '<->', or '-o'
     '''
-    def __init__(self, shape: str='-', k: float=1, arrow: str=None, **kwargs):
+    def __init__(self, shape: str = '-', k: float = 1, arrow: str = None, **kwargs):
         super().__init__(**kwargs)
         self._userparams['shape'] = shape
         self._userparams['k'] = k
         self._userparams['arrow'] = arrow
         self._userparams.setdefault('to', (3, -2))
 
-    def to(self, xy: XY, dx: float=0, dy: float=0) -> 'Element':
+    def to(self, xy: XY, dx: float = 0, dy: float = 0) -> 'Element':
         ''' Specify ending position
 
             Args:
@@ -177,17 +155,17 @@ class Wire(Element):
         self._userparams['to'] = Point((xy.x + dx, xy.y + dy))
         return self
 
-    def delta(self, dx: float=0, dy: float=0):
+    def delta(self, dx: float = 0, dy: float = 0):
         ''' Specify ending position relative to start position '''
         self._userparams['delta'] = Point((dx, dy))
         return self
 
-    def dot(self, open: bool=False) -> 'Element':
+    def dot(self, open: bool = False) -> 'Element':
         ''' Add a dot to the end of the element '''
         self._userparams['dot'] = True if not open else 'open'
         return self
 
-    def idot(self, open: bool=False) -> 'Element':
+    def idot(self, open: bool = False) -> 'Element':
         ''' Add a dot to the input/start of the element '''
         self._userparams['idot'] = True if not open else 'open'
         return self
@@ -286,7 +264,7 @@ class Arc2(Element):
         self.k = k
         self.arrow = arrow
 
-    def to(self, xy: XY, dx: float=0, dy: float=0) -> 'Element':
+    def to(self, xy: XY, dx: float = 0, dy: float = 0) -> 'Element':
         ''' Specify ending position
 
             Args:
@@ -298,7 +276,7 @@ class Arc2(Element):
         self._userparams['to'] = Point((xy.x + dx, xy.y + dy))
         return self
 
-    def delta(self, dx: float=0, dy: float=0) -> 'Element':
+    def delta(self, dx: float = 0, dy: float = 0) -> 'Element':
         ''' Specify change in position '''
         self._userparams['delta'] = Point((dx, dy))
         return self
@@ -381,7 +359,7 @@ class Arc3(Element):
         self.arrowlength = arrowlength
         self.arrowwidth = arrowwidth
 
-    def to(self, xy: XY, dx: float=0, dy: float=0) -> 'Element':
+    def to(self, xy: XY, dx: float = 0, dy: float = 0) -> 'Element':
         ''' Specify ending position
 
             Args:
@@ -393,7 +371,7 @@ class Arc3(Element):
         self._userparams['to'] = Point((xy.x + dx, xy.y + dy))
         return self
 
-    def delta(self, dx: float=0, dy: float=0) -> 'Element':
+    def delta(self, dx: float = 0, dy: float = 0) -> 'Element':
         ''' Specify change in position '''
         self._userparams['delta'] = Point((dx, dy))
         return self
@@ -544,14 +522,14 @@ class ArcLoop(Element):
             TL
             TR
     '''
-    def __init__(self, radius: float=0.6, arrow: str=None, arrowlength=.25, arrowwidth=.2, **kwargs):
+    def __init__(self, radius: float = 0.6, arrow: str = None, arrowlength=.25, arrowwidth=.2, **kwargs):
         super().__init__(**kwargs)
         self.radius = radius
         self.arrow = arrow
         self.arrowlength = arrowlength
         self.arrowwidth = arrowwidth
 
-    def to(self, xy: XY, dx: float=0, dy: float=0) -> 'Element':
+    def to(self, xy: XY, dx: float = 0, dy: float = 0) -> 'Element':
         ''' Specify ending position
 
             Args:
@@ -563,7 +541,7 @@ class ArcLoop(Element):
         self._userparams['to'] = Point((xy.x + dx, xy.y + dy))
         return self
 
-    def delta(self, dx: float=0, dy: float=0):
+    def delta(self, dx: float = 0, dy: float = 0):
         ''' Specify ending position relative to start position '''
         self._userparams['delta'] = Point((dx, dy))
         return self
@@ -633,7 +611,7 @@ class Label(Element):
         Args:
             label: text to display.
     '''
-    def __init__(self, *d, label: str=None, **kwargs):
+    def __init__(self, *d, label: str = None, **kwargs):
         super().__init__(*d, **kwargs)
         self.params['lblloc'] = 'center'
         self.params['lblofst'] = 0
@@ -651,7 +629,7 @@ class Tag(Element):
             width: Width of the tag
             height: Height of the tag
     '''
-    def __init__(self, *d, width: float=1.5, height: float=0.625, **kwargs):
+    def __init__(self, *d, width: float = 1.5, height: float = 0.625, **kwargs):
         super().__init__(*d, **kwargs)
         height = height / 2
         self.segments.append(SegmentPoly([(0, 0),
@@ -676,9 +654,12 @@ class CurrentLabel(Element):
             length: Length of the arrow
             top: Draw arrow on top or bottom of element
             reverse: Reverse the arrow direction
+            headlength: Length of arrowhead
+            headwidth: Width of arrowhead
     '''
-    def __init__(self, ofst: float=0.4, length: float=2,
-                 top: bool=True, reverse: bool=False, **kwargs):
+    def __init__(self, ofst: float = 0.4, length: float = 2,
+                 top: bool = True, reverse: bool = False,
+                 headlength: float = 0.3, headwidth: float = 0.2, **kwargs):
         super().__init__(**kwargs)
         self.params['lblofst'] = -.1
         self.params['drop'] = None
@@ -688,6 +669,8 @@ class CurrentLabel(Element):
         self._length = length
         self._top = top
         self._reverse = reverse
+        self._headlength = headlength
+        self._headwidth = headwidth
 
     def at(self, xy: XY | Element) -> 'Element':  # type: ignore[override]
         ''' Specify CurrentLabel position.
@@ -727,7 +710,7 @@ class CurrentLabel(Element):
         if self._reverse:
             a, b = b, a
 
-        self.segments.append(Segment((a, b), arrow='->', arrowwidth=.2, arrowlength=.3))
+        self.segments.append(Segment((a, b), arrow='->', arrowwidth=self._headwidth, arrowlength=self._headlength))
         return super()._place(dwgxy, dwgtheta, **dwgparams)
 
 
@@ -744,9 +727,9 @@ class CurrentLabelInline(Element):
             headwidth: Width of arrowhead
     '''
     def __init__(self,
-                 direction: BilateralDirection='in',
-                 ofst: float=0.8, start: bool=True,
-                 headlength: float=0.3, headwidth: float=0.3, **kwargs):
+                 direction: BilateralDirection = 'in',
+                 ofst: float = 0.8, start: bool = True,
+                 headlength: float = 0.3, headwidth: float = 0.3, **kwargs):
         super().__init__(**kwargs)
         self.params['lblofst'] = 0
         self.params['drop'] = None
@@ -801,9 +784,9 @@ class ZLabel(Element):
             headlength: Arrowhead length
             headwidth: Arrowhead width
     '''
-    def __init__(self, ofst: float=0.5, hofst: float=0.4,
-                 length: float=1, lengthtip: float=.5,
-                 headlength: float=0.25, headwidth: float=0.15, **kwargs):
+    def __init__(self, ofst: float = 0.5, hofst: float = 0.4,
+                 length: float = 1, lengthtip: float = .5,
+                 headlength: float = 0.25, headwidth: float = 0.15, **kwargs):
         super().__init__(**kwargs)
         self.params['drop'] = None
         self.anchor('center')
@@ -832,7 +815,7 @@ class ZLabel(Element):
             except AttributeError:
                 bbox = xy.get_bbox()
                 pos = Point(((bbox.xmax + bbox.xmin)/2, (bbox.ymax + bbox.ymin)/2))
-            
+
             super().at(pos)
 
             theta = xy.transform.theta
@@ -859,7 +842,7 @@ class ZLabel(Element):
         self.segments.append(Segment((c, b, a), arrow='->',
                                      arrowwidth=self._headwidth,
                                      arrowlength=self._headlength))
-        
+
         # Attempt to align the label at the tail of the arrow.
         self.params['lblloc'] = 'tail'
         th = self._cparams.get('theta', 0)
@@ -867,7 +850,7 @@ class ZLabel(Element):
             th += 180
 
         th -= 90  # Because arrow is at right angle
-        th = (th+360)%360
+        th = (th+360) % 360
 
         if th < 45 or th > 315:
             self.params['lblalign'] = ('left', 'center')
@@ -896,9 +879,9 @@ class LoopArrow(Element):
             width: Width of loop
             height: Height of loop
     '''
-    def __init__(self, direction: Arcdirection='cw',
-                 theta1: float=35, theta2: float=-35,
-                 width: float=1.0, height: float=1.0, **kwargs):
+    def __init__(self, direction: Arcdirection = 'cw',
+                 theta1: float = 35, theta2: float = -35,
+                 width: float = 1.0, height: float = 1.0, **kwargs):
         super().__init__(**kwargs)
 
         self.segments.append(SegmentArc(
@@ -923,10 +906,10 @@ class LoopCurrent(LoopArrow):
             theta2: Angle of end of loop arrow
             pad: Distance from elements to loop
     '''
-    def __init__(self, elm_list: Sequence[Element]=None,
-                 direction: Arcdirection='cw',
-                 theta1: float=35, theta2: float=-35,
-                 pad: float=0.2, **kwargs):
+    def __init__(self, elm_list: Sequence[Element] = None,
+                 direction: Arcdirection = 'cw',
+                 theta1: float = 35, theta2: float = -35,
+                 pad: float = 0.2, **kwargs):
         assert elm_list is not None
         bbox1 = elm_list[0].get_bbox(transform=True, includetext=False)
         bbox2 = elm_list[1].get_bbox(transform=True, includetext=False)
@@ -954,7 +937,7 @@ class Rect(Element):
             corner1: Position of top-left corner
             corner2: Position of bottom-right corner
     '''
-    def __init__(self, *d, corner1: XY=(0, 0), corner2: XY=(1, 1), **kwargs):
+    def __init__(self, *d, corner1: XY = (0, 0), corner2: XY = (1, 1), **kwargs):
         super().__init__(*d, **kwargs)
         c1a = (corner1[0], corner2[1])
         c2a = (corner2[0], corner1[1])
@@ -971,9 +954,9 @@ class Encircle(Element):
             pady: Vertical distance from elements to loop
             includelabels: Include labesl in the ellipse
     '''
-    def __init__(self, elm_list: Sequence[Element]=None,
-                 padx: float=0.2, pady: float=0.2,
-                 includelabels: bool=True,
+    def __init__(self, elm_list: Sequence[Element] = None,
+                 padx: float = 0.2, pady: float = 0.2,
+                 includelabels: bool = True,
                  **kwargs):
         super().__init__(**kwargs)
         assert elm_list is not None
@@ -1029,10 +1012,10 @@ class EncircleBox(Element):
             pady: Vertical distance from elements to loop
             includelabels: Include labels in the box
     '''
-    def __init__(self, elm_list: Sequence[Element]=None,
-                 cornerradius: float=0.3,
-                 padx: float=0.2, pady: float=0.2,
-                 includelabels: bool=True,
+    def __init__(self, elm_list: Sequence[Element] = None,
+                 cornerradius: float = 0.3,
+                 padx: float = 0.2, pady: float = 0.2,
+                 includelabels: bool = True,
                  **kwargs):
         super().__init__(**kwargs)
         assert elm_list is not None

@@ -10,7 +10,7 @@ _gnd_lead = 0.4
 
 class Ground(Element):
     ''' Ground connection '''
-    def __init__(self, *d, lead: bool=True, **kwargs):
+    def __init__(self, *d, lead: bool = True, **kwargs):
         super().__init__(*d, **kwargs)
         gnd_lead = _gnd_lead if lead else 0
         self.segments.append(Segment(
@@ -28,9 +28,9 @@ class Ground(Element):
 
 class GroundSignal(Element):
     ''' Signal ground '''
-    def __init__(self, *d, lead: bool=True, **kwargs):
+    def __init__(self, *d, lead: bool = True, **kwargs):
         super().__init__(*d, **kwargs)
-        
+
         gnd_lead = _gnd_lead if lead else 0
         self.segments.append(Segment(
             [(0, 0), (0, -gnd_lead), (-resheight, -gnd_lead), (0, -gnd_lead-resheight),
@@ -44,7 +44,7 @@ class GroundSignal(Element):
 
 class GroundChassis(Element):
     ''' Chassis ground '''
-    def __init__(self, *d, lead: bool=True, **kwargs):
+    def __init__(self, *d, lead: bool = True, **kwargs):
         super().__init__(*d, **kwargs)
         gnd_lead = _gnd_lead if lead else 0
         dx = resheight*.75
@@ -118,7 +118,7 @@ class AntennaLoop2(Element):
 
 class Vss(Element):
     ''' Vss connection '''
-    def __init__(self, *d, lead: bool=True, **kwargs):
+    def __init__(self, *d, lead: bool = True, **kwargs):
         super().__init__(*d, **kwargs)
         dx = resheight*.75
         gnd_lead = _gnd_lead if lead else 0
@@ -135,7 +135,7 @@ class Vss(Element):
 
 class Vdd(Element):
     ''' Vdd connection '''
-    def __init__(self, *d, lead: bool=True, **kwargs):
+    def __init__(self, *d, lead: bool = True, **kwargs):
         super().__init__(*d, **kwargs)
         dx = resheight*.75
         gnd_lead = _gnd_lead if lead else 0
@@ -147,3 +147,19 @@ class Vdd(Element):
         self.anchors['start'] = (0, 0)
         self.anchors['center'] = (0, 0)
         self.anchors['end'] = (0, 0)
+
+
+class NoConnect(Element):
+    ''' No Connection '''
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        dx = resheight*.75
+        dy = resheight*.75
+        self.segments.append(Segment([(-dx, -dy), (dx, dy)]))
+        self.segments.append(Segment([(-dx, dy), (dx, -dy)]))
+        self.params['drop'] = (0, 0)
+        self.params['theta'] = 0
+        self.anchors['start'] = (0, 0)
+        self.anchors['center'] = (0, 0)
+        self.anchors['end'] = (0, 0)
+        self.params['lblloc'] = 'bottom'

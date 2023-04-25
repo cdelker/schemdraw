@@ -7,19 +7,21 @@ from dataclasses import dataclass
 import warnings
 import math
 
+from .. import default_canvas
 from ..segments import SegmentText, SegmentCircle, BBox, SegmentType
 from ..transform import Transform
 from .. import util
 from ..util import Point
 from ..types import XY, Linestyle, Align, Halign, Valign, LabelLoc
 
+from ..backends.svg import Figure as svgFigure
+try:
+    from ..backends.mpl import Figure as mplFigure
+except ImportError:
+    mplFigure = None  # type: ignore
+
+
 gap = (math.nan, math.nan)  # Put a gap in a path
-
-
-Figure = None
-def _set_elm_backend(figureclass):
-    global Figure
-    Figure = figureclass
 
 
 @dataclass
@@ -92,28 +94,32 @@ class Element:
     def down(self) -> 'Element':
         ''' Set the direction to down '''
         if 'd' in self._userparams:
-            warnings.warn(f"Duplicated direction parameter in element. `{self._userparams['d']}` changed to `down`.")
+            warnings.warn("Duplicated direction parameter in element."
+                          f" `{self._userparams['d']}` changed to `down`.")
         self._userparams['d'] = 'down'
         return self
 
     def left(self) -> 'Element':
         ''' Set the direction to left '''
         if 'd' in self._userparams:
-            warnings.warn(f"Duplicated direction parameter in element. `{self._userparams['d']}` changed to `left`.")
+            warnings.warn("Duplicated direction parameter in element."
+                          f" `{self._userparams['d']}` changed to `left`.")
         self._userparams['d'] = 'left'
         return self
 
     def right(self) -> 'Element':
         ''' Set the direction to right '''
         if 'd' in self._userparams:
-            warnings.warn(f"Duplicated direction parameter in element. `{self._userparams['d']}` changed to `right`.")
+            warnings.warn("Duplicated direction parameter in element."
+                          f" `{self._userparams['d']}` changed to `right`.")
         self._userparams['d'] = 'right'
         return self
 
     def theta(self, theta: float) -> 'Element':
         ''' Set the drawing direction angle in degrees '''
         if 'd' in self._userparams:
-            warnings.warn(f"Duplicate direciton parameter in element: `{self._userparams['d']}` replaced with `theta={theta}`")
+            warnings.warn("Duplicate direciton parameter in element:"
+                          f" `{self._userparams['d']}` replaced with `theta={theta}`")
         self._userparams['theta'] = theta
         return self
 
@@ -124,16 +130,16 @@ class Element:
         self._userparams['drop'] = drop
         return self
 
-    def at(self, xy: XY | tuple['Element', str], dx: float=0, dy: float=0) -> 'Element':
+    def at(self, xy: XY | tuple['Element', str], dx: float = 0, dy: float = 0) -> 'Element':
         ''' Set the element xy position
 
             Args:
                 xy: (x,y) position or tuple of (Element, anchorname)
-                
         '''
         xy = Point(xy)
         if 'at' in self._userparams:
-            warnings.warn(f"Duplicate `at` parameter in element: `{self._userparams['at']}` changed to `{xy}`.")
+            warnings.warn("Duplicate `at` parameter in element: "
+                          f"`{self._userparams['at']}` changed to `{xy}`.")
         if isinstance(xy[1], str):
             self._userparams['at'] = xy
             if dx != 0 or dy != 0:
@@ -142,12 +148,12 @@ class Element:
             self._userparams['at'] = Point((xy.x + dx, xy.y + dy))
         return self
 
-    def scale(self, scale: float=1) -> 'Element':
+    def scale(self, scale: float = 1) -> 'Element':
         ''' Apply scale/zoom factor to element '''
         self._userparams['zoom'] = scale
         return self
 
-    def flip(self)-> 'Element':
+    def flip(self) -> 'Element':
         ''' Apply flip up/down '''
         self._userparams['flip'] = True
         return self
@@ -162,7 +168,8 @@ class Element:
             aligned with the position specified by `at()` method.
         '''
         if 'anchor' in self._userparams:
-            warnings.warn(f"Duplicate anchor parameter in element: `{self._userparams['anchor']}` changed to `{anchor}`.")
+            warnings.warn("Duplicate anchor parameter in element: "
+                          f"`{self._userparams['anchor']}` changed to `{anchor}`.")
 
         self._userparams['anchor'] = anchor
         return self
@@ -194,7 +201,7 @@ class Element:
         self._userparams['lw'] = lw
         return self
 
-    def fill(self, color: bool | str=True) -> 'Element':
+    def fill(self, color: bool | str = True) -> 'Element':
         ''' Sets the element fill color.
 
             Args:
@@ -204,8 +211,8 @@ class Element:
         self._userparams['fill'] = color
         return self
 
-    def style(self, color: str=None, fill: str=None,
-              ls: Linestyle=None, lw: float=None) -> 'Element':
+    def style(self, color: str = None, fill: str = None,
+              ls: Linestyle = None, lw: float = None) -> 'Element':
         ''' Apply all style parameters
 
             Args:
@@ -237,15 +244,15 @@ class Element:
         return self
 
     def label(self, label: str | Sequence[str],
-              loc: LabelLoc=None,
-              ofst: XY | float | None=None,
-              halign: Halign=None,
-              valign: Valign=None,
-              rotate: bool | float=False,
-              fontsize: float=None,
-              font: str=None,
-              mathfont: str=None,
-              color: str=None):
+              loc: LabelLoc = None,
+              ofst: XY | float | None = None,
+              halign: Halign = None,
+              valign: Valign = None,
+              rotate: bool | float = False,
+              fontsize: float = None,
+              font: str = None,
+              mathfont: str = None,
+              color: str = None):
         ''' Add a label to the Element.
 
             Args:
@@ -282,7 +289,7 @@ class Element:
             if pos in element.absanchors:
                 xy = element.absanchors[pos]
             else:
-                raise KeyError('Unknown anchor name {}'.format(pos))
+                raise KeyError(f'Unknown anchor name {pos}')
             self._userparams['at'] = xy
 
         # All subsequent actions get params from cparams
@@ -408,7 +415,8 @@ class Element:
         xmin = ymin = math.inf
         xmax = ymax = -math.inf
         for segment in self.segments:
-            if not includetext and isinstance(segment, SegmentText): continue
+            if not includetext and isinstance(segment, SegmentText):
+                continue
             if transform:
                 segment = segment.xform(self.transform)
             segxmin, segymin, segxmax, segymax = segment.get_bbox()
@@ -419,36 +427,10 @@ class Element:
 
         return BBox(xmin, ymin, xmax, ymax)
 
-    def add_label(self, label, loc='top', ofst=None, align=None,
-                  rotation=0, fontsize=None, size=None, font=None, color=None):
-        ''' Add a label to the element, after element placement
-
-            Args:
-                label: Text to add. If list, list items will be evenly spaced
-                    along the element.
-                loc: Location for text relative to element, either
-                    ['top', 'bot', 'lft', 'rgt'] or name of an anchor
-                ofst: Offset between text and element. Defaults to
-                    Element.lblofst. Can be list of [x, y] offets.
-                align: Tuple of (horizontal, vertical) alignment where
-                    horizontal is ['center', 'left', 'right'] and vertical
-                    is ['center', 'top', 'bottom']
-                rotation: Rotation angle (degrees)
-                fontsize: Font size
-                font: Font family
-                color: Label text color
-         '''
-        warnings.warn('`add_label` is deprecated. Use `label` instead.', DeprecationWarning)
-        if align is None:
-            align = (None, None)
-        fontsize = fontsize if fontsize else size
-        self._place_label(label, loc, ofst, align=align, rotation=rotation,
-                          fontsize=fontsize, font=font, color=color)
-
-    def _place_label(self, label: str, loc: LabelLoc=None,
-                     ofst: XY | float | None=None, align: Align=(None, None),
-                     rotation: float=0, fontsize: float=None,
-                     font: str=None, mathfont: str=None, color: str=None) -> None:
+    def _place_label(self, label: str, loc: LabelLoc = None,
+                     ofst: XY | float | None = None, align: Align = (None, None),
+                     rotation: float = 0, fontsize: float = None,
+                     font: str = None, mathfont: str = None, color: str = None) -> None:
         ''' Adds the label Segment to the element, AFTER element placement
 
             Args:
@@ -468,7 +450,7 @@ class Element:
                 color: Label text color
         '''
         rotation = (rotation + 360) % 360
-        if rotation > 90 and rotation < 270:
+        if 90 < rotation < 270:
             rotation -= 180  # Keep the label from going upside down
 
         if loc is None:
@@ -558,7 +540,7 @@ class Element:
                     except ValueError:
                         rotalignidx = 0
                     if ofst is None and not isinstance(label, (tuple, list)):
-                        ofst = [ofstx, ofsty]
+                        ofst = Point((ofstx, ofsty))
 
             if loc == 'center':
                 align = (align[0] or 'center', align[1] or 'center')
@@ -648,13 +630,16 @@ class Element:
                 ofst = Point((0, ofst)) if not isinstance(ofst, (list, tuple)) else Point(ofst)
                 xy = Point(((xmax+xmin)/2, (ymax+ymin)/2))
             else:
-                raise ValueError('Undefined location {}'.format(loc))
+                raise ValueError(f'Undefined location {loc}')
             xy = xy + ofst
             self.segments.append(SegmentText(xy, label, **lblparams))
 
     def _draw_on_figure(self):
         ''' Draw the element on a new figure. Useful for _repr_ functions. '''
-        fig = Figure(bbox=self.get_bbox(transform=True))
+        if default_canvas.default_canvas == 'matplotlib':
+            fig = mplFigure()
+        else:
+            fig = svgFigure(bbox=self.get_bbox(transform=True))
         if not self._cparams:
             self._place((0, 0), 0)
         fig.set_bbox(self.get_bbox(transform=True))
@@ -668,6 +653,8 @@ class Element:
 
     def _repr_png_(self):
         ''' PNG representation for Jupyter '''
+        if default_canvas.default_canvas == 'svg':
+            return None
         fig = self._draw_on_figure()
         return fig.getimage(ext='png')
 
@@ -702,7 +689,7 @@ class Element2Term(Element):
             * center
             * end
     '''
-    def to(self, xy: XY, dx: float=0, dy: float=0) -> 'Element2Term':
+    def to(self, xy: XY, dx: float = 0, dy: float = 0) -> 'Element2Term':
         ''' Sets ending position of element
 
             Args:
@@ -724,7 +711,7 @@ class Element2Term(Element):
         self._userparams['toy'] = y
         return self
 
-    def up(self, length: float=None) -> 'Element':
+    def up(self, length: float = None) -> 'Element':
         ''' Set the direction to up '''
         if 'd' in self._userparams:
             warnings.warn(f"Duplicated direction parameter in element. `{self._userparams['d']}` changed to `up`.")
@@ -733,7 +720,7 @@ class Element2Term(Element):
             self._userparams['l'] = length
         return self
 
-    def down(self, length: float=None) -> 'Element':
+    def down(self, length: float = None) -> 'Element':
         ''' Set the direction to down '''
         if 'd' in self._userparams:
             warnings.warn(f"Duplicated direction parameter in element. `{self._userparams['d']}` changed to `down`.")
@@ -742,7 +729,7 @@ class Element2Term(Element):
             self._userparams['l'] = length
         return self
 
-    def left(self, length: float=None) -> 'Element':
+    def left(self, length: float = None) -> 'Element':
         ''' Set the direction to left '''
         if 'd' in self._userparams:
             warnings.warn(f"Duplicated direction parameter in element. `{self._userparams['d']}` changed to `left`.")
@@ -751,7 +738,7 @@ class Element2Term(Element):
             self._userparams['l'] = length
         return self
 
-    def right(self, length: float=None) -> 'Element':
+    def right(self, length: float = None) -> 'Element':
         ''' Set the direction to right '''
         if 'd' in self._userparams:
             warnings.warn(f"Duplicated direction parameter in element. `{self._userparams['d']}` changed to `right`.")
@@ -772,12 +759,12 @@ class Element2Term(Element):
         self._userparams['endpts'] = (start, end)
         return self
 
-    def dot(self, open: bool=False) -> 'Element2Term':
+    def dot(self, open: bool = False) -> 'Element2Term':
         ''' Add a dot to the end of the element '''
         self._userparams['dot'] = True if not open else 'open'
         return self
 
-    def idot(self, open: bool=False) -> 'Element2Term':
+    def idot(self, open: bool = False) -> 'Element2Term':
         ''' Add a dot to the input/start of the element '''
         self._userparams['idot'] = True if not open else 'open'
         return self
@@ -825,7 +812,7 @@ class Element2Term(Element):
                 x = float(tox)
             else:
                 x = tox[0]
-            endpt = [x, xy[1]]
+            endpt = Point((x, xy[1]))
             totlen = util.dist(xy, endpt)
             theta = 180 if xy.x > x else 0
         elif toy is not None:
@@ -834,7 +821,7 @@ class Element2Term(Element):
                 y = toy
             else:
                 y = toy[1]
-            endpt = [xy[0], y]
+            endpt = Point((xy[0], y))
             totlen = util.dist(xy, endpt)
             theta = -90 if xy.y > y else 90
 
@@ -858,13 +845,13 @@ class Element2Term(Element):
                 self._localshift = Point((0, 0))
 
             # Adjust position of endpoints (arrowheads, dots, etc.)
-            for i in range(len(self.segments)):
-                if getattr(self.segments[i], 'endref', None) == 'end':
+            for i, segment in enumerate(self.segments):
+                if getattr(segment, 'endref', None) == 'end':
                     xform = Transform(0, end)
-                    self.segments[i] = self.segments[i].xform(xform)
-                elif getattr(self.segments[i], 'endref', None) == 'start':
+                    self.segments[i] = segment.xform(xform)
+                elif getattr(segment, 'endref', None) == 'start':
                     xform = Transform(0, start)
-                    self.segments[i] = self.segments[i].xform(xform)
+                    self.segments[i] = segment.xform(xform)
         else:
             start = Point(self.segments[0].path[0])  # type: ignore
             end = Point(self.segments[0].path[-1])  # type: ignore

@@ -26,8 +26,8 @@ class OrthoLines(Element):
             xstart: Fractional distance (0-1) to start vertical
                 portion of first ortholine
     '''
-    def __init__(self, *d, n: int=1, dy: float=0.6,
-                 xstart: float=None, arrow: str=None, **kwargs):
+    def __init__(self, *d, n: int = 1, dy: float = 0.6,
+                 xstart: float = None, arrow: str = None, **kwargs):
         super().__init__(*d, **kwargs)
         self._userparams['n'] = n
         self._userparams['dy'] = dy
@@ -40,7 +40,7 @@ class OrthoLines(Element):
         self._userparams['to'] = xy
         return self
 
-    def delta(self, dx: float=0, dy: float=0):
+    def delta(self, dx: float = 0, dy: float = 0):
         ''' Specify ending position relative to start position '''
         self._userparams['delta'] = Point((dx, dy))
         return self
@@ -106,7 +106,7 @@ class RightLines(Element):
             n: Number of parallel lines
             dy: Distance between parallel lines
     '''
-    def __init__(self, *d, n: int=1, dy: float=0.6, arrow: str=None, **kwargs):
+    def __init__(self, *d, n: int = 1, dy: float = 0.6, arrow: str = None, **kwargs):
         super().__init__(*d, **kwargs)
         self._userparams['n'] = n
         self._userparams['dy'] = dy
@@ -118,11 +118,11 @@ class RightLines(Element):
         self._userparams['to'] = xy
         return self
 
-    def delta(self, dx: float=0, dy: float=0):
+    def delta(self, dx: float = 0, dy: float = 0):
         ''' Specify ending position relative to start position '''
         self._userparams['delta'] = Point((dx, dy))
         return self
-    
+
     def _place(self, dwgxy: XY, dwgtheta: float, **dwgparams) -> tuple[Point, float]:
         ''' Calculate absolute placement of Element '''
         self._dwgparams = dwgparams
@@ -153,7 +153,7 @@ class RightLines(Element):
         self.params['lblloc'] = 'mid'
         self.params['drop'] = (x, dy)
         self.params['droptheta'] = 90 if dy > 0 else -90
-    
+
         return super()._place(dwgxy, dwgtheta, **dwgparams)
 
 
@@ -185,19 +185,20 @@ class Header(Element):
             pin[X] for each pin
     '''
     def __init__(self, *d,
-                 rows: int=4, cols: int=1,
-                 style: HeaderStyle='round',
-                 numbering: HeaderNumbering='lr',
-                 shownumber: bool=False,
+                 rows: int = 4,
+                 cols: int = 1,
+                 style: HeaderStyle = 'round',
+                 numbering: HeaderNumbering = 'lr',
+                 shownumber: bool = False,
                  pinsleft: Sequence[str] = None,
                  pinsright: Sequence[str] = None,
-                 pinalignleft: Valign='bottom',
-                 pinalignright: Valign='bottom',
-                 pinfontsizeright: float=9,
-                 pinfontsizeleft: float=9,
-                 pinspacing: float=0.6,
-                 edge: float=0.3,
-                 pinfill: str='bg',
+                 pinalignleft: Valign = 'bottom',
+                 pinalignright: Valign = 'bottom',
+                 pinfontsizeright: float = 9,
+                 pinfontsizeleft: float = 9,
+                 pinspacing: float = 0.6,
+                 edge: float = 0.3,
+                 pinfill: str = 'bg',
                  **kwargs):
         super().__init__(*d, **kwargs)
         if pinsleft is None:
@@ -241,7 +242,8 @@ class Header(Element):
                 if shownumber:
                     numxy = (w+.05 if col % 2 else -.05, xy[1])
                     align = ('left' if col % 2 else 'right', 'bottom')
-                    self.segments.append(SegmentText(numxy, pnumber, fontsize=pinfontsizeleft, align=align))  # type: ignore
+                    self.segments.append(SegmentText(
+                        numxy, pnumber, fontsize=pinfontsizeleft, align=align))  # type: ignore
 
                 if pinsleft and (cols == 1 or not col % 2):
                     lblxy = (-.05, xy[1])
@@ -263,7 +265,7 @@ class Jumper(Element):
         Args:
             pinspacing: Spacing between pins
     '''
-    def __init__(self, *d, pinspacing: float=0.6, **kwargs):
+    def __init__(self, *d, pinspacing: float = 0.6, **kwargs):
         super().__init__(*d, **kwargs)
         self.params['theta'] = 0
         pinrad = .1
@@ -290,7 +292,8 @@ class BusConnect(Element):
             * end
             * p[X] where X is int for each data line
     '''
-    def __init__(self, *d, n: int=1, dy: float=0.6, up: bool=True, lwbus: float=4, l: float=3, **kwargs):
+    def __init__(self, *d, n: int = 1, dy: float = 0.6, up: bool = True,
+                 lwbus: float = 4, l: float = 3, **kwargs):
         super().__init__(*d, **kwargs)
         self.params['theta'] = 0
         dx = l
@@ -300,7 +303,7 @@ class BusConnect(Element):
         for i in range(n):
             y = -i*dy
             self.segments.append(Segment([(0, y), (dx-slantx, y), (dx, y+slanty)]))
-            self.anchors['pin{}'.format(i+1)] = (0, y)
+            self.anchors[f'pin{i+1}'] = (0, y)
         self.segments.append(Segment([(dx, slantx), (dx, slanty-n*dy)], lw=lwbus))
         self.params['drop'] = (dx, slantx)
         self.anchors['start'] = (dx, slantx)
@@ -315,7 +318,7 @@ class BusLine(Line):
         Args:
             lw: Line width
     '''
-    def __init__(self, *d, lw: float=4, **kwargs):
+    def __init__(self, *d, lw: float = 4, **kwargs):
         super().__init__(*d, **kwargs)
         self.params['lw'] = lw
 
@@ -332,8 +335,8 @@ class DB9(Element):
         Anchors:
             * pin1 thru pin9
     '''
-    def __init__(self, *d, pinspacing: float=0.6, edge: float=0.3, number: bool=False,
-                 pinfill: str='bg',
+    def __init__(self, *d, pinspacing: float = 0.6, edge: float = 0.3,
+                 number: bool = False, pinfill: str = 'bg',
                  **kwargs):
         super().__init__(*d, **kwargs)
         self.params['theta'] = 0
@@ -347,17 +350,17 @@ class DB9(Element):
         for i in range(4):
             xy = (edge, h1-(i+.5)*pinspacing-edge)
             self.segments.append(SegmentCircle(xy, pinrad, fill=pinfill, zorder=4))
-            self.anchors['pin{}'.format(9-i)] = xy
+            self.anchors[f'pin{9-i}'] = xy
             if number:
-                self.segments.append(SegmentText([xy[0], xy[1]+pinrad],
+                self.segments.append(SegmentText((xy[0], xy[1]+pinrad),
                                                  str(9-i), fontsize=9,
                                                  align=('center', 'bottom')))
         for i in range(5):
             xy = (edge+pinspacing, h2-(i+.75)*pinspacing-edge)
             self.segments.append(SegmentCircle(xy, pinrad, fill=pinfill, zorder=4))
-            self.anchors['pin{}'.format(5-i)] = xy
+            self.anchors[f'pin{5-i}'] = xy
             if number:
-                self.segments.append(SegmentText([xy[0], xy[1]+pinrad],
+                self.segments.append(SegmentText((xy[0], xy[1]+pinrad),
                                                  str(5-i), fontsize=9,
                                                  align=('center', 'bottom')))
 
@@ -374,8 +377,8 @@ class DB25(Element):
         Anchors:
             * pin1 thru pin25
     '''
-    def __init__(self, *d, pinspacing: float=0.6, edge: float=0.3, number: bool=False,
-                 pinfill: str='bg',
+    def __init__(self, *d, pinspacing: float = 0.6, edge: float = 0.3,
+                 number: bool = False, pinfill: str = 'bg',
                  **kwargs):
         super().__init__(*d, **kwargs)
         self.params['theta'] = 0
@@ -389,17 +392,17 @@ class DB25(Element):
         for i in range(12):
             xy = (edge, h1-(i+.5)*pinspacing-edge)
             self.segments.append(SegmentCircle(xy, pinrad, fill=pinfill, zorder=4))
-            self.anchors['pin{}'.format(25-i)] = xy
+            self.anchors[f'pin{25-i}'] = xy
             if number:
-                self.segments.append(SegmentText([xy[0], xy[1]+pinrad],
+                self.segments.append(SegmentText((xy[0], xy[1]+pinrad),
                                                  str(25-i), fontsize=9,
                                                  align=('center', 'bottom')))
         for i in range(13):
             xy = (edge+pinspacing, h2-(i+.75)*pinspacing-edge)
             self.segments.append(SegmentCircle(xy, pinrad, fill=pinfill, zorder=4))
-            self.anchors['pin{}'.format(13-i)] = xy
+            self.anchors[f'pin{13-i}'] = xy
             if number:
-                self.segments.append(SegmentText([xy[0], xy[1]+pinrad],
+                self.segments.append(SegmentText((xy[0], xy[1]+pinrad),
                                                  str(13-i), fontsize=9,
                                                  align=('center', 'bottom')))
 
@@ -419,7 +422,8 @@ class CoaxConnect(Element):
             * E
             * W
     '''
-    def __init__(self, *d, radius: float=0.4, radiusinner: float=0.12, fillinner: str='bg', **kwargs):
+    def __init__(self, *d, radius: float = 0.4, radiusinner: float = 0.12,
+                 fillinner: str = 'bg', **kwargs):
         super().__init__(*d, **kwargs)
         self.segments.append(SegmentCircle((0, 0), radius))
         self.segments.append(SegmentCircle((0, 0), radiusinner, fill=fillinner, zorder=4))

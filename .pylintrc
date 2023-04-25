@@ -1,0 +1,6 @@
+[MASTER]
+extension-pkg-whitelist=PyQt5
+
+[FORMAT]
+max-line-length=120
+good-names=i,j,k,x,y,dx,dy,lw,ls,at,xy,ax

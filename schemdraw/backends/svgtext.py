@@ -18,7 +18,7 @@ from xml.etree import ElementTree as ET
 import string
 import re
 
-from ..util import Point, rotate
+from ..util import Point
 from ..types import Halign, Valign, RotationMode
 
 
@@ -49,7 +49,7 @@ textable = {
     r'\\iota': 'ι',
     r'\\kappa': 'κ',
     r'\\lambda': 'λ',
-    r'\\mu': 'μ', # \u03BC - "Greek small letter mu" (not \uB5 micro sign)
+    r'\\mu': 'μ',  # \u03BC - "Greek small letter mu" (not \uB5 micro sign)
     r'\\nu': 'ν',
     r'\\xi': 'ξ',
     r'\\omicron': 'ο',
@@ -229,12 +229,12 @@ def mathtextsvg(text: str) -> ET.Element:
             if sup.startswith(r'\overline{'):
                 t = t.replace(sup, f'<tspan text-decoration="overline">{sup[10:-1]}</tspan>')
         svgtext += t
-        
+
     svgtext = '<tspan>' + svgtext + '</tspan>'
     return ET.fromstring(svgtext)
 
 
-def string_width(st: str, fontsize: float=12, font: str='Arial') -> float:
+def string_width(st: str, fontsize: float = 12, font: str = 'Arial') -> float:
     ''' Estimate string width based on individual characters
 
         Args:
@@ -252,37 +252,61 @@ def string_width(st: str, fontsize: float=12, font: str='Arial') -> float:
     if 'times' in font.lower() or ('serif' in font.lower() and 'sans' not in font.lower()):
         # Estimates based on Times Roman
         for s in st:
-            if s in 'lij:.,;t': size += 47
-            elif s in '|': size += 37
-            elif s in '![]fI/\\': size += 55
-            elif s in '`-(){}r': size += 60
-            elif s in 'sJ°': size += 68
-            elif s in '"zcae?1': size += 74
-            elif s in '*^kvxyμbdhnopqug#$_α' + string.digits: size += 85
-            elif s in '#$+<>=~FSP': size += 95
-            elif s in 'ELZT': size += 105
-            elif s in 'BRC': size += 112
-            elif s in 'DAwHUKVXYNQGO': size += 122
-            elif s in '&mΩ': size += 130
-            elif s in '%': size += 140
-            elif s in 'MW@∠': size += 155
-            else: size += 60
+            if s in 'lij:.,;t':
+                size += 47
+            elif s in '|':
+                size += 37
+            elif s in '![]fI/\\':
+                size += 55
+            elif s in '`-(){}r':
+                size += 60
+            elif s in 'sJ°':
+                size += 68
+            elif s in '"zcae?1':
+                size += 74
+            elif s in '*^kvxyμbdhnopqug#$_α' + string.digits:
+                size += 85
+            elif s in '#$+<>=~FSP':
+                size += 95
+            elif s in 'ELZT':
+                size += 105
+            elif s in 'BRC':
+                size += 112
+            elif s in 'DAwHUKVXYNQGO':
+                size += 122
+            elif s in '&mΩ':
+                size += 130
+            elif s in '%':
+                size += 140
+            elif s in 'MW@∠':
+                size += 155
+            else:
+                size += 60
 
     else:  # Arial, or other sans fonts
         for s in st:
-            if s in 'lij|\' ': size += 37
-            elif s in '![]fI.,:;/\\t': size += 50
-            elif s in '`-(){}r"': size += 60
-            elif s in '*^zcsJkvxyμ°': size += 85
-            elif s in 'aebdhnopqug#$L+<>=?_~FZTα' + string.digits: size += 95
-            elif s in 'BSPEAKVXY&UwNRCHD': size += 112
-            elif s in 'QGOMm%@Ω': size += 140
-            elif s in 'W∠': size += 155
-            else: size += 75
+            if s in 'lij|\' ':
+                size += 37
+            elif s in '![]fI.,:;/\\t':
+                size += 50
+            elif s in '`-(){}r"':
+                size += 60
+            elif s in '*^zcsJkvxyμ°':
+                size += 85
+            elif s in 'aebdhnopqug#$L+<>=?_~FZTα' + string.digits:
+                size += 95
+            elif s in 'BSPEAKVXY&UwNRCHD':
+                size += 112
+            elif s in 'QGOMm%@Ω':
+                size += 140
+            elif s in 'W∠':
+                size += 155
+            else:
+                size += 75
     return size * 72 / 1000.0 * (fontsize/12)  # to points
 
 
-def text_approx_size(text: str, font: str='Arial', size: float=16) -> tuple[float, float, float]:
+def text_approx_size(text: str, font: str = 'Arial', size: float = 16) -> tuple[float, float, float]:
     ''' Get approximate width, height and line spacing of multiline text
 
         Does not account for descent or ascent of text (for example,
@@ -309,10 +333,10 @@ def text_approx_size(text: str, font: str='Arial', size: float=16) -> tuple[floa
     return w, h, dy
 
 
-def text_tosvg(text: str, x: float, y: float, font: str='Arial', size: float=16, color: str='black',
-               halign: Halign='center', valign: Valign='center',
-               rotation: float=0, rotation_mode: RotationMode='anchor',
-               testmode: bool=False) -> ET.Element:
+def text_tosvg(text: str, x: float, y: float, font: str = 'Arial', size: float = 16, color: str = 'black',
+               halign: Halign = 'center', valign: Valign = 'center',
+               rotation: float = 0, rotation_mode: RotationMode = 'anchor',
+               testmode: bool = False) -> ET.Element:
     ''' Convert text to svg <text> tag.
 
         Args:
@@ -336,7 +360,7 @@ def text_tosvg(text: str, x: float, y: float, font: str='Arial', size: float=16,
     w, h, dy = text_approx_size(text, font=font, size=size)
 
     textelm = ET.Element('text')
-    
+
     for line in text.splitlines():
         tspan = mathtextsvg(line)
         tspan.set('x', str(x))

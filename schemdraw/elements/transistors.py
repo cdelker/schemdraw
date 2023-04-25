@@ -1,16 +1,17 @@
 ''' Transistor elements '''
 
+from __future__ import annotations
+
 from .elements import Element, Element2Term
 from .twoterm import reswidth
 from ..segments import Segment, SegmentCircle
-from ..types import Point
+from ..types import Point, XY
 
-
-fetw = reswidth*4
-feth = reswidth*5
-fetl = feth/2
+fetw = reswidth * 4
+feth = reswidth * 5
+fetl = feth / 2
 fetgap = reswidth
-fetr = reswidth*.7  # Radius of "not" bubble
+fetr = reswidth * .7  # Radius of "not" bubble
 
 
 class NFet(Element):
@@ -154,6 +155,244 @@ class PFet2(Element2Term):
         if self._userparams.get('reverse', False):
             self.anchors['source'] = self.anchors['start']
             self.anchors['drain'] = self.anchors['end']
+
+# Analog style FETs
+afetw   = reswidth * 2.5
+afeth   = afetw * 2
+afetl   = afeth * 0.5
+afetgap = afetw * 0.2
+afeti   = afeth * 0.1  # gate inset
+afetb   = afeti * 0.75 # bias dot radius
+afeta   = 0.25         # fet arrow head width
+
+class AnalogNFet(Element):
+    ''' N-type Field Effect Transistor, analog style
+
+        Args:
+            bulk: Draw bulk contact
+            offset_gate: Draw gate on the source side of the transistor, rather than middle
+            arrow: Draw source arrow on the transistor if bulk arrow is not drawn
+
+        Anchors:
+            source
+            drain
+            gate
+            bulk (if bulk=True)
+            center
+    '''
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        bulk        = kwargs.pop('bulk', False)
+        offset_gate = kwargs.pop('offset_gate', True)
+        arrow       = kwargs.pop('arrow', True) if bulk == False else False
+        self.segments.append(Segment([(0, 0), (0, -afetl), (afetw, -afetl),
+                                      (afetw, -afetl - afeth), (0, -afetl - afeth),
+                                      (0, -2 * afetl - afeth)]))
+        if arrow:
+            self.segments.append(Segment([(afetw, -afetl - afeth), (0, -afetl - afeth)],
+                                         arrow='->', arrowwidth=afeta, arrowlength=afeta))
+        self.segments.append(Segment([(afetw + afetgap, -afetl - afeti),
+                                      (afetw + afetgap, -afetl - afeth + afeti)]))
+
+        if offset_gate:
+            self.segments.append(Segment([(afetw + afetgap, -afetl - afeth + afeti),
+                                          (afetw + afetgap + afetl, -afetl - afeth + afeti)]))
+            self.anchors['gate'] = (afetw + afetgap + afetl, -afetl - afeth + afeti)
+        else:
+            self.segments.append(Segment([(afetw + afetgap, -afetl - afeth / 2),
+                                          (afetw + afetgap + afetl, -afetl - afeth / 2)]))
+            self.anchors['gate'] = (afetw + afetgap + afetl, -afetl - afeth / 2)
+
+        self.anchors['source'] = (0, -2 * afetl - afeth)
+        self.anchors['drain']  = (0, 0)
+        self.anchors['center'] = (0, -afetl - afeth / 2)
+        self.params['drop']    = (0, -2 * afetl - afeth)
+        self.params['lblloc']  = 'lft'
+        if bulk:
+            self.segments.append(Segment([(0, -afetl - afeth / 2),(afetw, -afetl - afeth / 2)],
+                                         arrow='->', arrowwidth=afeta, arrowlength=afeta))
+            self.anchors['bulk'] = (0, -afetl - afeth / 2)
+
+
+class AnalogPFet(Element):
+    ''' P-type Field Effect Transistor, analog style
+
+        Args:
+            bulk: Draw bulk contact
+            offset_gate: Draw gate on the source side of the transistor, rather than middle
+            arrow: Draw source arrow on the transistor if bulk arrow is not drawn
+
+        Anchors:
+            source
+            drain
+            gate
+            bulk (if bulk=True)
+            center
+    '''
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        bulk        = kwargs.pop('bulk', False)
+        offset_gate = kwargs.pop('offset_gate', True)
+        arrow       = kwargs.pop('arrow', True) if bulk == False else False
+        self.segments.append(Segment([(0, 0), (0, -afetl), (afetw, -afetl),
+                                      (afetw, -afetl - afeth), (0, -afetl - afeth),
+                                      (0, -2 * afetl - afeth)]))
+        if arrow:
+            self.segments.append(Segment([(0, -afetl), (afetw, -afetl)],
+                                         arrow='->', arrowwidth=afeta, arrowlength=afeta))
+        self.segments.append(Segment([(afetw + afetgap, -afetl - afeti),
+                                      (afetw + afetgap, -afetl - afeth + afeti)]))
+        if offset_gate:
+            self.segments.append(Segment([(afetw + afetgap, -afetl - afeti),
+                                          (afetw + afetgap + afetl, -afetl - afeti)]))
+            self.anchors['gate'] = (afetw + afetgap + afetl, -afetl - afeti)
+        else:
+            self.segments.append(Segment([(afetw + afetgap, -afetl - afeth / 2),
+                                          (afetw + afetgap + afetl, -afetl - afeth / 2)]))
+            self.anchors['gate'] = (afetw + afetgap + afetl, -afetl - afeth / 2)
+        #self.segments.append(SegmentCircle([fetw+fetgap+fetr, -fetl-fetw/2], fetr))
+
+        self.anchors['source'] = (0, 0)
+        self.anchors['drain']  = (0, -2 * afetl - afeth)
+        self.anchors['center'] = (0, -afetl - afeth / 2)
+        self.params['drop']    = (0, -2 * afetl - afeth)
+        self.params['lblloc']  = 'lft'
+        if bulk:
+            self.segments.append(Segment([(fetw, -afetl - afeth / 2), (0, -afetl - afeth / 2)],
+                                         arrow='->', arrowwidth=afeta, arrowlength=afeta))
+            self.anchors['bulk'] = (0, -afetl - afeth / 2)
+
+class AnalogBiasedFet(Element):
+    ''' Generic biased small-signal Field Effect Transistor, analog style
+
+        Args:
+            bulk: Draw bulk contact
+            offset_gate: Draw gate on the source side of the transistor, rather than middle
+            arrow: Draw source dot on the transistor if bulk dot is not drawn
+
+        Anchors:
+            source
+            drain
+            gate
+            bulk (if bulk=True)
+            center
+    '''
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        bulk        = kwargs.pop('bulk', False)
+        offset_gate = kwargs.pop('offset_gate', True)
+        arrow       = kwargs.pop('arrow', True) if bulk == False else False
+        self.segments.append(Segment([(0, 0), (0, -afetl), (afetw, -afetl),
+                                      (afetw, -afetl - afeth), (0, -afetl - afeth),
+                                      (0, -2 * afetl - afeth)]))
+        if arrow:
+            self.segments.append(SegmentCircle(center=(afetb * 2, -afetl - afeth), radius=afetb, fill=True, lw=None))
+        self.segments.append(Segment([(afetw + afetgap, -afetl - afeti),
+                                      (afetw + afetgap, -afetl - afeth + afeti)]))
+
+        if offset_gate:
+            self.segments.append(Segment([(afetw + afetgap, -afetl - afeth + afeti),
+                                          (afetw + afetgap + afetl, -afetl - afeth + afeti)]))
+            self.anchors['gate'] = (afetw + afetgap + afetl, -afetl - afeth + afeti)
+        else:
+            self.segments.append(Segment([(afetw + afetgap, -afetl - afeth / 2),
+                                          (afetw + afetgap + afetl, -afetl - afeth / 2)]))
+            self.anchors['gate'] = (afetw + afetgap + afetl, -afetl - afeth / 2)
+
+        self.anchors['source'] = (0, -2 * afetl - afeth)
+        self.anchors['drain']  = (0, 0)
+        self.anchors['center'] = (0, -afetl - afeth / 2)
+        self.params['drop']    = (0, -2 * afetl - afeth)
+        self.params['lblloc']  = 'lft'
+        if bulk:
+            self.segments.append(Segment([(0, -afetl - afeth / 2),
+                                          (afetw, -afetl - afeth / 2)]))
+            self.segments.append(SegmentCircle(center=(afetw - afetb * 2, -afetl - afeth / 2), radius=afetb, fill=True, lw=None))
+            self.anchors['bulk'] = (0, -afetl - afeth / 2)
+
+class FetCurrentLabel(Element):
+    ''' Current label arrow drawn next to channel of MOS transistor
+
+        Use `.at()` method to place the label over an
+        existing element.
+
+        Args:
+            ofst: Offset distance from element
+            length: Length of the arrow
+            reverse: Reverse the arrow direction
+
+        Anchors:
+            center
+    '''
+    def __init__(self, ofst: float=0.4, length: float=afeth + afetl, reverse: bool=False, **kwargs):
+        super().__init__(**kwargs)
+        self.params['lblofst'] = 0.1
+        self.params['drop'] = None
+        self.anchor('center')
+        self.anchors['center'] = (0, 0)
+        self._ofst = ofst
+        self._length = length
+        self._reverse = reverse
+        self._target_flipped = False
+        self._flip_label = False
+
+    def at(self, xy: XY | Element) -> 'Element':  # type: ignore[override]
+        ''' Specify FetCurrentLabel position.
+
+            If xy is an Element, arrow will be centered
+            along element and its color will also be
+            inherited.
+
+            Args:
+                xy: The absolute (x, y) position or an
+                Element instance to center the arrow over
+        '''
+        if isinstance(xy, Element):
+            try:
+                pos = xy.center
+            except AttributeError:
+                bbox = xy.get_bbox()
+                pos = Point(((bbox.xmax + bbox.xmin) / 2, (bbox.ymax + bbox.ymin) / 2))
+            super().at(pos)
+
+            try:
+                if xy._userparams.get('reverse', False):
+                    self._ofst             = -self._ofst
+
+                self._target_flipped = xy._userparams.get('flip', False)
+            except AttributeError:
+                pass
+
+            # No 'top=True' labels above the element, but consistent arrow direction
+            theta = xy.transform.theta
+            self.theta(theta)
+            self._flip_label ^= (theta % 360) > 90 and (theta % 360) <= 270
+            if 'color' in xy._userparams:
+                self.color(xy._userparams.get('color'))
+        else:
+            super().at(xy)
+        return self
+
+    def _place(self, dwgxy, dwgtheta, **dwgparams):
+        self._ofst = -self._ofst
+
+        self._flip_label ^= self._ofst > 0
+
+        if self._flip_label:
+            self.params['lblloc'] = 'right'
+        else:
+            self.params['lblloc'] = 'lft'
+
+        a, b = (self._ofst, self._length/2), (self._ofst, -self._length/2)
+
+        if self._reverse:
+            a, b = b, a
+
+        if self._target_flipped:
+            a, b = b, a
+
+        self.segments.append(Segment((a, b), arrow='->', arrowwidth=.2, arrowlength=.3))
+        return super()._place(dwgxy, dwgtheta, **dwgparams)
 
 
 # Junction FETs

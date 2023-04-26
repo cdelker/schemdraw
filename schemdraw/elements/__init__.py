@@ -14,7 +14,7 @@ from .sources import (Source, SourceV, SourceI, SourceSin, SourcePulse, SourceSq
 from .switches import (Switch, SwitchSpdt, SwitchSpdt2, SwitchDpst, SwitchDpdt, Button, SwitchReed,
                        SwitchRotary, SwitchDIP)
 from .transistors import (NFet, PFet, JFet, JFetN, JFetP, Bjt, BjtNpn, BjtPnp, BjtPnp2c, Bjt2, BjtNpn2, BjtPnp2,
-                          BjtPnp2c2, NFet2, PFet2, JFet2, JFetN2, JFetP2)
+                          BjtPnp2c2, NFet2, PFet2, JFet2, JFetN2, JFetP2, NMos, NMos2, PMos, PMos2)
 from .misc import Speaker, Mic, Motor, AudioJack
 from .xform import Transformer
 from .cables import Coax, Triax

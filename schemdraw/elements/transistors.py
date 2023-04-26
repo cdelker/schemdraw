@@ -1,9 +1,287 @@
 ''' Transistor elements '''
 
+__all__ = [
+    'Bjt', 'Bjt2', 'BjtNpn', 'BjtNpn2', 'BjtPnp', 'BjtPnp2', 'BjtPnp2c', 'BjtPnp2c2',
+    'JFet', 'JFet2', 'JFetN', 'JFetN2', 'JFetP', 'JFetP2',
+    'NFet', 'NFet2', 'NMos', 'NMos2', 'PFet', 'PFet2', 'PMos', 'PMos2']
+
+
 from .elements import Element, Element2Term
 from .twoterm import reswidth
-from ..segments import Segment, SegmentCircle
+from ..segments import Segment, SegmentPoly, SegmentCircle
 from ..types import Point
+
+
+class Mosfet(Element):
+
+    '''Base Class for Metal Oxide Semiconductor Field Effect Transistors
+
+        Args:
+            variant: one of {'nmos', 'pmos'}
+            diode: Draw body diode
+            circle: Draw circle around the mosfet
+
+        Anchors:
+            * source
+            * drain
+            * gate
+    '''
+
+    __variants = ['nmos', 'pmos']
+
+    def __init__(self, *d, variant: str, diode: bool = False, circle: bool = False, **kwargs):
+
+        if variant not in self.__variants:
+            raise ValueError(
+                "Parameter 'variant' must be one of {}, not {}.".format(
+                    self.__variants, variant))
+
+        super().__init__(*d, **kwargs)
+
+        u = reswidth*0.6
+
+        # gate
+        self.segments.extend([
+            Segment([(-18*u, -8*u), (-8*u, -8*u)]),
+            Segment([(-8*u, -8*u), (-8*u, -22*u)]),
+            ])
+
+        # ---
+        self.segments.extend([
+            Segment([(-6*u, -8*u), (-6*u, -12*u)]),
+            Segment([(-6*u, -13*u), (-6*u, -17*u)]),
+            Segment([(-6*u, -18*u), (-6*u, -22*u)]),
+            ])
+
+        # top lead
+        self.segments.extend([
+            Segment([(-6*u, -10*u), (0, -10*u)]),
+            Segment([(0, -10*u), (0, 0)]),
+            ])
+
+        # bottom lead
+        self.segments.extend([
+            Segment([(0, -20*u), (0, -30*u)]),
+            Segment([(-6*u, -20*u), (0, -20*u)]),
+            ])
+
+        if variant == 'nmos':
+
+            # source
+            self.segments.extend([
+                Segment([(-3*u, -15*u), (0, -15*u)]),
+                Segment([(0, -15*u), (0, -20*u)]),
+                SegmentPoly([(-6*u, -15*u), (-3*u, -13*u), (-3*u, -17*u)]),
+                ])
+
+            self.anchors['source'] = (0, -30*u)
+            self.anchors['gate'] = (-18*u, -8*u)
+            self.anchors['drain'] = (0, 0)
+
+        elif variant == 'pmos':
+
+            # source
+            self.segments.extend([
+                Segment([(-6*u, -15*u), (-3*u, -15*u)]),
+                Segment([(0, -15*u), (0, -10*u)]),
+                SegmentPoly([(0, -15*u), (-3*u, -13*u), (-3*u, -17*u)]),
+                ])
+
+            self.anchors['source'] = (0, 0)
+            self.anchors['gate'] = (-18*u, -8*u)
+            self.anchors['drain'] = (0, -30*u)
+
+        self.params['drop'] = (0, -30*u)
+        self.params['lblloc'] = 'rgt'
+
+        if diode:
+            self.segments.extend([
+                Segment([(0, -10*u), (5*u, -10*u),]),
+                Segment([(5*u, -10*u), (5*u, -13.5*u)]),
+                Segment([(0, -20*u), (5*u, -20*u)]),
+                Segment([(5*u, -20*u), (5*u, -16.5*u)]),
+                SegmentPoly([(3*u, -16.5*u), (7*u, -16.5*u), (5*u, -13.5*u)]),
+                Segment([(3*u, -13.5*u), (7*u, -13.5*u)]),
+                ])
+
+        if circle:
+            self.segments.append(
+                SegmentCircle((-1*u, -15*u), 12*u))
+
+
+class NMos(Mosfet):
+
+    ''' N-type Metal Oxide Semiconductor Field Effect Transistor
+
+        Args:
+            diode: Draw body diode
+            circle: Draw circle around the mosfet
+
+        Anchors:
+            * source
+            * drain
+            * gate
+    '''
+
+    def __init__(self, *d, diode: bool = False, circle: bool = False, **kwargs):
+
+        super().__init__(*d, variant='nmos', diode=diode, circle=circle, **kwargs)
+
+
+class PMos(Mosfet):
+
+    ''' P-type Metal Oxide Semiconductor Field Effect Transistor
+
+        Args:
+            diode: Draw body diode
+            circle: Draw circle around the mosfet
+
+        Anchors:
+            * source
+            * drain
+            * gate
+    '''
+
+    def __init__(self, *d, diode: bool = False, circle: bool = False, **kwargs):
+
+        super().__init__(*d, variant='pmos', diode=diode, circle=circle, **kwargs)
+
+
+class Mosfet2(Element):
+
+    '''Base Class for Metal Oxide Semiconductor Field Effect Transistors
+
+        Args:
+            variant: one of {'nmos', 'pmos'}
+            diode: Draw body diode
+            circle: Draw circle around the mosfet
+
+        Anchors:
+            * source
+            * drain
+            * gate
+    '''
+
+    __variants = ['nmos', 'pmos']
+
+    def __init__(self, *d, variant: str, diode: bool = False, circle: bool = False, **kwargs):
+
+        if variant not in self.__variants:
+            raise ValueError(
+                "Parameter 'variant' must be one of {}, not {}.".format(
+                    self.__variants, variant))
+
+        super().__init__(*d, **kwargs)
+
+        u = reswidth*0.5
+
+        # gate
+        self.segments.extend([
+            Segment([(-10*u, -6*u), (-5*u, -6*u)]),
+            Segment([(-5*u, -6*u), (-5*u, -14*u)]),
+            ])
+
+        # ---
+        self.segments.extend([
+            Segment([(-3*u, -6.5*u), (-3*u, -7.5*u)]),
+            Segment([(-3*u, -9.5*u), (-3*u, -10.5*u)]),
+            Segment([(-3*u, -12.5*u), (-3*u, -13.5*u)]),
+            ])
+
+        # top lead
+        self.segments.extend([
+            Segment([(0, -7*u), (0, 0)]),
+            Segment([(-3*u, -7*u), (0, -7*u)]),
+            ])
+
+        # bottom lead
+        self.segments.extend([
+            Segment([(0, -20*u), (0, -13*u)]),
+            Segment([(-3*u, -13*u), (0, -13*u)]),
+            ])
+
+        if variant == 'nmos':
+
+            # source
+            self.segments.extend([
+                Segment(
+                    [(-3*u, -10*u), (0, -10*u)],
+                    arrow='<-', arrowwidth=2*u, arrowlength=2*u),
+                Segment([(0, -10*u), (0, -13*u)]),
+                ])
+
+            self.anchors['source'] = (0, -20*u)
+            self.anchors['gate'] = (-10*u, -6*u)
+            self.anchors['drain'] = (0, 0)
+
+        elif variant == 'pmos':
+
+            # source
+            self.segments.extend([
+                Segment(
+                    [(-3*u, -10*u), (0, -10*u)],
+                    arrow='->', arrowwidth=2*u, arrowlength=2*u),
+                Segment([(0, -10*u), (0, -7*u)]),
+                ])
+
+            self.anchors['source'] = (0, 0)
+            self.anchors['gate'] = (-10*u, -6*u)
+            self.anchors['drain'] = (0, -20*u)
+
+        self.params['drop'] = (0, -20*u)
+        self.params['lblloc'] = 'rgt'
+
+        if diode:
+            self.segments.extend([
+                Segment([(0, -7*u), (3*u, -7*u)]),
+                Segment([(3*u, -7*u), (3*u, -9*u)]),
+                Segment([(2*u, -9*u), (4*u, -9*u)]),
+                SegmentPoly([(3*u, -9*u), (2*u, -11*u), (4*u, -11*u)]),
+                Segment([(3*u, -11*u), (3*u, -13*u)]),
+                Segment([(3*u, -13*u), (0, -13*u)]),
+                ])
+
+        if circle:
+            self.segments.append(
+                SegmentCircle((-1*u, -10*u), 7*u))
+
+
+class NMos2(Mosfet2):
+
+    ''' N-type Metal Oxide Semiconductor Field Effect Transistor
+
+        Args:
+            diode: Draw body diode
+            circle: Draw circle around the mosfet
+
+        Anchors:
+            * source
+            * drain
+            * gate
+    '''
+
+    def __init__(self, *d, diode: bool = False, circle: bool = False, **kwargs):
+
+        super().__init__(*d, variant='nmos', diode=diode, circle=circle, **kwargs)
+
+
+class PMos2(Mosfet2):
+
+    ''' P-type Metal Oxide Semiconductor Field Effect Transistor
+
+        Args:
+            diode: Draw body diode
+            circle: Draw circle around the mosfet
+
+        Anchors:
+            * source
+            * drain
+            * gate
+    '''
+
+    def __init__(self, *d, diode: bool = False, circle: bool = False, **kwargs):
+
+        super().__init__(*d, variant='pmos', diode=diode, circle=circle, **kwargs)
 
 
 fetw = reswidth*4

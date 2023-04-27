@@ -77,6 +77,7 @@ class Mosfet(Element):
 
             self.anchors['source'] = (0, -20*u)
             self.anchors['gate'] = (-10*u, -6*u)
+            self.anchors['center'] = (0, -10*u)
             self.anchors['drain'] = (0, 0)
 
         elif variant == 'pmos':
@@ -91,6 +92,7 @@ class Mosfet(Element):
 
             self.anchors['source'] = (0, 0)
             self.anchors['gate'] = (-10*u, -6*u)
+            self.anchors['center'] = (0, -10*u)
             self.anchors['drain'] = (0, -20*u)
 
         self.params['drop'] = (0, -20*u)

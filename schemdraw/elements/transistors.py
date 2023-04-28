@@ -3,7 +3,7 @@
 __all__ = [
     'Bjt', 'Bjt2', 'BjtNpn', 'BjtNpn2', 'BjtPnp', 'BjtPnp2', 'BjtPnp2c', 'BjtPnp2c2',
     'JFet', 'JFet2', 'JFetN', 'JFetN2', 'JFetP', 'JFetP2',
-    'NFet', 'NFet2', 'NMos', 'PFet', 'PFet2', 'PMos']
+    'NFet', 'NFet2', 'NMos', 'NMos2', 'PFet', 'PFet2', 'PMos', 'PMos2']
 
 
 from .elements import Element, Element2Term
@@ -25,6 +25,8 @@ class Mosfet(Element):
             * source
             * drain
             * gate
+
+    Note: vertical orientation.  For horizontal orientation, see Mosfet2.
     '''
 
     __variants = ['nmos', 'pmos']
@@ -75,10 +77,10 @@ class Mosfet(Element):
                 Segment([(0, -10*u), (0, -13*u)]),
                 ])
 
-            self.anchors['source'] = (0, -20*u)
+            self.anchors['drain'] = (0, 0)
             self.anchors['gate'] = (-10*u, -6*u)
             self.anchors['center'] = (0, -10*u)
-            self.anchors['drain'] = (0, 0)
+            self.anchors['source'] = (0, -20*u)
 
         elif variant == 'pmos':
 
@@ -125,6 +127,8 @@ class NMos(Mosfet):
             * source
             * drain
             * gate
+
+    Note: vertical orientation.  For horizontal orientation, see NMos2.
     '''
 
     def __init__(self, *d, diode: bool = False, circle: bool = False, **kwargs):
@@ -144,6 +148,153 @@ class PMos(Mosfet):
             * source
             * drain
             * gate
+
+    Note: vertical orientation.  For horizontal orientation, see PMos2.
+    '''
+
+    def __init__(self, *d, diode: bool = False, circle: bool = False, **kwargs):
+
+        super().__init__(*d, variant='pmos', diode=diode, circle=circle, **kwargs)
+
+
+class Mosfet2(Element2Term):
+
+    '''Base Class for Metal Oxide Semiconductor Field Effect Transistors
+
+        Args:
+            variant: one of {'nmos', 'pmos'}
+            diode: Draw body diode
+            circle: Draw circle around the mosfet
+
+        Anchors:
+            * source
+            * drain
+            * gate
+
+    Note: horizontal orientation.  For vertical orientation, see Mosfet.
+    '''
+
+    __variants = ['nmos', 'pmos']
+
+    def __init__(self, *d, variant: str, diode: bool = False, circle: bool = False, **kwargs):
+
+        if variant not in self.__variants:
+            raise ValueError(
+                "Parameter 'variant' must be one of {}, not {}.".format(
+                    self.__variants, variant))
+
+        super().__init__(*d, **kwargs)
+
+        self.variant = variant
+
+        u = reswidth*0.5
+
+        # we need this so that we can have matplotlib pick up the pen where we need to
+        # jump across the device to get to the other terminal
+        NAN = float('nan')
+
+        # top and bottom leads
+        self.segments.append(
+            Segment([
+                (0, 0), (7*u, 0), (7*u, -3*u), (NAN, NAN),
+                (13*u, -3*u), (13*u, 0), (20*u, 0),
+                ]))
+
+        # gate
+        self.segments.extend([
+            Segment([(6*u, -10*u), (6*u, -5*u)]),
+            Segment([(6*u, -5*u), (14*u, -5*u)]),
+            ])
+
+        # ---
+        self.segments.extend([
+            Segment([(6.5*u, -3*u), (7.5*u, -3*u)]),
+            Segment([(9.5*u, -3*u), (10.5*u, -3*u)]),
+            Segment([(12.5*u, -3*u), (13.5*u, -3*u)]),
+            ])
+
+        if variant == 'nmos':
+
+            # source
+            self.segments.extend([
+                Segment(
+                    [(10*u, -3*u), (10*u, 0)],
+                    arrow='<-', arrowwidth=2*u, arrowlength=2*u),
+                Segment([(10*u, 0), (13*u, 0)]),
+                ])
+
+            self.anchors['drain'] = (0, 0)
+            self.anchors['gate'] = (6*u, -10*u)
+            self.anchors['source'] = (20*u, 0)
+
+        elif variant == 'pmos':
+
+            # source
+            self.segments.extend([
+                Segment(
+                    [(10*u, -3*u), (10*u, 0)],
+                    arrow='->', arrowwidth=2*u, arrowlength=2*u),
+                Segment([(10*u, 0), (7*u, 0)]),
+                ])
+
+            self.anchors['source'] = (0, 0)
+            self.anchors['gate'] = (6*u, -10*u)
+            self.anchors['drain'] = (20*u, 0)
+
+        self.anchors['center'] = (10*u, 0)
+        self.params['drop'] = (20*u, 0)
+        self.params['lblloc'] = 'bottom'
+
+        if diode:
+            self.segments.extend([
+                Segment([(7*u, 0), (7*u, 3*u)]),
+                Segment([(7*u, 3*u), (9*u, 3*u)]),
+                Segment([(9*u, 2*u), (9*u, 4*u)]),
+                SegmentPoly([(9*u, 3*u), (11*u, 2*u), (11*u, 4*u)]),
+                Segment([(11*u, 3*u), (13*u, 3*u)]),
+                Segment([(13*u, 3*u), (13*u, 0)]),
+                ])
+
+        if circle:
+            self.segments.append(
+                SegmentCircle((10*u, -1*u), 7*u))
+
+
+class NMos2(Mosfet2):
+
+    ''' N-type Metal Oxide Semiconductor Field Effect Transistor
+
+        Args:
+            diode: Draw body diode
+            circle: Draw circle around the mosfet
+
+        Anchors:
+            * source
+            * drain
+            * gate
+
+    Note: horizontal orientation.  For vertical orientation, see NMos.
+    '''
+
+    def __init__(self, *d, diode: bool = False, circle: bool = False, **kwargs):
+
+        super().__init__(*d, variant='nmos', diode=diode, circle=circle, **kwargs)
+
+
+class PMos2(Mosfet2):
+
+    ''' P-type Metal Oxide Semiconductor Field Effect Transistor
+
+        Args:
+            diode: Draw body diode
+            circle: Draw circle around the mosfet
+
+        Anchors:
+            * source
+            * drain
+            * gate
+
+    Note: horizontal orientation.  For vertical orientation, see PMos.
     '''
 
     def __init__(self, *d, diode: bool = False, circle: bool = False, **kwargs):

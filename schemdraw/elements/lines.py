@@ -936,14 +936,17 @@ class Rect(Element):
         Args:
             corner1: Position of top-left corner
             corner2: Position of bottom-right corner
+            fill: Color to fill if not None
+            lw: Line width
+            ls: Line style '-', '--', ':', etc.
     '''
-    def __init__(self, *d, corner1: XY = (0, 0), corner2: XY = (1, 1), **kwargs):
+    def __init__(self, *d, corner1: XY = (0, 0), corner2: XY = (1, 1),
+                 fill: str = None, lw: float = None, ls: Linestyle = None, **kwargs):
         super().__init__(*d, **kwargs)
         c1a = (corner1[0], corner2[1])
         c2a = (corner2[0], corner1[1])
-        self.segments.append(Segment([corner1, c1a, corner2, c2a, corner1], zorder=0))
+        self.segments.append(Segment([corner1, c1a, corner2, c2a, corner1], zorder=0, fill=fill, lw=lw, ls=ls))
         self.params['zorder'] = 0   # Put on bottom
-
 
 class Encircle(Element):
     ''' Draw ellipse around all elements in the list

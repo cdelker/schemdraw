@@ -29,6 +29,8 @@ from .lines import (Line, Dot, Arrowhead, Arrow, DotDotDot, Wire, Gap, Label, Ta
                     Annotate, Encircle, EncircleBox)
 from .connectors import OrthoLines, RightLines, Header, Jumper, BusConnect, BusLine, DB25, DB9, CoaxConnect, Plug, Jack
 from .compound import ElementCompound, Optocoupler, Relay, Rectifier, Wheatstone
+from .twoports import (TwoportElement, TwoPort, VoltageTransactor, TransimpedanceTransactor, CurrentTransactor,
+                       TransadmittanceTransactor, Nullor)
 from .outlets import (OutletA, OutletB, OutletC, OutletD, OutletE, OutletF, OutletG, OutletH, OutletI, OutletJ,
                       OutletK, OutletL)
 

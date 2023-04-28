@@ -1,5 +1,13 @@
 v0.17 - INPROGRESS
 
+    - Added compound twoport elements:
+        - TwoportElement
+        - TwoPort
+        - VoltageTransactor
+        - TransimpedanceTransactor
+        - CurrentTransactor
+        - TransadmittanceTransactor
+        - Nullor
     - Added pathological elements Nullator and Norator
     - Added Transistor elements AnalogNFet, AnalogPFet, AnalogBiasedFet, and FetCurrentLabel
 

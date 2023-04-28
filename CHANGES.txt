@@ -1,5 +1,6 @@
 v0.17 - INPROGRESS
 
+    - Added pathological elements Nullator and Norator
     - Added Transistor elements AnalogNFet, AnalogPFet, AnalogBiasedFet, and FetCurrentLabel
 
 v0.16 - 25-Mar-2023

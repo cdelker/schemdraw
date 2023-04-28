@@ -552,6 +552,22 @@ class SparkGap(Element2Term):
         self.segments.append(Segment([(.3, 0), (.52, 0)], arrow='->', arrowwidth=.2))
         self.segments.append(Segment([(.7, 0), (.48, 0)], arrow='->', arrowwidth=.2))
 
+class Nullator(Element2Term):
+    ''' Nullator '''
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.segments.append(Segment([[0, 0], [0, 0], gap, [1, 0], [1, 0]]))
+        self.segments.append(SegmentArc(center=[0.5,0], width=1, height=0.5, theta1=0, theta2=360))
+        self.params['theta'] = 90
+
+class Norator(Element2Term):
+    ''' Norator '''
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.segments.append(Segment([[0, 0], [0, 0], gap, [1, 0], [1, 0]]))
+        self.segments.append(SegmentCircle([0.25, 0], 0.25,))
+        self.segments.append(SegmentCircle([1-0.25, 0], 0.25,))
+        self.params['theta'] = 90
 
 # default to IEEE style
 Resistor = ResistorIEEE

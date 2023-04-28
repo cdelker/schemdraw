@@ -180,11 +180,9 @@ class AnalogNFet(Element):
             bulk (if bulk=True)
             center
     '''
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        bulk        = kwargs.pop('bulk', False)
-        offset_gate = kwargs.pop('offset_gate', True)
-        arrow       = kwargs.pop('arrow', True) if bulk == False else False
+    def __init__(self, *d, bulk: bool = False, offset_gate: bool = True, arrow: bool = True, **kwargs):
+        super().__init__(*d, **kwargs)
+        arrow = arrow if bulk == False else False
         self.segments.append(Segment([(0, 0), (0, -afetl), (afetw, -afetl),
                                       (afetw, -afetl - afeth), (0, -afetl - afeth),
                                       (0, -2 * afetl - afeth)]))
@@ -229,11 +227,9 @@ class AnalogPFet(Element):
             bulk (if bulk=True)
             center
     '''
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        bulk        = kwargs.pop('bulk', False)
-        offset_gate = kwargs.pop('offset_gate', True)
-        arrow       = kwargs.pop('arrow', True) if bulk == False else False
+    def __init__(self, *d, bulk: bool = False, offset_gate: bool = True, arrow: bool = True, **kwargs):
+        super().__init__(*d, **kwargs)
+        arrow = arrow if bulk == False else False
         self.segments.append(Segment([(0, 0), (0, -afetl), (afetw, -afetl),
                                       (afetw, -afetl - afeth), (0, -afetl - afeth),
                                       (0, -2 * afetl - afeth)]))
@@ -277,11 +273,9 @@ class AnalogBiasedFet(Element):
             bulk (if bulk=True)
             center
     '''
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        bulk        = kwargs.pop('bulk', False)
-        offset_gate = kwargs.pop('offset_gate', True)
-        arrow       = kwargs.pop('arrow', True) if bulk == False else False
+    def __init__(self, *d, bulk: bool = False, offset_gate: bool = True, arrow: bool = True, **kwargs):
+        super().__init__(*d, **kwargs)
+        arrow = arrow if bulk == False else False
         self.segments.append(Segment([(0, 0), (0, -afetl), (afetw, -afetl),
                                       (afetw, -afetl - afeth), (0, -afetl - afeth),
                                       (0, -2 * afetl - afeth)]))

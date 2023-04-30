@@ -1,5 +1,7 @@
 v0.17 - INPROGRESS
 
+    - Fixed CurrentLabel placement with transistor elements, now follows biasing current
+    - Fixed CurrentLabel positioning for elements with no center anchor
     - Add DataBusLine element
     - Fixed default style hierarchy on segments
     - Added compound twoport elements:
@@ -11,7 +13,7 @@ v0.17 - INPROGRESS
         - TransadmittanceTransactor
         - Nullor
     - Added pathological elements Nullator and Norator
-    - Added Transistor elements AnalogNFet, AnalogPFet, AnalogBiasedFet, and FetCurrentLabel
+    - Added Transistor elements AnalogNFet, AnalogPFet, and AnalogBiasedFet
 
 v0.16 - 25-Mar-2023
 

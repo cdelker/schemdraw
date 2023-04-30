@@ -680,6 +680,7 @@ class CurrentLabel(Element):
         self._reverse = reverse
         self._headlength = headlength
         self._headwidth = headwidth
+        self._reverse_flow = False
 
     def at(self, xy: XY | Element) -> 'Element':  # type: ignore[override]
         ''' Specify CurrentLabel position.
@@ -710,7 +711,8 @@ class CurrentLabel(Element):
                 If at most two opposite sides are allowed, this gives the user freedom to put the label at any allowed
                 side.
             '''
-            theta = xy.transform.theta
+            target_theta   = xy.transform.theta
+            theta          = target_theta
             allowed_angles = [theta + angle for angle, allowed in zip([0, 90, 180, 270], xy._get_allowed_sides()) if
                               allowed]
 
@@ -724,7 +726,15 @@ class CurrentLabel(Element):
             theta = allowed_angles[differences_to_top.index(min(differences_to_top))]
 
             # since current arrow is drawn on top by default, subtract 90 degree for rotation top to right side
-            self.theta(theta - 90)
+            theta = theta - 90
+            self.theta(theta)
+
+            bias_angle = xy._get_bias_angle()
+            if bias_angle is None:
+                self._reverse_flow = False
+            else:
+                bias_angle_difference = ((bias_angle + target_theta - theta) + 180) % 360 - 180
+                self._reverse_flow = abs(bias_angle_difference) > 90
 
             if 'color' in xy._userparams:
                 self.color(xy._userparams.get('color'))
@@ -739,6 +749,9 @@ class CurrentLabel(Element):
             self.params['lblloc'] = 'bot'
 
         a, b = (-self._length / 2, self._ofst), (self._length / 2, self._ofst)
+
+        if self._reverse_flow:
+            a, b = b, a
 
         if self._reverse:
             a, b = b, a

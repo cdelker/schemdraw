@@ -26,7 +26,7 @@ class ElementTwoport(ElementCompound):
             bpady: Vertical padding from edge of either component
             minw: Margin around component if smaller than minw
             terminals: Draw with terminals extending past box
-            component_offset: Offset between input and output element
+            width: Width of the twoport box
             box: Draw twoport outline
             boxfill: Color to fill the twoport if not None
             boxlw: Line width of twoport outline
@@ -42,9 +42,8 @@ class ElementTwoport(ElementCompound):
 
     def __init__(self, input_element: elm.Element2Term, output_element: elm.Element2Term, *d,
                  boxpadx: float = .2, boxpady: float = .2, minw: float = .5,
-                 terminals: bool = True, width: float = 2.15,
+                 terminals: bool = True, unit: float = 1.5, width: float = 2.15,
                  box: bool = True, boxfill: str = None, boxlw: float = None, boxls: float = None, **kwargs):
-        unit = 1.5
         super().__init__(*d, unit=unit, **kwargs)
 
         input_component  = input_element.down()
@@ -55,7 +54,7 @@ class ElementTwoport(ElementCompound):
 
         # since components are not yet placed, transform is not taken into account for bbox calculation
         # hence, use the height rather than the width. Also assumes symmetry
-        in_w  = max(-(bbox_input.ymax - bbox_input.ymin)/2,  minw / 2)
+        in_w  = max((bbox_input.ymax - bbox_input.ymin)/2,  minw / 2)
         out_w = max((bbox_output.ymax - bbox_output.ymin)/2, minw / 2)
 
         input_component  = self.add(input_component.at((boxpadx + in_w, 0)))

@@ -665,6 +665,7 @@ class CurrentLabel(Element):
             headlength: Length of arrowhead
             headwidth: Width of arrowhead
     '''
+
     def __init__(self, ofst: float = 0.4, length: float = 2,
                  top: bool = True, reverse: bool = False,
                  headlength: float = 0.3, headwidth: float = 0.2, **kwargs):
@@ -695,14 +696,36 @@ class CurrentLabel(Element):
             try:
                 pos = xy.center
             except AttributeError:
-                bbox = xy.get_bbox()
-                pos = Point(((bbox.xmax + bbox.xmin)/2, (bbox.ymax + bbox.ymin)/2))
+                bbox = xy.get_bbox(transform=True)
+                pos = Point(((bbox.xmax + bbox.xmin) / 2, (bbox.ymax + bbox.ymin) / 2))
             super().at(pos)
 
+            ''' Every element has 4 sides where a current label could be placed, but not all are allowed
+                In a resistor, the top and bottom are allowed, but not the sides. In a transistor, only the side of the
+                channel is allowed. Otherwise, the current label would overlap the terminals, which wouldn't make sense.
+                
+                This code calculates the angles for the allowed sides of the components. If the current label is desired
+                to be on top, it picks the closest angle to the top. Otherwise, it picks the closest angle to the
+                top of the component in the drawing frame. If the label is flipped, it will pick the opposite angle.
+                If at most two opposite sides are allowed, this gives the user freedom to put the label at any allowed
+                side.
+            '''
             theta = xy.transform.theta
-            if (theta % 360) > 90 and (theta % 360) <= 270:
-                theta += 180  # Keeps 'top=True' labels above the element
-            self.theta(theta)
+            allowed_angles = [theta + angle for angle, allowed in zip([0, 90, 180, 270], xy._get_allowed_sides()) if
+                              allowed]
+
+            if self._top:
+                preferred_angle = 90
+            else:
+                preferred_angle = 90 + theta if not self.flip else -90 + theta
+
+            # find which allowed angle is closest to the preferred angle
+            differences_to_top = [abs(((angle - preferred_angle) + 180) % 360 - 180) for angle in allowed_angles]
+            theta = allowed_angles[differences_to_top.index(min(differences_to_top))]
+
+            # since current arrow is drawn on top by default, subtract 90 degree for rotation top to right side
+            self.theta(theta - 90)
+
             if 'color' in xy._userparams:
                 self.color(xy._userparams.get('color'))
         else:
@@ -710,10 +733,12 @@ class CurrentLabel(Element):
         return self
 
     def _place(self, dwgxy, dwgtheta, **dwgparams):
-        if not self._top:
-            self._ofst = -self._ofst
+        angle_difference = ((self._userparams.get('theta', 0) - 180) + 180) % 360 - 180
+        change_label = (angle_difference > -90) and (angle_difference <= 90)
+        if change_label:
             self.params['lblloc'] = 'bot'
-        a, b = (-self._length/2, self._ofst), (self._length/2, self._ofst)
+
+        a, b = (-self._length / 2, self._ofst), (self._length / 2, self._ofst)
 
         if self._reverse:
             a, b = b, a

@@ -13,12 +13,11 @@ from .sources import (Source, SourceV, SourceI, SourceSin, SourcePulse, SourceSq
                       MeterA, MeterOhm, Lamp, Solar, Neon)
 from .switches import (Switch, SwitchSpdt, SwitchSpdt2, SwitchDpst, SwitchDpdt, Button, SwitchReed,
                        SwitchRotary, SwitchDIP)
-from .transistors import (NFet, PFet, AnalogNFet, AnalogPFet, AnalogBiasedFet, FetCurrentLabel,
+from .transistors import (NFet, PFet, AnalogNFet, AnalogPFet, AnalogBiasedFet,
                           JFet, JFetN, JFetP, Bjt, BjtNpn, BjtPnp, BjtPnp2c, Bjt2, BjtNpn2, BjtPnp2,
                           BjtPnp2c2, NFet2, PFet2, JFet2, JFetN2, JFetP2)
 from .sources import Source, SourceV, SourceI, SourceSin, SourcePulse, SourceSquare, SourceTriangle, SourceRamp, SourceControlled, SourceControlledV, SourceControlledI, BatteryCell, Battery, MeterV, MeterI, MeterA, MeterOhm, Lamp, Solar, Neon
 from .switches import Switch, SwitchSpdt, SwitchSpdt2, SwitchDpst, SwitchDpdt, Button, SwitchReed, SwitchRotary, SwitchDIP
-from .transistors import NFet, PFet, AnalogNFet, AnalogPFet, AnalogBiasedFet, FetCurrentLabel, JFet, JFetN, JFetP, Bjt, BjtNpn, BjtPnp, BjtPnp2c, Bjt2, BjtNpn2, BjtPnp2, BjtPnp2c2, NFet2, PFet2, JFet2, JFetN2, JFetP2
 from .misc import Speaker, Mic, Motor, AudioJack
 from .xform import Transformer
 from .cables import Coax, Triax

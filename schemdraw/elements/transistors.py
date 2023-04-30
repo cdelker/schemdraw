@@ -24,9 +24,14 @@ class NFet(Element):
             * source
             * drain
             * gate
+            * center
     '''
     def __init__(self, *d, bulk: bool = False, **kwargs):
         super().__init__(*d, **kwargs)
+
+        # defines whether a current label can be drawn on each side
+        self.allowed_sides = [False, False, True, False] # right, top, left, bottom
+
         self.segments.append(Segment([(0, 0), (0, -fetl), (fetw, -fetl),
                                       (fetw, -fetl-fetw), (0, -fetl-fetw),
                                       (0, -2*fetl-fetw)]))
@@ -37,6 +42,7 @@ class NFet(Element):
         self.anchors['source'] = (0, -2*fetl-fetw)
         self.anchors['drain'] = (0, 0)
         self.anchors['gate'] = (fetw+fetgap+fetl+fetr, -fetl-fetw/2)
+        self.anchors['center'] = (0, -fetl - fetw/2)
         self.params['drop'] = (0, -2*fetl-fetw)
         self.params['lblloc'] = 'lft'
         if bulk:
@@ -55,9 +61,14 @@ class PFet(Element):
             source
             drain
             gate
+            center
     '''
     def __init__(self, *d, bulk: bool = False, **kwargs):
         super().__init__(*d, **kwargs)
+
+        # defines whether a current label can be drawn on each side
+        self.allowed_sides = [False, False, True, False] # right, top, left, bottom
+
         self.segments.append(Segment([(0, 0), (0, -fetl), (fetw, -fetl),
                                       (fetw, -fetl-fetw), (0, -fetl-fetw),
                                       (0, -2*fetl-fetw)]))
@@ -70,6 +81,7 @@ class PFet(Element):
         self.anchors['source'] = (0, 0)
         self.anchors['drain'] = (0, -2*fetl-fetw)
         self.anchors['gate'] = (fetw+fetgap+fetl+fetr, -fetl-fetw/2)
+        self.anchors['center'] = (0, -fetl - fetw / 2)
         self.params['drop'] = (0, -2*fetl-fetw)
         self.params['lblloc'] = 'lft'
         if bulk:
@@ -92,6 +104,10 @@ class NFet2(Element2Term):
     '''
     def __init__(self, *d, bulk: bool = False, **kwargs):
         super().__init__(*d, **kwargs)
+
+        # defines whether a current label can be drawn on each side
+        self.allowed_sides = [False, False, False, True]  # right, top, left, bottom
+
         self.segments.append(Segment([(0, 0), (fetl, 0), (fetl, fetw),
                                       (fetl+fetw, fetw), (fetl+fetw, 0), (2*fetl+fetw, 0)]))
         self.segments.append(Segment([(fetl, fetw+fetgap), (fetl+fetw, fetw+fetgap)]))
@@ -131,6 +147,10 @@ class PFet2(Element2Term):
     '''
     def __init__(self, *d, bulk: bool = False, **kwargs):
         super().__init__(*d, **kwargs)
+
+        # defines whether a current label can be drawn on each side
+        self.allowed_sides = [False, False, False, True]  # right, top, left, bottom
+
         self.segments.append(Segment([(0, 0), (fetl, 0), (fetl, fetw),
                                       (fetl+fetw, fetw), (fetl+fetw, 0), (2*fetl+fetw, 0)]))
         self.segments.append(Segment([(fetl, fetw+fetgap), (fetl+fetw, fetw+fetgap)]))
@@ -165,7 +185,13 @@ afeti   = afeth * 0.1  # gate inset
 afetb   = afeti * 0.75 # bias dot radius
 afeta   = 0.25         # fet arrow head width
 
-class AnalogNFet(Element):
+class _AnalogFet(Element):
+    def __init__(self, *d, **kwargs):
+        super().__init__(*d, **kwargs)
+        # defines whether a current label can be drawn on each side
+        self.allowed_sides = [False, False, True, False] # right, top, left, bottom
+
+class AnalogNFet(_AnalogFet):
     ''' N-type Field Effect Transistor, analog style
 
         Args:
@@ -212,7 +238,7 @@ class AnalogNFet(Element):
             self.anchors['bulk'] = (0, -afetl - afeth / 2)
 
 
-class AnalogPFet(Element):
+class AnalogPFet(_AnalogFet):
     ''' P-type Field Effect Transistor, analog style
 
         Args:
@@ -258,7 +284,7 @@ class AnalogPFet(Element):
                                          arrow='->', arrowwidth=afeta, arrowlength=afeta))
             self.anchors['bulk'] = (0, -afetl - afeth / 2)
 
-class AnalogBiasedFet(Element):
+class AnalogBiasedFet(_AnalogFet):
     ''' Generic biased small-signal Field Effect Transistor, analog style
 
         Args:
@@ -304,91 +330,6 @@ class AnalogBiasedFet(Element):
             self.segments.append(SegmentCircle(center=(afetw - afetb * 2, -afetl - afeth / 2), radius=afetb, fill=True, lw=None))
             self.anchors['bulk'] = (0, -afetl - afeth / 2)
 
-class FetCurrentLabel(Element):
-    ''' Current label arrow drawn next to channel of MOS transistor
-
-        Use `.at()` method to place the label over an
-        existing element.
-
-        Args:
-            ofst: Offset distance from element
-            length: Length of the arrow
-            reverse: Reverse the arrow direction
-
-        Anchors:
-            center
-    '''
-    def __init__(self, ofst: float=0.4, length: float=afeth + afetl, reverse: bool=False, **kwargs):
-        super().__init__(**kwargs)
-        self.params['lblofst'] = 0.1
-        self.params['drop'] = None
-        self.anchor('center')
-        self.anchors['center'] = (0, 0)
-        self._ofst = ofst
-        self._length = length
-        self._reverse = reverse
-        self._target_flipped = False
-        self._flip_label = False
-
-    def at(self, xy: XY | Element) -> 'Element':  # type: ignore[override]
-        ''' Specify FetCurrentLabel position.
-
-            If xy is an Element, arrow will be centered
-            along element and its color will also be
-            inherited.
-
-            Args:
-                xy: The absolute (x, y) position or an
-                Element instance to center the arrow over
-        '''
-        if isinstance(xy, Element):
-            try:
-                pos = xy.center
-            except AttributeError:
-                bbox = xy.get_bbox()
-                pos = Point(((bbox.xmax + bbox.xmin) / 2, (bbox.ymax + bbox.ymin) / 2))
-            super().at(pos)
-
-            try:
-                if xy._userparams.get('reverse', False):
-                    self._ofst             = -self._ofst
-
-                self._target_flipped = xy._userparams.get('flip', False)
-            except AttributeError:
-                pass
-
-            # No 'top=True' labels above the element, but consistent arrow direction
-            theta = xy.transform.theta
-            self.theta(theta)
-            self._flip_label ^= (theta % 360) > 90 and (theta % 360) <= 270
-            if 'color' in xy._userparams:
-                self.color(xy._userparams.get('color'))
-        else:
-            super().at(xy)
-        return self
-
-    def _place(self, dwgxy, dwgtheta, **dwgparams):
-        self._ofst = -self._ofst
-
-        self._flip_label ^= self._ofst > 0
-
-        if self._flip_label:
-            self.params['lblloc'] = 'right'
-        else:
-            self.params['lblloc'] = 'lft'
-
-        a, b = (self._ofst, self._length/2), (self._ofst, -self._length/2)
-
-        if self._reverse:
-            a, b = b, a
-
-        if self._target_flipped:
-            a, b = b, a
-
-        self.segments.append(Segment((a, b), arrow='->', arrowwidth=.2, arrowlength=.3))
-        return super()._place(dwgxy, dwgtheta, **dwgparams)
-
-
 # Junction FETs
 fete = fetw*.2  # JFET extension
 jfetw = reswidth*3
@@ -401,9 +342,14 @@ class JFet(Element):
             * source
             * drain
             * gate
+            * center
     '''
     def __init__(self, *d, circle: bool = False, **kwargs):
         super().__init__(*d, **kwargs)
+
+        # defines whether a current label can be drawn on each side
+        self.allowed_sides = [False, False, True, False] # right, top, left, bottom
+
         self.segments.append(Segment(
             [(0, 0), (0, -fetl), (jfetw, -fetl), (jfetw, -fetl+fete),
              (jfetw, -fetl-jfetw-fete), (jfetw, -fetl-jfetw),
@@ -413,6 +359,7 @@ class JFet(Element):
         self.anchors['source'] = (0, -2*fetl-jfetw)
         self.anchors['drain'] = (0, 0)
         self.anchors['gate'] = (jfetw+fetl, -fetl-jfetw)
+        self.anchors['center'] = (0, -fetl-jfetw/2)
         self.params['lblloc'] = 'lft'
         if circle:
             self.segments.append(SegmentCircle((jfetw/2, -fetw), fetw*1.1))
@@ -428,6 +375,7 @@ class JFetN(JFet):
             * source
             * drain
             * gate
+            * center
     '''
     def __init__(self, *d, circle: bool = False, **kwargs):
         super().__init__(*d, circle=circle, **kwargs)
@@ -446,6 +394,10 @@ class JFet2(Element2Term):
     '''
     def __init__(self, *d, circle: bool = False, **kwargs):
         super().__init__(*d, **kwargs)
+
+        # defines whether a current label can be drawn on each side
+        self.allowed_sides = [False, False, False, True] # right, top, left, bottom
+
         self.segments.append(Segment([
             (0, 0), (fetl, 0), (fetl, jfetw), (fetl+jfetw, jfetw),
             (fetl+jfetw, 0), (2*fetl+jfetw, 0)]))
@@ -517,6 +469,7 @@ class JFetP(JFet):
             * source
             * drain
             * gate
+            * center
     '''
     def __init__(self, *d, circle: bool = False, **kwargs):
         super().__init__(*d, circle=circle, **kwargs)
@@ -543,9 +496,14 @@ class Bjt(Element):
             * collector
             * emitter
             * base
+            * center
     '''
     def __init__(self, *d, circle: bool = False, **kwargs):
         super().__init__(*d, **kwargs)
+
+        # defines whether a current label can be drawn on each side
+        self.allowed_sides = [True, False, False, False] # right, top, left, bottom
+
         self.segments.append(Segment([(0, 0), (bjt_v, 0)]))
         self.segments.append(Segment([(bjt_v, bjt_v_len/2), (bjt_v, -bjt_v_len/2)]))
         self.segments.append(Segment([(bjt_v, bjt_a), (bjt_emx, bjt_emy),
@@ -559,6 +517,7 @@ class Bjt(Element):
         self.anchors['base'] = (0, 0)
         self.anchors['collector'] = (bjt_emx, bjt_emy+bjt_a)
         self.anchors['emitter'] = (bjt_emx, -bjt_emy-bjt_a)
+        self.anchors['center'] = (bjt_emx, 0)
         self.base: Point
         self.collector: Point
         self.emitter: Point
@@ -574,6 +533,7 @@ class BjtNpn(Bjt):
             * collector
             * emitter
             * base
+            * center
     '''
     def __init__(self, *d, circle: bool = False, **kwargs):
         super().__init__(*d, circle=circle, **kwargs)
@@ -591,6 +551,7 @@ class BjtPnp(Bjt):
             * collector
             * emitter
             * base
+            * center
     '''
     def __init__(self, *d, circle: bool = False, **kwargs):
         super().__init__(*d, circle=circle, **kwargs)
@@ -611,6 +572,7 @@ class BjtPnp2c(BjtPnp):
             * emitter
             * base
             * C2
+            * center
     '''
     def __init__(self, *d, circle: bool = False, **kwargs):
         super().__init__(*d, circle=circle, **kwargs)
@@ -643,6 +605,10 @@ class Bjt2(Element2Term):
     '''
     def __init__(self, *d, circle: bool = False, **kwargs):
         super().__init__(*d, **kwargs)
+
+        # defines whether a current label can be drawn on each side
+        self.allowed_sides = [False, False, False, True] # right, top, left, bottom
+
         self.segments.append(Segment(((0, 0),
                                       (bjt_width/2-bjt_diag_ofst, bjt_base_h),
                                       (bjt_width/2+bjt_diag_ofst, bjt_base_h),

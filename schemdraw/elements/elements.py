@@ -71,6 +71,9 @@ class Element:
         self.segments: list[SegmentType] = []
         self.transform = Transform(0, [0, 0])
 
+        # defines whether a current label can be drawn on each side
+        self.allowed_sides = [False, True, False, True] # right, top, left, bottom
+
         if 'xy' in self._userparams:  # Allow legacy 'xy' parameter
             self._userparams.setdefault('at', self._userparams.pop('xy'))
         if d:
@@ -664,6 +667,14 @@ class Element:
             self._place((0, 0), 0)
         for segment in self.segments:
             segment.draw(fig, self.transform, **self._cparams)
+
+    def _get_allowed_sides(self):
+        allowed_sides = self.allowed_sides
+        if self._userparams.get('reverse', False):
+            allowed_sides[0], allowed_sides[2] = allowed_sides[2], allowed_sides[0]
+        if self._userparams.get('flip', False):
+            allowed_sides[1], allowed_sides[3] = allowed_sides[3], allowed_sides[1]
+        return allowed_sides
 
 
 class ElementDrawing(Element):

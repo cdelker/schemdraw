@@ -143,7 +143,7 @@ class Segment:
             'capstyle': self.capstyle if self.capstyle else style.get('capstyle', None),
             'joinstyle': self.joinstyle if self.joinstyle else style.get('joinstyle', None),
             'visible': self.visible}
-        style = {k: v for k, v in style.items() if params.get(k) is not None}
+        style = {k: v for k, v in style.items() if params.get(k) is None and  k in params.keys()}
         params.update(style)
         return Segment(transform.transform_array(self.path), **params)
 

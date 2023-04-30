@@ -316,3 +316,28 @@ class Nullor(TwoportElement):
 
     def __init__(self, *d, **kwargs):
         super().__init__(*d, input_element=elm.Nullator(), output_element=elm.Norator(), boxpadx=0.3, **kwargs)
+
+class VMCMPair(TwoportElement):
+    ''' Nullor
+
+        Args:
+            bpadx: Horizontal padding from edge of either component
+            bpady: Vertical padding from edge of either component
+            minw: Margin around component if smaller than minw
+            terminals: Draw with terminals extending past box
+            component_offset: Offset between input and output element
+            box: Draw twoport outline
+            boxfill: Color to fill the twoport if not None
+            boxlw: Line width of twoport outline
+            boxls: Line style of twoport outline '-', '--', ':', etc.
+
+        Anchors:
+            * in_p
+            * in_n
+            * out_p
+            * out_n
+            * center
+    '''
+
+    def __init__(self, *d, **kwargs):
+        super().__init__(*d, input_element=elm.VoltageMirror(), output_element=elm.CurrentMirror(), boxpadx=0.3, **kwargs)

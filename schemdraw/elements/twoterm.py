@@ -569,6 +569,36 @@ class Norator(Element2Term):
         self.segments.append(SegmentCircle([1-0.25, 0], 0.25,))
         self.params['theta'] = 90
 
+class CurrentMirror(Element2Term):
+    ''' Current mirror with optional common terminal
+
+        Anchors:
+            * scommon
+    '''
+    def __init__(self, *d, bulk: bool = False, **kwargs):
+        super().__init__(*d, **kwargs)
+
+        self.segments.append(Segment([[0, 0], [0, 0], gap, [1, 0], [1, 0]]))
+        self.segments.append(SegmentCircle([0.3, 0], 0.3, ))
+        self.segments.append(SegmentCircle([1 - 0.3, 0], 0.3, ))
+        self.params['theta'] = 90
+        self.anchors['common'] = (0.5, math.sqrt(0.3**2 - 0.2**2))
+
+class VoltageMirror(Element2Term):
+    ''' Voltage mirror with optional common terminal
+
+        Anchors:
+            * scommon
+    '''
+    def __init__(self, *d, bulk: bool = False, **kwargs):
+        super().__init__(*d, **kwargs)
+
+        self.segments.append(Segment([[0, 0], [0, 0], gap, [1, 0], [1, 0]]))
+        self.segments.append(SegmentArc(center=[0.7, 0], width=0.6, height=0.3, theta1=0, theta2=360))
+        self.segments.append(SegmentArc(center=[0.3, 0], width=0.6, height=0.3, theta1=0, theta2=360))
+        self.params['theta'] = 90
+        self.anchors['common'] = (0.5, math.sqrt(1 - 0.2**2/0.3**2)*0.15)
+
 # default to IEEE style
 Resistor = ResistorIEEE
 ResistorVar = ResistorVarIEEE

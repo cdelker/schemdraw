@@ -26,6 +26,7 @@ class ElementTwoport(ElementCompound):
             bpady: Vertical padding from edge of either component
             minw: Margin around component if smaller than minw
             terminals: Draw with terminals extending past box
+            unit: Length of input and output element
             width: Width of the twoport box
             box: Draw twoport outline
             boxfill: Color to fill the twoport if not None

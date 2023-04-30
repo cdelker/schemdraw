@@ -16,7 +16,7 @@ tp_arrowlen = 1
 # tp_pluslen = .2
 tp_termlen = 0.5  # terminal length
 
-class TwoportElement(ElementCompound):
+class ElementTwoport(ElementCompound):
     ''' Compound twoport element
 
         Args:
@@ -111,7 +111,7 @@ def _add_rotating_text_at(self, location, text, align=None):
         Label(label=text, loc='center', ofst=location - center_coord, align=align, rotate=True, fontsize=None,
               font=None, mathfont=None, color=None))
 
-class TwoPort(TwoportElement):
+class TwoPort(ElementTwoport):
     ''' Generic Twoport
 
         Args:
@@ -159,7 +159,7 @@ class TwoPort(TwoportElement):
                              headlength=0.3,
                              ))
 
-class VoltageTransactor(TwoportElement):
+class VoltageTransactor(ElementTwoport):
     ''' Voltage transactor
 
         Args:
@@ -192,7 +192,7 @@ class VoltageTransactor(TwoportElement):
         _add_rotating_text_at(self, Point((0, -0.05)) + self.input_component.start, '+', align=('right', 'top'))
 
 
-class TransimpedanceTransactor(TwoportElement):
+class TransimpedanceTransactor(ElementTwoport):
     ''' Transimpedance transactor
 
         Args:
@@ -225,7 +225,7 @@ class TransimpedanceTransactor(TwoportElement):
         current_label_inline.at(self.input_component)
         self.add(current_label_inline)
 
-class CurrentTransactor(TwoportElement):
+class CurrentTransactor(ElementTwoport):
     ''' Current transactor
 
         Args:
@@ -259,7 +259,7 @@ class CurrentTransactor(TwoportElement):
         self.add(current_label_inline)
 
 
-class TransadmittanceTransactor(TwoportElement):
+class TransadmittanceTransactor(ElementTwoport):
     ''' Transadmittance transactor
 
         Args:
@@ -292,7 +292,7 @@ class TransadmittanceTransactor(TwoportElement):
         _add_rotating_text_at(self, Point((0, -0.05)) + self.input_component.start, '+', align=('right', 'top'))
 
 
-class Nullor(TwoportElement):
+class Nullor(ElementTwoport):
     ''' Nullor
 
         Args:
@@ -317,7 +317,7 @@ class Nullor(TwoportElement):
     def __init__(self, *d, **kwargs):
         super().__init__(*d, input_element=elm.Nullator(), output_element=elm.Norator(), boxpadx=0.3, **kwargs)
 
-class VMCMPair(TwoportElement):
+class VMCMPair(ElementTwoport):
     ''' Nullor
 
         Args:

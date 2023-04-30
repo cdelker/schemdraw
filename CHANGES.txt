@@ -6,7 +6,7 @@ v0.17 - INPROGRESS
     - Add DataBusLine element
     - Fixed default style hierarchy on segments
     - Added compound twoport elements:
-        - TwoportElement
+        - ElementTwoport
         - TwoPort
         - VoltageTransactor
         - TransimpedanceTransactor

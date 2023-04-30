@@ -135,7 +135,7 @@ class TwoPort(TwoportElement):
             * center
     '''
 
-    def __init__(self, sign: bool = True, arrow: bool = True, *d, **kwargs):
+    def __init__(self, sign: bool = True, arrow: bool = True, reverse_output: bool = False, *d, **kwargs):
         super().__init__(*d, input_element=elm.Gap(), output_element=elm.Gap(),
                          boxpadx=0, minw=0, component_offset=2, **kwargs)
 
@@ -143,8 +143,12 @@ class TwoPort(TwoportElement):
             # note the use of unicode − rather than usual - for better visual representation.
             _add_rotating_text_at(self, Point(( 0.1, 0.1)) + self.input_component.end,    '−', align=('left', 'center'))
             _add_rotating_text_at(self, Point(( 0.1,-0.1)) + self.input_component.start,  '+', align=('left', 'center'))
-            _add_rotating_text_at(self, Point((-0.1, 0.1)) + self.output_component.end,   '−', align=('right','center'))
-            _add_rotating_text_at(self, Point((-0.1,-0.1)) + self.output_component.start, '+', align=('right','center'))
+            if not reverse_output:
+                _add_rotating_text_at(self, Point((-0.1, 0.1)) + self.output_component.end,   '−', align=('right','center'))
+                _add_rotating_text_at(self, Point((-0.1,-0.1)) + self.output_component.start, '+', align=('right','center'))
+            else:
+                _add_rotating_text_at(self, Point((-0.1, 0.1)) + self.output_component.end,   '+', align=('right','center'))
+                _add_rotating_text_at(self, Point((-0.1,-0.1)) + self.output_component.start, '−', align=('right','center'))
 
         if arrow:
             center_point = Point(self.anchors['center'])

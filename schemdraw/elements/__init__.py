@@ -24,7 +24,7 @@ from .xform import Transformer
 from .cables import Coax, Triax
 from .intcircuits import (IcPin, Ic, Multiplexer, IcDIP, VoltageRegulator, DFlipFlop, JKFlipFlop, Ic555,
                           SevenSegment, sevensegdigit)
-from .lines import (Line, Dot, Arrowhead, Arrow, DotDotDot, Wire, Gap, Label, Tag, CurrentLabel,
+from .lines import (Line, DataBusLine, Dot, Arrowhead, Arrow, DotDotDot, Wire, Gap, Label, Tag, CurrentLabel,
                     CurrentLabelInline, ZLabel, LoopCurrent, LoopArrow, Rect, Arc2, Arc3, ArcZ, ArcN, ArcLoop,
                     Annotate, Encircle, EncircleBox)
 from .connectors import OrthoLines, RightLines, Header, Jumper, BusConnect, BusLine, DB25, DB9, CoaxConnect, Plug, Jack

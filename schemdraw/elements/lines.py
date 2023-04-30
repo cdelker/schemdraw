@@ -25,6 +25,14 @@ class Line(Element2Term):
         self.segments.append(Segment([(0, 0)], arrow=arrow,
                                      arrowwidth=arrowwidth, arrowlength=arrowlength))
 
+bus_stroke = 0.25
+class DataBusLine(Element2Term):
+    ''' Straight Line with bus indication stripe '''
+    def __init__(self, *d, **kwargs):
+        super().__init__(*d, **kwargs)
+        self.segments.append(Segment(
+            [(0, 0), gap, (-bus_stroke/2, bus_stroke), (bus_stroke/2, -bus_stroke),
+             gap, (0, 0)]))
 
 class Arrow(Line):
     ''' Arrow

@@ -5,7 +5,7 @@ from typing import Sequence, Union
 from .compound import ElementCompound
 from ..import elements as elm
 from ..types import Point
-from ..segments import SegmentArrow, Segment
+from ..segments import SegmentArrow, SegmentText, Segment
 from .elements import Label
 
 # tp_back = 2.5
@@ -99,18 +99,6 @@ class ElementTwoport(ElementCompound):
 
                 self.segments.append(Segment([previous_anchor, new_anchor]))
 
-
-''' The generic twoport and voltage input transactors feature + and - texts that should rotate with the components.
-However, the SegmentText class is designed for fixed rotations in the world frame, not segments that rotate with the
-component. Hence, this quick hack effectively places labels that contain the text. Alternate solutions could be to add a
-rotation_global flag to the SegmentText class or create a new segment type for these applications. However, those
-changes touch a lot of code and could thus cause problems.'''
-def _add_rotating_text_at(self, location, text, align=None):
-    center_coord = Point(self.anchors['center'])
-    self._userlabels.append(
-        Label(label=text, loc='center', ofst=location - center_coord, align=align, rotate=True, fontsize=None,
-              font=None, mathfont=None, color=None))
-
 class TwoPort(ElementTwoport):
     ''' Generic Twoport
 
@@ -141,14 +129,27 @@ class TwoPort(ElementTwoport):
 
         if sign:
             # note the use of unicode − rather than usual - for better visual representation.
-            _add_rotating_text_at(self, Point(( 0.1, 0.1)) + self.input_component.end,    '−', align=('left', 'center'))
-            _add_rotating_text_at(self, Point(( 0.1,-0.1)) + self.input_component.start,  '+', align=('left', 'center'))
+            self.segments.append(
+                SegmentText(pos=Point((0.1, 0.1)) + self.input_component.end, label='−',
+                            align=('left', 'center'), rotation_global=False))
+            self.segments.append(
+                SegmentText(pos=Point((0.1,-0.1)) + self.input_component.start, label='+',
+                            align=('left', 'center'), rotation_global=False))
+
             if not reverse_output:
-                _add_rotating_text_at(self, Point((-0.1, 0.1)) + self.output_component.end,   '−', align=('right','center'))
-                _add_rotating_text_at(self, Point((-0.1,-0.1)) + self.output_component.start, '+', align=('right','center'))
+                self.segments.append(
+                    SegmentText(pos=Point((-0.1, 0.1)) + self.output_component.end, label='−',
+                                align=('right', 'center'), rotation_global=False))
+                self.segments.append(
+                    SegmentText(pos=Point((-0.1, -0.1)) + self.output_component.start, label='+',
+                                align=('right', 'center'), rotation_global=False))
             else:
-                _add_rotating_text_at(self, Point((-0.1, 0.1)) + self.output_component.end,   '+', align=('right','center'))
-                _add_rotating_text_at(self, Point((-0.1,-0.1)) + self.output_component.start, '−', align=('right','center'))
+                self.segments.append(
+                    SegmentText(pos=Point((-0.1, 0.1)) + self.output_component.end, label='+',
+                                align=('right', 'center'), rotation_global=False))
+                self.segments.append(
+                    SegmentText(pos=Point((-0.1, -0.1)) + self.output_component.start, label='−',
+                                align=('right', 'center'), rotation_global=False))
 
         if arrow:
             center_point = Point(self.anchors['center'])
@@ -188,8 +189,12 @@ class VoltageTransactor(ElementTwoport):
             output_element = output_element.reverse()  # element is reversed in itself, so do a double reversal to cancel
         super().__init__(*d, input_element=elm.Gap(), output_element=output_element, **kwargs)
 
-        _add_rotating_text_at(self, Point((0,  0.05)) + self.input_component.end,   '−', align=('right', 'bottom'))
-        _add_rotating_text_at(self, Point((0, -0.05)) + self.input_component.start, '+', align=('right', 'top'))
+        self.segments.append(
+            SegmentText(pos=Point((0, 0.05)) + self.input_component.end, label='−',
+                        align=('right', 'bottom'), rotation_global=False))
+        self.segments.append(
+            SegmentText(pos=Point((0, -0.05)) + self.input_component.start, label='+',
+                        align=('right', 'top'), rotation_global=False))
 
 
 class TransimpedanceTransactor(ElementTwoport):
@@ -288,8 +293,12 @@ class TransadmittanceTransactor(ElementTwoport):
             output_element = output_element.reverse()  # element is reversed in itself, so do a double reversal to cancel
         super().__init__(*d, input_element=elm.Gap(), output_element=output_element, **kwargs)
 
-        _add_rotating_text_at(self, Point((0,  0.05)) + self.input_component.end,   '−', align=('right', 'bottom'))
-        _add_rotating_text_at(self, Point((0, -0.05)) + self.input_component.start, '+', align=('right', 'top'))
+        self.segments.append(
+            SegmentText(pos=Point((0, 0.05)) + self.input_component.end, label='−',
+                        align=('right', 'bottom'), rotation_global=False))
+        self.segments.append(
+            SegmentText(pos=Point((0, -0.05)) + self.input_component.start, label='+',
+                        align=('right', 'top'), rotation_global=False))
 
 
 class Nullor(ElementTwoport):

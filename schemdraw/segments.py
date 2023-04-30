@@ -259,6 +259,7 @@ class SegmentText:
                 'top', 'bottom')
             rotation: Rotation angle in degrees
             rotation_mode: See Matplotlib documentation. 'anchor' or 'default'.
+            rotation_global: Lock rotation to world rather than component. Defaults to True
             color: Color for this segment
             fontsize: Font size
             font: Font name/family
@@ -271,6 +272,7 @@ class SegmentText:
                  align: Align = None,
                  rotation: float = None,
                  rotation_mode: RotationMode = None,
+                 rotation_global: bool = True,
                  color: str = None,
                  fontsize: float = 14,
                  font: str = None,
@@ -287,6 +289,7 @@ class SegmentText:
         self.color = color
         self.rotation = rotation
         self.rotation_mode = rotation_mode
+        self.rotation_global = rotation_global
         self.clip = clip
         self.zorder = zorder
         self.visible = visible
@@ -294,10 +297,14 @@ class SegmentText:
     def doreverse(self, centerx: float) -> None:
         ''' Reverse the path (flip horizontal about the centerx point) '''
         self.xy = util.mirrorx(self.xy, centerx)
+        if not self.rotation_global:
+            self.align = ({'center': 'center', 'left': 'right', 'right': 'left'}[self.align[0]], self.align[1])
 
     def doflip(self) -> None:
         ''' Vertically flip the element '''
         self.xy = util.flip(self.xy)
+        if not self.rotation_global:
+            self.align = (self.align[0], {'center': 'center', 'top': 'bottom', 'bottom': 'top'}[self.align[1]])
 
     def xform(self, transform, **style) -> 'SegmentText':
         ''' Return a new Segment that has been transformed
@@ -315,12 +322,16 @@ class SegmentText:
             'color': self.color if self.color else style.get('color', None),
             'rotation': self.rotation if self.rotation else style.get('rotation', None),
             'rotation_mode': self.rotation_mode if self.rotation_mode else style.get('rotation_mode', None),
+            'rotation_global': self.rotation_global,
             'clip': self.clip,
             'zorder': self.zorder if self.zorder is not None else style.get('zorder', None),
             'visible': self.visible}
 
         style = {k: v for k, v in style.items() if params.get(k) is not None}
         params.update(style)
+        if not params['rotation_global']:
+            params['rotation'] = params['rotation'] + transform.theta % 360
+
         return SegmentText(transform.transform(self.xy),
                            self.text, **params)
 
@@ -369,6 +380,9 @@ class SegmentText:
         rotation = self.rotation if self.rotation else style.get('rotation', 0)
         rotmode = self.rotation_mode if self.rotation_mode else style.get('rotation_mode', 'anchor')
         zorder = self.zorder if self.zorder is not None else style.get('zorder', 3)
+
+        if not self.rotation_global:
+            rotation = rotation + transform.theta % 360
 
         fig.text(self.text, xy[0], xy[1],
                  color=color, fontsize=fontsize, fontfamily=font, mathfont=mathfont,

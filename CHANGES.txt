@@ -1,5 +1,6 @@
 v0.17 - INPROGRESS
 
+    - Add SegmentText nonglobal rotation mode
     - Add additional pathological elements CurrentMirror and VoltageMirror, along with a twoport VMCMPair
     - Fixed CurrentLabel placement with transistor elements, now follows biasing current
     - Fixed CurrentLabel positioning for elements with no center anchor

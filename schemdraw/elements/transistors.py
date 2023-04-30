@@ -254,7 +254,7 @@ class AnalogPFet(Element):
         self.params['drop']    = (0, -2 * afetl - afeth)
         self.params['lblloc']  = 'lft'
         if bulk:
-            self.segments.append(Segment([(fetw, -afetl - afeth / 2), (0, -afetl - afeth / 2)],
+            self.segments.append(Segment([(afetw, -afetl - afeth / 2), (0, -afetl - afeth / 2)],
                                          arrow='->', arrowwidth=afeta, arrowlength=afeta))
             self.anchors['bulk'] = (0, -afetl - afeth / 2)
 

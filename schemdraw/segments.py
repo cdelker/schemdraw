@@ -330,7 +330,10 @@ class SegmentText:
         style = {k: v for k, v in style.items() if params.get(k) is not None}
         params.update(style)
         if not params['rotation_global']:
-            params['rotation'] = params['rotation'] + transform.theta % 360
+            if params['rotation'] is None:
+                params['rotation'] = transform.theta
+            else:
+                params['rotation'] = params['rotation'] + transform.theta % 360
 
         return SegmentText(transform.transform(self.xy),
                            self.text, **params)
@@ -382,7 +385,10 @@ class SegmentText:
         zorder = self.zorder if self.zorder is not None else style.get('zorder', 3)
 
         if not self.rotation_global:
-            rotation = rotation + transform.theta % 360
+            if rotation is None:
+                rotation = transform.theta
+            else:
+                rotation = rotation + transform.theta % 360
 
         fig.text(self.text, xy[0], xy[1],
                  color=color, fontsize=fontsize, fontfamily=font, mathfont=mathfont,

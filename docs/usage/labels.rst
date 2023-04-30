@@ -178,6 +178,26 @@ arrow will be placed over the center of that Element.
 
     d.draw()
 
+For transistors, the label will follow sensible bias currents by default.
+
+.. jupyter-execute::
+    :hide-code:
+
+    d = schemdraw.Drawing()
+
+.. jupyter-execute::
+
+    d += (Q1 := elm.AnalogNFet())
+    d += elm.CurrentLabel().at(Q1).label('10 µA')
+
+    d += (Q2 := elm.AnalogNFet()).at([4,0]).flip().reverse()
+    d += elm.CurrentLabel().at(Q2).label('10 µA')
+
+.. jupyter-execute::
+    :hide-code:
+
+    d.draw()
+
 
 Inline Current Arrow
 ^^^^^^^^^^^^^^^^^^^^

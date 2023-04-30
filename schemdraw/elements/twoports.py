@@ -135,7 +135,7 @@ class TwoPort(TwoportElement):
             * center
     '''
 
-    def __init__(self, sign=True, arrow=True, *d, **kwargs):
+    def __init__(self, sign: bool = True, arrow: bool = True, *d, **kwargs):
         super().__init__(*d, input_element=elm.Gap(), output_element=elm.Gap(),
                          boxpadx=0, minw=0, component_offset=2, **kwargs)
 
@@ -211,7 +211,7 @@ class TransimpedanceTransactor(TwoportElement):
             * center
     '''
 
-    def __init__(self, *d, reverse_output=False, **kwargs):
+    def __init__(self, *d, reverse_output: bool = False, **kwargs):
         output_element = elm.SourceControlledV()
         if not reverse_output:
             output_element = output_element.reverse()  # element is reversed in itself, so do a double reversal to cancel
@@ -244,7 +244,7 @@ class CurrentTransactor(TwoportElement):
             * center
     '''
 
-    def __init__(self, *d, reverse_output=False, **kwargs):
+    def __init__(self, *d, reverse_output: bool = False, **kwargs):
         output_element = elm.SourceControlledI()
         if not reverse_output:
             output_element = output_element.reverse()  # element is reversed in itself, so do a double reversal to cancel
@@ -278,7 +278,7 @@ class TransadmittanceTransactor(TwoportElement):
             * center
     '''
 
-    def __init__(self, *d, reverse_output=False, **kwargs):
+    def __init__(self, *d, reverse_output: bool = False, **kwargs):
         output_element = elm.SourceControlledI()
         if not reverse_output:
             output_element = output_element.reverse()  # element is reversed in itself, so do a double reversal to cancel

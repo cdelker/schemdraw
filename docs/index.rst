@@ -31,8 +31,10 @@ The next element added to the drawing will start at the endpoint of the resistor
 
 
 
+|
+
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 1
    :caption: Contents:
 
    usage/start
@@ -42,6 +44,7 @@ The next element added to the drawing will start at the endpoint of the resistor
    usage/customizing
    classes/index   
    changes
+   contributing
 
 
 ----------

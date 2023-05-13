@@ -50,10 +50,10 @@ class Figure:
             else:
                 self.fig = plt.figure()
             self.fig.subplots_adjust(
-                left=0.05,
-                bottom=0.05,
-                right=0.95,
-                top=0.90)
+                left=0.0,
+                bottom=0.0,
+                right=1.,
+                top=1.)
             self.ax = self.fig.add_subplot()
             self.userfig = False
             self.ax.set_aspect('equal')
@@ -61,6 +61,13 @@ class Figure:
                 self.ax.axes.get_xaxis().set_visible(False)
                 self.ax.axes.get_yaxis().set_visible(False)
                 self.ax.set_frame_on(False)
+
+        # whitespace around contents
+        margin = kwargs.get('margin', .01)
+        try:
+            self.ax.margins(*margin)  # tuple of x, y
+        except TypeError:
+            self.ax.margins(margin, margin)  # single value
 
     def set_bbox(self, bbox: BBox):
         ''' Set bounding box, to override Matplotlib's autoscale '''
@@ -249,8 +256,10 @@ class Figure:
     def save(self, fname: str, transparent: bool = True, dpi: float = 72) -> None:
         ''' Save the figure to a file '''
         fig = self.getfig()
+        fig.subplots_adjust(0,0,1,1)
         fig.savefig(fname, bbox_inches='tight', transparent=transparent, dpi=dpi,
-                    bbox_extra_artists=self.ax.get_default_bbox_extra_artists())
+                    bbox_extra_artists=self.ax.get_default_bbox_extra_artists(),
+                    pad_inches=0)
 
     def getfig(self):
         ''' Get the Matplotlib figure '''
@@ -276,7 +285,10 @@ class Figure:
         ''' Get the image as SVG or PNG bytes array '''
         fig = self.getfig()
         output = BytesIO()
-        fig.savefig(output, format=ext, bbox_inches='tight')
+        fig.savefig(output, format=ext, bbox_inches='tight',
+                    bbox_extra_artists=self.ax.get_default_bbox_extra_artists(),
+                    pad_inches=0)
+
         return output.getvalue()
 
     def clear(self) -> None:

@@ -21,17 +21,13 @@ Several compound elements defined based on other basic elements.
             if hasattr(e, 'keywords'):  # partials have keywords attribute
                 args = ', '.join(['{}={}'.format(k, v) for k, v in e.keywords.items()])
                 name = '{}({})'.format(name, args)
-            eplaced = d.add(e(d='right', xy=[x, y]))
-            eplaced.label(name, loc='rgt', halign='left', valign='center')
-            anchors = eplaced.absanchors.copy()
-            anchors.pop('start', None)
-            anchors.pop('end', None)
-            anchors.pop('center', None)
-            anchors.pop('xy', None)
+            newelm = e().right().at((x, y)).label(name, loc='rgt', halign='left', valign='center')
 
-            if len(anchors) > 0:
-                for aname, apos in anchors.items():
-                    eplaced.label(aname, loc=aname, color='blue', fontsize=10)
+            if len(newelm.anchors) > 0:
+                for aname, apos in newelm.anchors.items():
+                    if aname not in ['start', 'end', 'center', 'xy']:
+                        newelm.label(aname, loc=aname, color='blue', fontsize=10)
+            d += newelm
         return d
     
 

@@ -153,7 +153,8 @@ class TimingDiagram(Element):
             self._drawgrid(periods, height)
 
         # phase shifts that go off screen will be clipped by this rect
-        clipbox = BBox(0, self.yheight, periods*self.yheight*2*self.hscale, -height)
+        # +.05 so the top pixel row doesn't get clipped
+        clipbox = BBox(0, self.yheight+.05, periods*self.yheight*2*self.hscale, -height)
         self.kwargs['clip'] = clipbox
 
         labelwidth = 0.

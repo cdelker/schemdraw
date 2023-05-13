@@ -1,3 +1,11 @@
+v0.17 - In progress...
+
+    - Fixed regression bug in logicparse where labels were not drawn on inputs/outputs
+    - Fix timing diagrams when async times are longer than the wave
+    - Added NMos and PMos elements (credit: dtmaidenmueller)
+    - Added arguments for length/width of CurrentLabel arrows (credit: Christian Seigel)
+
+
 v0.16 - 25-Mar-2023
 
     - Added `canvas` parameter to Drawing and draw method, and deprecated `backend` parameter.

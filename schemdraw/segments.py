@@ -143,7 +143,7 @@ class Segment:
             'capstyle': self.capstyle if self.capstyle else style.get('capstyle', None),
             'joinstyle': self.joinstyle if self.joinstyle else style.get('joinstyle', None),
             'visible': self.visible}
-        style = {k: v for k, v in style.items() if params.get(k) is None and  k in params.keys()}
+        style = {k: v for k, v in style.items() if params.get(k) is None and k in params.keys()}
         params.update(style)
         return Segment(transform.transform_array(self.path), **params)
 
@@ -327,7 +327,7 @@ class SegmentText:
             'zorder': self.zorder if self.zorder is not None else style.get('zorder', None),
             'visible': self.visible}
 
-        style = {k: v for k, v in style.items() if params.get(k) is not None}
+        style = {k: v for k, v in style.items() if params.get(k) is None and k in params.keys()}
         params.update(style)
         if not params['rotation_global']:
             if params['rotation'] is None:
@@ -468,7 +468,7 @@ class SegmentPoly:
             'clip': self.clip,
             'zorder': self.zorder if self.zorder is not None else style.get('zorder', None),
             'visible': self.visible}
-        style = {k: v for k, v in style.items() if params.get(k) is not None}
+        style = {k: v for k, v in style.items() if params.get(k) is None and k in params.keys()}
         params.update(style)
         return SegmentPoly(transform.transform_array(self.verts), **params)
 
@@ -581,7 +581,7 @@ class SegmentCircle:
             'clip': self.clip,
             'ref': self.endref,
             'visible': self.visible}
-        style = {k: v for k, v in style.items() if params.get(k) is not None}
+        style = {k: v for k, v in style.items() if params.get(k) is None and k in params.keys()}
         params.update(style)
         return SegmentCircle(transform.transform(self.center),
                              self.radius*transform.zoom, **params)
@@ -699,7 +699,7 @@ class SegmentBezier:
             'clip': self.clip,
             'zorder': self.zorder if self.zorder is not None else style.get('zorder', None),
             'visible': self.visible}
-        style = {k: v for k, v in style.items() if params.get(k) is not None}
+        style = {k: v for k, v in style.items() if params.get(k) is None and k in params.keys()}
         params.update(style)
         return SegmentBezier(transform.transform_array(self.p), **params)
 
@@ -806,7 +806,7 @@ class SegmentArc:
             'clip': self.clip,
             'zorder': self.zorder if self.zorder is not None else style.get('zorder', None),
             'visible': self.visible}
-        style = {k: v for k, v in style.items() if params.get(k) is not None}
+        style = {k: v for k, v in style.items() if params.get(k) is None and k in params.keys()}
         params.update(style)
         return SegmentArc(transform.transform(self.center),
                           self.width*transform.zoom, self.height*transform.zoom, angle=angle,

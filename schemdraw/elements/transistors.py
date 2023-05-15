@@ -2,13 +2,19 @@
 
 from __future__ import annotations
 
+__all__ = [
+    'Bjt', 'Bjt2', 'BjtNpn', 'BjtNpn2', 'BjtPnp', 'BjtPnp2', 'BjtPnp2c', 'BjtPnp2c2',
+    'JFet', 'JFet2', 'JFetN', 'JFetN2', 'JFetP', 'JFetP2',
+    'NFet', 'NFet2', 'NMos', 'NMos2', 'PFet', 'PFet2', 'PMos', 'PMos2',
+    "AnalogNFet", "AnalogPFet", "AnalogBiasedFet"]
+
 from .elements import Element, Element2Term
 from .twoterm import reswidth
 from ..segments import Segment, SegmentPoly, SegmentCircle
 from ..types import Point, XY
 
 
-class Mosfet(Element):
+class _Mosfet(Element):
 
     '''Base Class for Metal Oxide Semiconductor Field Effect Transistors
 
@@ -22,19 +28,21 @@ class Mosfet(Element):
             * drain
             * gate
 
-    Note: vertical orientation.  For horizontal orientation, see Mosfet2.
+    Note: vertical orientation.  For horizontal orientation, see _Mosfet2.
     '''
 
     __variants = ['nmos', 'pmos']
 
     def __init__(self, *d, variant: str, diode: bool = False, circle: bool = False, **kwargs):
-
         if variant not in self.__variants:
             raise ValueError(
                 "Parameter 'variant' must be one of {}, not {}.".format(
                     self.__variants, variant))
 
         super().__init__(*d, **kwargs)
+
+        self._allowed_sides = [True, False, False, False]  # right, top, left, bottom
+        self._bias_direction = 'bottom'
 
         u = reswidth*0.5
 
@@ -111,7 +119,7 @@ class Mosfet(Element):
                 SegmentCircle((-1*u, -10*u), 7*u))
 
 
-class NMos(Mosfet):
+class NMos(_Mosfet):
 
     ''' N-type Metal Oxide Semiconductor Field Effect Transistor
 
@@ -132,7 +140,7 @@ class NMos(Mosfet):
         super().__init__(*d, variant='nmos', diode=diode, circle=circle, **kwargs)
 
 
-class PMos(Mosfet):
+class PMos(_Mosfet):
 
     ''' P-type Metal Oxide Semiconductor Field Effect Transistor
 
@@ -153,7 +161,7 @@ class PMos(Mosfet):
         super().__init__(*d, variant='pmos', diode=diode, circle=circle, **kwargs)
 
 
-class Mosfet2(Element2Term):
+class _Mosfet2(Element2Term):
 
     '''Base Class for Metal Oxide Semiconductor Field Effect Transistors
 
@@ -167,19 +175,21 @@ class Mosfet2(Element2Term):
             * drain
             * gate
 
-    Note: horizontal orientation.  For vertical orientation, see Mosfet.
+    Note: horizontal orientation.  For vertical orientation, see _Mosfet.
     '''
 
     __variants = ['nmos', 'pmos']
 
     def __init__(self, *d, variant: str, diode: bool = False, circle: bool = False, **kwargs):
-
         if variant not in self.__variants:
             raise ValueError(
                 "Parameter 'variant' must be one of {}, not {}.".format(
                     self.__variants, variant))
 
         super().__init__(*d, **kwargs)
+
+        self._allowed_sides = [False, True, False, False]  # right, top, left, bottom
+        self._bias_direction = 'right'
 
         self.variant = variant
 
@@ -256,7 +266,7 @@ class Mosfet2(Element2Term):
                 SegmentCircle((10*u, -1*u), 7*u))
 
 
-class NMos2(Mosfet2):
+class NMos2(_Mosfet2):
 
     ''' N-type Metal Oxide Semiconductor Field Effect Transistor
 
@@ -277,7 +287,7 @@ class NMos2(Mosfet2):
         super().__init__(*d, variant='nmos', diode=diode, circle=circle, **kwargs)
 
 
-class PMos2(Mosfet2):
+class PMos2(_Mosfet2):
 
     ''' P-type Metal Oxide Semiconductor Field Effect Transistor
 
@@ -598,7 +608,7 @@ class AnalogBiasedFet(_AnalogFet):
                                       (afetw, -afetl - afeth), (0, -afetl - afeth),
                                       (0, -2 * afetl - afeth)]))
         if arrow:
-            self.segments.append(SegmentCircle(center=(afetb * 2, -afetl - afeth), radius=afetb, fill=True, lw=None))
+            self.segments.append(SegmentCircle(center=(afetb * 2, -afetl - afeth), radius=afetb, fill=True))
         self.segments.append(Segment([(afetw + afetgap, -afetl - afeti),
                                       (afetw + afetgap, -afetl - afeth + afeti)]))
 
@@ -619,7 +629,7 @@ class AnalogBiasedFet(_AnalogFet):
         if bulk:
             self.segments.append(Segment([(0, -afetl - afeth / 2),
                                           (afetw, -afetl - afeth / 2)]))
-            self.segments.append(SegmentCircle(center=(afetw - afetb * 2, -afetl - afeth / 2), radius=afetb, fill=True, lw=None))
+            self.segments.append(SegmentCircle(center=(afetw - afetb * 2, -afetl - afeth / 2), radius=afetb, fill=True))
             self.anchors['bulk'] = (0, -afetl - afeth / 2)
 
 # Junction FETs

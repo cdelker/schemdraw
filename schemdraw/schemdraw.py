@@ -38,7 +38,8 @@ def config(unit: float = 3.0, inches_per_unit: float = 0.5,
            lblofst: float = 0.1, fontsize: float = 14.,
            font: str = 'sans-serif', color: str = 'black',
            lw: float = 2., ls: Linestyle = '-',
-           fill: str = None, bgcolor: str = None) -> None:
+           fill: str = None, bgcolor: str = None,
+           margin: Union[float, Sequence[float, float]] = 0.01) -> None:
     ''' Set global schemdraw style configuration
 
         Args:
@@ -52,6 +53,9 @@ def config(unit: float = 3.0, inches_per_unit: float = 0.5,
             lw: Default line width for elements
             ls: Default line style
             fill: Deault fill color for closed elements
+            margin: White space around the drawing as fraction (0-1) of
+                drawing size. If tuple, unique values for x and y margin
+                may be provided.
     '''
     schemdrawstyle['unit'] = unit
     schemdrawstyle['inches_per_unit'] = inches_per_unit
@@ -62,6 +66,7 @@ def config(unit: float = 3.0, inches_per_unit: float = 0.5,
     schemdrawstyle['lw'] = lw
     schemdrawstyle['ls'] = ls
     schemdrawstyle['fill'] = fill
+    schemdrawstyle['margin'] = margin
     if bgcolor:
         schemdrawstyle['bgcolor'] = bgcolor
 
@@ -308,7 +313,8 @@ class Drawing:
     def config(self, unit: float = None, inches_per_unit: float = None,
                fontsize: float = None, font: str = None,
                color: str = None, lw: float = None, ls: Linestyle = None,
-               fill: str = None, bgcolor: str = None) -> None:
+               fill: str = None, bgcolor: str = None,
+               margin: Union[float, Sequence[float, float]] = None) -> None:
         ''' Set Drawing configuration, overriding schemdraw global config.
 
             Args:
@@ -321,6 +327,9 @@ class Drawing:
                 lw: Default line width for elements
                 ls: Default line style
                 fill: Deault fill color for closed elements
+            margin: White space around the drawing as fraction (0-1) of
+                drawing size. If tuple, unique values for x and y margin
+                may be provided.
         '''
         if unit is not None:
             self.unit = unit
@@ -341,6 +350,8 @@ class Drawing:
             self.dwgparams['fill'] = fill
         if bgcolor is not None:
             self.dwgparams['bgcolor'] = bgcolor
+        if margin is not None:
+            self.dwgparams['margin'] = margin
 
     def _drawelements(self):
         ''' Draw all the elements on self.fig '''
@@ -352,6 +363,7 @@ class Drawing:
         if self.fig is None or ax is not None:
             self.fig = mplFigure(ax=ax,
                                  inches_per_unit=self.dwgparams.get('inches_per_unit'),
+                                 margin=self.dwgparams['margin'],
                                  showframe=showframe)
             if 'bgcolor' in self.dwgparams:
                 self.fig.bgcolor(self.dwgparams['bgcolor'])
@@ -362,6 +374,7 @@ class Drawing:
         if self.fig is None or svg is not None:
             self.fig = svgFigure(svg=svg, bbox=self.get_bbox(),
                                  inches_per_unit=self.dwgparams.get('inches_per_unit'),
+                                 margin=self.dwgparams.get('margin'),
                                  showframe=showframe)
         if 'bgcolor' in self.dwgparams:
             self.fig.bgcolor(self.dwgparams['bgcolor'])

@@ -553,7 +553,10 @@ class SparkGap(Element2Term):
         self.segments.append(Segment([(.7, 0), (.48, 0)], arrow='->', arrowwidth=.2))
 
 class Nullator(Element2Term):
-    ''' Nullator '''
+    ''' Nullator
+
+        This element does not support filling
+    '''
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.segments.append(Segment([[0, 0], [0, 0], gap, [1, 0], [1, 0]]))
@@ -579,13 +582,22 @@ class CurrentMirror(Element2Term):
         super().__init__(*d, **kwargs)
 
         self.segments.append(Segment([[0, 0], [0, 0], gap, [1, 0], [1, 0]]))
-        self.segments.append(SegmentCircle([0.3, 0], 0.3, ))
-        self.segments.append(SegmentCircle([1 - 0.3, 0], 0.3, ))
+        # in order to prevent graphical glitches due to overlapping outlines when filling, draw fill before outline
+        # fill is drawn here. The outline is disabled to prevent anti-aliasing glitches
+        ''' ideally, the outline would be disabled with ls='None', but this does not work in testing, so lw=1e-9 is here
+        as a fallback. 0 cannot be used because it would be ignored by the style logic '''
+        self.segments.append(SegmentCircle([0.3, 0], 0.3, lw=1e-9, ls="None"))
+        self.segments.append(SegmentCircle([1 - 0.3, 0], 0.3, lw=1e-9, ls="None"))
+        # outline is drawn here, without fill to prevent the glitch
+        self.segments.append(SegmentCircle([0.3, 0], 0.3, fill=False))
+        self.segments.append(SegmentCircle([1 - 0.3, 0], 0.3, fill=False))
         self.params['theta'] = 90
         self.anchors['common'] = (0.5, math.sqrt(0.3**2 - 0.2**2))
 
 class VoltageMirror(Element2Term):
     ''' Voltage mirror with optional common terminal
+
+        This element does not support filling
 
         Anchors:
             * scommon

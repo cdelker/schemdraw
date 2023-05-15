@@ -127,16 +127,21 @@ def drawlogic(tree, gateH=.7, gateW=2, outlabel=None):
         x = root.y * -gateW   # buchheim draws vertical trees, so flip x-y.
         y = -root.x * gateH
 
-        g = drawing.add(elm(d='r', at=(x, y), anchor='end',
-                            l=gateW, inputs=len(root.children)))
+        g = elm(d='r', at=(x, y), anchor='end',
+                l=gateW, inputs=len(root.children))
         if outlabel:
             g.label(outlabel, loc='end')
-
+        
         for i, child in enumerate(root.children):
             anchorname = 'start' if elm in [logic.Not, logic.Buf] else f'in{i+1}'
             if child.node not in elmdefs:
                 g.label(child.node, loc=anchorname)
-            else:
+
+        drawing.add(g)
+
+        for i, child in enumerate(root.children):
+            anchorname = 'start' if elm in [logic.Not, logic.Buf] else f'in{i+1}'
+            if child.node in elmdefs:
                 childelm = drawit(child, depth+1)  # recursive
                 drawing.add(RightLines(at=(g, anchorname), to=childelm.end))
         return g

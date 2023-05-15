@@ -28,23 +28,13 @@ See :ref:`elecelements` for complete class definitions for these elements.
             if hasattr(e, 'keywords'):  # partials have keywords attribute
                 args = ', '.join(['{}={}'.format(k, v) for k, v in e.keywords.items()])
                 name = '{}({})'.format(name, args)
-            eplaced = d.add(e().right().at([x, y])
-                            .label(name, loc=lblloc, halign='left', valign='center', ofst=lblofst))
-            anchors = eplaced.absanchors.copy()
-            anchors.pop('start', None)
-            anchors.pop('end', None)
-            anchors.pop('istart', None)
-            anchors.pop('iend', None)
-            anchors.pop('isource', None)
-            anchors.pop('idrain', None)
-            anchors.pop('iemitter', None)
-            anchors.pop('icollector', None)
-            anchors.pop('center', None)
-            anchors.pop('xy', None)
-
-            if len(anchors) > 0:
-                for aname, apos in anchors.items():
-                    eplaced.label(aname, loc=aname, color='blue', fontsize=10)
+            newelm = e().right().at((x, y)).label(name, loc=lblloc, halign='left', valign='center', ofst=lblofst)
+            if len(newelm.anchors) > 0:
+                for aname, apos in newelm.anchors.items():
+                    if aname not in ['center', 'start', 'end', 'istart', 'iend',
+                                     'isource', 'idrain', 'iemitter', 'icollector', 'xy']:
+                        newelm.label(aname, loc=aname, color='blue', fontsize=10)
+            d += newelm
         return d
 
 

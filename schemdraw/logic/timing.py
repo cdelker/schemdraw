@@ -148,11 +148,13 @@ class TimingDiagram(Element):
 
         height = (self.yheight+self.ygap)*len(signals_flat)
         periods = max(len(w.get('wave', [])) for w in signals_flat)
+        periods = max(periods, (max(w.get('async', [0])[-1] for w in signals_flat)))
         if self.grid:
             self._drawgrid(periods, height)
 
         # phase shifts that go off screen will be clipped by this rect
-        clipbox = BBox(0, self.yheight, periods*self.yheight*2*self.hscale, -height)
+        # +.05 so the top pixel row doesn't get clipped
+        clipbox = BBox(0, self.yheight+.05, periods*self.yheight*2*self.hscale, -height)
         self.kwargs['clip'] = clipbox
 
         labelwidth = 0.

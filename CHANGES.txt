@@ -1,4 +1,4 @@
-v0.17 - INPROGRESS
+v0.17 - In progress...
 
     - Add SegmentText nonglobal rotation mode
     - Add additional pathological elements CurrentMirror and VoltageMirror, along with a twoport VMCMPair
@@ -16,6 +16,10 @@ v0.17 - INPROGRESS
         - Nullor
     - Added pathological elements Nullator and Norator
     - Added Transistor elements AnalogNFet, AnalogPFet, and AnalogBiasedFet
+    - Fixed regression bug in logicparse where labels were not drawn on inputs/outputs
+    - Fix timing diagrams when async times are longer than the wave
+    - Added NMos and PMos elements (credit: dtmaidenmueller)
+    - Added arguments for length/width of CurrentLabel arrows (credit: Christian Seigel)
 
 v0.16 - 25-Mar-2023
 

@@ -36,8 +36,7 @@ Directional elements, such as `Amp`, `Adc`, and `Dac` define anchors `input` and
             if hasattr(e, 'keywords'):  # partials have keywords attribute
                 args = ', '.join(['{}={}'.format(k, v) for k, v in e.keywords.items()])
                 name = '{}({})'.format(name, args)
-            eplaced = d.add(e(d='right', xy=[x, y]))
-            eplaced.label(name, loc='rgt', ofst=.2, halign='left', valign='center')
+            d += e().right().at((x,y)).label(name, loc='rgt', ofst=.2, halign='left', valign='center')
         return d
 
     elms = [dsp.Square, dsp.Circle, dsp.Sum, dsp.SumSigma, dsp.Mixer, dsp.Speaker,

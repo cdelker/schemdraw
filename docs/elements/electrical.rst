@@ -127,6 +127,14 @@ Diodes
                Zener, Varactor, LED, LED2, Photodiode, Diac, Triac, SCR]
     drawElements(elmlist, cols=2)
 
+Pathological
+^^^^^^^^^^^^^
+
+.. jupyter-execute::
+    :hide-code:
+
+    elmlist = [Nullator, Norator, CurrentMirror, VoltageMirror]
+    drawElements(elmlist, cols=2)
 
 Miscellaneous
 ^^^^^^^^^^^^^
@@ -172,7 +180,7 @@ Lines and Arrows
 .. jupyter-execute::
     :hide-code:
     
-    elmlist = [Line, Arrow, partial(Arrow, double=True)]
+    elmlist = [Line, Arrow, partial(Arrow, double=True), DataBusLine]
     drawElements(elmlist, cols=2)
 
 
@@ -405,7 +413,12 @@ Field-Effect Transistors
     :hide-code:
 
     elmlist = [NFet, PFet, partial(NFet, bulk=True), partial(PFet, bulk=True),
-               JFet, JFetN, JFetP, partial(JFetN, circle=True), partial(JFetP, circle=True)]
+               JFet, JFetN, JFetP, partial(JFetN, circle=True), partial(JFetP, circle=True),
+               AnalogNFet, AnalogPFet, AnalogBiasedFet, partial(AnalogNFet, bulk=True),
+               partial(AnalogPFet, bulk=True), partial(AnalogBiasedFet, bulk=True),
+               partial(AnalogNFet, arrow=False), partial(AnalogPFet, arrow=False),
+               partial(AnalogBiasedFet, arrow=False), partial(AnalogNFet, offset_gate=False),
+               partial(AnalogPFet, offset_gate=False), partial(AnalogBiasedFet, offset_gate=False),]
     drawElements(elmlist, dx=6.5, dy=3, lblofst=[0, -.8])
 
 
@@ -422,6 +435,82 @@ These can be easier to place centered between endpoints, for example.
     elmlist = [BjtNpn2, BjtPnp2, BjtPnp2c2, NFet2, PFet2, JFetN2, JFetP2]
     drawElements(elmlist, dx=6.5, dy=3)
 
+
+Two-ports
+-----------
+
+Twoport elements share the interface defined by :py:class:`schemdraw.elements.twoports.ElementTwoport`, providing a set of anchors and various styling options. The terminals and box can be enabled or disabled using the `terminals` and `box` arguments. In addition, the `boxfill`, `boxlw`, and `boxls` provide the option to style the outline separately from other elements.
+
+.. jupyter-execute::
+    :hide-code:
+
+    d = schemdraw.Drawing(fontsize=12)
+    d += (tp := elm.TwoPort().label('TwoPort', ofst=.6)).anchor('center')
+    d += elm.Dot().at(tp.in_p).color('blue').label('in_p', loc='left', valign='center')
+    d += elm.Dot().at(tp.in_n).color('blue').label('in_n', loc='left', valign='center')
+    d += elm.Dot().at(tp.out_p).color('blue').label('out_p', loc='right', valign='center')
+    d += elm.Dot().at(tp.out_n).color('blue').label('in_n', loc='right', valign='center')
+    d += elm.Dot().at(tp.center).color('blue').label('center', loc='top')
+
+    d += (tp := elm.TwoPort(terminals=False, boxlw=3).label('TwoPort(terminals=False, boxlw=3)', ofst=.6)).anchor('center').at([7,0])
+
+    d.draw()
+
+Generic
+^^^^^^^
+
+.. jupyter-execute::
+    :hide-code:
+
+    elmlist = [TwoPort, partial(TwoPort, reverse_output=True), partial(TwoPort, arrow=False),
+               partial(TwoPort, sign=False)]
+    drawElements(elmlist, dy=3, cols=2)
+
+
+Transactors (ideal amplifiers)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Like the generic twoport, the transactors provide the option to reverse the direction of the output or current using the `reverse_output` argument.
+
+.. jupyter-execute::
+    :hide-code:
+
+    elmlist = [VoltageTransactor, TransimpedanceTransactor,TransadmittanceTransactor, CurrentTransactor]
+    drawElements(elmlist, dy=3, cols=2)
+
+Pathological
+^^^^^^^^^^^^
+
+.. jupyter-execute::
+    :hide-code:
+
+    elmlist = [Nullor, VMCMPair]
+    drawElements(elmlist, dy=3, cols=2)
+
+Custom
+^^^^^^
+
+The :py:class:`schemdraw.elements.twoports.ElementTwoport` class can be used to define custom twoports by specifying an `input_element` and `output_element`. The `bpadx`, `bpady`, `minw`, `unit`, `width` can be used to tune the horizontal and vertical padding, minimum width of the elements, length of components, and width of the twoport respectively.
+
+.. jupyter-execute::
+    :hide-code:
+
+    d = schemdraw.Drawing()
+
+.. jupyter-execute::
+
+    d += elm.ElementTwoport(input_element=elm.Inductor2(),
+                            output_element=elm.SwitchReed(),
+                            unit=2.5, width=2.5).anchor('center')
+
+    d += elm.ElementTwoport(input_element=elm.Lamp(),
+                            output_element=elm.Photodiode().reverse().flip(),
+                            width=3).anchor('center').at([7,0])
+
+.. jupyter-execute::
+    :hide-code:
+
+    d.draw()
 
 Cables
 ------

@@ -206,3 +206,126 @@ Also note the use of newline characters inside resistor and capacitor labels.
         d += elm.Gap().toy(G.start).label(['+', '$V_{out}$', '–'])
         d += elm.Dot(open=True)
         d += elm.Line().left()
+
+5-transistor Operational Transconductance Amplifer (OTA)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Note the use of current labels to show the bias currents.
+
+.. jupyter-execute::
+    :code-below:
+
+    with schemdraw.Drawing() as d:
+        # tail transistor
+        d += (Q1 := elm.AnalogNFet()).anchor('source').theta(0).reverse()
+        d += elm.Line().down().length(0.5)
+        ground = d.here
+        d += elm.Ground()
+
+        # input pair
+        d += elm.Line().left().length(1).at(Q1.drain)
+        d += (Q2 := elm.AnalogNFet()).anchor('source').theta(0).reverse()
+
+        d += elm.Dot().at(Q1.drain)
+        d += elm.Line().right().length(1)
+        d += (Q3 := elm.AnalogNFet()).anchor('source').theta(0)
+
+        # current mirror
+        d += (Q4 := elm.AnalogPFet()).anchor('drain').at(Q2.drain).theta(0)
+        d += (Q5 := elm.AnalogPFet()).anchor('drain').at(Q3.drain).theta(0).reverse()
+
+        d += elm.Line().right().at(Q4.gate).to(Q5.gate)
+
+        d += elm.Dot().at(0.5*(Q4.gate + Q5.gate))
+        d += elm.Line().down().toy(Q4.drain)
+        d += elm.Line().left().tox(Q4.drain)
+        d += elm.Dot()
+
+        # vcc connection
+        d += elm.Line().right().at(Q4.source).to(Q5.source)
+        d += elm.Dot().at(0.5*(Q4.source + Q5.source))
+        d += elm.Vdd()
+
+        # bias source
+        d += elm.Line().left().length(0.25).at(Q1.gate)
+        d += elm.SourceV().down().toy(ground).reverse().scale(0.5).label("Bias")
+        d += elm.Ground()
+
+        # signal labels
+        d += elm.Tag().at(Q2.gate).label("In+").left()
+        d += elm.Tag().at(Q3.gate).label("In−").right()
+        d += elm.Dot().at(Q3.drain)
+        d += elm.Line().right().tox(Q3.gate)
+        d += elm.Tag().right().label("Out").reverse()
+
+        # bias currents
+        d += elm.CurrentLabel(length=1.25, ofst=0.25).at(Q1).label("20µA")
+        d += elm.CurrentLabel(length=1.25, ofst=0.25).at(Q4).label("10µA")
+        d += elm.CurrentLabel(length=1.25, ofst=0.25).at(Q5).label("10µA")
+
+
+Quadruple loop negative feedback amplifier
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. jupyter-execute::
+    :code-below:
+
+    with schemdraw.Drawing() as d:
+        # place twoports
+        d += (N1 := elm.Nullor()).anchor('center')
+        d += (T1 := elm.TransimpedanceTransactor(reverse_output=True)).reverse().flip().anchor('center').at([0,-3]).label("B")
+        d += (T2 := elm.CurrentTransactor()).reverse().flip().anchor('center').at([0,-6]).label("D")
+        d += (T3 := elm.VoltageTransactor()).reverse().anchor('center').at([0,-9]).label("A")
+        d += (T4 := elm.TransadmittanceTransactor(reverse_output=True)).reverse().anchor('center').at([0,-12]).label("C")
+
+        ## make connections
+        # right side
+        d += elm.Line().at(N1.out_n).to(T1.in_n)
+        d += elm.Line().at(T1.in_p).to(T2.in_n)
+        d += elm.Line().at(T3.in_n).to(T4.in_n)
+
+        d += elm.Line().right().length(1).at(N1.out_p)
+        pre_out = d.here
+        d += (outline := elm.Line()).right().length(1).dot(open=True)
+        out = d.here
+        d += elm.Gap().down().label(('+','$V_o$','–')).toy(N1.out_n)
+        d += elm.Line().idot(open=True).down().toy(T4.in_n)
+        d += elm.Line().left().to(T4.in_n)
+        d += elm.Dot()
+        d += elm.CurrentLabelInline(direction='in', ofst=-0.15).at(outline).label('$I_o$')
+
+        d += elm.Line().at(T2.in_p).right().tox(out)
+        d += elm.Dot()
+
+        d += elm.Line().right().at(T4.in_p).tox(pre_out)
+        d += elm.Line().up().toy(pre_out)
+        d += elm.Dot()
+
+        d += elm.Line().right().at(T3.in_p).tox(pre_out)
+        d += elm.Dot()
+
+        # left side
+        d += elm.Line().down().at(N1.in_n).to(T1.out_n)
+
+        d += elm.Line().up().at(T3.out_p).to(T1.out_p)
+
+        d += elm.Line().left().at(N1.in_p).length(1)
+        pre_in = d.here
+        d += (inline := elm.Line()).length(1).dot(open=True).left()
+        in_node = d.here
+        d += elm.Gap().down().label(('+','$V_i$','–')).toy(N1.in_n)
+        d += elm.Line().idot(open=True).down().toy(T4.out_n)
+        d += elm.Line().right().to(T4.out_n)
+        d += elm.CurrentLabelInline(direction='out', ofst=-0.15).at(inline).label('$I_i$')
+
+        d += elm.Line().left().at(T2.out_p).tox(in_node)
+        d += elm.Dot()
+        d += elm.Line().left().at(T3.out_n).tox(in_node)
+        d += elm.Dot()
+
+        d += elm.Line().left().at(T4.out_p).tox(pre_in)
+        d += elm.Line().up().toy(pre_in)
+        d += elm.Dot()
+
+        d += elm.Line().left().at(T2.out_n).tox(pre_in)
+        d += elm.Dot()

@@ -1,10 +1,25 @@
 v0.17 - In progress...
 
+    - Add SegmentText nonglobal rotation mode
+    - Add additional pathological elements CurrentMirror and VoltageMirror, along with a twoport VMCMPair
+    - Fixed CurrentLabel placement with transistor elements, now follows biasing current
+    - Fixed CurrentLabel positioning for elements with no center anchor
+    - Add DataBusLine element
+    - Fixed default style hierarchy on segments
+    - Added compound twoport elements:
+        - ElementTwoport
+        - TwoPort
+        - VoltageTransactor
+        - TransimpedanceTransactor
+        - CurrentTransactor
+        - TransadmittanceTransactor
+        - Nullor
+    - Added pathological elements Nullator and Norator
+    - Added Transistor elements AnalogNFet, AnalogPFet, and AnalogBiasedFet
     - Fixed regression bug in logicparse where labels were not drawn on inputs/outputs
     - Fix timing diagrams when async times are longer than the wave
     - Added NMos and PMos elements (credit: dtmaidenmueller)
     - Added arguments for length/width of CurrentLabel arrows (credit: Christian Seigel)
-
 
 v0.16 - 25-Mar-2023
 

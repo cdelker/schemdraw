@@ -552,6 +552,64 @@ class SparkGap(Element2Term):
         self.segments.append(Segment([(.3, 0), (.52, 0)], arrow='->', arrowwidth=.2))
         self.segments.append(Segment([(.7, 0), (.48, 0)], arrow='->', arrowwidth=.2))
 
+class Nullator(Element2Term):
+    ''' Nullator
+
+        This element does not support filling
+    '''
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.segments.append(Segment([[0, 0], [0, 0], gap, [1, 0], [1, 0]]))
+        self.segments.append(SegmentArc(center=[0.5,0], width=1, height=0.5, theta1=0, theta2=360))
+        self.params['theta'] = 90
+
+class Norator(Element2Term):
+    ''' Norator '''
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.segments.append(Segment([[0, 0], [0, 0], gap, [1, 0], [1, 0]]))
+        self.segments.append(SegmentCircle([0.25, 0], 0.25,))
+        self.segments.append(SegmentCircle([1-0.25, 0], 0.25,))
+        self.params['theta'] = 90
+
+class CurrentMirror(Element2Term):
+    ''' Current mirror with optional common terminal
+
+        Anchors:
+            * scommon
+    '''
+    def __init__(self, *d, bulk: bool = False, **kwargs):
+        super().__init__(*d, **kwargs)
+
+        self.segments.append(Segment([[0, 0], [0, 0], gap, [1, 0], [1, 0]]))
+        # in order to prevent graphical glitches due to overlapping outlines when filling, draw fill before outline
+        # fill is drawn here. The outline is disabled to prevent anti-aliasing glitches
+        ''' ideally, the outline would be disabled with ls='None', but this does not work in testing, so lw=1e-9 is here
+        as a fallback. 0 cannot be used because it would be ignored by the style logic '''
+        self.segments.append(SegmentCircle([0.3, 0], 0.3, lw=1e-9, ls="None"))
+        self.segments.append(SegmentCircle([1 - 0.3, 0], 0.3, lw=1e-9, ls="None"))
+        # outline is drawn here, without fill to prevent the glitch
+        self.segments.append(SegmentCircle([0.3, 0], 0.3, fill=False))
+        self.segments.append(SegmentCircle([1 - 0.3, 0], 0.3, fill=False))
+        self.params['theta'] = 90
+        self.anchors['common'] = (0.5, math.sqrt(0.3**2 - 0.2**2))
+
+class VoltageMirror(Element2Term):
+    ''' Voltage mirror with optional common terminal
+
+        This element does not support filling
+
+        Anchors:
+            * scommon
+    '''
+    def __init__(self, *d, bulk: bool = False, **kwargs):
+        super().__init__(*d, **kwargs)
+
+        self.segments.append(Segment([[0, 0], [0, 0], gap, [1, 0], [1, 0]]))
+        self.segments.append(SegmentArc(center=[0.7, 0], width=0.6, height=0.3, theta1=0, theta2=360))
+        self.segments.append(SegmentArc(center=[0.3, 0], width=0.6, height=0.3, theta1=0, theta2=360))
+        self.params['theta'] = 90
+        self.anchors['common'] = (0.5, math.sqrt(1 - 0.2**2/0.3**2)*0.15)
 
 # default to IEEE style
 Resistor = ResistorIEEE

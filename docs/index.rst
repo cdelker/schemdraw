@@ -7,6 +7,7 @@ Schemdraw documentation
     %config InlineBackend.figure_format = 'svg'
     import schemdraw
     from schemdraw import elements as elm
+    schemdraw.config(margin=.2)
 
 Schemdraw is a Python package for producing high-quality electrical circuit schematic diagrams.
 Circuit elements are added, one at a time, similar to how you might draw them by hand, using Python methods.

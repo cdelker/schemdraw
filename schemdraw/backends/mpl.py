@@ -63,11 +63,11 @@ class Figure:
                 self.ax.set_frame_on(False)
 
         # whitespace around contents
-        margin = kwargs.get('margin', .01)
+        self.margin = kwargs.get('margin', .01)
         try:
-            self.ax.margins(*margin)  # tuple of x, y
+            self.ax.margins(*self.margin)  # tuple of x, y
         except TypeError:
-            self.ax.margins(margin, margin)  # single value
+            self.ax.margins(self.margin, self.margin)  # single value
 
     def set_bbox(self, bbox: BBox):
         ''' Set bounding box, to override Matplotlib's autoscale '''
@@ -269,6 +269,11 @@ class Figure:
             y1, y2 = self.ax.get_ylim()
             w = x2-x1
             h = y2-y1
+
+            try:
+                self.ax.margins(*self.margin)  # tuple of x, y
+            except TypeError:
+                self.ax.margins(self.margin, self.margin)  # single value
 
             if not self.showframe:
                 self.ax.axes.get_xaxis().set_visible(False)

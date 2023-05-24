@@ -7,6 +7,7 @@ Connectors
     from functools import partial
     import schemdraw
     from schemdraw import elements as elm
+    schemdraw.config(margin=.1)
 
 All connectors are defined with a default pin spacing of 0.6, matching the default pin spacing of the :py:class:`schemdraw.elements.intcircuits.Ic` class, for easy connection of multiple signals.
 

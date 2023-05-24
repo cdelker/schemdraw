@@ -7,6 +7,7 @@ Flowcharts and Diagrams
     %config InlineBackend.figure_format = 'svg'
     import schemdraw
     from schemdraw import flow
+    schemdraw.config(margin=.1)
 
 
 Schemdraw provides basic symbols for flowcharting and state diagrams. 

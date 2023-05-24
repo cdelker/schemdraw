@@ -7,6 +7,7 @@ Digital Logic
     %config InlineBackend.figure_format = 'svg'
     import schemdraw
     from schemdraw import logic
+    schemdraw.config(margin=.1)
 
 
 Logic gates can be drawn by importing the :py:mod:`schemdraw.logic.logic` module:

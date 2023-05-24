@@ -7,7 +7,8 @@ Analog Circuits
     %config InlineBackend.figure_format = 'svg'
     import schemdraw
     from schemdraw import elements as elm
-    
+    schemdraw.config(margin=.1)
+
 
 Discharging capacitor
 ^^^^^^^^^^^^^^^^^^^^^

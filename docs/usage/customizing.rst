@@ -8,7 +8,8 @@ Customizing Elements
     import schemdraw
     from schemdraw import elements as elm
     from schemdraw import logic
-    from schemdraw.segments import *    
+    from schemdraw.segments import *
+    schemdraw.config(margin=.1)
 
 
 Grouping Elements

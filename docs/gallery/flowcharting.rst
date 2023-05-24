@@ -11,6 +11,7 @@ Flowcharting
     import schemdraw
     from schemdraw import elements as elm
     from schemdraw import flow    
+    schemdraw.config(margin=.1)
 
 
 Flowchart elements are defined in the :py:mod:`flow` module.

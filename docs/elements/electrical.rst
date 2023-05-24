@@ -13,7 +13,8 @@ See :ref:`elecelements` for complete class definitions for these elements.
     import schemdraw
     from schemdraw import elements as elm
     from schemdraw.elements import *
-    
+    schemdraw.config(margin=.1)
+ 
     def drawElements(elmlist, cols=3, dx=8, dy=2, lblofst=None, lblloc='rgt'):
         d = schemdraw.Drawing(fontsize=12)
         for i, e in enumerate(elmlist):

@@ -161,8 +161,8 @@ class Mixer(Circle):
 
 class Speaker(Element):
     ''' Speaker with only one terminal '''
-    def __init__(self, d=None, **kwargs):
-        super().__init__(d, **kwargs)
+    def __init__(self, *d, **kwargs):
+        super().__init__(*d, **kwargs)
         self.segments.append(Segment([(0, 0), (0, 0.25), (0.25, 0.25),
                                       (0.25, -.25), (0, -.25), (0, 0)]))
         self.segments.append(Segment([(0.25, 0.25), (0.5, 0.5), (0.5, -0.5),

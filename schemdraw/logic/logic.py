@@ -221,7 +221,25 @@ class Not(Element2Term):
         self.anchors['out'] = (gatel+notbubble*2, 0)
         self.anchors['in1'] = (0, 0)
 
+class Tristate(Element2Term):
+    ''' Tristate inverter
 
+        Anchors:
+            in
+            out
+            c
+    '''
+    def __init__(self, *d, **kwargs):
+        super().__init__(*d, **kwargs)
+        self.segments.append(Segment([(0, 0), gap, (gatel+notbubble*2, 0)]))
+        self.segments.append(Segment([(0, gateh/2), (gatel, 0), (0, -gateh/2), (0, gateh/2)]))
+        self.segments.append(SegmentCircle((gatel+notbubble, 0), notbubble))
+        self.segments.append(Segment([(gatel/2, .28), (gatel/2, .7)]))
+        self.anchors['out'] = (gatel+notbubble*2, 0)
+        self.anchors['in1'] = (0, 0)
+        self.anchors['c'] = (gatel/2, .7)
+        
+        
 class NotNot(Element2Term):
     ''' Double inverter
 

@@ -34,7 +34,7 @@ Logic gates are shown below. Gates define anchors for `out` and `in1`, `in2`, et
         return d
 
     elms = ['And', 'Nand', 'Or', 'Nor', 'Xor', 'Xnor',
-            'Buf', 'Not', 'NotNot', 'Tgate',
+            'Buf', 'Not', 'NotNot', 'Tgate', 'Tristate',
             'Schmitt', 'SchmittNot', 'SchmittAnd', 'SchmittNand']
     drawElements(elms, dx=6)
 

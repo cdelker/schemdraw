@@ -28,7 +28,7 @@ Alternatively, schemdraw can be installed directly by downloading the source and
 
 .. code-block:: bash
 
-    python setup.py install
+    pip install ./
 
 Schemdraw requires Python 3.7 or higher. Note that many of the examples and test notebooks still require 3.8+ to run due to their use of the walrus operator. The optional svgmath dependencies also require 3.8+.
 

@@ -146,7 +146,7 @@ def getstyle(color: str = None, ls: Linestyle = None, lw: float = None,
     return s
 
 
-def text_size(text: str, font: str = 'Arial', size: float = 16) -> tuple[float, float, float]:
+def text_size(text: str, font: str = 'sans', size: float = 16) -> tuple[float, float, float]:
     ''' Get size of text. Size will be exact bounding box if ziamath installed and
         using path text mode. Otherwise size will be estimated based on character
         widths.
@@ -169,7 +169,7 @@ def text_size(text: str, font: str = 'Arial', size: float = 16) -> tuple[float, 
         lines = text.splitlines()
         maths = []
         for line in lines:
-            maths.append(ziamath.Math.fromlatextext(line, size=size, mathstyle=font, textstyle=font))
+            maths.append(ziamath.Text(line, size=size, mathstyle=font, textfont=font))
         sizes = [m.getsize() for m in maths]
         w: float = max([s[0] for s in sizes])
         h: float = sum([s[1] for s in sizes])
@@ -274,7 +274,7 @@ class Figure:
         self.svgelements.append((zorder, et))
 
     def text(self, s: str, x: float, y: float, color: str = 'black',
-             fontsize: float = 14, fontfamily: str = 'sans-serif',
+             fontsize: float = 14, fontfamily: str = 'sans',
              mathfont: str = None,
              rotation: float = 0, halign: Halign = 'center',
              valign: Valign = 'center',
@@ -287,9 +287,11 @@ class Figure:
         x0, y0 = self.xform(x, y)
         x, y = x0, y0
 
+        if fontfamily.lower() in ['sans-serif', 'Arial']:
+            fontfamily = 'sans'
+
         if ziamath and config.text == 'path':
             texttag = ET.Element('g')
-
             ztext = ziamath.Text(s, textfont=fontfamily, mathfont=mathfont,
                                  size=fontsize, linespacing=1, color=color,
                                  rotation=rotation, rotation_mode=rotation_mode)

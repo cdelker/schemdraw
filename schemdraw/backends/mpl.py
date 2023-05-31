@@ -256,7 +256,7 @@ class Figure:
     def save(self, fname: str, transparent: bool = True, dpi: float = 72) -> None:
         ''' Save the figure to a file '''
         fig = self.getfig()
-        fig.subplots_adjust(0,0,1,1)
+        fig.subplots_adjust(0, 0, 1, 1)
         fig.savefig(fname, bbox_inches='tight', transparent=transparent, dpi=dpi,
                     bbox_extra_artists=self.ax.get_default_bbox_extra_artists(),
                     pad_inches=0)

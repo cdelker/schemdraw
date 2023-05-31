@@ -72,12 +72,14 @@ class Element:
         self.transform = Transform(0, [0, 0])
 
         # defines whether a current label can be drawn on each side
-        self._allowed_sides = [False, True, False, True] # right, top, left, bottom
-        self._bias_direction = None # defines direction of bias current 'right', 'top', 'left', 'bottom', or None
+        self._allowed_sides = [False, True, False, True]  # right, top, left, bottom
+        self._bias_direction = None  # defines direction of bias current 'right', 'top', 'left', 'bottom', or None
 
         if 'xy' in self._userparams:  # Allow legacy 'xy' parameter
             self._userparams.setdefault('at', self._userparams.pop('xy'))
         if d:
+            warnings.warn('Positional argument d is deprecated. Use keyword direction or direction method.',
+                          DeprecationWarning, stacklevel=2)
             self._userparams['d'] = d[0]
             if len(d) > 1:
                 warnings.warn('Unused positional arguments in Element.')
@@ -277,7 +279,7 @@ class Element:
         if halign is None and valign is None:
             align = None
         else:
-            align = (halign, valign)
+            align = (halign if halign else 'left', valign if valign else 'bottom')
         if not rotate:
             rotate = 0
         elif isinstance(rotate, bool):
@@ -432,7 +434,7 @@ class Element:
         return BBox(xmin, ymin, xmax, ymax)
 
     def _place_label(self, label: str, loc: LabelLoc = None,
-                     ofst: XY | float | None = None, align: Align = (None, None),
+                     ofst: XY | float | None = None, align: Align = ('left', 'bottom'),
                      rotation: float = 0, fontsize: float = None,
                      font: str = None, mathfont: str = None, color: str = None) -> None:
         ''' Adds the label Segment to the element, AFTER element placement
@@ -685,7 +687,7 @@ class Element:
         map_bias = {'top': 'top', 'left': 'left', 'bottom': 'bottom', 'right': 'right'}
 
         if self._userparams.get('reverse', False):
-            map_bias['left']  = 'right'
+            map_bias['left'] = 'right'
             map_bias['right'] = 'left'
         if self._userparams.get('flip', False):
             map_bias['top'] = 'bottom'
@@ -694,7 +696,6 @@ class Element:
         map_angle = {'top': 90, 'left': 180, 'bottom': 270, 'right': 0}
 
         return map_angle[map_bias[self._bias_direction]]
-
 
 
 class ElementDrawing(Element):

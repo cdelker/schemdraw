@@ -224,7 +224,7 @@ class Figure:
         self.pxheight = (self.bbox.ymax-self.bbox.ymin) * self.scale
         self.pxwidth = max(5, self.pxwidth)
         self.pxheight = max(5, self.pxheight)
-            
+
     def xform(self, x: float, y: float) -> Point:
         ''' Convert x, y in user coords to svg pixel coords '''
         return Point((x*self.scale, -y*self.scale))

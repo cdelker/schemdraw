@@ -1,14 +1,9 @@
 ''' Data types for schemdraw '''
 
 import sys
-from typing import Union, Tuple, Optional
+from typing import Union, Tuple, Optional, Literal
 from collections import namedtuple
 from enum import Enum, unique
-
-if sys.version_info >= (3, 8):
-    from typing import Literal
-else:
-    from typing_extensions import Literal
 
 from .util import Point
 
@@ -22,7 +17,7 @@ Direction = Union[Literal['up', 'down', 'left', 'right',
                           'u', 'd', 'l', 'r'], int]
 Halign = Literal['center', 'left', 'right']
 Valign = Literal['center', 'top', 'bottom']
-Align = Tuple[Optional[Halign], Optional[Valign]]
+Align = Tuple[Halign, Valign]
 Arcdirection = Literal['cw', 'ccw']
 Side = Literal['top', 'bot', 'lft', 'rgt', 'bottom', 'left', 'right', 'L', 'R', 'T', 'B']
 LabelLoc = Union[Side, str]

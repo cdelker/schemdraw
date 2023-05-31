@@ -2,13 +2,12 @@
 
 from __future__ import annotations
 from typing import Sequence, Union
-import warnings
 import math
 
 from ..segments import Segment, SegmentCircle, SegmentArc, SegmentPoly, SegmentBezier
 from .elements import Element, Element2Term
 from .twoterm import gap
-from ..types import XY, Point, Arcdirection, BilateralDirection
+from ..types import XY, Point, Arcdirection, BilateralDirection, Linestyle
 from .. import util
 
 
@@ -25,6 +24,7 @@ class Line(Element2Term):
         self.segments.append(Segment([(0, 0)], arrow=arrow,
                                      arrowwidth=arrowwidth, arrowlength=arrowlength))
 
+
 bus_stroke = 0.25
 class DataBusLine(Element2Term):
     ''' Straight Line with bus indication stripe '''
@@ -33,6 +33,7 @@ class DataBusLine(Element2Term):
         self.segments.append(Segment(
             [(0, 0), gap, (-bus_stroke/2, bus_stroke), (bus_stroke/2, -bus_stroke),
              gap, (0, 0)]))
+
 
 class Arrow(Line):
     ''' Arrow
@@ -665,7 +666,6 @@ class CurrentLabel(Element):
             headlength: Length of arrowhead
             headwidth: Width of arrowhead
     '''
-
     def __init__(self, ofst: float = 0.4, length: float = 2,
                  top: bool = True, reverse: bool = False,
                  headlength: float = 0.3, headwidth: float = 0.2, **kwargs):
@@ -701,18 +701,17 @@ class CurrentLabel(Element):
                 pos = Point(((bbox.xmax + bbox.xmin) / 2, (bbox.ymax + bbox.ymin) / 2))
             super().at(pos)
 
-            ''' Every element has 4 sides where a current label could be placed, but not all are allowed
-                In a resistor, the top and bottom are allowed, but not the sides. In a transistor, only the side of the
-                channel is allowed. Otherwise, the current label would overlap the terminals, which wouldn't make sense.
-                
-                This code calculates the angles for the allowed sides of the components. If the current label is desired
-                to be on top, it picks the closest angle to the top. Otherwise, it picks the closest angle to the
-                top of the component in the drawing frame. If the label is flipped, it will pick the opposite angle.
-                If at most two opposite sides are allowed, this gives the user freedom to put the label at any allowed
-                side.
-            '''
-            target_theta   = xy.transform.theta
-            theta          = target_theta
+            # Every element has 4 sides where a current label could be placed, but not all are allowed
+            # In a resistor, the top and bottom are allowed, but not the sides. In a transistor, only the side of the
+            # channel is allowed. Otherwise, the current label would overlap the terminals, which wouldn't make sense.
+            #
+            # This code calculates the angles for the allowed sides of the components. If the current label is desired
+            # to be on top, it picks the closest angle to the top. Otherwise, it picks the closest angle to the
+            # top of the component in the drawing frame. If the label is flipped, it will pick the opposite angle.
+            # If at most two opposite sides are allowed, this gives the user freedom to put the label at any allowed
+            # side.
+            target_theta = xy.transform.theta
+            theta = target_theta
             allowed_angles = [theta + angle for angle, allowed in zip([0, 90, 180, 270], xy._get_allowed_sides()) if
                               allowed]
 
@@ -993,6 +992,7 @@ class Rect(Element):
         c2a = (corner2[0], corner1[1])
         self.segments.append(Segment([corner1, c1a, corner2, c2a, corner1], zorder=0, fill=fill, lw=lw, ls=ls))
         self.params['zorder'] = 0   # Put on bottom
+
 
 class Encircle(Element):
     ''' Draw ellipse around all elements in the list

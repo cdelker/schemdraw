@@ -272,7 +272,7 @@ class Rectifier(ElementCompound):
         self.add(A)
         self.add(B)
         self.add(C)
-        self.add(D)    
+        self.add(D)
         self.anchors['W'] = A.start
         self.anchors['N'] = B.start
         self.anchors['E'] = C.start

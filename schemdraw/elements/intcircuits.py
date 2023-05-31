@@ -157,7 +157,7 @@ class Ic(Element):
                 if pin.pos is not None:
                     z = pin.pos * sidelen
                 elif pin.slot is None:
-                    pin.slot = '{}/{}'.format(i+1, len(sidepin))
+                    pin.slot = f'{i+1}/{len(sidepin)}'
 
                 if pin.slot is not None:
                     num, tot = [int(k) for k in pin.slot.split('/')]
@@ -206,9 +206,9 @@ class Ic(Element):
                              'B': Point((0, lofst))}.get(side)
 
                     align = cast(Optional[Align], {'L': ('left', 'center'),
-                             'R': ('right', 'center'),
-                             'T': ('center', 'top'),
-                             'B': ('center', 'bottom')}.get(side))
+                                                   'R': ('right', 'center'),
+                                                   'T': ('center', 'top'),
+                                                   'B': ('center', 'bottom')}.get(side))
 
                     self.segments.append(SegmentText(pos=pinxy+pofst,
                                          label=pin.name,
@@ -350,7 +350,7 @@ class IcDIP(Element):
         If signal names are provided, they will also be added as anchors
         along with _in inside variants.
     '''
-    def __init__(self, *d, pins: int = 8, 
+    def __init__(self, *d, pins: int = 8,
                  names: Sequence[str] = None,
                  notch: bool = True,
                  width: float = 3,
@@ -364,7 +364,7 @@ class IcDIP(Element):
         if pins % 2 == 1:
             raise ValueError('pins must be even')
 
-        height = pins/2*pinw + spacing*(pins/2+1)    
+        height = pins/2*pinw + spacing*(pins/2+1)
         self.segments.append(SegmentPoly(((0, 0), (width, 0), (width, height), (0, height))))
 
         if notch:
@@ -635,8 +635,8 @@ def sevensegdigit(bottom: float = 0, left: float = 0,
         segments.append(SegmentCircle((left+seglen+segw+dotrad/2, bottom),
                                       radius=dotrad, color='gray', fill=segcolor, lw=.5))
     return segments
-        
-        
+
+
 class SevenSegment(Ic):
     ''' A seven-segment display digit.
 

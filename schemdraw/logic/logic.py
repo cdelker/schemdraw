@@ -221,6 +221,7 @@ class Not(Element2Term):
         self.anchors['out'] = (gatel+notbubble*2, 0)
         self.anchors['in1'] = (0, 0)
 
+
 class Tristate(Element2Term):
     ''' Tristate inverter
 
@@ -238,8 +239,8 @@ class Tristate(Element2Term):
         self.anchors['out'] = (gatel+notbubble*2, 0)
         self.anchors['in1'] = (0, 0)
         self.anchors['c'] = (gatel/2, .7)
-        
-        
+
+
 class NotNot(Element2Term):
     ''' Double inverter
 

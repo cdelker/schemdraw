@@ -9,7 +9,7 @@ from typing import Sequence, Any, Union
 import warnings
 import math
 
-from .types import BBox, XY, Linestyle, Capstyle, Joinstyle, Align, Arcdirection, EndRef, RotationMode
+from .types import BBox, XY, Linestyle, Capstyle, Joinstyle, Align, Arcdirection, EndRef, RotationMode, Halign, Valign
 from . import util
 from .util import Point
 from .backends import svg
@@ -297,14 +297,17 @@ class SegmentText:
     def doreverse(self, centerx: float) -> None:
         ''' Reverse the path (flip horizontal about the centerx point) '''
         self.xy = util.mirrorx(self.xy, centerx)
-        if not self.rotation_global:
-            self.align = ({'center': 'center', 'left': 'right', 'right': 'left'}[self.align[0]], self.align[1])
+        if not self.rotation_global and self.align is not None:
+            align_lookup: dict[str, Halign] = {'center': 'center', 'left': 'right', 'right': 'left'}
+            leftalign = align_lookup.get(self.align[0], 'left')
+            self.align = (leftalign, self.align[1])
 
     def doflip(self) -> None:
         ''' Vertically flip the element '''
         self.xy = util.flip(self.xy)
-        if not self.rotation_global:
-            self.align = (self.align[0], {'center': 'center', 'top': 'bottom', 'bottom': 'top'}[self.align[1]])
+        if not self.rotation_global and self.align is not None:
+            align_lookup: dict[str, Valign] = {'center': 'center', 'top': 'bottom', 'bottom': 'top'}
+            self.align = (self.align[0], align_lookup.get(self.align[1], 'bottom'))
 
     def xform(self, transform, **style) -> 'SegmentText':
         ''' Return a new Segment that has been transformed

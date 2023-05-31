@@ -1,7 +1,7 @@
 ''' Schemdraw Drawing class '''
 
 from __future__ import annotations
-from typing import Type, Any, MutableMapping, Union, Optional, TYPE_CHECKING
+from typing import Sequence, Any, MutableMapping, Union, Optional, TYPE_CHECKING
 from collections import ChainMap
 import warnings
 import math
@@ -39,7 +39,7 @@ def config(unit: float = 3.0, inches_per_unit: float = 0.5,
            font: str = 'sans-serif', color: str = 'black',
            lw: float = 2., ls: Linestyle = '-',
            fill: str = None, bgcolor: str = None,
-           margin: Union[float, Sequence[float, float]] = 0.01) -> None:
+           margin: Union[float, Sequence[float]] = 0.01) -> None:
     ''' Set global schemdraw style configuration
 
         Args:
@@ -314,7 +314,7 @@ class Drawing:
                fontsize: float = None, font: str = None,
                color: str = None, lw: float = None, ls: Linestyle = None,
                fill: str = None, bgcolor: str = None,
-               margin: Union[float, Sequence[float, float]] = None) -> None:
+               margin: Union[float, Sequence[float]] = None) -> None:
         ''' Set Drawing configuration, overriding schemdraw global config.
 
             Args:

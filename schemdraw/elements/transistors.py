@@ -11,11 +11,10 @@ __all__ = [
 from .elements import Element, Element2Term
 from .twoterm import reswidth
 from ..segments import Segment, SegmentPoly, SegmentCircle
-from ..types import Point, XY
+from ..types import Point
 
 
 class _Mosfet(Element):
-
     '''Base Class for Metal Oxide Semiconductor Field Effect Transistors
 
         Args:
@@ -120,7 +119,6 @@ class _Mosfet(Element):
 
 
 class NMos(_Mosfet):
-
     ''' N-type Metal Oxide Semiconductor Field Effect Transistor
 
         Args:
@@ -134,14 +132,12 @@ class NMos(_Mosfet):
 
     Note: vertical orientation.  For horizontal orientation, see NMos2.
     '''
-
     def __init__(self, *d, diode: bool = False, circle: bool = False, **kwargs):
 
         super().__init__(*d, variant='nmos', diode=diode, circle=circle, **kwargs)
 
 
 class PMos(_Mosfet):
-
     ''' P-type Metal Oxide Semiconductor Field Effect Transistor
 
         Args:
@@ -162,7 +158,6 @@ class PMos(_Mosfet):
 
 
 class _Mosfet2(Element2Term):
-
     '''Base Class for Metal Oxide Semiconductor Field Effect Transistors
 
         Args:
@@ -267,7 +262,6 @@ class _Mosfet2(Element2Term):
 
 
 class NMos2(_Mosfet2):
-
     ''' N-type Metal Oxide Semiconductor Field Effect Transistor
 
         Args:
@@ -281,14 +275,12 @@ class NMos2(_Mosfet2):
 
     Note: horizontal orientation.  For vertical orientation, see NMos.
     '''
-
     def __init__(self, *d, diode: bool = False, circle: bool = False, **kwargs):
 
         super().__init__(*d, variant='nmos', diode=diode, circle=circle, **kwargs)
 
 
 class PMos2(_Mosfet2):
-
     ''' P-type Metal Oxide Semiconductor Field Effect Transistor
 
         Args:
@@ -302,7 +294,6 @@ class PMos2(_Mosfet2):
 
     Note: horizontal orientation.  For vertical orientation, see PMos.
     '''
-
     def __init__(self, *d, diode: bool = False, circle: bool = False, **kwargs):
 
         super().__init__(*d, variant='pmos', diode=diode, circle=circle, **kwargs)
@@ -331,7 +322,7 @@ class NFet(Element):
         super().__init__(*d, **kwargs)
 
         # defines whether a current label can be drawn on each side
-        self._allowed_sides = [False, False, True, False] # right, top, left, bottom
+        self._allowed_sides = [False, False, True, False]  # right, top, left, bottom
 
         self.segments.append(Segment([(0, 0), (0, -fetl), (fetw, -fetl),
                                       (fetw, -fetl-fetw), (0, -fetl-fetw),
@@ -368,7 +359,7 @@ class PFet(Element):
         super().__init__(*d, **kwargs)
 
         # defines whether a current label can be drawn on each side
-        self._allowed_sides = [False, False, True, False] # right, top, left, bottom
+        self._allowed_sides = [False, False, True, False]  # right, top, left, bottom
 
         self.segments.append(Segment([(0, 0), (0, -fetl), (fetw, -fetl),
                                       (fetw, -fetl-fetw), (0, -fetl-fetw),
@@ -477,21 +468,24 @@ class PFet2(Element2Term):
             self.anchors['source'] = self.anchors['start']
             self.anchors['drain'] = self.anchors['end']
 
+
 # Analog style FETs
-afetw   = reswidth * 2.5
-afeth   = afetw * 2
-afetl   = afeth * 0.5
+afetw = reswidth * 2.5
+afeth = afetw * 2
+afetl = afeth * 0.5
 afetgap = afetw * 0.2
-afeti   = afeth * 0.1  # gate inset
-afetb   = afeti * 0.75 # bias dot radius
-afeta   = 0.25         # fet arrow head width
+afeti = afeth * 0.1   # gate inset
+afetb = afeti * 0.75  # bias dot radius
+afeta = 0.25          # fet arrow head width
+
 
 class _AnalogFet(Element):
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
         # defines whether a current label can be drawn on each side
-        self._allowed_sides  = [False, False, True, False] # right, top, left, bottom
+        self._allowed_sides = [False, False, True, False]  # right, top, left, bottom
         self._bias_direction = 'bottom'
+
 
 class AnalogNFet(_AnalogFet):
     ''' N-type Field Effect Transistor, analog style
@@ -510,7 +504,7 @@ class AnalogNFet(_AnalogFet):
     '''
     def __init__(self, *d, bulk: bool = False, offset_gate: bool = True, arrow: bool = True, **kwargs):
         super().__init__(*d, **kwargs)
-        arrow = arrow if bulk == False else False
+        arrow = arrow if not bulk else False
         self.segments.append(Segment([(0, 0), (0, -afetl), (afetw, -afetl),
                                       (afetw, -afetl - afeth), (0, -afetl - afeth),
                                       (0, -2 * afetl - afeth)]))
@@ -530,12 +524,12 @@ class AnalogNFet(_AnalogFet):
             self.anchors['gate'] = (afetw + afetgap + afetl, -afetl - afeth / 2)
 
         self.anchors['source'] = (0, -2 * afetl - afeth)
-        self.anchors['drain']  = (0, 0)
+        self.anchors['drain'] = (0, 0)
         self.anchors['center'] = (0, -afetl - afeth / 2)
-        self.params['drop']    = (0, -2 * afetl - afeth)
-        self.params['lblloc']  = 'lft'
+        self.params['drop'] = (0, -2 * afetl - afeth)
+        self.params['lblloc'] = 'lft'
         if bulk:
-            self.segments.append(Segment([(0, -afetl - afeth / 2),(afetw, -afetl - afeth / 2)],
+            self.segments.append(Segment([(0, -afetl - afeth / 2), (afetw, -afetl - afeth / 2)],
                                          arrow='->', arrowwidth=afeta, arrowlength=afeta))
             self.anchors['bulk'] = (0, -afetl - afeth / 2)
 
@@ -557,7 +551,7 @@ class AnalogPFet(_AnalogFet):
     '''
     def __init__(self, *d, bulk: bool = False, offset_gate: bool = True, arrow: bool = True, **kwargs):
         super().__init__(*d, **kwargs)
-        arrow = arrow if bulk == False else False
+        arrow = arrow if not bulk else False
         self.segments.append(Segment([(0, 0), (0, -afetl), (afetw, -afetl),
                                       (afetw, -afetl - afeth), (0, -afetl - afeth),
                                       (0, -2 * afetl - afeth)]))
@@ -574,17 +568,17 @@ class AnalogPFet(_AnalogFet):
             self.segments.append(Segment([(afetw + afetgap, -afetl - afeth / 2),
                                           (afetw + afetgap + afetl, -afetl - afeth / 2)]))
             self.anchors['gate'] = (afetw + afetgap + afetl, -afetl - afeth / 2)
-        #self.segments.append(SegmentCircle([fetw+fetgap+fetr, -fetl-fetw/2], fetr))
 
         self.anchors['source'] = (0, 0)
-        self.anchors['drain']  = (0, -2 * afetl - afeth)
+        self.anchors['drain'] = (0, -2 * afetl - afeth)
         self.anchors['center'] = (0, -afetl - afeth / 2)
-        self.params['drop']    = (0, -2 * afetl - afeth)
-        self.params['lblloc']  = 'lft'
+        self.params['drop'] = (0, -2 * afetl - afeth)
+        self.params['lblloc'] = 'lft'
         if bulk:
             self.segments.append(Segment([(afetw, -afetl - afeth / 2), (0, -afetl - afeth / 2)],
                                          arrow='->', arrowwidth=afeta, arrowlength=afeta))
             self.anchors['bulk'] = (0, -afetl - afeth / 2)
+
 
 class AnalogBiasedFet(_AnalogFet):
     ''' Generic biased small-signal Field Effect Transistor, analog style
@@ -603,7 +597,7 @@ class AnalogBiasedFet(_AnalogFet):
     '''
     def __init__(self, *d, bulk: bool = False, offset_gate: bool = True, arrow: bool = True, **kwargs):
         super().__init__(*d, **kwargs)
-        arrow = arrow if bulk == False else False
+        arrow = arrow if not bulk else False
         self.segments.append(Segment([(0, 0), (0, -afetl), (afetw, -afetl),
                                       (afetw, -afetl - afeth), (0, -afetl - afeth),
                                       (0, -2 * afetl - afeth)]))
@@ -622,15 +616,16 @@ class AnalogBiasedFet(_AnalogFet):
             self.anchors['gate'] = (afetw + afetgap + afetl, -afetl - afeth / 2)
 
         self.anchors['source'] = (0, -2 * afetl - afeth)
-        self.anchors['drain']  = (0, 0)
+        self.anchors['drain'] = (0, 0)
         self.anchors['center'] = (0, -afetl - afeth / 2)
-        self.params['drop']    = (0, -2 * afetl - afeth)
-        self.params['lblloc']  = 'lft'
+        self.params['drop'] = (0, -2 * afetl - afeth)
+        self.params['lblloc'] = 'lft'
         if bulk:
             self.segments.append(Segment([(0, -afetl - afeth / 2),
                                           (afetw, -afetl - afeth / 2)]))
             self.segments.append(SegmentCircle(center=(afetw - afetb * 2, -afetl - afeth / 2), radius=afetb, fill=True))
             self.anchors['bulk'] = (0, -afetl - afeth / 2)
+
 
 # Junction FETs
 fete = fetw*.2  # JFET extension
@@ -650,7 +645,7 @@ class JFet(Element):
         super().__init__(*d, **kwargs)
 
         # defines whether a current label can be drawn on each side
-        self._allowed_sides = [False, False, True, False] # right, top, left, bottom
+        self._allowed_sides = [False, False, True, False]  # right, top, left, bottom
 
         self.segments.append(Segment(
             [(0, 0), (0, -fetl), (jfetw, -fetl), (jfetw, -fetl+fete),
@@ -699,7 +694,7 @@ class JFet2(Element2Term):
         super().__init__(*d, **kwargs)
 
         # defines whether a current label can be drawn on each side
-        self._allowed_sides = [False, False, False, True] # right, top, left, bottom
+        self._allowed_sides = [False, False, False, True]  # right, top, left, bottom
 
         self.segments.append(Segment([
             (0, 0), (fetl, 0), (fetl, jfetw), (fetl+jfetw, jfetw),
@@ -808,7 +803,7 @@ class Bjt(Element):
         super().__init__(*d, **kwargs)
 
         # defines whether a current label can be drawn on each side
-        self._allowed_sides = [True, False, False, False] # right, top, left, bottom
+        self._allowed_sides = [True, False, False, False]  # right, top, left, bottom
 
         self.segments.append(Segment([(0, 0), (bjt_v, 0)]))
         self.segments.append(Segment([(bjt_v, bjt_v_len/2), (bjt_v, -bjt_v_len/2)]))
@@ -916,7 +911,7 @@ class Bjt2(Element2Term):
         super().__init__(*d, **kwargs)
 
         # defines whether a current label can be drawn on each side
-        self._allowed_sides = [False, False, False, True] # right, top, left, bottom
+        self._allowed_sides = [False, False, False, True]  # right, top, left, bottom
 
         self.segments.append(Segment(((0, 0),
                                       (bjt_width/2-bjt_diag_ofst, bjt_base_h),

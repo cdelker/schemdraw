@@ -1,25 +1,35 @@
 v0.17 - In progress...
+        
+    New Elements:
+        - Tristate inverter (credit: Jan Genoe)
+        - NMos and PMos elements (credit: dtmaidenmueller)
+        - AnalogNFet, AnalogPFet, AnalogBiasedFet
+        - DataBusLine
+        - CurrentMirror, VoltageMirror
+        - Nullator, Norator, VMCMPair
+        - Compound twoport elements (ElementTwoport base class):
+            - TwoPort
+            - VoltageTransactor
+            - TransimpedanceTransactor
+            - CurrentTransactor
+            - TransadmittanceTransactor
+            - Nullor
 
-    - Add SegmentText nonglobal rotation mode
-    - Add additional pathological elements CurrentMirror and VoltageMirror, along with a twoport VMCMPair
-    - Fixed CurrentLabel placement with transistor elements, now follows biasing current
-    - Fixed CurrentLabel positioning for elements with no center anchor
-    - Add DataBusLine element
-    - Fixed default style hierarchy on segments
-    - Added compound twoport elements:
-        - ElementTwoport
-        - TwoPort
-        - VoltageTransactor
-        - TransimpedanceTransactor
-        - CurrentTransactor
-        - TransadmittanceTransactor
-        - Nullor
-    - Added pathological elements Nullator and Norator
-    - Added Transistor elements AnalogNFet, AnalogPFet, and AnalogBiasedFet
-    - Fixed regression bug in logicparse where labels were not drawn on inputs/outputs
-    - Fix timing diagrams when async times are longer than the wave
-    - Added NMos and PMos elements (credit: dtmaidenmueller)
-    - Added arguments for length/width of CurrentLabel arrows (credit: Christian Seigel)
+    Enhancements:
+        - Added arguments for length/width of CurrentLabel arrows (credit: Christian Seigel)
+        - Added config option for setting whitespace margins
+
+    Bug fixes:
+        - Fixed regression bug in logicparse where labels were not drawn on inputs/outputs
+        - Fix timing diagrams when async times are longer than the wave
+        - Fixed default style hierarchy on segments
+        - Fixed CurrentLabel placement with transistor elements, now follows biasing current
+        - Fixed CurrentLabel positioning for elements with no center anchor
+
+    Other changes:
+        - Deprecated positional direction parameter to Element class.
+        - Add nonglobal rotation mode attribute to SegmentText
+
 
 v0.16 - 25-Mar-2023
 

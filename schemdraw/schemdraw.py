@@ -180,10 +180,11 @@ class Drawing:
         ''' Exit context manager - save to file and display '''
         if self.outfile is not None:
             self.save(self.outfile)
-        dwg = self.draw(show=False)
+        if not self.fig:
+            self.draw(show=False)
         if self.show and not hasattr(self.canvas, 'plot'):
             try:
-                display(dwg)
+                display(self.fig)
             except NameError:  # Not in Jupyter/IPython
                 pass
 

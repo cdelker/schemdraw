@@ -276,10 +276,20 @@ class Element:
                 mathfont: Name/font-family of math text
                 color: Color of label
         '''
-        if halign is None and valign is None:
+        if not halign and not valign:
             align = None
         else:
-            align = (halign if halign else 'left', valign if valign else 'bottom')
+            if not halign:
+                halign = {'top': 'center',
+                          'bottom': 'center',
+                          'left': 'right',
+                          'right': 'left'}.get(loc, 'left')
+            if not valign:
+                valign = {'top': 'baseline',
+                          'bottom': 'top',
+                          'left': 'center',
+                          'right': 'center'}.get(loc, 'bottom')
+            align = (halign, valign)
         if not rotate:
             rotate = 0
         elif isinstance(rotate, bool):

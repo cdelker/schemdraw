@@ -7,7 +7,6 @@ Timing Diagrams
     %config InlineBackend.figure_format = 'svg'
     import schemdraw
     from schemdraw import logic
-    schemdraw.config(margin=.1)
 
 
 Digital timing diagrams may be drawn using the :py:class:`schemdraw.logic.timing.TimingDiagram` Element in the :py:mod:`schemdraw.logic` module.

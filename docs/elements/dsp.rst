@@ -8,7 +8,6 @@ Signal Processing
     from functools import partial
     import schemdraw
     from schemdraw import dsp
-    schemdraw.config(margin=.1)
 
 Signal processing elements can be drawn by importing the :py:mod:`schemdraw.dsp.dsp` module:
 

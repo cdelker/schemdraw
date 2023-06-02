@@ -10,7 +10,6 @@ Several compound elements defined based on other basic elements.
     from functools import partial
     import schemdraw
     from schemdraw import elements as elm
-    schemdraw.config(margin=.1)
 
     def drawElements(elmlist, cols=3, dx=8, dy=2):
         d = schemdraw.Drawing(fontsize=12)

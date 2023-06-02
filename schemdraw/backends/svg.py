@@ -198,7 +198,7 @@ class Figure:
         self.clips: dict[BBox, int] = {}
         self.showframe = kwargs.get('showframe', False)
         self.scale = 64.8 * kwargs.get('inches_per_unit', .5)  # Magic scale factor that matches what MPL did
-        self.margin = kwargs.get('margin')
+        self.margin = kwargs.get('margin', .1)
         self.set_bbox(bbox)
         self._bgcolor: Optional[str] = None
         self.svgcanvas = kwargs.get('svg')
@@ -206,19 +206,10 @@ class Figure:
     def set_bbox(self, bbox: BBox) -> None:
         ''' Set the bounding box '''
         self.bbox = bbox
-        if self.margin:
-            try:
-                # self.margin is tuple of x, y
-                marginx = (self.bbox.xmax - self.bbox.xmin) * self.margin[0]
-                marginy = (self.bbox.ymax - self.bbox.ymin) * self.margin[1]
-            except TypeError:
-                # self.margin is single value for both
-                marginx = (self.bbox.xmax - self.bbox.xmin) * self.margin
-                marginy = (self.bbox.ymax - self.bbox.ymin) * self.margin
-            self.bbox = BBox(self.bbox.xmin - marginx,
-                             self.bbox.ymin - marginy,
-                             self.bbox.xmax + marginx,
-                             self.bbox.ymax + marginy)
+        self.bbox = BBox(self.bbox.xmin - self.margin,
+                         self.bbox.ymin - self.margin,
+                         self.bbox.xmax + self.margin,
+                         self.bbox.ymax + self.margin)
 
         self.pxwidth = (self.bbox.xmax-self.bbox.xmin) * self.scale
         self.pxheight = (self.bbox.ymax-self.bbox.ymin) * self.scale

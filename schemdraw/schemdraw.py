@@ -39,7 +39,7 @@ def config(unit: float = 3.0, inches_per_unit: float = 0.5,
            font: str = 'sans-serif', color: str = 'black',
            lw: float = 2., ls: Linestyle = '-',
            fill: str = None, bgcolor: str = None,
-           margin: Union[float, Sequence[float]] = 0.01) -> None:
+           margin: float = 0.1) -> None:
     ''' Set global schemdraw style configuration
 
         Args:
@@ -53,9 +53,7 @@ def config(unit: float = 3.0, inches_per_unit: float = 0.5,
             lw: Default line width for elements
             ls: Default line style
             fill: Deault fill color for closed elements
-            margin: White space around the drawing as fraction (0-1) of
-                drawing size. If tuple, unique values for x and y margin
-                may be provided.
+            margin: White space around the drawing in drawing units
     '''
     schemdrawstyle['unit'] = unit
     schemdrawstyle['inches_per_unit'] = inches_per_unit
@@ -314,7 +312,7 @@ class Drawing:
                fontsize: float = None, font: str = None,
                color: str = None, lw: float = None, ls: Linestyle = None,
                fill: str = None, bgcolor: str = None,
-               margin: Union[float, Sequence[float]] = None) -> None:
+               margin: float = None) -> None:
         ''' Set Drawing configuration, overriding schemdraw global config.
 
             Args:
@@ -327,9 +325,7 @@ class Drawing:
                 lw: Default line width for elements
                 ls: Default line style
                 fill: Deault fill color for closed elements
-            margin: White space around the drawing as fraction (0-1) of
-                drawing size. If tuple, unique values for x and y margin
-                may be provided.
+            margin: White space around the drawing in drawing units
         '''
         if unit is not None:
             self.unit = unit

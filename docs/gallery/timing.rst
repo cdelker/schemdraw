@@ -6,11 +6,9 @@ Timing Diagrams
 .. jupyter-execute::
     :hide-code:
 
-    %config InlineBackend.figure_format = 'svg'
     import schemdraw
     from schemdraw import elements as elm
     from schemdraw import logic
-    schemdraw.config(margin=.1)
 
 
 Timing diagrams, based on `WaveDrom <https://wavedrom.com/>`_, are drawn using the :py:class:`schemdraw.logic.timing.TimingDiagram` class.

@@ -7,7 +7,6 @@ Connectors
     from functools import partial
     import schemdraw
     from schemdraw import elements as elm
-    schemdraw.config(margin=.1)
 
 All connectors are defined with a default pin spacing of 0.6, matching the default pin spacing of the :py:class:`schemdraw.elements.intcircuits.Ic` class, for easy connection of multiple signals.
 
@@ -31,8 +30,7 @@ A :py:class:`schemdraw.elements.connectors.Header` is a generic Header block wit
             if hasattr(e, 'keywords'):  # partials have keywords attribute
                 args = ', '.join(['{}={}'.format(k, v) for k, v in e.keywords.items()])
                 name = '{}({})'.format(name, args)
-            eplaced = d.add(e(d='right', xy=[x, y]))
-            eplaced.label(name, loc='rgt', halign='left', valign='center')
+            d += e().at((x, y)).label(name, loc='rgt', halign='left', valign='center')
         return d
 
     elmlist = [elm.Header,

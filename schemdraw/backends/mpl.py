@@ -63,11 +63,7 @@ class Figure:
                 self.ax.set_frame_on(False)
 
         # whitespace around contents
-        self.margin = kwargs.get('margin', .01)
-        try:
-            self.ax.margins(*self.margin)  # tuple of x, y
-        except TypeError:
-            self.ax.margins(self.margin, self.margin)  # single value
+        self.margin = kwargs.get('margin', .1)
 
     def set_bbox(self, bbox: BBox):
         ''' Set bounding box, to override Matplotlib's autoscale '''
@@ -259,7 +255,7 @@ class Figure:
         fig.subplots_adjust(0, 0, 1, 1)
         fig.savefig(fname, bbox_inches='tight', transparent=transparent, dpi=dpi,
                     bbox_extra_artists=self.ax.get_default_bbox_extra_artists(),
-                    pad_inches=0)
+                    pad_inches=self.margin*self.inches_per_unit)
 
     def getfig(self):
         ''' Get the Matplotlib figure '''
@@ -269,11 +265,6 @@ class Figure:
             y1, y2 = self.ax.get_ylim()
             w = x2-x1
             h = y2-y1
-
-            try:
-                self.ax.margins(*self.margin)  # tuple of x, y
-            except TypeError:
-                self.ax.margins(self.margin, self.margin)  # single value
 
             if not self.showframe:
                 self.ax.axes.get_xaxis().set_visible(False)
@@ -292,7 +283,7 @@ class Figure:
         output = BytesIO()
         fig.savefig(output, format=ext, bbox_inches='tight',
                     bbox_extra_artists=self.ax.get_default_bbox_extra_artists(),
-                    pad_inches=0)
+                    pad_inches=self.margin*self.inches_per_unit)
 
         return output.getvalue()
 

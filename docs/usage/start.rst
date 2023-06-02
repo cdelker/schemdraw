@@ -30,7 +30,7 @@ Alternatively, schemdraw can be installed directly by downloading the source and
 
     pip install ./
 
-Schemdraw requires Python 3.7 or higher. Note that many of the examples and test notebooks still require 3.8+ to run due to their use of the walrus operator. The optional svgmath dependencies also require 3.8+.
+Schemdraw requires Python 3.8 or higher.
 
 
 Overview
@@ -44,11 +44,6 @@ use in a drawing. A common import structure is:
 
     import schemdraw
     import schemdraw.elements as elm
-
-.. jupyter-execute::
-    :hide-code:
-    
-    schemdraw.config(margin=(.05, .2))
 
 
 To make a circuit diagram, a :py:class:`schemdraw.Drawing` is created and :py:class:`schemdraw.elements.Element` instances are added to it:
@@ -71,12 +66,6 @@ This code is equivalent to the above:
         d += elm.Diode()
 
 Element placement and other properties and are set using a chained method interface, for example:
-
-.. jupyter-execute::
-    :hide-code:
-
-    schemdraw.config(margin=(.2, .2))
-
 
 .. jupyter-execute::
 

@@ -4,10 +4,8 @@ Styles
 .. jupyter-execute::
     :hide-code:
 
-    %config InlineBackend.figure_format = 'svg'
     import schemdraw
     from schemdraw import elements as elm
-    schemdraw.config(margin=.1)
 
 
 Circuit elements can be styled using Matplotlib colors, line-styles, and line widths.

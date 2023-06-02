@@ -4,11 +4,9 @@ Digital Logic
 .. jupyter-execute::
     :hide-code:
 
-    %config InlineBackend.figure_format = 'svg'
     import schemdraw
     from schemdraw import elements as elm
     from schemdraw import logic
-    schemdraw.config(margin=.1)
 
 
 Logic gate definitions are in the :py:mod:`schemdraw.logic.logic` module. Here it was imported with

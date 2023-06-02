@@ -4,10 +4,8 @@ Opamp Circuits
 .. jupyter-execute::
     :hide-code:
 
-    %config InlineBackend.figure_format = 'svg'
     import schemdraw
     from schemdraw import elements as elm
-    schemdraw.config(margin=.1)
 
 
 Inverting Opamp

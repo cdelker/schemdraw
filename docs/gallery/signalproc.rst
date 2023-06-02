@@ -4,11 +4,9 @@ Signal Processing
 .. jupyter-execute::
     :hide-code:
 
-    %config InlineBackend.figure_format = 'svg'
     import schemdraw
     from schemdraw import elements as elm
     from schemdraw import dsp
-    schemdraw.config(margin=.1)
 
 
 Signal processing elements are in the :py:mod:`schemdraw.dsp.dsp` module.

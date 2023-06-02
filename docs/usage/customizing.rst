@@ -9,7 +9,6 @@ Customizing Elements
     from schemdraw import elements as elm
     from schemdraw import logic
     from schemdraw.segments import *
-    schemdraw.config(margin=.1)
 
 
 Grouping Elements
@@ -210,6 +209,7 @@ A :py:class:`schemdraw.Figure` is returned from the `draw` method, which contain
 .. jupyter-execute::
     :emphasize-lines: 4-5
 
+    schemdraw.use('matplotlib')
     d = schemdraw.Drawing()
     d.add(elm.Resistor())
     schemfig = d.draw()

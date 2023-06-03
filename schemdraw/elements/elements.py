@@ -1,7 +1,7 @@
 ''' Schemdraw base Element class '''
 
 from __future__ import annotations
-from typing import Sequence, MutableMapping, Any, Union
+from typing import Sequence, MutableMapping, Any, Union, Optional
 from collections import ChainMap
 from dataclasses import dataclass
 import warnings
@@ -277,19 +277,19 @@ class Element:
                 color: Color of label
         '''
         if not halign and not valign:
-            align = None
+            align: Optional[Align] = None
         else:
             if not halign:
                 halign = {'top': 'center',
                           'bottom': 'center',
                           'left': 'right',
-                          'right': 'left'}.get(loc, 'left')
+                          'right': 'left'}.get(loc, 'left')  # type: ignore
             if not valign:
                 valign = {'top': 'baseline',
                           'bottom': 'top',
                           'left': 'center',
-                          'right': 'center'}.get(loc, 'bottom')
-            align = (halign, valign)
+                          'right': 'center'}.get(loc, 'bottom')  # type: ignore
+            align = (halign, valign)  # type: ignore
         if not rotate:
             rotate = 0
         elif isinstance(rotate, bool):

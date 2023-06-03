@@ -79,4 +79,5 @@ Other
 .. automodule:: schemdraw.elements.compound
     :members:
     
-
+.. automodule:: schemdraw.elements.twoports
+    :members:

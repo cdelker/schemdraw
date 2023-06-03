@@ -1,5 +1,5 @@
-v0.17 - In progress...
-        
+v0.17 - 2023-06-03
+
     New Elements:
         - Tristate inverter (credit: Jan Genoe)
         - NMos and PMos elements (credit: dtmaidenmueller)

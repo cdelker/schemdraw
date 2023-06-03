@@ -36,11 +36,11 @@ The SVG backend can be enabled for all drawings by calling:
 
     schemdraw.use('svg')
 
-The backend can be changed at any time. Alternatively, the backend can be set individually on each Drawing:
+The backend can be changed at any time. Alternatively, the backend can be set individually on each Drawing using the `canvas` parameter:
 
 .. code-block:: 
 
-    with schemdraw.Drawing(backend='svg') as d:
+    with schemdraw.Drawing(canvas='svg') as d:
         ...
 
 Use additional Python libraries, such as `pycairo <https://cairosvg.org/>`_, to convert the SVG output into other image formats.

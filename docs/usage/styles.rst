@@ -171,7 +171,7 @@ With the SVG backend in the `path` text mode, the mathfont parameter may be the 
 
 .. code-block:: python
 
-    with schemdraw.Drawing(backend='svg') as d:
+    with schemdraw.Drawing(canvas='svg') as d:
         # Default math font
         d += elm.RBox().label(r'$\sqrt{a^2+b^2}$').at((0, -2))
 

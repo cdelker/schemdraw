@@ -224,18 +224,30 @@ class Not(Element2Term):
 
 class Tristate(Element2Term):
     ''' Tristate inverter
+        Args:
+            outputnot: Draw invert bubble on output
+            controlnot: Active-low control
 
         Anchors:
             in
             out
             c
     '''
-    def __init__(self, *d, **kwargs):
+    def __init__(self, *d, outputnot: bool = True, controlnot: bool = False, **kwargs):
+        kwargs['outputnot'] = outputnot
+        kwargs['control'] = controlnot
         super().__init__(*d, **kwargs)
-        self.segments.append(Segment([(0, 0), gap, (gatel+notbubble*2, 0)]))
+        if outputnot:
+          self.segments.append(Segment([(0, 0), gap, (gatel+notbubble*2, 0)]))
+          self.segments.append(SegmentCircle((gatel+notbubble, 0), notbubble))
+        else:
+          self.segments.append(Segment([(0, 0), gap, (gatel, 0)]))
         self.segments.append(Segment([(0, gateh/2), (gatel, 0), (0, -gateh/2), (0, gateh/2)]))
-        self.segments.append(SegmentCircle((gatel+notbubble, 0), notbubble))
-        self.segments.append(Segment([(gatel/2, .28), (gatel/2, .7)]))
+        if controlnot:
+          self.segments.append(SegmentCircle((gatel/2, .42), notbubble))
+          self.segments.append(Segment([(gatel/2, .42+notbubble), (gatel/2, .7)]))
+        else:  
+          self.segments.append(Segment([(gatel/2, .28), (gatel/2, .7)]))
         self.anchors['out'] = (gatel+notbubble*2, 0)
         self.anchors['in1'] = (0, 0)
         self.anchors['c'] = (gatel/2, .7)

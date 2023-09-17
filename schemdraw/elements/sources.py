@@ -195,6 +195,19 @@ class Lamp(Source):
         self.segments.append(Segment(list(zip(x, y))))
 
 
+class Lamp2(Source):
+    ''' Incandescent Lamp (with X through a Source) '''
+    def __init__(self, *d, **kwargs):
+        super().__init__(*d, **kwargs)
+        r=0.5
+        self.segments.append(Segment(
+            [(r-r/2**.5, -r/2**.5),
+             (r+r/2**.5,  r/2**.5)]))
+        self.segments.append(Segment(
+            [(r-r/2**.5,  r/2**.5),
+             (r+r/2**.5, -r/2**.5)]))
+
+
 class Neon(Source):
     ''' Neon bulb '''
     def __init__(self, *d, **kwargs):

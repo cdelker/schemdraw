@@ -451,3 +451,23 @@ class Jack(Element):
         self.segments.append(Segment([(0, 0), (-resheight, resheight), gap,
                                       (-resheight, -resheight), (0, 0), (1, 0)]))
         self.params['drop'] = (1, 0)
+
+
+class Terminal(Element):
+    ''' Terminal element '''
+    def __init__(self, *d, r: float = 0.18, open: bool = False, **kwargs):
+        super().__init__(*d, **kwargs)
+        fill = 'bg'
+        self.anchors['start'] = (0, 0)
+        self.anchors['center'] = (0, 0)
+        self.anchors['end'] = (0, 0)
+        self.params['drop'] = (0, 0)
+        self.params['theta'] = 0
+        self.params['zorder'] = 4
+        self.params['fill'] = fill
+        self.segments.append(SegmentCircle((0, 0), r))
+        kx = 1.0
+        ky = 2.0
+        self.segments.append(Segment(
+            [(-kx*r, -ky*r),
+             ( kx*r,  ky*r)]))

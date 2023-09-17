@@ -10,7 +10,7 @@ from .oneterm import Ground, GroundSignal, GroundChassis, Antenna, AntennaLoop, 
 from .opamp import Opamp
 from .sources import (Source, SourceV, SourceI, SourceSin, SourcePulse, SourceSquare, SourceTriangle, SourceRamp,
                       SourceControlled, SourceControlledV, SourceControlledI, BatteryCell, Battery, MeterV, MeterI,
-                      MeterA, MeterOhm, Lamp, Solar, Neon)
+                      MeterA, MeterOhm, Lamp, Lamp2, Solar, Neon)
 from .switches import (Switch, SwitchSpdt, SwitchSpdt2, SwitchDpst, SwitchDpdt, Button, SwitchReed,
                        SwitchRotary, SwitchDIP)
 from .transistors import (NFet, PFet, AnalogNFet, AnalogPFet, AnalogBiasedFet,
@@ -24,7 +24,7 @@ from .intcircuits import (IcPin, Ic, Multiplexer, IcDIP, VoltageRegulator, DFlip
 from .lines import (Line, DataBusLine, Dot, Arrowhead, Arrow, DotDotDot, Wire, Gap, Label, Tag, CurrentLabel,
                     CurrentLabelInline, ZLabel, LoopCurrent, LoopArrow, Rect, Arc2, Arc3, ArcZ, ArcN, ArcLoop,
                     Annotate, Encircle, EncircleBox)
-from .connectors import OrthoLines, RightLines, Header, Jumper, BusConnect, BusLine, DB25, DB9, CoaxConnect, Plug, Jack
+from .connectors import OrthoLines, RightLines, Header, Jumper, BusConnect, BusLine, DB25, DB9, CoaxConnect, Plug, Jack, Terminal
 from .compound import ElementCompound, Optocoupler, Relay, Rectifier, Wheatstone
 from .twoports import (ElementTwoport, TwoPort, VoltageTransactor, TransimpedanceTransactor, CurrentTransactor,
                        TransadmittanceTransactor, Nullor, VMCMPair)
@@ -44,7 +44,7 @@ __all__ = [
     "Ground", "GroundSignal", "GroundChassis", "Antenna", "AntennaLoop", "AntennaLoop2", "Vss", "Vdd", "NoConnect",
     "Opamp", "Source", "SourceV", "SourceI", "SourceSin", "SourcePulse", "SourceSquare", "SourceTriangle",
     "SourceRamp", "SourceControlled", "SourceControlledV", "SourceControlledI", "BatteryCell", "Battery", "MeterV",
-    "MeterI", "MeterA", "MeterOhm", "Lamp", "Solar", "Neon", "Switch", "SwitchSpdt", "SwitchSpdt2", "SwitchDpst",
+    "MeterI", "MeterA", "MeterOhm", "Lamp", "Lamp2", "Solar", "Neon", "Switch", "SwitchSpdt", "SwitchSpdt2", "SwitchDpst",
     "SwitchDpdt", "Button", "SwitchReed", "SwitchRotary", "SwitchDIP", "NFet", "PFet", "AnalogNFet", "AnalogPFet",
     "AnalogBiasedFet", "JFet", "JFetN", "JFetP",
     "Bjt", "BjtNpn", "BjtPnp", "BjtPnp2c", "Bjt2", "BjtNpn2", "BjtPnp2", "BjtPnp2c2", "NFet2", "PFet2", "JFet2",
@@ -54,7 +54,7 @@ __all__ = [
     "sevensegdigit", "Line", "DataBusLine", "Dot", "Annotate", "ZLabel", "Arrowhead", "Arrow", "DotDotDot", "Wire",
     "Gap", "Label", "Tag", "CurrentLabel", "CurrentLabelInline", "LoopCurrent", "LoopArrow", "Rect",
     "Arc2", "Arc3", "ArcZ", "ArcN", "ArcLoop", "Encircle", "EncircleBox", "OrthoLines", "RightLines", "Header",
-    "Jumper", "BusConnect", "BusLine", "DB25", "DB9", "CoaxConnect", "Plug", "Jack", "ElementCompound", "Optocoupler",
+    "Jumper", "BusConnect", "BusLine", "DB25", "DB9", "CoaxConnect", "Plug", "Jack", "Terminal", "ElementCompound", "Optocoupler",
     "Relay", "Rectifier", "Wheatstone", "ElementTwoport", "TwoPort", "VoltageTransactor", "TransimpedanceTransactor",
     "CurrentTransactor", "TransadmittanceTransactor", "Nullor", "VMCMPair", "OutletA", "OutletB", "OutletC", "OutletD",
     "OutletE", "OutletF", "OutletG", "OutletH", "OutletI", "OutletJ", "OutletK", "OutletL"]

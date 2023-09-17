@@ -142,7 +142,7 @@ Miscellaneous
 .. jupyter-execute::
     :hide-code:
     
-    elmlist = [Breaker, Crystal, CPE, Josephson, Motor, Lamp, Neon, Thermistor, Memristor, Memristor2, Jack, Plug]
+    elmlist = [Breaker, Crystal, CPE, Josephson, Motor, Lamp, Lamp2, Neon, Thermistor, Memristor, Memristor2, Jack, Plug, Terminal]
     drawElements(elmlist, cols=2)
 
 

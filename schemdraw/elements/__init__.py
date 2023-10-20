@@ -1,4 +1,5 @@
 from .elements import Element, ElementDrawing, Element2Term
+from .container import Container
 from .twoterm import (Resistor, ResistorIEEE, ResistorIEC, ResistorVar, ResistorVarIEEE,
                       ResistorVarIEC, Thermistor, Photoresistor, PhotoresistorIEEE, PhotoresistorIEC,
                       Rshunt, Capacitor, Capacitor2, CapacitorVar, CapacitorTrim, Diode, Schottky, DiodeTunnel,
@@ -33,7 +34,7 @@ from .outlets import (OutletA, OutletB, OutletC, OutletD, OutletE, OutletF, Outl
 
 
 __all__ = [
-    "Element", "ElementDrawing", "Element2Term",
+    "Element", "ElementDrawing", "Element2Term", "Container",
     "Resistor", "ResistorIEEE", "ResistorIEC", "ResistorVar", "ResistorVarIEEE", "ResistorVarIEC", "Rshunt",
     "Thermistor", "Photoresistor", "PhotoresistorIEEE", "PhotoresistorIEC", "Capacitor", "Capacitor2",
     "CapacitorVar", "CapacitorTrim", "Diode", "Schottky", "DiodeTunnel", "DiodeShockley", "Zener", "Varactor",

@@ -720,7 +720,8 @@ class ElementDrawing(Element):
         self.segments = self.drawing.get_segments()
         self.anchors = self.drawing.anchors
         self.params['drop'] = self.drawing.here
-
+        self.params['d'] = 'right'  # Reset drawing direction
+        
 
 class Element2Term(Element):
     ''' Two terminal element. The element leads can be automatically

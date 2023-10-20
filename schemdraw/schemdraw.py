@@ -8,7 +8,7 @@ import math
 
 from . import default_canvas
 from .types import BBox, Backends, ImageFormat, Linestyle, XY, ImageType
-from .elements import Element
+from .elements import Element, Container
 from .segments import SegmentType
 from .util import Point
 from .backends.svg import Figure as svgFigure
@@ -148,7 +148,7 @@ class Drawing:
             theta: (float) Current drawing angle, in degrees. The next
                 element will be added with this angle unless specified
                 otherwise.
-    '''
+    '''    
     def __init__(self, canvas: Union[Backends, xml.etree.ElementTree.Element,
                                      matplotlib.pyplot.Axes] = None,
                  file: str = None, show: bool = True, **kwargs):
@@ -172,6 +172,17 @@ class Drawing:
         self._state: list[tuple[Point, float]] = []  # Push/Pop stack
         self._interactive = False
         self.fig: Optional[Union[mplFigure, svgFigure]] = None
+
+    def container(self, cornerradius: float = .3,
+                  padx: float = .75, pady: float = .75):
+        ''' Add a container to the drawing
+
+            Args:
+                cornerradius: radius for box corners
+                padx: space between contents and border in x direction
+                pady: space between contents and border in y direction
+        '''
+        return Container(self, cornerradius, padx, pady)
 
     def __enter__(self):
         return self

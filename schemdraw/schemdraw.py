@@ -12,6 +12,7 @@ from .elements import Element, Container
 from .segments import SegmentType
 from .util import Point
 from .backends.svg import Figure as svgFigure
+from . import drawing_stack #import drawing_stack
 
 if TYPE_CHECKING:
     import xml.etree.ElementTree.Element  # type: ignore
@@ -148,7 +149,7 @@ class Drawing:
             theta: (float) Current drawing angle, in degrees. The next
                 element will be added with this angle unless specified
                 otherwise.
-    '''    
+    '''     
     def __init__(self, canvas: Union[Backends, xml.etree.ElementTree.Element,
                                      matplotlib.pyplot.Axes] = None,
                  file: str = None, show: bool = True, **kwargs):
@@ -167,15 +168,40 @@ class Drawing:
         self.dwgparams.update(kwargs)  # To maintain support for arguments that moved to config method
         self.unit = kwargs.get('unit', schemdrawstyle.get('unit'))
 
-        self.here: XY = Point((0, 0))
-        self.theta: float = 0
+        self._here: XY = Point((0, 0))
+        self._theta: float = 0
         self._state: list[tuple[Point, float]] = []  # Push/Pop stack
         self._interactive = False
         self.fig: Optional[Union[mplFigure, svgFigure]] = None
 
+    @property
+    def here(self):
+        drawing_stack.push_element(None)
+        return self._here
+
+    @here.setter
+    def here(self, value):
+        drawing_stack.push_element(None)
+        self._here = value
+
+    @property
+    def theta(self):
+        drawing_stack.push_element(None)
+        return self._theta
+
+    @theta.setter
+    def theta(self, value):
+        self._theta = value
+
     def container(self, cornerradius: float = .3,
                   padx: float = .75, pady: float = .75):
-        ''' Add a container to the drawing
+        ''' Add a container to the drawing. Use as a context manager,
+            such that elemnents inside the `with` are surrounded by
+            the container.
+            
+            >>> with drawing.container():
+            >>>    elm.Resistor()
+            >>>    ...
 
             Args:
                 cornerradius: radius for box corners
@@ -185,10 +211,14 @@ class Drawing:
         return Container(self, cornerradius, padx, pady)
 
     def __enter__(self):
+        drawing_stack.push_drawing(self)
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         ''' Exit context manager - save to file and display '''
+        drawing_stack.push_element(None)
+        drawing_stack.pop_drawing(self)
+
         if self.outfile is not None:
             self.save(self.outfile)
         if not self.fig:
@@ -204,6 +234,9 @@ class Drawing:
         if name in vars(self).get('anchors', {}):
             return vars(self).get('anchors')[name]  # type: ignore
         raise AttributeError(f"'Drawing' has no attribute {name}")
+
+    def __contains__(self, element):
+        return element in self.elements
 
     def interactive(self, interactive: bool = True):
         ''' Enable interactive mode (matplotlib backend only). Matplotlib
@@ -255,7 +288,7 @@ class Drawing:
             Args:
                 element: The element to add.
         '''
-        self.here, self.theta = element._place(self.here, self.theta, **self.dwgparams)
+        self._here, self._theta = element._place(self._here, self._theta, **self.dwgparams)
         self.elements.append(element)
 
         if self._interactive:
@@ -282,7 +315,7 @@ class Drawing:
         self.fig.clear()  # type: ignore
         for element in self.elements:
             element._draw(self.fig)
-        self.here, self.theta = self.elements[-1].absdrop
+        self._here, self._theta = self.elements[-1].absdrop
         self.fig.set_bbox(self.get_bbox())  # type: ignore
         self.fig.getimage()  # type: ignore
 
@@ -293,32 +326,36 @@ class Drawing:
                 dx: change in x position
                 dy: change in y position
         '''
-        self.here = Point((self.here[0] + dx, self.here[1] + dy))
+        drawing_stack.push_element(None)
+        self._here = Point((self._here[0] + dx, self._here[1] + dy))
 
     def move_from(self, ref: Point, dx: float = 0, dy: float = 0, theta: float = None) -> None:
         ''' Move drawing position relative to the reference point. Change drawing
             theta if provided.
         '''
-        self.here = (ref.x + dx, ref.y + dy)
+        drawing_stack.push_element(None)
+        self._here = (ref.x + dx, ref.y + dy)
         if theta is not None:
-            self.theta = theta
+            self._theta = theta
 
     def set_anchor(self, name: str) -> None:
         ''' Define a Drawing anchor at the current drawing position '''
-        self.anchors[name] = self.here
+        self.anchors[name] = self._here
 
     def push(self) -> None:
         ''' Push/save the drawing state.
             Drawing.here and Drawing.theta are saved.
         '''
-        self._state.append((Point(self.here), self.theta))
+        drawing_stack.push_element(None)
+        self._state.append((Point(self._here), self._theta))
 
     def pop(self) -> None:
         ''' Pop/load the drawing state. Location and angle are returned to
             previously pushed state.
         '''
+        drawing_stack.push_element(None)
         if len(self._state) > 0:
-            self.here, self.theta = self._state.pop()
+            self._here, self._theta = self._state.pop()
 
     def config(self, unit: float = None, inches_per_unit: float = None,
                fontsize: float = None, font: str = None,

@@ -23,21 +23,14 @@ If a style method is not called when creating an Element, its value is obtained 
 Color and fill parameters accept any named `SVG color <https://upload.wikimedia.org/wikipedia/commons/2/2b/SVG_Recognized_color_keyword_names.svg>`_ or a hex color string such as '#6A5ACD'. Linestyle parameters may be '-', '--', ':', or '-.'.
 
 .. jupyter-execute::
-    :hide-output:
     
     # All elements are blue with lightgray fill unless specified otherwise    
-    d = schemdraw.Drawing(color='blue', fill='lightgray')
-
-    d += elm.Diode()
-    d += elm.Diode().fill('red')        # Fill overrides drawing color here
-    d += elm.Resistor().fill('purple')  # Fill has no effect on non-closed elements
-    d += elm.RBox().linestyle('--').color('orange')
-    d += elm.Resistor().linewidth(5)
-
-.. jupyter-execute::
-    :hide-code:
-
-    d.draw()
+    with schemdraw.Drawing(color='blue', fill='lightgray'):
+        elm.Diode()
+        elm.Diode().fill('red')        # Fill overrides drawing color here
+        elm.Resistor().fill('purple')  # Fill has no effect on non-closed elements
+        elm.RBox().linestyle('--').color('orange')
+        elm.Resistor().linewidth(5)
 
 The `label` method also accepts color, font, and fontsize parameters, allowing labels with different style as their elements.
 
@@ -59,12 +52,12 @@ Styles may be applied to every new drawing created by Schemdraw (during the Pyth
     :emphasize-lines: 1
 
     schemdraw.config(lw=1, font='serif')
-    with schemdraw.Drawing() as d:
-        d += elm.Resistor().label('100KΩ')
-        d += elm.Capacitor().down().label('0.1μF', loc='bottom')
-        d += elm.Line().left()
-        d += elm.Ground()
-        d += elm.SourceV().up().label('10V')
+    with schemdraw.Drawing():
+        elm.Resistor().label('100KΩ')
+        elm.Capacitor().down().label('0.1μF', loc='bottom')
+        elm.Line().left()
+        elm.Ground()
+        elm.SourceV().up().label('10V')
 
 .. jupyter-execute::
     :hide-code:
@@ -89,9 +82,9 @@ For example, the following code fills all Diode elements:
 
     elm.style({'Diode': partial(elm.Diode, fill=True)})
 
-    with schemdraw.Drawing() as d:
-        d += elm.Diode()
-        d += elm.Diode()
+    with schemdraw.Drawing():
+        elm.Diode()
+        elm.Diode()
 
 Be careful, though, because the `style` method can overwrite existing elements in the namespace.
 
@@ -105,37 +98,16 @@ The `schemdraw.elements.STYLE_IEC` and `schemdraw.elements.STYLE_IEEE` are dicti
 To configure IEC/European style, use the `style` method with the `elm.STYLE_IEC` dictionary.
 
 .. jupyter-execute::
-    :hide-code:
-    
-    d = schemdraw.Drawing()
-
-.. jupyter-execute::
     :emphasize-lines: 1
 
     elm.style(elm.STYLE_IEC)
-    d += elm.Resistor()
-
-.. jupyter-execute::
-    :hide-code:
-
-    d.draw()
-    
-
-.. jupyter-execute::
-    :hide-code:
-    
-    d = schemdraw.Drawing()
+    elm.Resistor()
 
 .. jupyter-execute::
     :emphasize-lines: 1
 
     elm.style(elm.STYLE_IEEE)
-    d += elm.Resistor()
-
-.. jupyter-execute::
-    :hide-code:
-
-    d.draw()
+    elm.Resistor()
 
 To see all the elements that change between IEEE and IEC, see :ref:`styledelements`.
 
@@ -148,18 +120,18 @@ These font options apply whether working in the Matplotlib or SVG backends.
 
 .. code-block:: python
 
-    with schemdraw.Drawing() as d:
+    with schemdraw.Drawing():
         # Default font
-        d += elm.RBox().label('R1\n500K')
+        elm.RBox().label('R1\n500K')
 
         # Named font in system fonts path
-        d += elm.RBox().label('R1\n500K', font='Comic Sans MS')
+        elm.RBox().label('R1\n500K', font='Comic Sans MS')
 
         # Path to a TTF file
-        d += elm.RBox().label('R1\n500K', font='Peralta-Regular.ttf')
+        elm.RBox().label('R1\n500K', font='Peralta-Regular.ttf')
 
         # Font family
-        d += elm.RBox().label('R1\n500K', font='serif')
+        elm.RBox().label('R1\n500K', font='serif')
 
 .. image:: fonts.svg
   :alt: Font examples
@@ -171,12 +143,12 @@ With the SVG backend in the `path` text mode, the mathfont parameter may be the 
 
 .. code-block:: python
 
-    with schemdraw.Drawing(canvas='svg') as d:
+    with schemdraw.Drawing(canvas='svg'):
         # Default math font
-        d += elm.RBox().label(r'$\sqrt{a^2+b^2}$').at((0, -2))
+        elm.RBox().label(r'$\sqrt{a^2+b^2}$').at((0, -2))
 
         # Path to a TTF file with MATH font table (SVG backend only)
-        d += elm.RBox().label(r'$\sqrt{a^2+b^2}$', mathfont='Asana-Math.ttf')
+        elm.RBox().label(r'$\sqrt{a^2+b^2}$', mathfont='Asana-Math.ttf')
 
 .. image:: mathfonts.svg
   :alt: Math font examples
@@ -207,12 +179,12 @@ They are enabled using :py:meth:`schemdraw.theme`:
     :emphasize-lines: 1
 
     schemdraw.theme('monokai')
-    with schemdraw.Drawing() as d:
-        d += elm.Resistor().label('100KΩ')
-        d += elm.Capacitor().down().label('0.1μF', loc='bottom')
-        d += elm.Line().left()
-        d += elm.Ground()
-        d += elm.SourceV().up().label('10V')
+    with schemdraw.Drawing():
+        elm.Resistor().label('100KΩ')
+        elm.Capacitor().down().label('0.1μF', loc='bottom')
+        elm.Line().left()
+        elm.Ground()
+        elm.SourceV().up().label('10V')
 
 .. jupyter-execute::
     :hide-code:

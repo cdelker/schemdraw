@@ -9,6 +9,7 @@ from .elements import Element, Element2Term
 from .twoterm import gap
 from ..types import XY, Point, Arcdirection, BilateralDirection, Linestyle
 from .. import util
+from .. import drawing_stack
 
 
 class Line(Element2Term):
@@ -956,6 +957,7 @@ class LoopCurrent(LoopArrow):
                  theta1: float = 35, theta2: float = -35,
                  pad: float = 0.2, **kwargs):
         assert elm_list is not None
+        drawing_stack.push_element(None)  # Flush the stack to make sure all elm_list are placed
         bbox1 = elm_list[0].get_bbox(transform=True, includetext=False)
         bbox2 = elm_list[1].get_bbox(transform=True, includetext=False)
         bbox3 = elm_list[2].get_bbox(transform=True, includetext=False)
@@ -1007,6 +1009,8 @@ class Encircle(Element):
                  padx: float = 0.2, pady: float = 0.2,
                  includelabels: bool = True,
                  **kwargs):
+        drawing_stack.push_element(None)  # Flush the stack to make sure all elm_list are placed
+
         super().__init__(**kwargs)
         assert elm_list is not None
         xmin = math.inf
@@ -1066,6 +1070,7 @@ class EncircleBox(Element):
                  padx: float = 0.2, pady: float = 0.2,
                  includelabels: bool = True,
                  **kwargs):
+        drawing_stack.push_element(None)  # Flush the stack to make sure all elm_list are placed
         super().__init__(**kwargs)
         assert elm_list is not None
         xmin = math.inf

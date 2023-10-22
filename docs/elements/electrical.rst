@@ -499,12 +499,12 @@ The :py:class:`schemdraw.elements.twoports.ElementTwoport` class can be used to 
 
 .. jupyter-execute::
 
-    d += elm.ElementTwoport(input_element=elm.Inductor2(),
-                            output_element=elm.SwitchReed(),
+    d += elm.ElementTwoport(input_element=elm.Inductor2,
+                            output_element=elm.SwitchReed,
                             unit=2.5, width=2.5).anchor('center')
 
-    d += elm.ElementTwoport(input_element=elm.Lamp(),
-                            output_element=elm.Photodiode().reverse().flip(),
+    d += elm.ElementTwoport(input_element=elm.Lamp,
+                            output_element=partial(elm.Photodiode, reverse=True, flip=True),
                             width=3).anchor('center').at([7,0])
 
 .. jupyter-execute::

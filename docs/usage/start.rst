@@ -46,41 +46,41 @@ use in a drawing. A common import structure is:
     import schemdraw.elements as elm
 
 
-To make a circuit diagram, a :py:class:`schemdraw.Drawing` is created and :py:class:`schemdraw.elements.Element` instances are added to it:
+To make a circuit diagram, use a context manager (`with` statement) on a :py:class:`schemdraw.Drawing`. Then any :py:class:`schemdraw.elements.Element` instances created within the `with` block added to the drawing:
 
 .. jupyter-execute::
 
-    with schemdraw.Drawing() as d:
-        d.add(elm.Resistor())
-        d.add(elm.Capacitor())
-        d.add(elm.Diode())
+    with schemdraw.Drawing():
+        elm.Resistor()
+        elm.Capacitor()
+        elm.Diode()
 
-The `+=` operator may be used as shorthand notation to add elements to the drawing.
-This code is equivalent to the above:
+**New in version 0.18**: The context manager keeps track of the active drawing, so that using `drawing.add(element)` or `drawing += element` is no longer necessary.
+These operators are still functional and are needed if drawing outside a `with` context manager:
 
 .. code-block:: python
 
-    with schemdraw.Drawing() as d:
-        d += elm.Resistor()
-        d += elm.Capacitor()
-        d += elm.Diode()
+    with schemdraw.Drawing() as drawing:
+        drawing += elm.Resistor()
+        drawing += elm.Capacitor()
+        drawing.add(elm.Diode())   # Same as `drawing +=`
 
 Element placement and other properties and are set using a chained method interface, for example:
 
 .. jupyter-execute::
 
-    with schemdraw.Drawing() as d:
-        d += elm.Resistor().label('100KΩ')
-        d += elm.Capacitor().down().label('0.1μF', loc='bottom')
-        d += elm.Line().left()
-        d += elm.Ground()
-        d += elm.SourceV().up().label('10V')
+    with schemdraw.Drawing():
+        elm.Resistor().label('100KΩ')
+        elm.Capacitor().down().label('0.1μF', loc='bottom')
+        elm.Line().left()
+        elm.Ground()
+        elm.SourceV().up().label('10V')
 
 Methods `up`, `down`, `left`, `right` specify the drawing direction, and `label` adds text to the element.
 If not specified, elements reuse the same direction from the previous element, and begin where
 the previous element ended.
 
-Using the `with` context manager is a convenience, letting the drawing be displayed and saved upon exiting the `with` block. Schematics may also be created simply by assinging a new Drawing instance, but this requires calling `draw()` and/or `save()` explicitly:
+Using the `with` context manager is a convenience, letting the drawing be displayed and saved upon exiting the `with` block. Schematics may also be created simply by assinging a new Drawing instance, but this requires explicitly adding elements to the drawing with `d.add` or d +=`, and calling `draw()` and/or `save()` to show the drawing:
 
 .. code-block:: python
 

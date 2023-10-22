@@ -14,19 +14,19 @@ For example,
 
 .. code-block:: python
 
-    with schemdraw.Drawing() as d:
-        d += elm.Resistor().right().label('1Ω')
+    with schemdraw.Drawing():
+        elm.Resistor().right().label('1Ω')
     
 creates a new schemdraw drawing with a resistor going to the right with a label of "1Ω".
 The next element added to the drawing will start at the endpoint of the resistor.
 
 .. jupyter-execute::
 
-    with schemdraw.Drawing() as d:
-        d += elm.Resistor().right().label('1Ω')
-        d += elm.Capacitor().down().label('10μF')
-        d += elm.Line().left()
-        d += elm.SourceSin().up().label('10V')
+    with schemdraw.Drawing():
+        elm.Resistor().right().label('1Ω')
+        elm.Capacitor().down().label('10μF')
+        elm.Line().left()
+        elm.SourceSin().up().label('10V')
 
 
 

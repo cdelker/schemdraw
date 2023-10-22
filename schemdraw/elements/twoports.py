@@ -1,5 +1,5 @@
 ''' Twoport elements made from groups of other elements '''
-import typing
+from functools import partial
 
 from .compound import ElementCompound
 from ..import elements as elm
@@ -35,43 +35,53 @@ class ElementTwoport(ElementCompound):
             * out_n
             * center
     '''
-    def __init__(self, *d, input_element: elm.Element2Term, output_element: elm.Element2Term,
+    def __init__(self, *d, input_element: type[elm.Element2Term],
+                 output_element: type[elm.Element2Term],
                  boxpadx: float = .2, boxpady: float = .2, minw: float = .5,
                  terminals: bool = True, unit: float = 1.5, width: float = 2.15,
                  box: bool = True, boxfill: str = None, boxlw: float = None, boxls: Linestyle = None, **kwargs):
+        self.input_element = input_element
+        self.output_element = output_element
+        self.boxpadx = boxpadx
+        self.boxpady = boxpady
+        self.minw = minw
+        self.terminals = terminals
+        self.unit = unit
+        self.width = width
+        self.box = box
+        self.boxfill = boxfill
+        self.boxlw = boxlw
+        self.boxls = boxls
         super().__init__(*d, unit=unit, **kwargs)
 
-        input_component = input_element.down()
-        output_component = output_element.down()
+    def setup(self):
+        self.input_component = self.input_element().down()
+        self.output_component = self.output_element().down()
 
-        bbox_input = input_component.get_bbox()
-        bbox_output = output_component.get_bbox()
+        bbox_input = self.input_component.get_bbox()
+        bbox_output = self.output_component.get_bbox()
 
         # since components are not yet placed, transform is not taken into account for bbox calculation
         # hence, use the height rather than the width. Also assumes symmetry
-        in_w = max((bbox_input.ymax - bbox_input.ymin)/2,  minw / 2)
-        out_w = max((bbox_output.ymax - bbox_output.ymin)/2, minw / 2)
+        in_w = max((bbox_input.ymax - bbox_input.ymin)/2,  self.minw / 2)
+        out_w = max((bbox_output.ymax - bbox_output.ymin)/2, self.minw / 2)
 
-        input_component = self.add(input_component.at((boxpadx + in_w, 0)))
-        output_component = self.add(output_component.at((width-boxpadx - out_w, 0)))
-
-        # expose input components to outside manipulation
-        self.input_component = input_component
-        self.output_component = output_component
+        self.add(self.input_component.at((self.boxpadx + in_w, 0)))
+        self.add(self.output_component.at((self.width-self.boxpadx - out_w, 0)))
 
         # draw outline
         bbox = self.get_bbox()
-        if box:
+        if self.box:
             self.add(elm.Rect('r', at=[0, 0],
-                              corner1=(0, bbox.ymin - boxpady), corner2=(width, bbox.ymax + boxpady),
-                              fill=boxfill, lw=boxlw, ls=boxls, zorder=0))
+                              corner1=(0, bbox.ymin - self.boxpady), corner2=(self.width, bbox.ymax + self.boxpady),
+                              fill=self.boxfill, lw=self.boxlw, ls=self.boxls, zorder=0))
 
         bbox = self.get_bbox()
 
-        out_p = self.add(elm.Line('r', at=output_component.start, tox=bbox.xmax))
-        out_n = self.add(elm.Line('r', at=output_component.end,   tox=bbox.xmax))
-        in_p = self.add(elm.Line('l', at=input_component.start,  tox=bbox.xmin))
-        in_n = self.add(elm.Line('l', at=input_component.end,    tox=bbox.xmin))
+        out_p = self.add(elm.Line('r', at=self.output_component.start, tox=bbox.xmax))
+        out_n = self.add(elm.Line('r', at=self.output_component.end, tox=bbox.xmax))
+        in_p = self.add(elm.Line('l', at=self.input_component.start, tox=bbox.xmin))
+        in_n = self.add(elm.Line('l', at=self.input_component.end, tox=bbox.xmin))
 
         self.anchors['in_p'] = in_p.end
         self.anchors['in_n'] = in_n.end
@@ -79,7 +89,7 @@ class ElementTwoport(ElementCompound):
         self.anchors['out_n'] = out_n.end
         self.anchors['center'] = ((bbox.xmin + bbox.xmax) / 2, (bbox.ymin + bbox.ymax) / 2)
 
-        if terminals:
+        if self.terminals:
             for anchor in ['in_p', 'in_n', 'out_p', 'out_n']:
                 if 'in' in anchor:
                     xadjust = -tp_termlen
@@ -117,10 +127,15 @@ class TwoPort(ElementTwoport):
             * center
     '''
     def __init__(self, *d, sign: bool = True, arrow: bool = True, reverse_output: bool = False, **kwargs):
-        super().__init__(*d, input_element=elm.Gap(), output_element=elm.Gap(),
+        self.sign = sign
+        self.arrow = arrow
+        self.reverse_output = reverse_output
+        super().__init__(*d, input_element=elm.Gap, output_element=elm.Gap,
                          boxpadx=0, minw=0, component_offset=2, **kwargs)
 
-        if sign:
+    def setup(self):
+        super().setup()
+        if self.sign:
             # note the use of unicode − rather than usual - for better visual representation.
             self.segments.append(
                 SegmentText(pos=Point((0.1, 0.1)) + self.input_component.end, label='−',
@@ -129,7 +144,7 @@ class TwoPort(ElementTwoport):
                 SegmentText(pos=Point((0.1, -0.1)) + self.input_component.start, label='+',
                             align=('left', 'center'), rotation_global=False))
 
-            if not reverse_output:
+            if not self.reverse_output:
                 self.segments.append(
                     SegmentText(pos=Point((-0.1, 0.1)) + self.output_component.end, label='−',
                                 align=('right', 'center'), rotation_global=False))
@@ -144,7 +159,7 @@ class TwoPort(ElementTwoport):
                     SegmentText(pos=Point((-0.1, -0.1)) + self.output_component.start, label='−',
                                 align=('right', 'center'), rotation_global=False))
 
-        if arrow:
+        if self.arrow:
             center_point = Point(self.anchors['center'])
             self.segments.append(
                 SegmentArrow(center_point + Point((-tp_arrowlen / 2, 0)), center_point + Point((tp_arrowlen / 2, 0)),
@@ -177,12 +192,14 @@ class VoltageTransactor(ElementTwoport):
             * center
     '''
     def __init__(self, *d, reverse_output: bool = False, **kwargs):
-        output_element: elm.Element2Term = elm.SourceControlledV()
+        output_element: type[elm.Element2Term] = elm.SourceControlledV
         if not reverse_output:
-            # element is reversed in itself, so do a double reversal to cancel
-            output_element = typing.cast(elm.Element2Term, output_element.reverse())
-        super().__init__(*d, input_element=elm.Gap(), output_element=output_element, **kwargs)
+            # mypy doesn't like partials
+            output_element = partial(output_element, reverse=True)  # type:ignore
+        super().__init__(*d, input_element=elm.Gap, output_element=output_element, **kwargs)
 
+    def setup(self):
+        super().setup()
         self.segments.append(
             SegmentText(pos=Point((0, 0.05)) + self.input_component.end, label='−',
                         align=('right', 'bottom'), rotation_global=False))
@@ -214,12 +231,14 @@ class TransimpedanceTransactor(ElementTwoport):
             * center
     '''
     def __init__(self, *d, reverse_output: bool = False, **kwargs):
-        output_element: elm.Element2Term = elm.SourceControlledV()
+        output_element: type[elm.Element2Term] = elm.SourceControlledV
         if not reverse_output:
             # element is reversed in itself, so do a double reversal to cancel
-            output_element = typing.cast(elm.Element2Term, output_element.reverse())
-        super().__init__(*d, input_element=elm.Line(), output_element=output_element, **kwargs)
+            output_element = partial(output_element, reverse=True)   # type:ignore
+        super().__init__(*d, input_element=elm.Line, output_element=output_element, **kwargs)
 
+    def setup(self):
+        super().setup()
         current_label_inline = elm.CurrentLabelInline(ofst=-0.15, headlength=0.3)
         current_label_inline.at(self.input_component)
         self.add(current_label_inline)
@@ -249,12 +268,14 @@ class CurrentTransactor(ElementTwoport):
     '''
 
     def __init__(self, *d, reverse_output: bool = False, **kwargs):
-        output_element: elm.Element2Term = elm.SourceControlledI()
+        output_element: type[elm.Element2Term] = elm.SourceControlledI
         if not reverse_output:
             # element is reversed in itself, so do a double reversal to cancel
-            output_element = typing.cast(elm.Element2Term, output_element.reverse())
-        super().__init__(*d, input_element=elm.Line(), output_element=output_element, **kwargs)
+            output_element = partial(output_element, reverse=True)  # type:ignore
+        super().__init__(*d, input_element=elm.Line, output_element=output_element, **kwargs)
 
+    def setup(self):
+        super().setup()
         current_label_inline = elm.CurrentLabelInline(ofst=-0.15, headlength=0.3)
         current_label_inline.at(self.input_component)
         self.add(current_label_inline)
@@ -284,12 +305,15 @@ class TransadmittanceTransactor(ElementTwoport):
     '''
 
     def __init__(self, *d, reverse_output: bool = False, **kwargs):
-        output_element: elm.Element2Term = elm.SourceControlledI()
+        output_element: type[elm.Element2Term] = elm.SourceControlledI
+        self.reverse_output = reverse_output
         if not reverse_output:
             # element is reversed in itself, so do a double reversal to cancel
-            output_element = typing.cast(elm.Element2Term, output_element.reverse())
-        super().__init__(*d, input_element=elm.Gap(), output_element=output_element, **kwargs)
+            output_element = partial(output_element, reverse=True)  # type:ignore
+        super().__init__(*d, input_element=elm.Gap, output_element=output_element, **kwargs)
 
+    def setup(self):
+        super().setup()
         self.segments.append(
             SegmentText(pos=Point((0, 0.05)) + self.input_component.end, label='−',
                         align=('right', 'bottom'), rotation_global=False))
@@ -320,7 +344,7 @@ class Nullor(ElementTwoport):
             * center
     '''
     def __init__(self, *d, **kwargs):
-        super().__init__(*d, input_element=elm.Nullator(), output_element=elm.Norator(), boxpadx=0.3, **kwargs)
+        super().__init__(*d, input_element=elm.Nullator, output_element=elm.Norator, boxpadx=0.3, **kwargs)
 
 
 class VMCMPair(ElementTwoport):
@@ -345,5 +369,5 @@ class VMCMPair(ElementTwoport):
             * center
     '''
     def __init__(self, *d, **kwargs):
-        super().__init__(*d, input_element=elm.VoltageMirror(), output_element=elm.CurrentMirror(),
+        super().__init__(*d, input_element=elm.VoltageMirror, output_element=elm.CurrentMirror,
                          boxpadx=0.3, **kwargs)

@@ -13,6 +13,7 @@ from ..transform import Transform
 from .. import util
 from ..util import Point
 from ..types import XY, Linestyle, Align, Halign, Valign, LabelLoc
+from .. import drawing_stack
 
 from ..backends.svg import Figure as svgFigure
 try:
@@ -54,6 +55,8 @@ class Element:
                 drawing coordinates
             segments: List of drawing primitives making up the element
             transform: Transformation from element to drawing coordinates
+            absdrop: Drop position in drawing coordinates, set after the
+                element is added to a drawing
 
         Anchor names are dynmically added as attributes after placing the
         element in a Drawing.
@@ -84,8 +87,18 @@ class Element:
             if len(d) > 1:
                 warnings.warn('Unused positional arguments in Element.')
 
+        drawing_stack.push_element(self)
+
     def __getattr__(self, name: str) -> Any:
         ''' Allow getting anchor position as attribute '''
+        anchornames = ['start', 'end', 'center', 'istart', 'iend',
+                       'N', 'S', 'E', 'W', 'NE', 'NW', 'SE', 'SW',
+                       'NNE', 'NNW', 'ENE', 'WNW', 'SSE', 'SSW', 'ESE', 'WSW']
+        if (name in anchornames + list(vars(self).get('anchors', {}).keys()) and
+            not name in vars(self).get('absanchors', {})):
+                # Not placed yet
+                drawing_stack.push_element(self)
+
         if name in vars(self).get('absanchors', {}):
             return vars(self).get('absanchors')[name]  # type: ignore
         raise AttributeError(f'{name} not defined in Element')
@@ -166,7 +179,10 @@ class Element:
 
     def reverse(self) -> 'Element':
         ''' Apply reverse left/right '''
-        self._userparams['reverse'] = True
+        if 'reverse' in self._userparams:
+            self._userparams['reverse'] = not self._userparams['reverse']
+        else:
+            self._userparams['reverse'] = True
         return self
 
     def anchor(self, anchor: str) -> 'Element':
@@ -719,7 +735,7 @@ class ElementDrawing(Element):
         self.drawing = drawing
         self.segments = self.drawing.get_segments()
         self.anchors = self.drawing.anchors
-        self.params['drop'] = self.drawing.here
+        self.params['drop'] = self.drawing._here
         self.params['d'] = 'right'  # Reset drawing direction
         
 
@@ -797,8 +813,6 @@ class Element2Term(Element):
 
     def endpoints(self, start: XY, end: XY) -> 'Element2Term':
         ''' Sets absolute endpoints of element '''
-        assert start is not None
-        assert end is not None
         self._userparams['endpts'] = (start, end)
         return self
 

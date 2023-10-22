@@ -1,3 +1,18 @@
+v0.18 - IN PROGRESS
+
+    Enhancements:
+        - Automatically increase size of flowchart boxes to fit the text
+        - Added Container element to automatically draw a box around a group of elements
+        - Internally track drawing state so that `d.add` or `d +=` is no longer necessary when adding elements inside a context manager
+
+    New Elements:
+        - Lamp2
+        - Terminal
+
+    Other changes:
+        - BREAKING: Subclasses of ElementCompound must add Segments inside a `setup` method instead of in `__init__`. The `inner_element` and `outer_element` parameters of `TwoPort` now accept classes instead of instances of those classes.
+
+
 v0.17 - 2023-06-03
 
     New Elements:

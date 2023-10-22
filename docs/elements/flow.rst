@@ -76,11 +76,11 @@ Typical flowcharts will use `Line` or `Arrow` elements to connect the boxes. The
 
     with schemdraw.Drawing() as d:
         d.config(fontsize=10, unit=.5)
-        d += flow.Terminal().label('Start')
-        d += flow.Arrow()
-        d += flow.Process().label('Do something').drop('E')
-        d += flow.Arrow().right()
-        d += flow.Process().label('Do something\nelse')
+        flow.Terminal().label('Start')
+        flow.Arrow()
+        flow.Process().label('Do something').drop('E')
+        flow.Arrow().right()
+        flow.Process().label('Do something\nelse')
 
 
 Some flow diagrams, such as State Machine diagrams, often use curved connectors between states. Several Arc connectors are available.
@@ -92,21 +92,12 @@ Arc2
 `Arc2` draws a symmetric quadratic Bezier curve between the endpoints, with curvature controlled by parameter `k`. Endpoints of the arc should be specified using `at()` and `to()` methods.
 
 .. jupyter-execute::
-    :hide-code:
-    
-    d = schemdraw.Drawing(fontsize=12, unit=1)
 
-.. jupyter-execute::
-
-    d += (a := flow.State().label('A'))
-    d += (b := flow.State(arrow='->').label('B').at((4, 0)))
-    d += flow.Arc2(arrow='->').at(a.NE).to(b.NW).color('deeppink').label('Arc2')
-    d += flow.Arc2(k=.2, arrow='<->').at(b.SW).to(a.SE).color('mediumblue').label('Arc2')
-
-.. jupyter-execute::
-    :hide-code:
-
-    d.draw()
+    with schemdraw.Drawing(fontsize=12, unit=1):
+        a = flow.State().label('A')
+        b = flow.State(arrow='->').label('B').at((4, 0))
+        flow.Arc2(arrow='->').at(a.NE).to(b.NW).color('deeppink').label('Arc2')
+        flow.Arc2(k=.2, arrow='<->').at(b.SW).to(a.SE).color('mediumblue').label('Arc2')
 
 
 ArcZ and ArcN
@@ -115,43 +106,27 @@ ArcZ and ArcN
 These draw symmetric cubic Bezier curves between the endpoints. The `ArcZ` curve approaches the endpoints horizontally, and `ArcN` approaches them vertically.
 
 .. jupyter-execute::
-    :hide-code:
-    
-    d = schemdraw.Drawing(fontsize=12, unit=1)
 
-.. jupyter-execute::
+    with schemdraw.Drawing(fontsize=12, unit=1):
+        a = flow.State().label('A')
+        b = flow.State().label('B').at((4, 4))
+        c = flow.State().label('C').at((8, 0))
+        flow.ArcN(arrow='<->').at(a.N).to(b.S).color('deeppink').label('ArcN')
+        flow.ArcZ(arrow='<->').at(b.E).to(c.W).color('mediumblue').label('ArcZ')
 
-    d += (a := flow.State().label('A'))
-    d += (b := flow.State().label('B').at((4, 4)))
-    d += (c := flow.State().label('C').at((8, 0)))
-    d += flow.ArcN(arrow='<->').at(a.N).to(b.S).color('deeppink').label('ArcN')
-    d += flow.ArcZ(arrow='<->').at(b.E).to(c.W).color('mediumblue').label('ArcZ')
-
-.. jupyter-execute::
-    :hide-code:
-
-    d.draw()
 
 Arc3
 ^^^^
 
 The `Arc3` curve is an arbitrary cubic Bezier curve, defined by endpoints and angle of approach to each endpoint. `ArcZ` and `ArcN` are simply `Arc3` defined with the angles as 0 and 180, or 90 and 270, respectively.
 
-.. jupyter-execute::
-    :hide-code:
-    
-    d = schemdraw.Drawing(fontsize=12, unit=1)
 
 .. jupyter-execute::
 
-    d += (a := flow.State().label('A'))
-    d += (b := flow.State().label('B').at((3, 3)))
-    d += flow.Arc3(th1=75, th2=-45, arrow='<->').at(a.N).to(b.SE).color('deeppink').label('Arc3')
-
-.. jupyter-execute::
-    :hide-code:
-
-    d.draw()
+    with schemdraw.Drawing(fontsize=12, unit=1):
+        a = flow.State().label('A')
+        b = flow.State().label('B').at((3, 3))
+        flow.Arc3(th1=75, th2=-45, arrow='<->').at(a.N).to(b.SE).color('deeppink').label('Arc3')
 
 
 ArcLoop
@@ -160,19 +135,10 @@ ArcLoop
 The `ArcLoop` curve draws a partial circle that intersects the two endpoints, with the given radius. Often used in state machine diagrams to indicate cases where the state does not change.
 
 .. jupyter-execute::
-    :hide-code:
-    
-    d = schemdraw.Drawing(fontsize=12, unit=1)
 
-.. jupyter-execute::
-
-    d += (a := flow.State().label('A'))
-    d += flow.ArcLoop(arrow='<-').at(a.NW).to(a.NNE).color('mediumblue').label('ArcLoop', halign='center')
-
-.. jupyter-execute::
-    :hide-code:
-
-    d.draw()
+    with schemdraw.Drawing(fontsize=12, unit=1):
+        a = flow.State().label('A')
+        flow.ArcLoop(arrow='<-').at(a.NW).to(a.NNE).color('mediumblue').label('ArcLoop', halign='center')
 
 
 Decisions
@@ -213,21 +179,50 @@ Otherwise, the `drop` method is useful for specifing where to begin the next arr
 
     with schemdraw.Drawing() as d:
         d.config(fontsize=10, unit=.5)
-        d += flow.Terminal().label('Start')
-        d += flow.Arrow()
-        d += flow.Process().label('Step 1')
-        d += flow.Arrow()
-        d += flow.Process().label('Step 2').drop('E')
-        d += flow.Arrow().right()
-        d += flow.Connect().label('Next')
+        flow.Terminal().label('Start')
+        flow.Arrow()
+        flow.Process().label('Step 1')
+        flow.Arrow()
+        flow.Process().label('Step 2').drop('E')
+        flow.Arrow().right()
+        flow.Connect().label('Next')
 
-        d += flow.Terminal().label('Start').at((4, 0))
-        d += flow.Arrow().theta(-45)
-        d += flow.Process().label('Step 1')
-        d += flow.Arrow()
-        d += flow.Process().label('Step 2').drop('E')
-        d += flow.Arrow().right()
-        d += flow.Connect().label('Next')
+        flow.Terminal().label('Start').at((4, 0))
+        flow.Arrow().theta(-45)
+        flow.Process().label('Step 1')
+        flow.Arrow()
+        flow.Process().label('Step 2').drop('E')
+        flow.Arrow().right()
+        flow.Connect().label('Next')
 
+
+Containers
+----------
+
+Use :py:meth:`schemdraw.Drawing.container` as a context manager to add elements
+to be enclosed in a box.
+The elements in the container are added to the outer drawing too; the `container`
+just draws the box around them when it exits the `with`.
+
+
+.. jupyter-execute::
+
+    with schemdraw.Drawing(unit=1) as d:
+        flow.Start().label('Start')
+        flow.Arrow().down().length(1.5)
+        with d.container() as c:
+            flow.Box().label('Step 1').drop('E')
+            flow.Arrow().right()
+            flow.Box().label('Step 2')
+            c.color('red')
+            c.label('Subprocess', loc='N', halign='center', valign='top')
+        flow.Arrow().right()
+        flow.Start().label('End').anchor('W')
+
+Containers may be nested, calling `container()` on either a Drawing, or another Container.
+
+
+Examples
+--------
 
 See the :ref:`galleryflow` Gallery for more examples.

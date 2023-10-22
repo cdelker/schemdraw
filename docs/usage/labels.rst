@@ -18,22 +18,13 @@ For a description of supported math expressions, in the Matplotlib backend see `
 Subscripts and superscripts are also added using LaTeX math mode, enclosed in `$..$`:
 
 .. jupyter-execute::
-    :hide-code:
     
-    d = schemdraw.Drawing()
-
-.. jupyter-execute::
-
-    d += elm.Resistor().label('1MΩ')
-    d += elm.Capacitor().label('1μF')
-    d += elm.Capacitor().label(r'$v = \frac{1}{C} \int i dt$')
-    d += elm.Resistor().at((0, -2)).label('$R_0$')
-    d += elm.Capacitor().label('$x^2$')
-
-.. jupyter-execute::
-    :hide-code:
-
-    d.draw()
+    with schemdraw.Drawing():
+        elm.Resistor().label('1MΩ')
+        elm.Capacitor().label('1μF')
+        elm.Capacitor().label(r'$v = \frac{1}{C} \int i dt$')
+        elm.Resistor().at((0, -2)).label('$R_0$')
+        elm.Capacitor().label('$x^2$')
 
 Location
 ********
@@ -43,67 +34,37 @@ It can be `left`, `right`, `top`, `bottom`, or the name of a defined anchor with
 These directions do not depend on rotation. A label with `loc='left'` is always on the leftmost terminal of the element.
 
 .. jupyter-execute::
-    :hide-code:
 
-    d = schemdraw.Drawing()
-
-.. jupyter-execute::
-    :hide-output:
-
-    d += (elm.Resistor()
+    with schemdraw.Drawing():
+        (elm.Resistor()
             .label('Label')  # 'top' is default
             .label('Bottom', loc='bottom')
             .label('Right', loc='right')
             .label('Left', loc='left'))
 
-.. jupyter-execute::
-    :hide-code:
-
-    d.draw()
-
 Labels may also be placed near an element anchor by giving the anchor name as the `loc` parameter.
 
 .. jupyter-execute::
-    :hide-code:
 
-    d = schemdraw.Drawing()
-
-.. jupyter-execute::
-    :hide-output:
-
-    d += (elm.BjtNpn()
+    with schemdraw.Drawing():
+        (elm.BjtNpn()
             .label('b', loc='base')
             .label('c', loc='collector')
             .label('e', loc='emitter'))
-
-.. jupyter-execute::
-    :hide-code:
-
-    d.draw()
 
 The :py:meth:`schemdraw.elements.Element.label` method also takes parameters that control the label's rotation, offset, font, alignment, and color.
 Label text stays horizontal by default, but may be rotated to the same angle as the element using `rotate=True`, or any angle `X` in degrees with `rotate=X`.
 Offsets apply vertically if a float value is given, or in both x and y if a tuple is given.
 
 .. jupyter-execute::
-    :hide-code:
 
-    d = schemdraw.Drawing()
-
-.. jupyter-execute::
-    :hide-output:
-
-    d += elm.Resistor().label('no offset')
-    d += elm.Resistor().label('offset', ofst=1)
-    d += elm.Resistor().label('offset (x, y)', ofst=(-.6, .2))
-    d += elm.Resistor().theta(-45).label('no rotate')
-    d += elm.Resistor().theta(-45).label('rotate', rotate=True)
-    d += elm.Resistor().theta(45).label('90°', rotate=90)
-
-.. jupyter-execute::
-    :hide-code:
-
-    d.draw()
+    with schemdraw.Drawing():
+        elm.Resistor().label('no offset')
+        elm.Resistor().label('offset', ofst=1)
+        elm.Resistor().label('offset (x, y)', ofst=(-.6, .2))
+        elm.Resistor().theta(-45).label('no rotate')
+        elm.Resistor().theta(-45).label('rotate', rotate=True)
+        elm.Resistor().theta(45).label('90°', rotate=90)
 
 
 Labels may also be added anywhere using the :py:class:`schemdraw.elements.lines.Label` element. The element itself draws nothing, but labels can be added to it:
@@ -120,38 +81,18 @@ A label may also be a list/tuple of strings, which will be evenly-spaced along t
 This allows for labeling positive and negative along with a component name, for example:
 
 .. jupyter-execute::
-    :hide-code:
 
-    d = schemdraw.Drawing()
+    elm.Resistor().label(('–','$V_1$','+'))  # Note: using endash U+2013 character
 
-.. jupyter-execute::
-    :hide-output:
-
-    d += elm.Resistor().label(('–','$V_1$','+'))  # Note: using endash U+2013 character
-
-.. jupyter-execute::
-    :hide-code:
-
-    d.draw()
     
 Use the `Gap` element to label voltage across a terminal:
 
 .. jupyter-execute::
-    :hide-code:
 
-    d = schemdraw.Drawing()
-
-.. jupyter-execute::
-    :hide-output:
-
-    d += elm.Line().dot(open=True)
-    d += elm.Gap().label(('–','$V_o$','+'))
-    d += elm.Line().idot(open=True)
-
-.. jupyter-execute::
-    :hide-code:
-
-    d.draw()
+    with schemdraw.Drawing():
+        elm.Line().dot(open=True)
+        elm.Gap().label(('–','$V_o$','+'))
+        elm.Line().idot(open=True)
 
 
 Current Arrow Labels
@@ -165,39 +106,21 @@ The `at` method of this element can take an Element instance to label, and the
 arrow will be placed over the center of that Element.
 
 .. jupyter-execute::
-    :hide-code:
 
-    d = schemdraw.Drawing()
-
-.. jupyter-execute::
-
-    d += (R1 := elm.Resistor())
-    d += elm.CurrentLabel().at(R1).label('10 mA')
-
-.. jupyter-execute::
-    :hide-code:
-
-    d.draw()
+    with schemdraw.Drawing():
+        R1 = elm.Resistor()
+        elm.CurrentLabel().at(R1).label('10 mA')
 
 For transistors, the label will follow sensible bias currents by default.
 
 .. jupyter-execute::
-    :hide-code:
 
-    d = schemdraw.Drawing()
+    with schemdraw.Drawing():
+        Q1 = elm.AnalogNFet()
+        elm.CurrentLabel().at(Q1).label('10 µA')
 
-.. jupyter-execute::
-
-    d += (Q1 := elm.AnalogNFet())
-    d += elm.CurrentLabel().at(Q1).label('10 µA')
-
-    d += (Q2 := elm.AnalogNFet()).at([4,0]).flip().reverse()
-    d += elm.CurrentLabel().at(Q2).label('10 µA')
-
-.. jupyter-execute::
-    :hide-code:
-
-    d.draw()
+        Q2 = elm.AnalogNFet().at([4,0]).flip().reverse()
+        elm.CurrentLabel().at(Q2).label('10 µA')
 
 
 Inline Current Arrow
@@ -207,20 +130,10 @@ Alternatively, current labels can be drawn inline as arrowheads on the leads of 
 is shown pointing into or out of the element, and which end to place the arrowhead on.
 
 .. jupyter-execute::
-    :hide-code:
 
-    d = schemdraw.Drawing()
-
-.. jupyter-execute::
-    :hide-output:
-
-    d += (R1 := elm.Resistor())
-    d += elm.CurrentLabelInline(direction='in').at(R1).label('10 mA')
-
-.. jupyter-execute::
-    :hide-code:
-
-    d.draw()
+    with schemdraw.Drawing():
+        R1 = elm.Resistor()
+        elm.CurrentLabelInline(direction='in').at(R1).label('10 mA')
 
 
 Loop Current
@@ -229,41 +142,21 @@ Loop Current
 Loop currents can be added using :py:class:`schemdraw.elements.lines.LoopCurrent`, given a list of 4 existing elements surrounding the loop.
 
 .. jupyter-execute::
-    :hide-code:
 
-    d = schemdraw.Drawing()
-
-.. jupyter-execute::
-    :hide-output:
-
-    d += (R1 := elm.Resistor())
-    d += (C1 := elm.Capacitor().down())
-    d += (D1 := elm.Diode().fill(True).left())
-    d += (L1 := elm.Inductor().up())
-    d += elm.LoopCurrent([R1, C1, D1, L1], direction='cw').label('$I_1$')
-
-.. jupyter-execute::
-    :hide-code:
-
-    d.draw()
+    with schemdraw.Drawing():
+        R1 = elm.Resistor()
+        C1 = elm.Capacitor().down()
+        D1 = elm.Diode().fill(True).left()
+        L1 = elm.Inductor().up()
+        elm.LoopCurrent([R1, C1, D1, L1], direction='cw').label('$I_1$')
 
 Alternatively, loop current arrows can be added anywhere with any size using :py:class:`schemdraw.elements.lines.LoopArrow`.
 
 .. jupyter-execute::
-    :hide-code:
     
-    d = schemdraw.Drawing()
-    
-.. jupyter-execute::
-    :hide-output:
-    
-    d += (a:=elm.Line().dot())
-    d += elm.LoopArrow(width=.75, height=.75).at(a.end)
-
-.. jupyter-execute::
-    :hide-code:
-
-    d.draw()
+    with schemdraw.Drawing():
+        a = elm.Line().dot()
+        elm.LoopArrow(width=.75, height=.75).at(a.end)
 
 
 Impedance Arrow Label
@@ -272,21 +165,10 @@ Impedance Arrow Label
 A right-angle arrow label, often used to indicate impedance looking into a node, is added using :py:class:`schemdraw.elements.lines.ZLabel`.
 
 .. jupyter-execute::
-    :hide-code:
 
-    d = schemdraw.Drawing()
-
-.. jupyter-execute::
-    :hide-output:
-
-    d += (R:=elm.RBox().right())
-    d += elm.ZLabel().at(R).label('$Z_{in}$')
-
-.. jupyter-execute::
-    :hide-code:
-
-    d.draw()
-
+    with schemdraw.Drawing():
+        R = elm.RBox().right()
+        elm.ZLabel().at(R).label('$Z_{in}$')
 
 
 Annotations
@@ -296,27 +178,29 @@ To make text and arrow annotations to a schematic, the :py:class:`schemdraw.elem
 
 The :py:class:`schemdraw.elements.lines.Encircle` and :py:class:`schemdraw.elements.lines.EncircleBox` elements draw an ellipse, or rounded rectangle, surrounding a list of elements.
 
-.. jupyter-execute::
-    :hide-code:
+.. jupyter-input::
 
-    d = schemdraw.Drawing(unit=2)
-    d += (R1 := elm.Resistor().down().label('R1'))
-    d += (c := elm.Line().right().length(1))
-    d += (R2 := elm.Resistor().up().label('R2', loc='bottom'))
-    d += elm.Line().left().length(1)
-    d += elm.Line().down().at(c.center).length(.75).idot()
-    d += (R3 := elm.Resistor().down().label('R3'))
-    d += (R4 := elm.Resistor().down().label('R4'))
+    parallel = elm.Encircle([R1, R2], padx=.8).linestyle('--').linewidth(1).color('red')
+    series = elm.Encircle([R3, R4], padx=.8).linestyle('--').linewidth(1).color('blue')
 
-.. jupyter-execute::
+    elm.Annotate().at(parallel.NNE).delta(dx=1, dy=1).label('Parallel').color('red')
+    elm.Annotate(th1=0).at(series.ENE).delta(dx=1.5, dy=1).label('Series').color('blue')
 
-    d += (parallel := elm.Encircle([R1, R2], padx=.8).linestyle('--').linewidth(1).color('red'))
-    d += (series := elm.Encircle([R3, R4], padx=.8).linestyle('--').linewidth(1).color('blue'))
-
-    d += elm.Annotate().at(parallel.NNE).delta(dx=1, dy=1).label('Parallel').color('red')
-    d += elm.Annotate(th1=0).at(series.ENE).delta(dx=1.5, dy=1).label('Series').color('blue')
 
 .. jupyter-execute::
     :hide-code:
 
-    d.draw()
+    with schemdraw.Drawing(unit=2):
+        R1 = elm.Resistor().down().label('R1')
+        c = elm.Line().right().length(1)
+        R2 = elm.Resistor().up().label('R2', loc='bottom')
+        elm.Line().left().length(1)
+        elm.Line().down().at(c.center).length(.75).idot()
+        R3 = elm.Resistor().down().label('R3')
+        R4 = elm.Resistor().down().label('R4')
+        parallel = elm.Encircle([R1, R2], padx=.8).linestyle('--').linewidth(1).color('red')
+        series = elm.Encircle([R3, R4], padx=.8).linestyle('--').linewidth(1).color('blue')
+
+        elm.Annotate().at(parallel.NNE).delta(dx=1, dy=1).label('Parallel').color('red')
+        elm.Annotate(th1=0).at(series.ENE).delta(dx=1.5, dy=1).label('Series').color('blue')
+

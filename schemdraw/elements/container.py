@@ -4,6 +4,7 @@ from typing import Union, TYPE_CHECKING
 
 from .elements import Element
 from ..segments import Segment, SegmentPoly, BBox
+from .. import drawing_stack# import drawing_stack
 
 if TYPE_CHECKING:
     from ..schemdraw import Drawing
@@ -27,7 +28,13 @@ class Container(Element):
 
     def container(self, cornerradius: float = .3,
                   padx: float = .75, pady: float = .75) -> 'Container':
-        ''' Add a container to the container
+        ''' Add a container to the container. Use as a context manager,
+            such that elemnents inside the `with` are surrounded by
+            the container.
+            
+            >>> with container.container():
+            >>>    elm.Resistor()
+            >>>    ...
 
             Args:
                 cornerradius: radius for box corners
@@ -46,10 +53,15 @@ class Container(Element):
         return self
 
     def __enter__(self):
+        drawing_stack.push_drawing(self)
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        self.drawing.add(self)
+        drawing_stack.push_element(self)
+        drawing_stack.pop_drawing(self)
+
+    def __contains__(self, element):
+        return element in self.elements
 
     def container_bbox(self, transform: bool = True) -> BBox:
         ''' Bounding box of the contents only '''

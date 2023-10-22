@@ -18,36 +18,35 @@ Using the :py:class:`schemdraw.elements.intcircuits.Ic` class to define a custom
     
     with schemdraw.Drawing() as d:
         d.config(fontsize=12)
-        IC555def = elm.Ic(pins=[elm.IcPin(name='TRG', side='left', pin='2'),
-                                elm.IcPin(name='THR', side='left', pin='6'),
-                                elm.IcPin(name='DIS', side='left', pin='7'),
-                                elm.IcPin(name='CTL', side='right', pin='5'),
-                                elm.IcPin(name='OUT', side='right', pin='3'),
-                                elm.IcPin(name='RST', side='top', pin='4'),
-                                elm.IcPin(name='Vcc', side='top', pin='8'),
-                                elm.IcPin(name='GND', side='bot', pin='1'),],
-                           edgepadW=.5,
-                           edgepadH=1,
-                           pinspacing=1.5,
-                           leadlen=1,
-                           label='555')
-        d += (T := IC555def)
-        d += (BOT := elm.Ground().at(T.GND))
-        d += elm.Dot()
-        d += elm.Resistor().endpoints(T.DIS, T.THR).label('Rb').idot()
-        d += elm.Resistor().up().at(T.DIS).label('Ra').label('+Vcc', 'right')
-        d += elm.Line().endpoints(T.THR, T.TRG)
-        d += elm.Capacitor().at(T.TRG).toy(BOT.start).label('C')
-        d += elm.Line().tox(BOT.start)
-        d += elm.Capacitor().at(T.CTL).toy(BOT.start).label('.01$\mu$F', 'bottom').dot()
-        d += elm.Dot().at(T.DIS)
-        d += elm.Dot().at(T.THR)
-        d += elm.Dot().at(T.TRG)
-        d += elm.Line().endpoints(T.RST,T.Vcc).dot()
-        d += elm.Line().up(d.unit/4).label('+Vcc', 'right')
-        d += elm.Resistor().right().at(T.OUT).label('330')
-        d += elm.LED().flip().toy(BOT.start)
-        d += elm.Line().tox(BOT.start)
+        T = elm.Ic(pins=[elm.IcPin(name='TRG', side='left', pin='2'),
+                         elm.IcPin(name='THR', side='left', pin='6'),
+                         elm.IcPin(name='DIS', side='left', pin='7'),
+                         elm.IcPin(name='CTL', side='right', pin='5'),
+                         elm.IcPin(name='OUT', side='right', pin='3'),
+                         elm.IcPin(name='RST', side='top', pin='4'),
+                         elm.IcPin(name='Vcc', side='top', pin='8'),
+                         elm.IcPin(name='GND', side='bot', pin='1'),],
+                    edgepadW=.5,
+                    edgepadH=1,
+                    pinspacing=1.5,
+                    leadlen=1,
+                    label='555')
+        BOT = elm.Ground().at(T.GND)
+        elm.Dot()
+        elm.Resistor().endpoints(T.DIS, T.THR).label('Rb').idot()
+        elm.Resistor().up().at(T.DIS).label('Ra').label('+Vcc', 'right')
+        elm.Line().endpoints(T.THR, T.TRG)
+        elm.Capacitor().at(T.TRG).toy(BOT.start).label('C')
+        elm.Line().tox(BOT.start)
+        elm.Capacitor().at(T.CTL).toy(BOT.start).label('.01$\mu$F', 'bottom').dot()
+        elm.Dot().at(T.DIS)
+        elm.Dot().at(T.THR)
+        elm.Dot().at(T.TRG)
+        elm.Line().endpoints(T.RST,T.Vcc).dot()
+        elm.Line().up(d.unit/4).label('+Vcc', 'right')
+        elm.Resistor().right().at(T.OUT).label('330')
+        elm.LED().flip().toy(BOT.start)
+        elm.Line().tox(BOT.start)
 
 
 Seven-Segment Display Counter
@@ -58,22 +57,23 @@ Seven-Segment Display Counter
     
     with schemdraw.Drawing() as d:
         d.config(fontsize=12)
-        d += (IC555 := elm.Ic555())
-        d += (gnd := elm.Ground(xy=IC555.GND))
-        d += elm.Dot()
-        d += elm.Resistor().endpoints(IC555.DIS, IC555.THR).label('100 kΩ')
-        d += elm.Resistor().up().at(IC555.DIS).label('1 kΩ').label('+Vcc', 'right')
-        d += elm.Line().endpoints(IC555.THR, IC555.TRG)
-        d += elm.Capacitor(polar=True).at(IC555.TRG).toy(gnd.start).label('10 μF')
-        d += elm.Line().tox(gnd.start)
-        d += elm.Capacitor().at(IC555.CTL).toy(gnd.start).label('.01 μF', 'bottom')
-        d += elm.Line().tox(gnd.start)
+        IC555 = elm.Ic555()
+        gnd = elm.Ground(xy=IC555.GND)
+        elm.Dot()
+        elm.Resistor().endpoints(IC555.DIS, IC555.THR).label('100 kΩ')
+        elm.Resistor().up().at(IC555.DIS).label('1 kΩ').label('+Vcc', 'right')
+        elm.Line().endpoints(IC555.THR, IC555.TRG)
+        elm.Capacitor(polar=True).at(IC555.TRG).toy(gnd.start).label('10 μF')
+        elm.Line().tox(gnd.start)
+        elm.Capacitor().at(IC555.CTL).toy(gnd.start).label('.01 μF', 'bottom')
+        elm.Line().tox(gnd.start)
 
-        d += elm.Dot().at(IC555.DIS)
-        d += elm.Dot().at(IC555.THR)
-        d += elm.Dot().at(IC555.TRG)
-        d += elm.Line().endpoints(IC555.RST,IC555.Vcc).dot()
-        d += elm.Line().up(d.unit/4).label('+Vcc', 'right')
+        elm.Dot().at(IC555.DIS)
+        elm.Dot().at(IC555.THR)
+        elm.Dot().at(IC555.TRG)
+        elm.Line().endpoints(IC555.RST,IC555.Vcc).dot()
+        elm.Line().up(d.unit/4).label('+Vcc', 'right')
+        d.move_from(IC555.OUT, dx=5, dy=-1)
 
         IC4026 = elm.Ic(pins=[elm.IcPin('CLK', pin='1', side='left'),
                               elm.IcPin('INH', pin='2', side='left'), # Inhibit
@@ -92,30 +92,27 @@ Seven-Segment Display Counter
                               elm.IcPin('b', pin='12', side='right'),
                               elm.IcPin('a', pin='10', side='right'),
                              ],
-                       w=4, leadlen=.8).label('4026').right()
+                       w=4, leadlen=.8).label('4026').right().anchor('center')
+        elm.Wire('c').at(IC555.OUT).to(IC4026.CLK)
+        elm.Line().endpoints(IC4026.INH, IC4026.RST).dot()
+        elm.Line().left(d.unit/4)
+        elm.Ground()
+        elm.Wire('|-').at(IC4026.DEI).to(IC4026.Vdd).dot()
+        elm.Line().up(d.unit/4).label('+Vcc', 'right')
+        elm.Line().at(IC4026.Vss).tox(IC4026.UCS).dot()
+        elm.Ground()
+        elm.Line().tox(IC4026.DEO).dot()
+        elm.Line().tox(IC4026.Co)
 
-        d.move_from(IC555.OUT, dx=5, dy=-1)
-        d += IC4026.anchor('center')
-        d += elm.Wire('c').at(IC555.OUT).to(IC4026.CLK)
-        d += elm.Line().endpoints(IC4026.INH, IC4026.RST).dot()
-        d += elm.Line().left(d.unit/4)
-        d += elm.Ground()
-        d += elm.Wire('|-').at(IC4026.DEI).to(IC4026.Vdd).dot()
-        d += elm.Line().up(d.unit/4).label('+Vcc', 'right')
-        d += elm.Line().at(IC4026.Vss).tox(IC4026.UCS).dot()
-        d += elm.Ground()
-        d += elm.Line().tox(IC4026.DEO).dot()
-        d += elm.Line().tox(IC4026.Co)
-
-        d += elm.Resistor().right().at(IC4026.a)
-        d += (disp := elm.SevenSegment(cathode=True).anchor('a'))
-        d += elm.Resistor().at(IC4026.b)
-        d += elm.Resistor().at(IC4026.c)
-        d += elm.Resistor().at(IC4026.d)
-        d += elm.Resistor().at(IC4026.e)
-        d += elm.Resistor().at(IC4026.f)
-        d += elm.Resistor().at(IC4026.g).label('7 x 330', loc='bottom')
-        d += elm.Ground(lead=False).at(disp.cathode)
+        elm.Resistor().right().at(IC4026.a)
+        disp = elm.SevenSegment(cathode=True).anchor('a')
+        elm.Resistor().at(IC4026.b)
+        elm.Resistor().at(IC4026.c)
+        elm.Resistor().at(IC4026.d)
+        elm.Resistor().at(IC4026.e)
+        elm.Resistor().at(IC4026.f)
+        elm.Resistor().at(IC4026.g).label('7 x 330', loc='bottom')
+        elm.Ground(lead=False).at(disp.cathode)
 
 
 Arduino Board
@@ -162,73 +159,75 @@ The Arduino board uses :py:class:`schemdraw.elements.connectors.OrthoLines` to e
 
     with schemdraw.Drawing() as d:
         d.config(fontsize=11, inches_per_unit=.4)
-        d += (Q1 := Atmega328())
-        d += (JP4 := elm.Header(rows=10, shownumber=True, pinsright=['D8', 'D9', 'D10', 'D11', 'D12', 'D13', '', '', '', ''], pinalignright='center')
-                                .flip().at(Q1.PB5, dx=4, dy=1).anchor('pin6').label('JP4', fontsize=10))
+        Q1 = Atmega328()
+        JP4 = (elm.Header(rows=10, shownumber=True,
+                          pinsright=['D8', 'D9', 'D10', 'D11', 'D12', 'D13', '', '', '', ''],
+                          pinalignright='center')
+                    .flip().at(Q1.PB5, dx=4, dy=1).anchor('pin6').label('JP4', fontsize=10))
 
-        d += (JP3 := elm.Header(rows=6, shownumber=True, pinsright=['A0', 'A1', 'A2', 'A3', 'A4', 'A5'], pinalignright='center')
+        JP3 = (elm.Header(rows=6, shownumber=True, pinsright=['A0', 'A1', 'A2', 'A3', 'A4', 'A5'], pinalignright='center')
                             .flip().at(Q1.PC5, dx=4).anchor('pin6').label('JP3', fontsize=10))
 
-        d += (JP2 := elm.Header(rows=8, shownumber=True, pinsright=['D0', 'D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7'],
-                                pinalignright='center')).at(Q1.PD7, dx=3).flip().anchor('pin8').label('JP2', fontsize=10)
+        JP2 = (elm.Header(rows=8, shownumber=True, pinsright=['D0', 'D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7'],
+                          pinalignright='center')).at(Q1.PD7, dx=3).flip().anchor('pin8').label('JP2', fontsize=10)
 
-        d += elm.OrthoLines(n=6).at(Q1.PB5).to(JP4.pin6)
-        d += elm.OrthoLines(n=6).at(Q1.PC5).to(JP3.pin6)
-        d += elm.OrthoLines(n=8).at(Q1.PD7).to(JP2.pin8)
+        elm.OrthoLines(n=6).at(Q1.PB5).to(JP4.pin6)
+        elm.OrthoLines(n=6).at(Q1.PC5).to(JP3.pin6)
+        elm.OrthoLines(n=8).at(Q1.PD7).to(JP2.pin8)
 
-        d += elm.Line().left(.9).at(JP4.pin7).label('GND', 'left')
-        d += elm.Line().left(.9).at(JP4.pin8).label('AREF', 'left')
-        d += elm.Line().left(.9).at(JP4.pin9).label('AD4/SDA', 'left')
-        d += elm.Line().left(.9).at(JP4.pin10).label('AD5/SCL', 'left')
+        elm.Line().left(.9).at(JP4.pin7).label('GND', 'left')
+        elm.Line().left(.9).at(JP4.pin8).label('AREF', 'left')
+        elm.Line().left(.9).at(JP4.pin9).label('AD4/SDA', 'left')
+        elm.Line().left(.9).at(JP4.pin10).label('AD5/SCL', 'left')
 
-        d += (JP1 := elm.Header(rows=6, shownumber=True, pinsright=['VCC', 'RXD', 'TXD', 'DTR', 'RTS', 'GND'],
-                                pinalignright='center').right().at(Q1.PD0, dx=4, dy=-2).anchor('pin1'))
-        d += elm.Line().left(d.unit/2).at(JP1.pin1)
-        d += elm.Vdd().label('+5V')
-        d += elm.Line().left().at(JP1.pin2)
-        d += elm.Line().toy(Q1.PD0).dot()
-        d += elm.Line().left(d.unit+.6).at(JP1.pin3)
-        d += elm.Line().toy(Q1.PD1).dot()
-        d += elm.Line().left(d.unit/2).at(JP1.pin6)
-        d += elm.Ground()
+        JP1 = (elm.Header(rows=6, shownumber=True, pinsright=['VCC', 'RXD', 'TXD', 'DTR', 'RTS', 'GND'],
+                          pinalignright='center').right().at(Q1.PD0, dx=4, dy=-2).anchor('pin1'))
+        elm.Line().left(d.unit/2).at(JP1.pin1)
+        elm.Vdd().label('+5V')
+        elm.Line().left().at(JP1.pin2)
+        elm.Line().toy(Q1.PD0).dot()
+        elm.Line().left(d.unit+.6).at(JP1.pin3)
+        elm.Line().toy(Q1.PD1).dot()
+        elm.Line().left(d.unit/2).at(JP1.pin6)
+        elm.Ground()
 
-        d += elm.Line().left(d.unit*2).at(Q1.XTAL2).dot()
+        elm.Line().left(d.unit*2).at(Q1.XTAL2).dot()
         d.push()
-        d += elm.Capacitor().left(d.unit/2).scale(.75)
-        d += elm.Line().toy(Q1.XTAL1).dot()
-        d += elm.Ground()
-        d += elm.Capacitor().right(d.unit/2).scale(.75).dot()
+        elm.Capacitor().left(d.unit/2).scale(.75)
+        elm.Line().toy(Q1.XTAL1).dot()
+        elm.Ground()
+        elm.Capacitor().right(d.unit/2).scale(.75).dot()
         d.pop()
-        d += elm.Crystal().toy(Q1.XTAL1).label('16MHz', 'bottom')
-        d += elm.Line().tox(Q1.XTAL1)
+        elm.Crystal().toy(Q1.XTAL1).label('16MHz', 'bottom')
+        elm.Line().tox(Q1.XTAL1)
 
-        d += elm.Line().left(d.unit/3).at(Q1.AREF).label('AREF', 'left')
-        d += elm.Line().left(1.5*d.unit).at(Q1.AVCC)
-        d += elm.Vdd().label('+5V')
-        d += elm.Line().toy(Q1.VCC).dot().idot()
-        d += elm.Line().tox(Q1.VCC).hold()
-        d += elm.Capacitor().down().label('100n')
-        d += (GND := elm.Ground())
+        elm.Line().left(d.unit/3).at(Q1.AREF).label('AREF', 'left')
+        elm.Line().left(1.5*d.unit).at(Q1.AVCC)
+        elm.Vdd().label('+5V')
+        elm.Line().toy(Q1.VCC).dot().idot()
+        elm.Line().tox(Q1.VCC).hold()
+        elm.Capacitor().down().label('100n')
+        GND = elm.Ground()
 
-        d += elm.Line().left().at(Q1.AGND)
-        d += elm.Line().toy(Q1.GND).dot()
-        d += elm.Line().tox(Q1.GND).hold()
-        d += elm.Wire('|-').to(GND.center).dot()
+        elm.Line().left().at(Q1.AGND)
+        elm.Line().toy(Q1.GND).dot()
+        elm.Line().tox(Q1.GND).hold()
+        elm.Wire('|-').to(GND.center).dot()
 
-        d += elm.Line().left().at(Q1.RESET).dot()
+        elm.Line().left().at(Q1.RESET).dot()
         d.push()
-        d += elm.RBox().up().label('10K')
-        d += elm.Vdd().label('+5V')
+        elm.RBox().up().label('10K')
+        elm.Vdd().label('+5V')
         d.pop()
-        d += elm.Line().left().dot()
+        elm.Line().left().dot()
         d.push()
-        d += (RST := elm.Button().up().label('Reset'))
-        d += elm.Line().left(d.unit/2)
-        d += elm.Ground()
+        RST = elm.Button().up().label('Reset')
+        elm.Line().left(d.unit/2)
+        elm.Ground()
         d.pop()
 
-        d += elm.Capacitor().left().at(JP1.pin4).label('100n', 'bottom')
-        d += elm.Wire('c', k=-16).to(RST.start)
+        elm.Capacitor().left().at(JP1.pin4).label('100n', 'bottom')
+        elm.Wire('c', k=-16).to(RST.start)
 
 
 .. _dip741:
@@ -240,7 +239,7 @@ The Arduino board uses :py:class:`schemdraw.elements.connectors.OrthoLines` to e
     :code-below:
     
     with schemdraw.Drawing() as d:
-        d += (Q := elm.IcDIP(pins=8)
+        Q = (elm.IcDIP(pins=8)
                      .label('Offset Null', loc='p1', fontsize=10)
                      .label('Inverting Input', loc='p2', fontsize=10)
                      .label('Non-inverting Input', loc='p3', fontsize=10)
@@ -249,9 +248,9 @@ The Arduino board uses :py:class:`schemdraw.elements.connectors.OrthoLines` to e
                      .label('Output', loc='p6', fontsize=10)
                      .label('V+', loc='p7', fontsize=10)
                      .label('NC', loc='p8', fontsize=10))
-        d += elm.Line().at(Q.p2_in).length(d.unit/5)
-        d += (op := elm.Opamp().anchor('in1').scale(.8))
-        d += elm.Line().at(Q.p3_in).length(d.unit/5)
-        d += elm.Wire('c', k=.3).at(op.out).to(Q.p6_in)
-        d += elm.Wire('-|').at(Q.p4_in).to(op.n1)
-        d += elm.Wire('-|').at(Q.p7_in).to(op.n2)
+        elm.Line().at(Q.p2_in).length(d.unit/5)
+        op = elm.Opamp().anchor('in1').scale(.8)
+        elm.Line().at(Q.p3_in).length(d.unit/5)
+        elm.Wire('c', k=.3).at(op.out).to(Q.p6_in)
+        elm.Wire('-|').at(Q.p4_in).to(op.n1)
+        elm.Wire('-|').at(Q.p7_in).to(op.n2)

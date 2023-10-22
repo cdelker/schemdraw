@@ -37,7 +37,6 @@ class ResistorVarIEEE(ResistorIEEE):
     ''' Variable resistor (U.S. style) '''
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
-        super().__init__(**kwargs)
         self.segments.append(Segment([(1.5*reswidth, -resheight*2), (4.5*reswidth, reswidth*3.5)],
                                      arrow='->', arrowwidth=.16, arrowlength=.2))
 

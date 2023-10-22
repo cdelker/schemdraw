@@ -49,29 +49,18 @@ The `flip` argument can be set True to put pin 1 at the bottom.
 .. jupyter-execute::
     :hide-code:
     
-    d = schemdraw.Drawing()
-    d.add(elm.Header(shownumber=True, cols=2, numbering='lr', label="lr"))
-    d.add(elm.Header(at=[3, 0], shownumber=True, cols=2, numbering='ud', label="ud"))
-    d.add(elm.Header(at=[6, 0], shownumber=True, cols=2, numbering='ccw', label="ccw"))
-    d.draw()
+    with schemdraw.Drawing():
+        elm.Header(shownumber=True, cols=2, numbering='lr', label="lr")
+        elm.Header(at=[3, 0], shownumber=True, cols=2, numbering='ud', label="ud")
+        elm.Header(at=[6, 0], shownumber=True, cols=2, numbering='ccw', label="ccw")
 
 A :py:class:`schemdraw.elements.connectors.Jumper` element is also defined, as a simple rectangle, for easy placing onto a header.
 
 .. jupyter-execute::
-    :hide-code:
-
-    d = schemdraw.Drawing()
-
-.. jupyter-execute::
-    :hide-output:
-
-    J = d.add(elm.Header(cols=2, style='square'))
-    d.add(elm.Jumper().at(J.pin3).fill('lightgray'))
-
-.. jupyter-execute::
-    :hide-code:
-
-    d.draw()
+    
+    with schemdraw.Drawing():
+        J = elm.Header(cols=2, style='square')
+        elm.Jumper().at(J.pin3).fill('lightgray')
     
 
 D-Sub Connectors
@@ -82,11 +71,10 @@ Both :py:class:`schemdraw.elements.connectors.DB9` and :py:class:`schemdraw.elem
 .. jupyter-execute::
     :hide-code:
 
-    d = schemdraw.Drawing(fontsize=12)
-    d.add(elm.DB9(label='DB9'))
-    d.add(elm.DB9(at=[3, 0], number=True, label='DB9(number=True)'))
-    d.add(elm.DB25(at=[6, 0], label='DB25'))
-    d.draw()
+    with schemdraw.Drawing(fontsize=12):
+        elm.DB9(label='DB9')
+        elm.DB9(at=[3, 0], number=True, label='DB9(number=True)')
+        elm.DB25(at=[6, 0], label='DB25')
 
 
 Multiple Lines
@@ -96,49 +84,30 @@ The :py:class:`schemdraw.elements.connectors.RightLines` and :py:class:`schemdra
 
 
 .. jupyter-execute::
-    :hide-code:
+    :emphasize-lines: 7
 
-    d = schemdraw.Drawing(fontsize=12)
+    with schemdraw.Drawing():
+        D1 = elm.Ic(pins=[elm.IcPin(name='A', side='t', slot='1/4'),
+                          elm.IcPin(name='B', side='t', slot='2/4'),
+                          elm.IcPin(name='C', side='t', slot='3/4'),
+                          elm.IcPin(name='D', side='t', slot='4/4')])
+        D2 = elm.Header(rows=4).at((5,4))
+        elm.RightLines(n=4).at(D2.pin1).to(D1.D).label('RightLines')
 
-.. jupyter-execute::
-    :hide-output:
-    :emphasize-lines: 6
-
-    D1 = d.add(elm.Ic(pins=[elm.IcPin(name='A', side='t', slot='1/4'),
-                            elm.IcPin(name='B', side='t', slot='2/4'),
-                            elm.IcPin(name='C', side='t', slot='3/4'),
-                            elm.IcPin(name='D', side='t', slot='4/4')]))
-    D2 = d.add(elm.Header(rows=4).at((5,4)))
-    d.add(elm.RightLines(n=4).at(D2.pin1).to(D1.D).label('RightLines'))
-
-.. jupyter-execute::
-    :hide-code:
-
-    d.draw()
 
 OrthoLines draw a z-shaped orthogonal connection. Use OrthoLines when the Headers are parallel but vertically offset.
 Use the `xstart` parameter, between 0 and 1, to specify the position where the first OrthoLine turns vertical.
 
 .. jupyter-execute::
-    :hide-code:
+    :emphasize-lines: 7
 
-    d = schemdraw.Drawing(fontsize=12)
-
-.. jupyter-execute::
-    :hide-output:
-    :emphasize-lines: 6
-
-    D1 = d.add(elm.Ic(pins=[elm.IcPin(name='A', side='r', slot='1/4'),
-                            elm.IcPin(name='B', side='r', slot='2/4'),
-                            elm.IcPin(name='C', side='r', slot='3/4'),
-                            elm.IcPin(name='D', side='r', slot='4/4')]))
-    D2 = d.add(elm.Header(rows=4).at((7, -3)))
-    d.add(elm.OrthoLines(n=4).at(D1.D).to(D2.pin1).label('OrthoLines'))
-
-.. jupyter-execute::
-    :hide-code:
-
-    d.draw()
+    with schemdraw.Drawing():
+        D1 = elm.Ic(pins=[elm.IcPin(name='A', side='r', slot='1/4'),
+                          elm.IcPin(name='B', side='r', slot='2/4'),
+                          elm.IcPin(name='C', side='r', slot='3/4'),
+                          elm.IcPin(name='D', side='r', slot='4/4')])
+        D2 = elm.Header(rows=4).at((7, -3))
+        elm.OrthoLines(n=4).at(D1.D).to(D2.pin1).label('OrthoLines')
 
 
 Data Busses
@@ -152,24 +121,15 @@ BusConnect elements define anchors `start`, `end` on the endpoints of the wide b
 
 
 .. jupyter-execute::
-    :hide-code:
+    :emphasize-lines: 3-5
 
-    d = schemdraw.Drawing()
+    with schemdraw.Drawing():
+        J = elm.Header(rows=6)
+        B = elm.BusConnect(n=6).at(J.pin1)
+        elm.BusLine().down().at(B.end).length(3)
+        B2 = elm.BusConnect(n=6).anchor('start').reverse()
+        elm.Header(rows=6).at(B2.pin1).anchor('pin1')
 
-.. jupyter-execute::
-    :hide-output:
-    :emphasize-lines: 2-4
-
-    J = d.add(elm.Header(rows=6))
-    B = d.add(elm.BusConnect(n=6).at(J.pin1))
-    d.add(elm.BusLine().down().at(B.end).length(3))
-    B2 = d.add(elm.BusConnect(n=6).anchor('start').reverse())
-    d.add(elm.Header(rows=6).at(B2.pin1).anchor('pin1'))
-
-.. jupyter-execute::
-    :hide-code:
-
-    d.draw()
 
 
 Outlets
@@ -184,9 +144,7 @@ The `plug` parameter fills the prongs to indicate a plug versus an outlet.
 
     outlets = [elm.OutletA, elm.OutletB, elm.OutletC, elm.OutletD, elm.OutletE, elm.OutletF,
                elm.OutletG, elm.OutletH, elm.OutletI, elm.OutletJ, elm.OutletK, elm.OutletL]
-    d = schemdraw.Drawing()
-    for i, outlet in enumerate(outlets):
-        K = outlet().label(outlet.__name__, loc='top')
-        d.here = (i % 4) * 4, (i//4) * -4
-        d += K
-    d.draw()
+    with schemdraw.Drawing() as d:
+        for i, outlet in enumerate(outlets):
+            d.here = (i % 4) * 4, (i//4) * -4
+            outlet().label(outlet.__name__, loc='top')

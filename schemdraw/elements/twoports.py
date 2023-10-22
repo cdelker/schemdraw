@@ -1,4 +1,5 @@
 ''' Twoport elements made from groups of other elements '''
+from __future__ import annotations
 from functools import partial
 
 from .compound import ElementCompound

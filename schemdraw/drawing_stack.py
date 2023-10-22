@@ -23,6 +23,7 @@
     A `pause` attribute may be set True to prevent any stack operations.
     This may be used, for example, when adding elements to an ElementCompound.
 '''
+from __future__ import annotations
 from typing import Union, Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:

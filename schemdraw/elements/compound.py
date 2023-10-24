@@ -12,7 +12,7 @@ class ElementCompound(elm.Element):
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
         self.dwgparams = {'unit': kwargs.get('unit', 3),
-                          'font': kwargs.get('font', 'sans-serif'),
+                          'font': kwargs.get('font', None),
                           'fontsize': kwargs.get('fontsize', 14),
                           'lblofst': kwargs.get('lblofst', .1),
                           'color': kwargs.get('color', 'black'),

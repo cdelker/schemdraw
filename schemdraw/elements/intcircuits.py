@@ -427,7 +427,7 @@ class DFlipFlop(Ic):
         pins = [IcPin('D', side='left', slot='2/2'),
                 IcPin('>', side='left', slot='1/2'),
                 IcPin('Q', side='right', slot='2/2'),
-                IcPin('$\overline{Q}$', side='right', slot='1/2', anchorname='Qbar')]
+                IcPin(r'$\overline{Q}$', side='right', slot='1/2', anchorname='Qbar')]
 
         if preclr:
             pins.extend([IcPin('PRE', side='top', invert=preclrinvert),
@@ -458,7 +458,7 @@ class JKFlipFlop(Ic):
                 IcPin('>', side='left', slot='2/3'),
                 IcPin('K', side='left', slot='1/3'),
                 IcPin('Q', side='right', slot='3/3'),
-                IcPin('$\overline{Q}$', side='right', slot='1/3', anchorname='Qbar')]
+                IcPin(r'$\overline{Q}$', side='right', slot='1/3', anchorname='Qbar')]
 
         if preclr:
             pins.extend([IcPin('PRE', side='top', invert=preclrinvert),

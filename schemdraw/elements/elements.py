@@ -61,7 +61,7 @@ class Element:
         Anchor names are dynmically added as attributes after placing the
         element in a Drawing.
     '''
-    def __init__(self, *d, **kwargs):
+    def __init__(self, *d, **kwargs) -> None:
         self._userparams = kwargs                       # Specified by user
         self._dwgparams: MutableMapping[str, Any] = {}  # Defaults from drawing
         self.params: MutableMapping[str, Any] = {}      # Element-specific definition
@@ -72,11 +72,11 @@ class Element:
         self.anchors: MutableMapping[str, Union[Point, tuple[float, float]]] = {}  # Untransformed anchors
         self.absanchors: MutableMapping[str, Any] = {}  # Transformed, absolute anchors
         self.segments: list[SegmentType] = []
-        self.transform = Transform(0, [0, 0])
+        self.transform = Transform(0, (0, 0))
 
         # defines whether a current label can be drawn on each side
         self._allowed_sides = [False, True, False, True]  # right, top, left, bottom
-        self._bias_direction = None  # defines direction of bias current 'right', 'top', 'left', 'bottom', or None
+        self._bias_direction: Optional[str] = None  # defines direction of bias current 'right', 'top', 'left', 'bottom', or None
 
         if 'xy' in self._userparams:  # Allow legacy 'xy' parameter
             self._userparams.setdefault('at', self._userparams.pop('xy'))
@@ -233,8 +233,8 @@ class Element:
         self._userparams['fill'] = color
         return self
 
-    def style(self, color: str = None, fill: str = None,
-              ls: Linestyle = None, lw: float = None) -> 'Element':
+    def style(self, color: Optional[str] = None, fill: Optional[str] = None,
+              ls: Optional[Linestyle] = None, lw: Optional[float] = None) -> 'Element':
         ''' Apply all style parameters
 
             Args:
@@ -266,15 +266,15 @@ class Element:
         return self
 
     def label(self, label: str | Sequence[str],
-              loc: LabelLoc = None,
+              loc: Optional[LabelLoc] = None,
               ofst: XY | float | None = None,
-              halign: Halign = None,
-              valign: Valign = None,
+              halign: Optional[Halign] = None,
+              valign: Optional[Valign] = None,
               rotate: bool | float = False,
-              fontsize: float = None,
-              font: str = None,
-              mathfont: str = None,
-              color: str = None):
+              fontsize: Optional[float] = None,
+              font: Optional[str] = None,
+              mathfont: Optional[str] = None,
+              color: Optional[str] = None):
         ''' Add a label to the Element.
 
             Args:
@@ -421,7 +421,7 @@ class Element:
         elif drop is not None and self._cparams.get('move_cur', True):
             if self.params.get('droptheta', None) is not None:
                 # Element-specified drop angle
-                self.absdrop = self.transform.transform(drop), self.params.get('droptheta')
+                self.absdrop = self.transform.transform(drop), self.params.get('droptheta', 0.)
             elif self.params.get('theta', None) == 0:
                 # Element-specified theta of 0, don't change theta
                 self.absdrop = self.transform.transform(drop), dwgtheta
@@ -459,10 +459,10 @@ class Element:
 
         return BBox(xmin, ymin, xmax, ymax)
 
-    def _place_label(self, label: str, loc: LabelLoc = None,
+    def _place_label(self, label: str, loc: Optional[LabelLoc] = None,
                      ofst: XY | float | None = None, align: Align = ('left', 'bottom'),
-                     rotation: float = 0, fontsize: float = None,
-                     font: str = None, mathfont: str = None, color: str = None) -> None:
+                     rotation: float = 0, fontsize: Optional[float] = None,
+                     font: Optional[str] = None, mathfont: Optional[str] = None, color: Optional[str] = None) -> None:
         ''' Adds the label Segment to the element, AFTER element placement
 
             Args:
@@ -770,7 +770,7 @@ class Element2Term(Element):
         self._userparams['toy'] = y
         return self
 
-    def up(self, length: float = None) -> 'Element':
+    def up(self, length: Optional[float] = None) -> 'Element':
         ''' Set the direction to up '''
         if 'd' in self._userparams:
             warnings.warn(f"Duplicated direction parameter in element. `{self._userparams['d']}` changed to `up`.")
@@ -779,7 +779,7 @@ class Element2Term(Element):
             self._userparams['l'] = length
         return self
 
-    def down(self, length: float = None) -> 'Element':
+    def down(self, length: Optional[float] = None) -> 'Element':
         ''' Set the direction to down '''
         if 'd' in self._userparams:
             warnings.warn(f"Duplicated direction parameter in element. `{self._userparams['d']}` changed to `down`.")
@@ -788,7 +788,7 @@ class Element2Term(Element):
             self._userparams['l'] = length
         return self
 
-    def left(self, length: float = None) -> 'Element':
+    def left(self, length: Optional[float] = None) -> 'Element':
         ''' Set the direction to left '''
         if 'd' in self._userparams:
             warnings.warn(f"Duplicated direction parameter in element. `{self._userparams['d']}` changed to `left`.")
@@ -797,7 +797,7 @@ class Element2Term(Element):
             self._userparams['l'] = length
         return self
 
-    def right(self, length: float = None) -> 'Element':
+    def right(self, length: Optional[float] = None) -> 'Element':
         ''' Set the direction to right '''
         if 'd' in self._userparams:
             warnings.warn(f"Duplicated direction parameter in element. `{self._userparams['d']}` changed to `right`.")

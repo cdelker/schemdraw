@@ -1,15 +1,15 @@
 ''' Compound elements made from groups of other elements '''
 
-from typing import Sequence, Union
+from typing import Optional, Sequence, Union
 
 from ..import elements as elm
 from ..types import Point
-from .. import drawing_stack #import drawing_stack
+from .. import drawing_stack
 
 
 class ElementCompound(elm.Element):
     ''' Element onto which other elements can be added like a drawing '''
-    def __init__(self, *d, **kwargs):
+    def __init__(self, *d, **kwargs) -> None:
         super().__init__(*d, **kwargs)
         self.dwgparams = {'unit': kwargs.get('unit', 3),
                           'font': kwargs.get('font', None),
@@ -21,7 +21,7 @@ class ElementCompound(elm.Element):
                           'fill': kwargs.get('fill', 'none')}
         self._here: Point = Point((0, 0))
         self._theta: float = 0
-        self.elements = []
+        self.elements: list[elm.Element] = []
         drawing_stack.pause = True#(self)
         self.setup()
         drawing_stack.pause = False #pop_drawing(self)# = False
@@ -29,7 +29,7 @@ class ElementCompound(elm.Element):
     def __contains__(self, element):
         return element in self.elements
         
-    def move_from(self, xy: Point, dx: float = 0, dy: float = 0, theta: float = None) -> None:
+    def move_from(self, xy: Point, dx: float = 0, dy: float = 0, theta: Optional[float] = None) -> None:
         ''' Move relative to xy position '''
         xy = Point(xy)
         self._here = Point((xy.x + dx, xy.y + dy))
@@ -138,7 +138,7 @@ class Relay(ElementCompound):
         self.link = link
         super().__init__(*d, unit=unit, **kwargs)
 
-    def setup(self):
+    def setup(self) -> None:
         if self.cycl:
             L = self.add(elm.Inductor2(d='d'))
         else:
@@ -240,7 +240,7 @@ class Wheatstone(ElementCompound):
             * vo1 (if vout==True)
             * vo2 (if vout==True)
     '''
-    def __init__(self, vout: bool = False, labels: Sequence[str] = None, **kwargs):
+    def __init__(self, vout: bool = False, labels: Optional[Sequence[str]] = None, **kwargs):
         self.vout = vout
         self.labels = labels
         super().__init__(**kwargs)

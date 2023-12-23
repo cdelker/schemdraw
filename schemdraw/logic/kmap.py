@@ -1,7 +1,6 @@
 ''' Karnaugh Map '''
 
-from typing import Sequence, Union
-
+from typing import Optional, Sequence, Union
 import math
 
 from ..segments import Segment, SegmentText, SegmentPoly
@@ -37,8 +36,8 @@ class Kmap(Element):
     '''
     def __init__(self,
                  names: str = 'ABCD',
-                 truthtable: Sequence[Sequence[Union[int, str]]] = None,
-                 groups: dict = None,
+                 truthtable: Optional[Sequence[Sequence[Union[int, str]]]] = None,
+                 groups: Optional[dict] = None,
                  default: str = '0',
                  **kwargs):
         super().__init__(**kwargs)

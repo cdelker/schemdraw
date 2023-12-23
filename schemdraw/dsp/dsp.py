@@ -1,7 +1,7 @@
 ''' Signal processing elements '''
 
 import math
-from typing import Sequence, Literal
+from typing import Optional, Sequence, Literal
 
 from ..util import linspace, Point
 from ..segments import Segment, SegmentCircle, SegmentText, SegmentArc
@@ -126,8 +126,8 @@ class Mixer(Circle):
             * SW
             * SE
     '''
-    def __init__(self, *d, N: str = None, E: str = None, S: str = None, W: str = None,
-                 font: str = None, fontsize: float = 10, **kwargs):
+    def __init__(self, *d, N: Optional[str] = None, E: Optional[str] = None, S: Optional[str] = None, W: Optional[str] = None,
+                 font: Optional[str] = None, fontsize: float = 10, **kwargs):
         super().__init__(*d, **kwargs)
         rad = .5
         k = rad*math.sqrt(2)/2  # Diagonal distance
@@ -236,7 +236,7 @@ class Filter(Square):
             * E
             * W
     '''
-    def __init__(self, *d, response: FilterType = None, **kwargs):
+    def __init__(self, *d, response: Optional[FilterType] = None, **kwargs):
         super().__init__(*d, **kwargs)
         path = _makesine()
         path1 = [Point((p[0], p[1]+.25)) for p in path]

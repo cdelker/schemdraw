@@ -4,7 +4,7 @@ from typing import Union, TYPE_CHECKING
 
 from .elements import Element
 from ..segments import Segment, SegmentPoly, BBox
-from .. import drawing_stack# import drawing_stack
+from .. import drawing_stack
 
 if TYPE_CHECKING:
     from ..schemdraw import Drawing

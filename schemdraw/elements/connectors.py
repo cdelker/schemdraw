@@ -1,7 +1,7 @@
 ''' Connectors and bus lines '''
 
 from __future__ import annotations
-from typing import Sequence
+from typing import Optional, Sequence
 import warnings
 
 from ..segments import Segment, SegmentText, SegmentCircle, SegmentPoly
@@ -27,7 +27,7 @@ class OrthoLines(Element):
                 portion of first ortholine
     '''
     def __init__(self, *d, n: int = 1, dy: float = 0.6,
-                 xstart: float = None, arrow: str = None, **kwargs):
+                 xstart: Optional[float] = None, arrow: Optional[str] = None, **kwargs):
         super().__init__(*d, **kwargs)
         self._userparams['n'] = n
         self._userparams['dy'] = dy
@@ -106,7 +106,7 @@ class RightLines(Element):
             n: Number of parallel lines
             dy: Distance between parallel lines
     '''
-    def __init__(self, *d, n: int = 1, dy: float = 0.6, arrow: str = None, **kwargs):
+    def __init__(self, *d, n: int = 1, dy: float = 0.6, arrow: Optional[str] = None, **kwargs):
         super().__init__(*d, **kwargs)
         self._userparams['n'] = n
         self._userparams['dy'] = dy
@@ -190,8 +190,8 @@ class Header(Element):
                  style: HeaderStyle = 'round',
                  numbering: HeaderNumbering = 'lr',
                  shownumber: bool = False,
-                 pinsleft: Sequence[str] = None,
-                 pinsright: Sequence[str] = None,
+                 pinsleft: Optional[Sequence[str]] = None,
+                 pinsright: Optional[Sequence[str]] = None,
                  pinalignleft: Valign = 'bottom',
                  pinalignright: Valign = 'bottom',
                  pinfontsizeright: float = 9,

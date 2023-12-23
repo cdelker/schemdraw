@@ -1,6 +1,6 @@
 ''' Switches and buttons '''
 
-from typing import Sequence
+from typing import Optional, Sequence
 import math
 
 from .elements import Element, Element2Term, gap
@@ -17,7 +17,7 @@ class Switch(Element2Term):
         Args:
             action: action arrow ('open' or 'close')
     '''
-    def __init__(self, *d, action: ActionType = None, **kwargs):
+    def __init__(self, *d, action: Optional[ActionType] = None, **kwargs):
         super().__init__(*d, **kwargs)
         self.segments.append(Segment(
             [(0, 0), gap, (sw_dot_r*2, .1), (.8, .45), gap, (1, 0)]))
@@ -44,7 +44,7 @@ class SwitchSpdt(Switch):
             * b
             * c
     '''
-    def __init__(self, *d, action: ActionType = None, **kwargs):
+    def __init__(self, *d, action: Optional[ActionType] = None, **kwargs):
         super().__init__(*d, action=action, **kwargs)
         self.segments.append(SegmentCircle((1-sw_dot_r, .7), sw_dot_r, fill='bg', zorder=3))
         self.anchors['a'] = Point((sw_dot_r, 0))
@@ -63,7 +63,7 @@ class SwitchSpdt2(Element):
             * b
             * c
     '''
-    def __init__(self, *d, action: ActionType = None, **kwargs):
+    def __init__(self, *d, action: Optional[ActionType] = None, **kwargs):
         super().__init__(*d, action=action, **kwargs)
         self.segments.append(Segment([(0, 0), gap, (sw_dot_r*2, .1),
                                       (.7, .25), gap, (1, .4)]))
@@ -214,7 +214,7 @@ class SwitchRotary(Element):
             * T[x] for each contact (starting at 1)
     '''
     def __init__(self, *d,
-                 n: int = 4, dtheta: float = None, theta0: float = None,
+                 n: int = 4, dtheta: Optional[float] = None, theta0: Optional[float] = None,
                  radius: float = 1, arrowlen: float = 0.75,
                  arrowcontact: int = 0,
                  **kwargs):
@@ -256,7 +256,7 @@ class SwitchDIP(Element):
     '''
     def __init__(self, *d,
                  n: int = 3,
-                 pattern: Sequence[bool] = None,
+                 pattern: Optional[Sequence[bool]] = None,
                  switchcolor: str = '#333333',
                  swidth: float = 0.4,
                  spacing: float = 0.2,

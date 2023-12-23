@@ -1,7 +1,7 @@
 ''' Lines, Arrows, and Labels '''
 
 from __future__ import annotations
-from typing import Sequence, Union
+from typing import Optional, Sequence, Union
 import math
 
 from ..segments import Segment, SegmentCircle, SegmentArc, SegmentPoly, SegmentBezier
@@ -18,7 +18,7 @@ class Line(Element2Term):
         Args:
             arrow: arrowhead specifier, such as '->', '<-', '<->', '-o', or '\|->'
     '''
-    def __init__(self, *d, arrow: str = None, **kwargs):
+    def __init__(self, *d, arrow: Optional[str] = None, **kwargs):
         super().__init__(*d, **kwargs)
         arrowwidth = kwargs.get('arrowwidth', .15)
         arrowlength = kwargs.get('arrowlength', .25)
@@ -146,7 +146,7 @@ class Wire(Element):
             k: Distance before the wire changes directions in `n` and `c` shapes.
             arrow: arrowhead specifier, such as '->', '<-', '<->', or '-o'
     '''
-    def __init__(self, shape: str = '-', k: float = 1, arrow: str = None, **kwargs):
+    def __init__(self, shape: str = '-', k: float = 1, arrow: Optional[str] = None, **kwargs):
         super().__init__(**kwargs)
         self._userparams['shape'] = shape
         self._userparams['k'] = k
@@ -532,7 +532,7 @@ class ArcLoop(Element):
             TL
             TR
     '''
-    def __init__(self, radius: float = 0.6, arrow: str = None, arrowlength=.25, arrowwidth=.2, **kwargs):
+    def __init__(self, radius: float = 0.6, arrow: Optional[str] = None, arrowlength=.25, arrowwidth=.2, **kwargs):
         super().__init__(**kwargs)
         self.radius = radius
         self.arrow = arrow
@@ -621,7 +621,7 @@ class Label(Element):
         Args:
             label: text to display.
     '''
-    def __init__(self, *d, label: str = None, **kwargs):
+    def __init__(self, *d, label: Optional[str] = None, **kwargs):
         super().__init__(*d, **kwargs)
         self.params['lblloc'] = 'center'
         self.params['lblofst'] = 0
@@ -717,9 +717,9 @@ class CurrentLabel(Element):
                               allowed]
 
             if self._top:
-                preferred_angle = 90
+                preferred_angle = 90.
             else:
-                preferred_angle = 90 + theta if not self.flip else -90 + theta
+                preferred_angle = 90 + theta if not self._userparams.get('flip', False) else -90 + theta
 
             # find which allowed angle is closest to the preferred angle
             differences_to_top = [abs(((angle - preferred_angle) + 180) % 360 - 180) for angle in allowed_angles]
@@ -737,7 +737,7 @@ class CurrentLabel(Element):
                 self._reverse_flow = abs(bias_angle_difference) > 90
 
             if 'color' in xy._userparams:
-                self.color(xy._userparams.get('color'))
+                self.color(xy._userparams.get('color'))  # type: ignore
         else:
             super().at(xy)
         return self
@@ -809,7 +809,7 @@ class CurrentLabelInline(Element):
             super().at(xy.center)
             self.theta(xy.transform.theta)
             if 'color' in xy._userparams:
-                self.color(xy._userparams.get('color'))
+                self.color(xy._userparams.get('color'))  # type: ignore
         else:
             super().at(xy)
         return self
@@ -869,7 +869,7 @@ class ZLabel(Element):
                 theta += 180  # Keeps 'top=True' labels above the element
             self.theta(theta)
             if 'color' in xy._userparams:
-                self.color(xy._userparams.get('color'))
+                self.color(xy._userparams.get('color'))  # type: ignore
         else:
             super().at(xy)
         return self
@@ -952,7 +952,7 @@ class LoopCurrent(LoopArrow):
             theta2: Angle of end of loop arrow
             pad: Distance from elements to loop
     '''
-    def __init__(self, elm_list: Sequence[Element] = None,
+    def __init__(self, elm_list: Optional[Sequence[Element]] = None,
                  direction: Arcdirection = 'cw',
                  theta1: float = 35, theta2: float = -35,
                  pad: float = 0.2, **kwargs):
@@ -988,7 +988,7 @@ class Rect(Element):
             ls: Line style '-', '--', ':', etc.
     '''
     def __init__(self, *d, corner1: XY = (0, 0), corner2: XY = (1, 1),
-                 fill: str = None, lw: float = None, ls: Linestyle = None, **kwargs):
+                 fill: Optional[str] = None, lw: Optional[float] = None, ls: Optional[Linestyle] = None, **kwargs):
         super().__init__(*d, **kwargs)
         c1a = (corner1[0], corner2[1])
         c2a = (corner2[0], corner1[1])
@@ -1005,7 +1005,7 @@ class Encircle(Element):
             pady: Vertical distance from elements to loop
             includelabels: Include labesl in the ellipse
     '''
-    def __init__(self, elm_list: Sequence[Element] = None,
+    def __init__(self, elm_list: Optional[Sequence[Element]] = None,
                  padx: float = 0.2, pady: float = 0.2,
                  includelabels: bool = True,
                  **kwargs):
@@ -1065,7 +1065,7 @@ class EncircleBox(Element):
             pady: Vertical distance from elements to loop
             includelabels: Include labels in the box
     '''
-    def __init__(self, elm_list: Sequence[Element] = None,
+    def __init__(self, elm_list: Optional[Sequence[Element]] = None,
                  cornerradius: float = 0.3,
                  padx: float = 0.2, pady: float = 0.2,
                  includelabels: bool = True,

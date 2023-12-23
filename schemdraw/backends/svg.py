@@ -112,9 +112,9 @@ def isnotebook():
 inline = isnotebook()
 
 
-def getstyle(color: str = None, ls: Linestyle = None, lw: float = None,
-             capstyle: Capstyle = None, joinstyle: Joinstyle = None,
-             fill: str = None, hatch: bool = False) -> str:
+def getstyle(color: Optional[str] = None, ls: Optional[Linestyle] = None, lw: Optional[float] = None,
+             capstyle: Optional[Capstyle] = None, joinstyle: Optional[Joinstyle] = None,
+             fill: Optional[str] = None, hatch: bool = False) -> str:
     ''' Get style for svg element. Leave empty if property matches default '''
     # Note: styles are added to every SVG element, rather than in a global <style>
     # tag, since multiple images in one HTML page may share <styles>.
@@ -244,7 +244,7 @@ class Figure:
     def plot(self, x: XY, y: XY,
              color: str = 'black', ls: Linestyle = '-', lw: float = 2,
              fill: str = 'none', capstyle: Capstyle = 'round',
-             joinstyle: Joinstyle = 'round', clip: BBox = None, zorder: int = 2) -> None:
+             joinstyle: Joinstyle = 'round', clip: Optional[BBox] = None, zorder: int = 2) -> None:
         ''' Plot a path '''
         et = ET.Element('path')
         d = 'M {},{} '.format(*self.xform(x[0], y[0]))
@@ -266,10 +266,10 @@ class Figure:
 
     def text(self, s: str, x: float, y: float, color: str = 'black',
              fontsize: float = 14, fontfamily: str = 'sans',
-             mathfont: str = None,
+             mathfont: Optional[str] = None,
              rotation: float = 0, halign: Halign = 'center',
              valign: Valign = 'center',
-             rotation_mode: RotationMode = 'anchor', clip: BBox = None, zorder: int = 3) -> None:
+             rotation_mode: RotationMode = 'anchor', clip: Optional[BBox] = None, zorder: int = 3) -> None:
         ''' Add text to the figure '''
         if s == '':
             return
@@ -299,7 +299,7 @@ class Figure:
     def poly(self, verts: Sequence[XY], closed: bool = True,
              color: str = 'black', fill: str = 'none', lw: float = 2,
              ls: Linestyle = '-', hatch: bool = False, capstyle: Capstyle = 'round',
-             joinstyle: Joinstyle = 'round', clip: BBox = None, zorder: int = 1) -> None:
+             joinstyle: Joinstyle = 'round', clip: Optional[BBox] = None, zorder: int = 1) -> None:
         ''' Draw a polygon '''
         et = ET.Element('polyline') if not closed else ET.Element('polygon')
         points = ''
@@ -316,7 +316,7 @@ class Figure:
 
     def circle(self, center: XY, radius: float, color: str = 'black',
                fill: str = 'none', lw: float = 2, ls: Linestyle = '-',
-               clip: BBox = None, zorder: int = 1) -> None:
+               clip: Optional[BBox] = None, zorder: int = 1) -> None:
         ''' Draw a circle '''
         x, y = self.xform(*center)
         radius = radius * self.scale
@@ -330,7 +330,7 @@ class Figure:
 
     def arrow(self, xy: XY, theta: float,
               arrowwidth: float = .15, arrowlength: float = .25,
-              color: str = 'black', lw: float = 2, clip: BBox = None, zorder: int = 1) -> None:
+              color: str = 'black', lw: float = 2, clip: Optional[BBox] = None, zorder: int = 1) -> None:
         ''' Draw an arrowhead '''
         x, y = self.xform(*xy)
         dx = arrowlength/2 * math.cos(math.radians(theta)) * self.scale
@@ -363,7 +363,7 @@ class Figure:
 
     def bezier(self, p: Sequence[Point], color: str = 'black',
                lw: float = 2, ls: Linestyle = '-', capstyle: Capstyle = 'round', zorder: int = 1,
-               arrow: str = None, arrowlength=.25, arrowwidth=.15, clip: BBox = None) -> None:
+               arrow: Optional[str] = None, arrowlength=.25, arrowwidth=.15, clip: Optional[BBox] = None) -> None:
         ''' Draw a cubic or quadratic bezier '''
         # Keep original points for arrow head
         # and adjust points for line so they don't extrude from arrows.
@@ -412,7 +412,7 @@ class Figure:
     def arc(self, center: XY, width: float, height: float,
             theta1: float = 0, theta2: float = 90, angle: float = 0,
             color: str = 'black', lw: float = 2, ls: Linestyle = '-', zorder: int = 1,
-            arrow: str = None, clip: BBox = None) -> None:
+            arrow: Optional[str] = None, clip: Optional[BBox] = None) -> None:
         ''' Draw an arc or ellipse, with optional arrowhead '''
         centerx, centery = self.xform(*center)
         width, height = width*self.scale, height*self.scale

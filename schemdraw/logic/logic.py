@@ -1,6 +1,5 @@
 ''' Logic gate definitions '''
-
-from typing import Sequence
+from typing import Optional, Sequence
 from functools import partial
 import math
 
@@ -29,7 +28,7 @@ class And(Element):
             out
             in[X] - for each input
     '''
-    def __init__(self, *d, inputs: int = 2, nand: bool = False, inputnots: Sequence[int] = None,
+    def __init__(self, *d, inputs: int = 2, nand: bool = False, inputnots: Optional[Sequence[int]] = None,
                  leadin: float = 0.35, leadout: float = 0.35, **kwargs):
         super().__init__(*d, **kwargs)
         rad = gateh/2
@@ -103,7 +102,7 @@ class Or(Element):
             in[X] - for each input
     '''
     def __init__(self, *d, inputs: int = 2, nor: bool = False,
-                 xor: bool = False, inputnots: Sequence[int] = None,
+                 xor: bool = False, inputnots: Optional[Sequence[int]] = None,
                  leadin: float = 0.35, leadout: float = 0.35, **kwargs):
         super().__init__(*d, **kwargs)
         # Define OR path

@@ -1,6 +1,5 @@
 ''' Data types for schemdraw '''
 
-import sys
 from typing import Union, Tuple, Optional, Literal
 from collections import namedtuple
 from enum import Enum, unique

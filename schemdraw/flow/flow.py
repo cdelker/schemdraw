@@ -1,5 +1,5 @@
 ''' Flowcharting element definitions '''
-
+from typing import Optional
 import math
 
 from ..util import linspace
@@ -289,8 +289,8 @@ class Decision(Box):
         Anchors:
             * 16 compass points (N, S, E, W, NE, NNE, etc.)
     '''
-    def __init__(self, N: str = None, E: str = None, S: str = None, W: str = None,
-                 font: str = None, fontsize: float = 14,
+    def __init__(self, N: Optional[str] = None, E: Optional[str] = None, S: Optional[str] = None, W: Optional[str] = None,
+                 font: Optional[str] = None, fontsize: float = 14,
                  **kwargs):
         super().__init__(**kwargs)
         self._size = 4, 2.25

@@ -1,6 +1,6 @@
 ''' Matplotlib drawing backend for schemdraw '''
 
-from typing import Sequence
+from typing import Optional, Sequence
 from io import BytesIO
 import math
 
@@ -92,8 +92,8 @@ class Figure:
             patch.set_clip_path(cliprect)
 
     def plot(self, x: float, y: float, color: str = 'black', ls: Linestyle = '-',
-             lw: float = 2, fill: str = None, capstyle: Capstyle = 'round',
-             joinstyle: Joinstyle = 'round', clip: BBox = None, zorder: int = 2) -> None:
+             lw: float = 2, fill: Optional[str] = None, capstyle: Capstyle = 'round',
+             joinstyle: Joinstyle = 'round', clip: Optional[BBox] = None, zorder: int = 2) -> None:
         ''' Plot a path '''
         p, = self.ax.plot(x, y, zorder=zorder, color=color, ls=ls, lw=lw,
                           solid_capstyle=fix_capstyle(capstyle),
@@ -105,9 +105,9 @@ class Figure:
 
     def text(self, s: str, x: float, y: float, color: str = 'black',
              fontsize: float = 14, fontfamily: str = 'sans-serif',
-             mathfont: str = None, rotation: float = 0,
+             mathfont: Optional[str] = None, rotation: float = 0,
              halign: str = 'center', valign: str = 'center',
-             rotation_mode: str = 'anchor', clip: BBox = None, zorder=3) -> None:
+             rotation_mode: str = 'anchor', clip: Optional[BBox] = None, zorder=3) -> None:
         ''' Add text to the figure '''
         if fontfamily.endswith('.ttf') or fontfamily.endswith('otf'):
             if fontfamily not in [f.fname for f in font_manager.fontManager.ttflist]:
@@ -124,8 +124,8 @@ class Figure:
         self.addclip(t, clip)
 
     def poly(self, verts: Sequence[XY], closed: bool = True,
-             color: str = 'black', fill: str = None, lw: float = 2, ls: Linestyle = '-', hatch: bool = False,
-             capstyle: Capstyle = 'round', joinstyle: Joinstyle = 'round', clip: BBox = None, zorder: int = 1) -> None:
+             color: str = 'black', fill: Optional[str] = None, lw: float = 2, ls: Linestyle = '-', hatch: bool = False,
+             capstyle: Capstyle = 'round', joinstyle: Joinstyle = 'round', clip: Optional[BBox] = None, zorder: int = 1) -> None:
         ''' Draw a polynomial '''
         h = '///////' if hatch else None
         p = plt.Polygon(verts, closed=closed, ec=color,
@@ -135,8 +135,8 @@ class Figure:
         self.ax.add_patch(p)
         self.addclip(p, clip)
 
-    def circle(self, center: XY, radius: float, color: str = 'black', fill: str = None,
-               lw: float = 2, ls: Linestyle = '-', clip: BBox = None, zorder: int = 1) -> None:
+    def circle(self, center: XY, radius: float, color: str = 'black', fill: Optional[str] = None,
+               lw: float = 2, ls: Linestyle = '-', clip: Optional[BBox] = None, zorder: int = 1) -> None:
         ''' Draw a circle '''
         circ = plt.Circle(xy=center, radius=radius, ec=color, fc=fill,
                           fill=fill is not None, lw=lw, ls=ls, zorder=zorder)
@@ -145,7 +145,7 @@ class Figure:
 
     def arrow(self, xy: XY, theta: float,
               arrowwidth: float = .15, arrowlength: float = .25,
-              color: str = 'black', lw: float = 2, clip: BBox = None, zorder: int = 1) -> None:
+              color: str = 'black', lw: float = 2, clip: Optional[BBox] = None, zorder: int = 1) -> None:
         ''' Draw an arrowhead '''
         # Easier to skip Matplotlib's arrow or annotate methods and just draw a line
         # and a polygon.
@@ -168,8 +168,8 @@ class Figure:
 
     def bezier(self, p: Sequence[util.Point], color: str = 'black',
                lw: float = 2, ls: Linestyle = '-', capstyle: Capstyle = 'round', zorder: int = 1,
-               arrow: str = None, arrowlength: float = 0.25, arrowwidth: float = 0.15,
-               clip: BBox = None) -> None:
+               arrow: Optional[str] = None, arrowlength: float = 0.25, arrowwidth: float = 0.15,
+               clip: Optional[BBox] = None) -> None:
         ''' Draw a cubic or quadratic bezier '''
         # Keep original points for arrow head
         # and adjust points for line so they don't extrude from arrows.
@@ -217,7 +217,7 @@ class Figure:
     def arc(self, center: XY, width: float, height: float,
             theta1: float = 0, theta2: float = 90, angle: float = 0,
             color: str = 'black', lw: float = 2, ls: Linestyle = '-',
-            zorder: int = 1, clip: BBox = None, arrow: str = None) -> None:
+            zorder: int = 1, clip: Optional[BBox] = None, arrow: Optional[str] = None) -> None:
         ''' Draw an arc or ellipse, with optional arrowhead '''
         arc = Arc(center, width=width, height=height, theta1=theta1,
                   theta2=theta2, angle=angle, color=color,

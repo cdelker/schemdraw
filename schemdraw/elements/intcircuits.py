@@ -1,7 +1,6 @@
 ''' Integrated Circuit Element '''
 
 from __future__ import annotations
-
 from typing import Optional, Sequence, cast
 import math
 from dataclasses import dataclass
@@ -73,8 +72,8 @@ class Ic(Element):
         does not conflict with other attributes).
     '''
     def __init__(self,
-                 size: XY = None,
-                 pins: Sequence[IcPin] = None,
+                 size: Optional[XY] = None,
+                 pins: Optional[Sequence[IcPin]] = None,
                  pinspacing: float = 0.6,
                  edgepadH: float = 0.25,
                  edgepadW: float = 0.25,
@@ -84,8 +83,8 @@ class Ic(Element):
                  plblofst: float = 0.05,
                  plblsize: float = 11,
                  slant: float = 0,
-                 w: float = None,
-                 h: float = None,
+                 w: Optional[float] = None,
+                 h: Optional[float] = None,
                  **kwargs):
         super().__init__(**kwargs)
 
@@ -302,8 +301,8 @@ class Multiplexer(Ic):
     '''
     def __init__(self,
                  demux: bool = False,
-                 size: XY = None,
-                 pins: Sequence[IcPin] = None,
+                 size: Optional[XY] = None,
+                 pins: Optional[Sequence[IcPin]] = None,
                  pinspacing: float = 0.6,
                  edgepadH: float = 0.25,
                  edgepadW: float = 0.25,
@@ -351,7 +350,7 @@ class IcDIP(Element):
         along with _in inside variants.
     '''
     def __init__(self, *d, pins: int = 8,
-                 names: Sequence[str] = None,
+                 names: Optional[Sequence[str]] = None,
                  notch: bool = True,
                  width: float = 3,
                  pinw: float = 0.6,

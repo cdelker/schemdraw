@@ -1,7 +1,7 @@
 ''' Schemdraw Drawing class '''
 
 from __future__ import annotations
-from typing import Sequence, Any, MutableMapping, Union, Optional, TYPE_CHECKING
+from typing import Any, MutableMapping, Union, Optional, TYPE_CHECKING
 from collections import ChainMap
 import warnings
 import math
@@ -12,7 +12,7 @@ from .elements import Element, Container
 from .segments import SegmentType
 from .util import Point
 from .backends.svg import Figure as svgFigure
-from . import drawing_stack #import drawing_stack
+from . import drawing_stack
 
 if TYPE_CHECKING:
     import xml.etree.ElementTree.Element  # type: ignore
@@ -39,7 +39,7 @@ def config(unit: float = 3.0, inches_per_unit: float = 0.5,
            lblofst: float = 0.1, fontsize: float = 14.,
            font: str = 'sans-serif', color: str = 'black',
            lw: float = 2., ls: Linestyle = '-',
-           fill: str = None, bgcolor: str = None,
+           fill: Optional[str] = None, bgcolor: Optional[str] = None,
            margin: float = 0.1) -> None:
     ''' Set global schemdraw style configuration
 
@@ -150,9 +150,9 @@ class Drawing:
                 element will be added with this angle unless specified
                 otherwise.
     '''     
-    def __init__(self, canvas: Union[Backends, xml.etree.ElementTree.Element,
-                                     matplotlib.pyplot.Axes] = None,
-                 file: str = None, show: bool = True, **kwargs):
+    def __init__(self, canvas: Optional[Union[Backends, xml.etree.ElementTree.Element,
+                                     matplotlib.pyplot.Axes]] = None,
+                 file: Optional[str] = None, show: bool = True, **kwargs):
         self.outfile = file
         self.canvas = canvas
         self.show = show
@@ -329,7 +329,7 @@ class Drawing:
         drawing_stack.push_element(None)
         self._here = Point((self._here[0] + dx, self._here[1] + dy))
 
-    def move_from(self, ref: Point, dx: float = 0, dy: float = 0, theta: float = None) -> None:
+    def move_from(self, ref: Point, dx: float = 0, dy: float = 0, theta: Optional[float] = None) -> None:
         ''' Move drawing position relative to the reference point. Change drawing
             theta if provided.
         '''
@@ -357,11 +357,11 @@ class Drawing:
         if len(self._state) > 0:
             self._here, self._theta = self._state.pop()
 
-    def config(self, unit: float = None, inches_per_unit: float = None,
-               fontsize: float = None, font: str = None,
-               color: str = None, lw: float = None, ls: Linestyle = None,
-               fill: str = None, bgcolor: str = None,
-               margin: float = None) -> None:
+    def config(self, unit: Optional[float] = None, inches_per_unit: Optional[float] = None,
+               fontsize: Optional[float] = None, font: Optional[str] = None,
+               color: Optional[str] = None, lw: Optional[float] = None, ls: Optional[Linestyle] = None,
+               fill: Optional[str] = None, bgcolor: Optional[str] = None,
+               margin: Optional[float] = None) -> None:
         ''' Set Drawing configuration, overriding schemdraw global config.
 
             Args:
@@ -426,7 +426,7 @@ class Drawing:
         self._drawelements()
 
     def draw(self, showframe: bool = False, show: bool = True,
-             canvas=None, backend: Backends = None):
+             canvas=None, backend: Optional[Backends] = None):
         ''' Draw the schematic
 
             Args:

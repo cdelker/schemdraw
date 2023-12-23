@@ -5,7 +5,7 @@
 '''
 
 from __future__ import annotations
-from typing import Sequence, Any, Union
+from typing import Optional, Sequence, Any, Union
 import warnings
 import math
 
@@ -97,17 +97,17 @@ class Segment:
             visible: Show the segment when drawn
     '''
     def __init__(self, path: Sequence[XY],
-                 color: str = None,
-                 lw: float = None,
-                 ls: Linestyle = None,
-                 capstyle: Capstyle = None,
-                 joinstyle: Joinstyle = None,
-                 fill: str = None,
-                 arrow: str = None,
+                 color: Optional[str] = None,
+                 lw: Optional[float] = None,
+                 ls: Optional[Linestyle] = None,
+                 capstyle: Optional[Capstyle] = None,
+                 joinstyle: Optional[Joinstyle] = None,
+                 fill: Optional[str] = None,
+                 arrow: Optional[str] = None,
                  arrowwidth: float = 0.15,
                  arrowlength: float = 0.25,
-                 clip: BBox = None,
-                 zorder: int = None,
+                 clip: Optional[BBox] = None,
+                 zorder: Optional[int] = None,
                  visible: bool = True):
         self.path: Sequence[XY] = [Point(p) for p in path]   # Untranformed path
         self.zorder = zorder
@@ -269,16 +269,16 @@ class SegmentText:
             visible: Show the segment when drawn
     '''
     def __init__(self, pos: XY, label: str,
-                 align: Align = None,
-                 rotation: float = None,
-                 rotation_mode: RotationMode = None,
+                 align: Optional[Align] = None,
+                 rotation: Optional[float] = None,
+                 rotation_mode: Optional[RotationMode] = None,
                  rotation_global: bool = True,
-                 color: str = None,
+                 color: Optional[str] = None,
                  fontsize: float = 14,
-                 font: str = None,
-                 mathfont: str = None,
-                 clip: BBox = None,
-                 zorder: int = None,
+                 font: Optional[str] = None,
+                 mathfont: Optional[str] = None,
+                 clip: Optional[BBox] = None,
+                 zorder: Optional[int] = None,
                  visible: bool = True):
         self.xy = pos
         self.text = label
@@ -420,15 +420,15 @@ class SegmentPoly:
     def __init__(self, verts: Sequence[XY],
                  closed: bool = True,
                  cornerradius: float = 0,
-                 color: str = None,
-                 fill: str = None,
-                 lw: float = None,
-                 ls: Linestyle = None,
+                 color: Optional[str] = None,
+                 fill: Optional[str] = None,
+                 lw: Optional[float] = None,
+                 ls: Optional[Linestyle] = None,
                  hatch: bool = False,
-                 joinstyle: Joinstyle = None,
-                 capstyle: Capstyle = None,
-                 clip: BBox = None,
-                 zorder: int = None,
+                 joinstyle: Optional[Joinstyle] = None,
+                 capstyle: Optional[Capstyle] = None,
+                 clip: Optional[BBox] = None,
+                 zorder: Optional[int] = None,
                  visible: bool = True):
         self.verts = verts
         self.closed = closed
@@ -537,13 +537,13 @@ class SegmentCircle:
     '''
     def __init__(self, center: XY,
                  radius: float,
-                 color: str = None,
-                 lw: float = None,
-                 ls: Linestyle = None,
+                 color: Optional[str] = None,
+                 lw: Optional[float] = None,
+                 ls: Optional[Linestyle] = None,
                  fill: bool | str | None = None,
-                 clip: BBox = None,
-                 zorder: int = None,
-                 ref: EndRef = None,
+                 clip: Optional[BBox] = None,
+                 zorder: Optional[int] = None,
+                 ref: Optional[EndRef] = None,
                  visible: bool = True):
         self.center = center
         self.radius = radius
@@ -651,15 +651,15 @@ class SegmentBezier:
             visible: Show the segment when drawn
     '''
     def __init__(self, p: Sequence[XY],
-                 color: str = None,
-                 lw: float = None,
-                 ls: Linestyle = None,
-                 capstyle: Capstyle = None,
-                 arrow: str = None,
+                 color: Optional[str] = None,
+                 lw: Optional[float] = None,
+                 ls: Optional[Linestyle] = None,
+                 capstyle: Optional[Capstyle] = None,
+                 arrow: Optional[str] = None,
                  arrowlength: float = .25,
                  arrowwidth: float = .15,
-                 clip: BBox = None,
-                 zorder: int = None,
+                 clip: Optional[BBox] = None,
+                 zorder: Optional[int] = None,
                  visible: bool = True):
         self.p = [Point(pi) for pi in p]
         self.arrow = arrow
@@ -759,13 +759,13 @@ class SegmentArc:
     def __init__(self, center: XY,
                  width: float, height: float,
                  theta1: float = 35, theta2: float = -35,
-                 arrow: Arcdirection = None,
+                 arrow: Optional[Arcdirection] = None,
                  angle: float = 0,
-                 color: str = None,
-                 lw: float = None,
-                 ls: Linestyle = None,
-                 clip: BBox = None,
-                 zorder: int = None,
+                 color: Optional[str] = None,
+                 lw: Optional[float] = None,
+                 ls: Optional[Linestyle] = None,
+                 clip: Optional[BBox] = None,
+                 zorder: Optional[int] = None,
                  visible: bool = True):
         self.center = center
         self.width = width
@@ -872,9 +872,9 @@ class SegmentArrow(Segment):
         [DEPRECATED - use Segment with arrow parameter instead]
     '''
     def __init__(self, tail: XY, head: XY,
-                 headwidth: float = None, headlength: float = None,
-                 color: str = None, lw: float = None, clip: BBox = None,
-                 ref: EndRef = None, zorder: int = None):        
+                 headwidth: Optional[float] = None, headlength: Optional[float] = None,
+                 color: Optional[str] = None, lw: Optional[float] = None, clip: Optional[BBox] = None,
+                 ref: Optional[EndRef] = None, zorder: Optional[int] = None):        
         warnings.warn('SegmentArrow is deprecated. Use Segment with arrow parameter.', DeprecationWarning)
         headwidth = 0.15 if headwidth is None else headwidth
         headlength = 0.25 if headlength is None else headlength

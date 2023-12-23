@@ -22,9 +22,11 @@ class ElementCompound(elm.Element):
         self._here: Point = Point((0, 0))
         self._theta: float = 0
         self.elements: list[elm.Element] = []
-        drawing_stack.pause = True#(self)
+
+        pause_state = drawing_stack.pause
+        drawing_stack.pause = True
         self.setup()
-        drawing_stack.pause = False #pop_drawing(self)# = False
+        drawing_stack.pause = pause_state
 
     def __contains__(self, element):
         return element in self.elements

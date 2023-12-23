@@ -719,7 +719,7 @@ class CurrentLabel(Element):
             if self._top:
                 preferred_angle = 90.
             else:
-                preferred_angle = 90 + theta if not self._userparams.get('flip', False) else -90 + theta
+                preferred_angle = -90 + theta
 
             # find which allowed angle is closest to the preferred angle
             differences_to_top = [abs(((angle - preferred_angle) + 180) % 360 - 180) for angle in allowed_angles]

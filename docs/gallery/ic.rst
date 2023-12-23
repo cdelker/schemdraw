@@ -38,7 +38,7 @@ Using the :py:class:`schemdraw.elements.intcircuits.Ic` class to define a custom
         elm.Line().endpoints(T.THR, T.TRG)
         elm.Capacitor().at(T.TRG).toy(BOT.start).label('C')
         elm.Line().tox(BOT.start)
-        elm.Capacitor().at(T.CTL).toy(BOT.start).label('.01$\mu$F', 'bottom').dot()
+        elm.Capacitor().at(T.CTL).toy(BOT.start).label(r'.01$\mu$F', 'bottom').dot()
         elm.Dot().at(T.DIS)
         elm.Dot().at(T.THR)
         elm.Dot().at(T.TRG)

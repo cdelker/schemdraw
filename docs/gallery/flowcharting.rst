@@ -165,7 +165,7 @@ Logical Flow Diagram
     with schemdraw.Drawing(unit=1) as dwg:
         a = flow.Circle(r=.5).label('a')
         x = flow.Decision(w=1.5, h=1.5).label('$X$').at(a.S).anchor('N')
-        elm.RightLines(arrow='->').at(x.E).label('$\overline{X}$')
+        elm.RightLines(arrow='->').at(x.E).label(r'$\overline{X}$')
         y1 = flow.Decision(w=1.5, h=1.5).label('$Y$')
         dwg.move_from(y1.N, dx=-5)
         y2 = flow.Decision(w=1.5, h=1.5).label('$Y$')
@@ -174,10 +174,10 @@ Logical Flow Diagram
         b = flow.Circle(r=.5).label('b')
         dwg.move_from(b.N, dx=2)
         c = flow.Circle(r=.5).label('c')
-        elm.RightLines(arrow='->').at(y2.E).to(c.N).label('$\overline{Y}$')
+        elm.RightLines(arrow='->').at(y2.E).to(c.N).label(r'$\overline{Y}$')
         elm.Arrow().at(y1.S).label('$Y$')
         d = flow.Circle(r=.5).label('d')
         dwg.move_from(d.N, dx=2)
         e = flow.Circle(r=.5).label('e')
-        elm.RightLines(arrow='->').at(y1.E).to(e.N).label('$\overline{Y}$')
+        elm.RightLines(arrow='->').at(y1.E).to(e.N).label(r'$\overline{Y}$')
 

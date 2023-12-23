@@ -53,4 +53,4 @@ may be created using:
 
 .. jupyter-execute::
 
-    dsp.Square().label('$\int$')
+    dsp.Square().label(r'$\int$')

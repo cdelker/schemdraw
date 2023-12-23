@@ -22,9 +22,9 @@ Shows how to connect to a switch with anchors.
         elm.Line().right(d.unit*.75)
         S1 = elm.SwitchSpdt2(action='close').up().anchor('b').label('$t=0$', loc='rgt')
         elm.Line().right(d.unit*.75).at(S1.c)
-        elm.Resistor().down().label('$100\Omega$').label(['+','$v_o$','-'], loc='bot')
+        elm.Resistor().down().label(r'$100\Omega$').label(['+','$v_o$','-'], loc='bot')
         elm.Line().to(V1.start)
-        elm.Capacitor().at(S1.a).toy(V1.start).label('1$\mu$F').dot()
+        elm.Capacitor().at(S1.a).toy(V1.start).label(r'1$\mu$F').dot()
 
 
 Capacitor Network
@@ -182,21 +182,21 @@ Also note the use of newline characters inside resistor and capacitor labels.
         elm.Zener().down().reverse().label('D2\n500mA', loc='bot').dot()
         G = elm.Ground()
         elm.Line().left().dot()
-        elm.Capacitor(polar=True).up().reverse().label('C2\n100$\mu$F\n50V', loc='bot').dot()
+        elm.Capacitor(polar=True).up().reverse().label('C2\n100$\\mu$F\n50V', loc='bot').dot()
         elm.Line().right().hold()
         elm.Resistor().toy(top.end).label('R1\n2.2K\n50V', loc='bot').dot()
 
         d.move(dx=-d.unit, dy=0)
-        elm.Capacitor(polar=True).toy(G.start).flip().label('C1\n 1000$\mu$F\n50V').dot().idot()
+        elm.Capacitor(polar=True).toy(G.start).flip().label('C1\n 1000$\\mu$F\n50V').dot().idot()
         elm.Line().at(G.start).tox(D.W)
         elm.Line().toy(D.W).dot()
 
-        elm.Resistor().right().at(Q2b.center).label('R2').label('56$\Omega$ 1W', loc='bot').dot()
+        elm.Resistor().right().at(Q2b.center).label('R2').label('56$\\Omega$ 1W', loc='bot').dot()
         d.push()
         elm.Line().toy(top.start).dot()
         elm.Line().tox(Q2.emitter)
         d.pop()
-        elm.Capacitor(polar=True).toy(G.start).label('C3\n470$\mu$F\n50V', loc='bot').dot()
+        elm.Capacitor(polar=True).toy(G.start).label('C3\n470$\\mu$F\n50V', loc='bot').dot()
         elm.Line().tox(G.start).hold()
         elm.Line().right().dot()
         elm.Resistor().toy(top.center).label('R3\n10K\n1W', loc='bot').dot()

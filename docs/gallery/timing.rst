@@ -78,7 +78,7 @@ Notice the use of the `async` dictionary parameter on the J and K signals, and t
             {'name': 'J', 'wave': '0101', 'async': [0, .8, 1.3, 3.7, 7]},
             {'name': 'K', 'wave': '010101', 'async': [0, 1.2, 2.3, 2.8, 3.2, 3.7, 7]},
             {'name': 'Q', 'wave': '010.101', 'color': 'red', 'lw': 1.5},
-            {'name': '$\overline{Q}$', 'wave': '101.010', 'color': 'blue', 'lw': 1.5}],
+            {'name': r'$\overline{Q}$', 'wave': '101.010', 'color': 'blue', 'lw': 1.5}],
         'config': {'hscale': 1.5}}, risetime=.05)
 
 

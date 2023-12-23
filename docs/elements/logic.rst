@@ -70,7 +70,7 @@ Examples:
 .. jupyter-execute::
 
     from schemdraw.parsing import logicparse
-    logicparse('not ((w and x) or (y and z))', outlabel='$\overline{Q}$')
+    logicparse('not ((w and x) or (y and z))', outlabel=r'$\overline{Q}$')
     
 .. jupyter-execute::
 

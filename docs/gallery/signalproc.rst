@@ -30,7 +30,7 @@ Various Networks
         dsp.Arrow().right(d.unit/2).at(delay.E)
         sm = dsp.SumSigma()
         dsp.Arrow().at(sm.E).length(d.unit/2)
-        intg = dsp.Box(w=2, h=2).anchor('W').label('$\int$')
+        intg = dsp.Box(w=2, h=2).anchor('W').label(r'$\int$')
         dsp.Arrow().right(d.unit/2).at(intg.E).label('out', loc='right')
         dsp.Line().down(d.unit/2).at(inpt.center)
         dsp.Line().tox(sm.S)

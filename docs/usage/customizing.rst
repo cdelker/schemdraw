@@ -55,23 +55,6 @@ A standard resistor is 1 drawing unit long, and with default lead extension will
 Segments include :py:class:`schemdraw.segments.Segment`, :py:class:`schemdraw.segments.SegmentPoly`,
 :py:class:`schemdraw.segments.SegmentCircle`, :py:class:`schemdraw.segments.SegmentArc`, :py:class:`schemdraw.segments.SegmentText`, and :py:class:`schemdraw.segments.SegmentBezier`.
 
-The subclassed `Element.__init__` method can be defined with extra parameters
-to help define the element options.
-
-In addition to the list of Segments, any named anchors and other parameters should be specified.
-Anchors should be added to the `Element.anchors` dictionary as {name: (x, y)} key/value pairs.
-
-The Element instance maintains its own parameters dictionary in `Element.params` that override the default drawing parameters.
-Parameters are resolved by a ChainMap of user arguments to the `Element` instance, the `Element.params` attribute, then the `schemdraw.Drawing` parameters, in that order.
-A common use of setting `Element.params` in the setup function is to change the default position of text labels, for example Transistor elements apply labels on the right side of the element by default, so they add to the setup:
-
-.. code-block::
-
-    self.params['lblloc'] = 'rgt'
-
-The user can still override this label position by creating, for example, `Transistor().label('Q1', loc='top')`.
-
-
 As an example, here's the definition of our favorite element, the resistor:
 
 .. code-block:: python
@@ -88,10 +71,74 @@ As an example, here's the definition of our favorite element, the resistor:
                                           (5.5*reswidth, -resheight),
                                           (6*reswidth, 0)]))
 
-
 The resistor is made of one path.
 `reswidth` and `resheight` are constants that define the height and width of the resistor zigzag (and are referenced by several other elements too).
 Browse the source code in the `Schemdraw.elements` submodule to see the definitions of the other built-in elements.
+
+In addition to the list of Segments, any named anchors and other parameters should be specified.
+Anchors should be added to the `Element.anchors` dictionary as {name: (x, y)} key/value pairs.
+
+Parameters and Defaults
+^^^^^^^^^^^^^^^^^^^^^^^
+
+`Element` subclasses may have an `_element_defaults` class attribute dictionary to specify default parameters used for
+drawing the element.
+This dictionary will be ChainMapped with the `_element_defaults` from all its parent classes into the `Element.defaults`
+dictionary the user may change to modify default behaviors.
+
+To access any of these parameters when defining the element, use the `self.params` dictionary, which ensures the correct parameter,
+whether a default value, a default from a parent class, or a parameter overriden by the user, is obtained.
+Any non-`None` named arguments provided to the Element will be inserted into `self.params` automatically
+(by the `Element.__new__` method).
+
+Parameters that need to be set dynamically during instantiation should be set in the `self.elmparams` dictionary, so they may
+still be overriden by the user.
+
+For example, consider the `Dot` element:
+
+.. code-block::
+
+    class Dot(Element):
+        ''' Connection Dot
+
+            Keyword Args:
+                radius: Radius of dot [default: 0.075]
+                open: Draw as an open circle [default: False]
+        '''
+        _element_defaults = {
+            'radius': 0.075,
+            'open': False}
+        def __init__(self, *d,
+                    radius: Optional[float] = None,
+                    open: Optional[bool] = None,
+                    **kwargs):
+            super().__init__(*d, **kwargs)
+            fill = 'bg' if self.params['open'] else True
+            self.elmparams['fill'] = fill
+            self.segments.append(SegmentCircle((0, 0), self.params['radius']))
+            self.anchors['center'] = (0, 0)
+
+It contains two default parameters, `radius`, and `open`.
+The user may override these for every new Dot by setting `Dot.defaults['radius'] = value`.
+Or to override the defaults for a single instance of Dot, provide the parameter at instantiation:
+`Dot(radius=value)`.
+
+Inside the `Dot.__init__` method, the `fill` parameter is determined based on the value of
+the `open` parameter, read from `self.params['open']`. The Dot is filled when the dot is not open,
+but filled with background color ('bg') when the dot is open. Because the fill value was added to
+`self.elmparams`, the user may sitll specify their own fill color using `Dot(fill=color)`.
+
+Next, a `SegmentCircle` is added with radius taken from `self.params['radius']`, so that the
+default radius will be used unless overridden. Finally, an anchor named `center` is defined at the center of the dot.
+
+When drawn, the parameters for the element are obtained from a ChainMap of the parameters in this order of preference:
+
+1) Setter methods like `.fill()` or `.color()` called after the element is instantiated
+2) Named arguments provided to Element instantiation
+3) Defaults set by the user in Element.defaults (inheriting from parent classes)
+4) Parameters defined in the Element attribute `self.elmparams`
+5) Parameters defined by Drawing.config
+6) Parameters defined by Schemdraw.config
 
 
 Flux Capacitor Example
@@ -112,7 +159,7 @@ Start by importing the Segments and define the class name and `__init__` functio
 
 The `d` and `kwargs` are passed to `super` to initialize the Element.
 
-We want a dot in the center of our flux capacitor, so start by adding a `SegmentCircle`. The `fclen` and `radius` variables could be set as arguments to the __init__ for the user to adjust, if desired, but here they are defined as constants in the __init__.
+We want a dot in the center of our flux capacitor, so start by adding a `SegmentCircle`. The `fclen` and `radius` variables could be set as arguments to the __init__ and/or added to `_element_defaults` for the user to adjust, if desired, but here they are defined as constants in the __init__.
 
 .. code-block:: python
 

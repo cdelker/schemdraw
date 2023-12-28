@@ -104,7 +104,10 @@ class Element:
             from parent classes.
         '''
         if len(self.__mro__) > 1 and hasattr(self.__mro__[1], 'defaults'):
-            self.defaults = self.__mro__[1].defaults.new_child(self._element_defaults)
+            if self.__mro__[1]._element_defaults is not self._element_defaults:
+                self.defaults = self.__mro__[1].defaults.new_child(self._element_defaults)
+            else:
+                self.defaults = self.__mro__[1].defaults.new_child()
         else:
             self.defaults = ChainMap()
 

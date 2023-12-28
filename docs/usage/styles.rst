@@ -68,31 +68,40 @@ Styles may be applied to every new drawing created by Schemdraw (during the Pyth
 Global Element Configuration
 ****************************
 
-The :py:meth:`schemdraw.elements.Element.style` can be used to configure styles on individual element classes that apply to all Drawings.
-It may be used, for example, to fill all Diode elements by default, without requiring the `fill()` method on every Diode instance.
+Each Element has a `defaults` dictionary attribute containing default parameters for drawing the element.
 
-Its argument is a dictionary of {name: Element} class pairs.
-Combined with `functools.partial <https://docs.python.org/3/library/functools.html#functools.partial>`_ from the standard library, parameters to elements can be set globally.
-For example, the following code fills all Diode elements:
+For example, to fill all Diode elements:
 
 .. jupyter-execute::
     :emphasize-lines: 3
 
-    from functools import partial
-
-    elm.style({'Diode': partial(elm.Diode, fill=True)})
-
+    elm.Diode.defaults['fill'] = True
     with schemdraw.Drawing():
         elm.Diode()
         elm.Diode()
+        elm.DiodeTunnel()
 
-Be careful, though, because the `style` method can overwrite existing elements in the namespace.
+Notice that the defaults apply to Diode and all elements subclassed from Diode, such as DiodeTunnel.
+In general, the docstring of each Element lists arguments with their default values, these arguments
+may be specified in the `defaults` dictionary.
+
+Styling Hierarchy
+^^^^^^^^^^^^^^^^^
+
+Element styles are applied in order of preference:
+
+1) Setter methods like `.fill()` or `.color()` called after the Element is instantiated
+2) Keyword arguments provided to Element instantiation
+3) Defaults set by user in Element.defaults (inheriting from parent classes)
+4) Parameters overridden by the Element definition
+5) Parameters set in Drawing.config
+6) Parameters set by Schemdraw.config
 
 
 U.S. versus European Style
 **************************
 
-The main use of :py:meth:`schemdraw.elements.Element.style` is to reconfigure elements in IEEE/U.S. style or IEC/European style.
+The :py:meth:`schemdraw.elements.Element.style` method will to reconfigure elements in IEEE/U.S. style or IEC/European style.
 The `schemdraw.elements.STYLE_IEC` and `schemdraw.elements.STYLE_IEEE` are dictionaries for use in the `style` method to change configuration of various elements that use different standard symbols (resistor, variable resistor, photo resistor, etc.)
 
 To configure IEC/European style, use the `style` method with the `elm.STYLE_IEC` dictionary.

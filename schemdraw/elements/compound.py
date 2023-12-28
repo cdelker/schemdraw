@@ -46,7 +46,7 @@ class ElementCompound(elm.Element):
         ''' Add an element to the segments list '''
         self.elements.append(element)
         self._here, self._theta = element._place(self._here, self._theta, **self.dwgparams)
-        self.segments.extend([s.xform(element.transform, **element._cparams)
+        self.segments.extend([s.xform(element.transform, **element.params)
                               for s in element.segments])
         return element
 

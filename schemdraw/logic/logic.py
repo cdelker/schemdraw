@@ -21,32 +21,38 @@ class And(Element):
             inputs: Number of inputs to gate.
             nand: Draw invert bubble on output
             inputnots: Input numbers (starting at 1) of inputs that have invert bubble
-            leadin: Length of input leads
-            leadout: Length of output lead
+            leadin: Length of input leads [default: 0.35]
+            leadout: Length of output lead [default: 0.35]
 
         Anchors:
             out
             in[X] - for each input
     '''
+    _element_defaults = {
+        'leadin': 0.35,
+        'leadout': 0.35
+    }
     def __init__(self, *d, inputs: int = 2, nand: bool = False, inputnots: Optional[Sequence[int]] = None,
-                 leadin: float = 0.35, leadout: float = 0.35, **kwargs):
+                 leadin: Optional[float] = None, leadout: Optional[float] = None, **kwargs):
         super().__init__(*d, **kwargs)
+        _leadin = self.params['leadin']
+        _leadout = self.params['leadout']
         rad = gateh/2
         theta = linspace(math.radians(-90), math.radians(90), num=50)
-        xs = [rad*math.cos(t) + gatel+leadin for t in theta]
+        xs = [rad*math.cos(t) + gatel+_leadin for t in theta]
         ys = [rad*math.sin(t) for t in theta]
 
         path = list(zip(xs, ys))
-        path += [(gatel+leadin, rad), (leadin, rad),
-                 (leadin, 0), (leadin, -rad),
-                 (gatel+leadin, -rad)]
+        path += [(gatel+_leadin, rad), (_leadin, rad),
+                 (_leadin, 0), (_leadin, -rad),
+                 (gatel+_leadin, -rad)]
         self.segments.append(Segment(path))
-        self.anchors['out'] = (gatel+gateh/2+leadin+leadout, 0)
+        self.anchors['out'] = (gatel+gateh/2+_leadin+_leadout, 0)
         self.anchors['end'] = self.anchors['out']
 
         if nand:
             self.segments.append(SegmentCircle(
-                (leadin+gatel+gateh/2+notbubble, 0), notbubble))
+                (_leadin+gatel+gateh/2+notbubble, 0), notbubble))
 
         # Set distance between inputs. A little larger for 2 input gates.
         if inputs == 2:
@@ -63,23 +69,23 @@ class And(Element):
             self.anchors['in%d' % (inputs-i)] = (0, y)
 
             if inputnots and (inputs-i) in inputnots:
-                self.segments.append(SegmentCircle((leadin-notbubble, y), notbubble))
-                self.segments.append(Segment([(0, y), (leadin-notbubble*2, y)]))
+                self.segments.append(SegmentCircle((_leadin-notbubble, y), notbubble))
+                self.segments.append(Segment([(0, y), (_leadin-notbubble*2, y)]))
             else:
-                self.segments.append(Segment([(0, y), (leadin, y)]))
+                self.segments.append(Segment([(0, y), (_leadin, y)]))
 
         # Extended back for large number of inputs
         if inputs > 3:
-            self.segments.append(Segment([(leadin, backlen/2+dy/2),
-                                          (leadin, -backlen/2-dy/2)]))
+            self.segments.append(Segment([(_leadin, backlen/2+dy/2),
+                                          (_leadin, -backlen/2-dy/2)]))
 
         # Output lead
         if nand:
             self.segments.append(Segment(
-                [(gatel+gateh/2+leadin+notbubble*2, 0), (gatel+gateh/2+leadin+leadout, 0)]))
+                [(gatel+gateh/2+_leadin+notbubble*2, 0), (gatel+gateh/2+_leadin+_leadout, 0)]))
         else:
             self.segments.append(Segment(
-                [(gatel+gateh/2+leadin, 0), (gatel+gateh/2+leadin+leadout, 0)]))
+                [(gatel+gateh/2+_leadin, 0), (gatel+gateh/2+_leadin+_leadout, 0)]))
         self.params['drop'] = self.segments[-1].path[-1]  # type: ignore
 
 
@@ -94,17 +100,23 @@ class Or(Element):
             nor: Draw invert bubble on output
             xor: Draw as exclusive-or gate
             inputnots: Input numbers (starting at 1) of inputs that have invert bubble
-            leadin: Length of input leads
-            leadout: Length of output lead
+            leadin: Length of input leads [default: 0.35]
+            leadout: Length of output lead [default: 0.35]
 
         Anchors:
             out
             in[X] - for each input
     '''
+    _element_defaults = {
+        'leadin': 0.35,
+        'leadout': 0.35
+    }
     def __init__(self, *d, inputs: int = 2, nor: bool = False,
                  xor: bool = False, inputnots: Optional[Sequence[int]] = None,
                  leadin: float = 0.35, leadout: float = 0.35, **kwargs):
         super().__init__(*d, **kwargs)
+        _leadin = self.params['leadin']
+        _leadout = self.params['leadout']
         # Define OR path
         orflat = .5
         xorgap = .15
@@ -121,8 +133,8 @@ class Or(Element):
         x2 = [x0 - back for x0 in x2]
 
         # Offset for inputs
-        xs = [x0 + leadin for x0 in xs]
-        x2 = [x0 + leadin for x0 in x2]
+        xs = [x0 + _leadin for x0 in xs]
+        x2 = [x0 + _leadin for x0 in x2]
 
         tip = max(xs)
         orheight = abs(min(ys))
@@ -132,13 +144,13 @@ class Or(Element):
         path += list(zip(x2[::-1], y2[::-1]))
 
         self.segments.append(Segment(path))
-        self.anchors['out'] = (tip+leadout, 0)
+        self.anchors['out'] = (tip+_leadout, 0)
         self.anchors['end'] = self.anchors['out']
 
         if xor:
             xxor = [x0-xorgap for x0 in x2]
             self.segments.append(Segment(list(zip(xxor, y2))))
-            leadin -= xorgap
+            _leadin -= xorgap
 
         if nor:
             self.segments.append(SegmentCircle((tip+notbubble, 0), notbubble))
@@ -156,9 +168,9 @@ class Or(Element):
         for i in range(inputs):
             y = (i+1 - (inputs/2+.5)) * dy
 
-            xback = leadin - y**2 - back
+            xback = _leadin - y**2 - back
             if inputs > 3 and ((y > orheight) or (y < -orheight)):
-                xback = leadin
+                xback = _leadin
 
             self.anchors['in%d' % (inputs-i)] = (0, y)
 
@@ -172,16 +184,16 @@ class Or(Element):
         # Extended back for large number of inputs
         if inputs > 3:
             self.segments.append(Segment(
-                [(leadin, backlen/2+dy/2), (leadin, orheight)]))
+                [(_leadin, backlen/2+dy/2), (_leadin, orheight)]))
             self.segments.append(Segment(
-                [(leadin, -backlen/2-dy/2), (leadin, -orheight)]))
+                [(_leadin, -backlen/2-dy/2), (_leadin, -orheight)]))
 
         # Output lead
         if nor:
-            self.segments.append(Segment([(tip+notbubble*2, 0), (tip+leadout, 0)]))
+            self.segments.append(Segment([(tip+notbubble*2, 0), (tip+_leadout, 0)]))
         else:
-            self.segments.append(Segment([(tip, 0), (tip+leadout, 0)]))
-        self.params['drop'] = self.segments[-1].path[-1]  # type: ignore
+            self.segments.append(Segment([(tip, 0), (tip+_leadout, 0)]))
+        self.elmparams['drop'] = self.segments[-1].path[-1]  # type: ignore
         self.tip = tip
 
 
@@ -336,7 +348,7 @@ class SchmittAnd(And):
     '''
     def __init__(self, *d, leadin: float = 0.35, leadout: float = 0.35, **kwargs):
         super().__init__(*d, leadin=leadin, leadout=leadout, **kwargs)
-        xofst = leadin+gatel/2
+        xofst = self.params['leadin']+gatel/2
         self.segments.append(Segment([(xofst+.07, -.15), (xofst+.25, -.15),
                                       (xofst+.25, .15), gap,
                                       (xofst+.33, .15), (xofst+.15, .15),

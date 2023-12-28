@@ -150,8 +150,9 @@ class Drawing:
                 element will be added with this angle unless specified
                 otherwise.
     '''     
-    def __init__(self, canvas: Optional[Union[Backends, xml.etree.ElementTree.Element,
-                                     matplotlib.pyplot.Axes]] = None,
+    def __init__(self, canvas: Optional[Union[Backends,
+                                        xml.etree.ElementTree.Element,
+                                        matplotlib.pyplot.Axes]] = None,
                  file: Optional[str] = None, show: bool = True, **kwargs):
         self.outfile = file
         self.canvas = canvas
@@ -262,7 +263,8 @@ class Drawing:
         ''' Get flattened list of all segments in the drawing '''
         segments = []
         for element in self.elements:
-            params = ChainMap(element._userparams, element.params)
+            # Exclude drawing params from the chain
+            params = ChainMap(element._userparams, element.elmparams, element.defaults)
             segments.extend([s.xform(element.transform, **params)
                              for s in element.segments])
         return segments

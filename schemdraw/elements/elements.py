@@ -57,15 +57,15 @@ class Element:
             transform: Transformation from element to drawing coordinates
             absdrop: Drop position in drawing coordinates, set after the
                 element is added to a drawing
+            defaults: Default parameters for the element
 
         Anchor names are dynmically added as attributes after placing the
         element in a Drawing.
     '''
+    _element_defaults: dict[str, Any] = {}     # Default parameters for subclassed elements
+    defaults: ChainMap[str, Any] = ChainMap()  # Subclasses will chainmap this with parents  
     def __init__(self, *d, **kwargs) -> None:
-        self._userparams = kwargs                       # Specified by user
-        self._dwgparams: MutableMapping[str, Any] = {}  # Defaults from drawing
-        self.params: MutableMapping[str, Any] = {}      # Element-specific definition
-        self._cparams: MutableMapping[str, Any] = {}    # ChainMap of above params
+        self._userparams.update(kwargs)         # Specified by user
         self._localshift: XY = Point((0, 0))
         self._userlabels: list[Label] = []
 
@@ -77,6 +77,7 @@ class Element:
         # defines whether a current label can be drawn on each side
         self._allowed_sides = [False, True, False, True]  # right, top, left, bottom
         self._bias_direction: Optional[str] = None  # defines direction of bias current 'right', 'top', 'left', 'bottom', or None
+        self._positioned = False  # Has the element been placed in a drawing via self._position()?
 
         if 'xy' in self._userparams:  # Allow legacy 'xy' parameter
             self._userparams.setdefault('at', self._userparams.pop('xy'))
@@ -88,6 +89,24 @@ class Element:
                 warnings.warn('Unused positional arguments in Element.')
 
         drawing_stack.push_element(self)
+
+    def __new__(cls, *args, **kwargs):
+        ''' Create a new Element instance, building chainmap of params '''
+        new = super().__new__(cls)
+        new._dwgparams = {}  # Defaults from drawing
+        new.elmparams = {}  # Parameters specified by element. Similar to _element_defaults, but may be dynamic
+        new._userparams = {name: value for name, value in kwargs.items() if value is not None}
+        new.params = ChainMap(new._userparams, new.elmparams, new.defaults, new._dwgparams)
+        return new
+
+    def __init_subclass__(self):
+        ''' Initialize an Element subclass, building chainmap of default parameters
+            from parent classes.
+        '''
+        if len(self.__mro__) > 1 and hasattr(self.__mro__[1], 'defaults'):
+            self.defaults = self.__mro__[1].defaults.new_child(self._element_defaults)
+        else:
+            self.defaults = ChainMap()
 
     def __getattr__(self, name: str) -> Any:
         ''' Allow getting anchor position as attribute '''
@@ -265,7 +284,8 @@ class Element:
         self._userparams['move_cur'] = False
         return self
 
-    def label(self, label: str | Sequence[str],
+    def label(self,
+              label: str | Sequence[str],
               loc: Optional[LabelLoc] = None,
               ofst: XY | float | None = None,
               halign: Optional[Halign] = None,
@@ -313,8 +333,10 @@ class Element:
         self._userlabels.append(Label(label, loc, ofst, align, rotate, fontsize, font, mathfont, color))
         return self
 
-    def _buildparams(self) -> None:
-        ''' Combine parameters from user, setup, and drawing. Fills self._cparams '''
+    def _position(self) -> None:
+        ''' Convert relative positions to absolute coordinates in self.params,
+            and apply flip/reverse
+        '''
         # Accomodate xy positions based on OTHER elements before they are fully set up.
         if 'at' in self._userparams and isinstance(self._userparams['at'][1], str):
             element, pos = self._userparams['at']
@@ -324,14 +346,14 @@ class Element:
                 raise KeyError(f'Unknown anchor name {pos}')
             self._userparams['at'] = xy
 
-        # All subsequent actions get params from cparams
-        self._cparams = ChainMap(self._userparams, self.params, self._dwgparams)
         self._flipreverse()
+        self._positioned = True
 
     def _flipreverse(self) -> None:
         ''' Flip and/or reverse element's segments if necessary '''
         if self._userparams.get('flip', False):
-            [s.doflip() for s in self.segments]  # type: ignore
+            for s in self.segments:
+                s.doflip()
             for name, pt in self.anchors.items():
                 self.anchors[name] = Point(pt).flip()
 
@@ -346,49 +368,59 @@ class Element:
                 self.anchors[name] = Point(pt).mirrorx(centerx)
 
     def _place(self, dwgxy: XY, dwgtheta: float, **dwgparams) -> tuple[Point, float]:
-        ''' Calculate element position within the drawing '''
-        self._dwgparams = dwgparams
-        if not self._cparams:
-            self._buildparams()
+        ''' Calculate element position within the drawing
+        
+            Args:
+                dwgxy: Current XY position within drawing
+                dwgtheta: Current theta in the drawing
+                dwgparams: Default parameters of the drawing
+            
+            Returns:
+                xy: New XY position after placing the element
+                theta: New theta after placing the element
+        '''
+        self._dwgparams.clear()  # Don't remove the original object so self.params ChainMap gets the new values.
+        self._dwgparams.update(dwgparams)
+        if not self._positioned:
+            self._position()
 
-        anchor = self._cparams.get('anchor', None)
-        zoom = self._cparams.get('zoom', self._cparams.get('scale', 1))
-        xy = self._cparams.get('at', dwgxy)
+        anchor = self.params.get('anchor', None)
+        zoom = self.params.get('zoom', self.params.get('scale', 1))
+        xy = self.params.get('at', dwgxy)
 
         # Get bounds of element, used for positioning user labels
         self.bbox = self.get_bbox(includetext=False)
 
         theta: float
-        if 'endpts' in self._cparams:
+        if 'endpts' in self.params:
             theta = dwgtheta
-        elif self._cparams.get('d') is not None:
-            d = self._cparams.get('d')
+        elif self.params.get('d') is not None:
+            d = self.params.get('d')
             if str(d).lstrip('-').isnumeric():
                 theta = float(str(d))
             else:
                 theta = {'u': 90, 'r': 0, 'l': 180, 'd': 270}[d[0].lower()]  # type: ignore
         else:
-            theta = self._cparams.get('theta', dwgtheta)
+            theta = self.params.get('theta', dwgtheta)
 
         if anchor is not None:
             self._localshift = -Point(self.anchors[anchor])
         self.transform = Transform(theta, xy, self._localshift, zoom)
 
         # Add user-defined labels
-        # user-defined labels - allow element def to define label location
-        lblloc = self._cparams.get('lblloc', 'top')
-        lblsize = self._cparams.get('lblsize', self._cparams.get('fontsize', 14))
-        lblrotate = self._cparams.get('lblrotate', False)
-        lblcolor = self._cparams.get('color', 'black')
+        lblloc = self.params.get('lblloc', 'top')
+        lblsize = self.params.get('lblsize', self.params.get('fontsize', 14))
+        lblrotate = self.params.get('lblrotate', False)
+        lblcolor = self.params.get('color', 'black')
         kwlabels = {
-            'top': self._cparams.get('toplabel', None),
-            'bot': self._cparams.get('botlabel', None),
-            'lft': self._cparams.get('lftlabel', None),
-            'rgt': self._cparams.get('rgtlabel', None),
-            'center': self._cparams.get('clabel', None)
+            'top': self.params.get('toplabel', None),
+            'bot': self.params.get('botlabel', None),
+            'lft': self.params.get('lftlabel', None),
+            'rgt': self.params.get('rgtlabel', None),
+            'center': self.params.get('clabel', None)
             }
-        if 'label' in self._cparams:
-            kwlabels[lblloc] = self._cparams.get('label')
+        if 'label' in self.params:
+            kwlabels[lblloc] = self.params.get('label')
 
         # Add labels defined in **kwargs to the _userlabels list
         for loc, label in kwlabels.items():
@@ -396,29 +428,19 @@ class Element:
                 rotate = (theta if lblrotate else 0)
                 self.label(label, loc, fontsize=lblsize, rotate=rotate, color=lblcolor)
 
-        for label in self._userlabels:
-            if not label.rotate:
-                rotate = 0
-            elif label.rotate is True:
-                rotate = theta
-            else:
-                rotate = label.rotate
-            self._place_label(label.label, loc=label.loc, ofst=label.ofst,
-                              align=label.align, rotation=rotate,
-                              font=label.font, mathfont=label.mathfont,
-                              fontsize=label.fontsize,
-                              color=label.color)
+        for label in self._userlabels:   # THIS MOVES to place_label.
+            self._place_label(label, theta)
 
         # Add element-specific anchors
         for name, pos in self.anchors.items():
             self.absanchors[name] = self.transform.transform(pos)
         self.absanchors['xy'] = self.transform.transform((0, 0))
 
-        drop = self._cparams.get('drop', None)
-        if drop in self.anchors:
+        drop = self.params.get('drop', None)
+        if drop is not None and drop in self.anchors:
             # User specified as anchor position
             self.absdrop = self.transform.transform(self.anchors[drop]), theta
-        elif drop is not None and self._cparams.get('move_cur', True):
+        elif drop is not None and self.params.get('move_cur', True):
             if self.params.get('droptheta', None) is not None:
                 # Element-specified drop angle
                 self.absdrop = self.transform.transform(drop), self.params.get('droptheta', 0.)
@@ -459,126 +481,163 @@ class Element:
 
         return BBox(xmin, ymin, xmax, ymax)
 
-    def _place_label(self, label: str, loc: Optional[LabelLoc] = None,
-                     ofst: XY | float | None = None, align: Align = ('left', 'bottom'),
-                     rotation: float = 0, fontsize: Optional[float] = None,
-                     font: Optional[str] = None, mathfont: Optional[str] = None, color: Optional[str] = None) -> None:
-        ''' Adds the label Segment to the element, AFTER element placement
+    def _position_label(self, label: Label, theta: float = 0) -> Label:
+        ''' Calculate position of label
+        
+            Args:
+                label: The label to position
+                theta: Element drawing direction
+        '''
+        if label.rotate is None:
+            label.rotate = 0
+        elif label.rotate is True:
+            label.rotate = theta
+        label.rotate = (label.rotate + 360) % 360
+        if 90 < label.rotate < 270:
+            label.rotate -= 180  # Keep the label from going upside down
+
+        # Set label default location if not specified
+        if label.loc is None:
+            label.loc = self.params.get('lblloc', 'top')
+
+        # Allow some aliases for positional locations
+        label.loc = {'bot': 'bottom',
+                     'B': 'bottom',
+                     'lft': 'left',
+                     'L': 'left',
+                     'rgt': 'right',
+                     'R': 'right',
+                     'T': 'top'}.get(label.loc, label.loc)
+
+        # Ensure a 'top' label is always on top, regardless of rotation
+        if (theta % 360) > 90 and (theta % 360) <= 270:
+            if label.loc == 'top':
+                label.loc = 'bottom'
+            elif label.loc == 'bottom':
+                label.loc = 'top'
+            elif label.loc == 'left':
+                label.loc = 'right'
+            elif label.loc == 'right':
+                label.loc = 'left'
+        return label
+
+    def _align_label(self, label: Label, theta: float = 0) -> Label:
+        ''' Calculate label alignment and offset based on angle and location
+            relative to the element
 
             Args:
-                label: Text to add. If list, list items will be evenly spaced
-                    along the element.
-                loc: Location for text relative to element, either
-                    ['top', 'bot', 'lft', 'rgt'] or name of an anchor
-                ofst: Offset between text and element. Defaults to Element.lblofst.
-                    Can be list of [x, y] offets.
-                align: Tuple of (horizontal, vertical) alignment where horizontal
-                    is ['center', 'left', 'right'] and vertical is ['center',
-                    'top', 'bottom']
-                rotation: Rotation angle (degrees)
-                fontsize: Font size
-                font: Font family
-                mathfont: Math font family
-                color: Label text color
+                label: The label to position
+                theta: Element drawing direction
         '''
-        rotation = (rotation + 360) % 360
-        if 90 < rotation < 270:
-            rotation -= 180  # Keep the label from going upside down
+        if label.align is None:
+            if label.loc == 'center':
+                align: Align = ('center', 'center')
 
-        if loc is None:
-            loc = self._cparams.get('lblloc', 'top')
-        loc = {'bot': 'bottom',
-               'B': 'bottom',
-               'lft': 'left',
-               'L': 'left',
-               'rgt': 'right',
-               'R': 'right',
-               'T': 'top'}.get(loc, loc)  # type: ignore
-
-        # This ensures a 'top' label is always on top, regardless of rotation
-        theta = self.transform.theta
-        if (theta % 360) > 90 and (theta % 360) <= 270:
-            if loc == 'top':
-                loc = 'bottom'
-            elif loc == 'bottom':
-                loc = 'top'
-            elif loc == 'left':
-                loc = 'right'
-            elif loc == 'right':
-                loc = 'left'
-
-        if align is None and 'lblalign' in self._cparams:
-            align = self._cparams['lblalign']
-        elif align is None and loc == 'center' and isinstance(label, (list, tuple)):
-            align = ('center', 'center')
-        elif align is None:
-            align = (None, None)
-        if None in align:   # Determine best alignment for label based on angle
-            th = theta - rotation
-            # Below alignment divisions work for label on top. Rotate angle for other sides.
-            if loc == 'left':
-                th = th + 90
-            elif loc == 'bottom':
-                th = th + 180
-            elif loc == 'right':
-                th = th + 270
-            th = (th+360) % 360  # Normalize angle so it's positive, clockwise
-
-            rotalign: list[Align] = [('center', 'bottom'),  # label on top
-                                     ('right', 'bottom'),
-                                     ('right', 'center'),   # label on right
-                                     ('right', 'top'),
-                                     ('center', 'top'),     # label on bottom
-                                     ('left', 'top'),
-                                     ('left', 'center'),    # label on left
-                                     ('left', 'bottom')]
-
-            # Index into rotalign for a "top" label that's been rotated
-            rotalignidx = int(round((th/360)*8) % 8)
-
-            if loc and loc in self.anchors:
+            elif label.loc and label.loc in self.anchors: 
+                # Anchor is on an edge
                 x1, y1, x2, y2 = self.get_bbox(includetext=False)
-                if (math.isclose(self.anchors[loc][0], x1, abs_tol=.15) or
-                   math.isclose(self.anchors[loc][0], x2, abs_tol=.15) or
-                   math.isclose(self.anchors[loc][1], y1, abs_tol=.15) or
-                   math.isclose(self.anchors[loc][1], y2, abs_tol=.15)):
-                    # Anchor is on an edge
-                    dofst = self._cparams.get('lblofst', .1)
+                align = ('center', 'center')
+                if math.isclose(self.anchors[label.loc][0], x1, abs_tol=.15):
+                    # Label on left edge
+                    align = ('right', align[1])
+                elif math.isclose(self.anchors[label.loc][0], x2, abs_tol=.15):
+                    # Label on right edge
+                    align = ('left', align[1])
+                else:
+                    # Not on left or right edge
+                    align = ('center', align[1])
 
-                    alignH: Halign
-                    alignV: Valign
-                    if math.isclose(self.anchors[loc][0], x1, abs_tol=.15):
-                        alignH = 'right'
-                        ofstx = -dofst
-                    elif math.isclose(self.anchors[loc][0], x2, abs_tol=.15):
-                        alignH = 'left'
-                        ofstx = dofst
-                    else:
-                        alignH = 'center'
-                        ofstx = 0
-                    if math.isclose(self.anchors[loc][1], y1, abs_tol=.15):
-                        alignV = 'top'
-                        ofsty = -dofst
-                    elif math.isclose(self.anchors[loc][1], y2, abs_tol=.15):
-                        alignV = 'bottom'
-                        ofsty = dofst
-                    else:
-                        alignV = 'center'
-                        ofsty = 0
+                if math.isclose(self.anchors[label.loc][1], y1, abs_tol=.15):
+                    # Label on bottom edge
+                    align = (align[0], 'top')
+                elif math.isclose(self.anchors[label.loc][1], y2, abs_tol=.15):
+                    # Label on top edge
+                    align = (align[0], 'bottom')
+                else:
+                    # Not on top or bottom edge
+                    align = (align[0], 'center')
 
-                    align = (align[0] or alignH, align[1] or alignV)
-                    try:
-                        rotalignidx = (rotalign.index(align) + round((th/360)*8)) % 8
-                    except ValueError:
-                        rotalignidx = 0
-                    if ofst is None and not isinstance(label, (tuple, list)):
-                        ofst = Point((ofstx, ofsty))
+                label.align = align
 
-            if loc == 'center':
-                align = (align[0] or 'center', align[1] or 'center')
+                # Fix offset if provided as single value
+                if isinstance(label.ofst, (float, int)):
+                    pofst = label.ofst
+                    label.ofst = {
+                        ('center', 'bottom'): (0, pofst),
+                        ('right', 'bottom'): (-pofst, pofst),
+                        ('right', 'center'): (-pofst, 0),
+                        ('right', 'top'): (-pofst, -pofst),
+                        ('center', 'top'): (0, -pofst),
+                        ('left', 'top'): (pofst, -pofst),
+                        ('left', 'center'): (pofst, 0),
+                        ('left', 'bottom'): (pofst, pofst)
+                    }.get(label.align, (0, pofst))
+                    label.ofst = Point(label.ofst)
+
             else:
-                ralign = rotalign[rotalignidx]
-                align = (align[0] or ralign[0], align[1] or ralign[1])
+                # Align based on position relative to the element
+                # Below alignment dictionary works for label on top.
+                # Rotate angle for other sides.
+                th = theta - label.rotate
+                th = {'left': th+90,
+                      'bottom': th+180,
+                      'right': th+270}.get(label.loc, th)  # type: ignore
+                th = (th+360) % 360  # Normalize angle so it's positive, clockwise
+
+                # Alignment for label in different positions
+                rotalign: list[Align] = [
+                    ('center', 'bottom'),  # label on top
+                    ('right', 'bottom'),
+                    ('right', 'center'),   # label on left
+                    ('right', 'top'),
+                    ('center', 'top'),     # label on bottom
+                    ('left', 'top'),
+                    ('left', 'center'),    # label on right
+                    ('left', 'bottom')]
+                label.align = rotalign[int(round((th/360)*8) % 8)]
+            
+        # Ensure label.ofst is a Point (x,y) pair
+        if isinstance(label.ofst, (float, int)):
+            if label.loc == 'bottom':
+                label.ofst = (0, -label.ofst)
+            elif label.loc == 'left':
+                label.ofst = (-label.ofst, 0)
+            elif label.loc == 'right':
+                label.ofst = (label.ofst, 0)
+            else:
+                label.ofst = (0, label.ofst)
+
+        label.ofst = Point(label.ofst)  # type: ignore
+        return label
+
+    def _place_label(self, label: Label, theta: float = 0) -> None:
+        ''' Adds the label SegmentText to the element, after element placement
+
+            Args:
+                label: The Label to add
+                theta: Current drawing angle
+        '''
+        # Make a copy of the label to modify with auto-placement values
+        label = Label(label.label, label.loc, label.ofst, label.align,
+                      label.rotate, label.fontsize,
+                      label.font, label.mathfont, label.color)
+
+        if label.align is None:
+            label.align = self.params.get('lblalign', None)
+        if label.ofst is None:
+            label.ofst = self.params.get('lblofst', .1)
+
+        label = self._position_label(label, theta)
+        label = self._align_label(label, theta)
+
+        # Parameters to send to SegmentText
+        segment_params = {
+            'color': label.color if label.color else self.params.get('color'),
+            'font': label.font if label.font else self.params.get('font'),
+            'mathfont': label.mathfont if label.mathfont else self.params.get('mathfont'),
+            'fontsize': label.fontsize if label.fontsize else self.params.get('fontsize', 14),
+            'align': label.align,
+            'rotation': label.rotate}
 
         xmax = self.bbox.xmax
         xmin = self.bbox.xmin
@@ -587,84 +646,49 @@ class Element:
         if not math.isfinite(xmax+xmin+ymax+ymin):
             xmax = xmin = ymax = ymin = .1
 
-        args: MutableMapping[str, Any] = {}
-        if fontsize is not None:
-            args['fontsize'] = fontsize
-        if font is not None:
-            args['font'] = font
-        if mathfont is not None:
-            args['mathfont'] = mathfont
-        if color is not None:
-            args['color'] = color
-
-        lblparams = dict(ChainMap(args, self._cparams))
-        lblparams = {'color': lblparams.get('color'),
-                     'font': lblparams.get('font'),
-                     'mathfont': lblparams.get('mathfont'),
-                     'fontsize': lblparams.get('fontsize', 14),
-                     'align': align,
-                     'rotation': rotation}
-        if ofst is None:
-            ofst = self._cparams.get('lblofst', .1)
-
-        if isinstance(label, (list, tuple)):
-            # Divide list along length
-            if loc == 'top':
-                xdiv = (xmax-xmin)/(len(label)+1)
-                ofst = Point((0, ofst)) if not isinstance(ofst, (list, tuple)) else Point(ofst)
-                for i, lbltxt in enumerate(label):
+        if isinstance(label.label, (list, tuple)):
+            if label.loc == 'top':
+                xdiv = (xmax-xmin)/(len(label.label)+1)
+                for i, lbltxt in enumerate(label.label):
                     xy = Point((xmin+xdiv*(i+1), ymax))
-                    self.segments.append(SegmentText(xy+ofst, lbltxt, **lblparams))
-            elif loc == 'bottom':
-                xdiv = (xmax-xmin)/(len(label)+1)
-                ofst = Point((0, -ofst)) if not isinstance(ofst, (list, tuple)) else Point(ofst)
-                for i, lbltxt in enumerate(label):
+                    self.segments.append(SegmentText(xy+label.ofst, lbltxt, **segment_params))
+            elif label.loc == 'bottom':
+                xdiv = (xmax-xmin)/(len(label.label)+1)
+                for i, lbltxt in enumerate(label.label):
                     xy = Point((xmin+xdiv*(i+1), ymin))
-                    self.segments.append(SegmentText(xy+ofst, lbltxt, **lblparams))
-            elif loc == 'left':
-                ydiv = (ymax-ymin)/(len(label)+1)
-                ofst = Point((-ofst, 0)) if not isinstance(ofst, (list, tuple)) else Point(ofst)
-                for i, lbltxt in enumerate(label):
+                    self.segments.append(SegmentText(xy+label.ofst, lbltxt, **segment_params))
+            elif label.loc == 'left':
+                ydiv = (ymax-ymin)/(len(label.label)+1)
+                for i, lbltxt in enumerate(label.label):
                     xy = Point((xmin, ymin+ydiv*(i+1)))
-                    self.segments.append(SegmentText(xy+ofst, lbltxt, **lblparams))
-            elif loc == 'right':
-                ydiv = (ymax-ymin)/(len(label)+1)
-                ofst = Point((ofst, 0)) if not isinstance(ofst, (list, tuple)) else Point(ofst)
-                for i, lbltxt in enumerate(label):
+                    self.segments.append(SegmentText(xy+label.ofst, lbltxt, **segment_params))
+            elif label.loc == 'right':
+                ydiv = (ymax-ymin)/(len(label.label)+1)
+                for i, lbltxt in enumerate(label.label):
                     xy = Point((xmax, ymin+ydiv*(i+1)))
-                    self.segments.append(SegmentText(xy+ofst, lbltxt, **lblparams))
-            elif loc == 'center':
-                xdiv = (xmax-xmin)/(len(label)+1)
-                ofst = Point((0, ofst)) if not isinstance(ofst, (list, tuple)) else Point(ofst)
-                for i, lbltxt in enumerate(label):
+                    self.segments.append(SegmentText(xy+label.ofst, lbltxt, **segment_params))
+            elif label.loc == 'center':
+                xdiv = (xmax-xmin)/(len(label.label)+1)
+                for i, lbltxt in enumerate(label.label):
                     xy = Point((xmin+xdiv*(i+1), 0))
-                    self.segments.append(SegmentText(xy+ofst, lbltxt, **lblparams))
+                    self.segments.append(SegmentText(xy+label.ofst, lbltxt, **segment_params))
 
-        elif isinstance(label, str):
-            # Place in center
-            if loc in self.anchors:
-                xy = Point(self.anchors[loc])  # type: ignore
-                ofst = Point((0, ofst)) if not isinstance(ofst, (list, tuple)) else Point(ofst)
-                xy = Point(xy)
-            elif loc == 'top':
-                ofst = Point((0, ofst)) if not isinstance(ofst, (list, tuple)) else Point(ofst)
+        elif isinstance(label.label, str):  # keep the elif instead of else for type hinting
+            if label.loc and label.loc in self.anchors:
+                xy = Point(self.anchors[label.loc])
+            elif label.loc == 'top':
                 xy = Point(((xmax+xmin)/2, ymax))
-            elif loc == 'bottom':
-                ofst = Point((0, -ofst)) if not isinstance(ofst, (list, tuple)) else Point(ofst)  # type: ignore
+            elif label.loc == 'bottom':
                 xy = Point(((xmax+xmin)/2, ymin))
-            elif loc == 'left':
-                ofst = Point((-ofst, 0)) if not isinstance(ofst, (list, tuple)) else Point(ofst)  # type: ignore
+            elif label.loc == 'left':
                 xy = Point((xmin, (ymax+ymin)/2))
-            elif loc == 'right':
-                ofst = Point((ofst, 0)) if not isinstance(ofst, (list, tuple)) else Point(ofst)
+            elif label.loc == 'right':
                 xy = Point((xmax, (ymax+ymin)/2))
-            elif loc == 'center':
-                ofst = Point((0, ofst)) if not isinstance(ofst, (list, tuple)) else Point(ofst)
+            elif label.loc == 'center':
                 xy = Point(((xmax+xmin)/2, (ymax+ymin)/2))
             else:
-                raise ValueError(f'Undefined location {loc}')
-            xy = xy + ofst
-            self.segments.append(SegmentText(xy, label, **lblparams))
+                raise ValueError(f'Undefined location {label.loc}')
+            self.segments.append(SegmentText(xy+label.ofst, label.label, **segment_params))
 
     def _draw_on_figure(self):
         ''' Draw the element on a new figure. Useful for _repr_ functions. '''
@@ -672,7 +696,7 @@ class Element:
             fig = mplFigure()
         else:
             fig = svgFigure(bbox=self.get_bbox(transform=True))
-        if not self._cparams:
+        if not self._positioned:
             self._place((0, 0), 0)
         fig.set_bbox(self.get_bbox(transform=True))
         self._draw(fig)
@@ -695,7 +719,7 @@ class Element:
         if len(self.segments) == 0:
             self._place((0, 0), 0)
         for segment in self.segments:
-            segment.draw(fig, self.transform, **self._cparams)
+            segment.draw(fig, self.transform, **self.params)
 
     def _get_allowed_sides(self):
         allowed_sides = self._allowed_sides
@@ -735,8 +759,8 @@ class ElementDrawing(Element):
         self.drawing = drawing
         self.segments = self.drawing.get_segments()
         self.anchors = self.drawing.anchors
-        self.params['drop'] = self.drawing._here
-        self.params['d'] = 'right'  # Reset drawing direction
+        self.elmparams['drop'] = self.drawing._here
+        self.elmparams['d'] = 'right'  # Reset drawing direction
         
 
 class Element2Term(Element):
@@ -748,6 +772,9 @@ class Element2Term(Element):
             * center
             * end
     '''
+    _element_defaults = {
+        'dotradius': 0.075
+    }
     def to(self, xy: XY, dx: float = 0, dy: float = 0) -> 'Element2Term':
         ''' Sets ending position of element
 
@@ -828,27 +855,28 @@ class Element2Term(Element):
 
     def _place(self, dwgxy: XY, dwgtheta: float, **dwgparams) -> tuple[Point, float]:
         ''' Calculate element placement, adding lead extensions '''
-        self._dwgparams = dwgparams
-        if not self._cparams:
-            self._buildparams()
+        self._dwgparams.clear()
+        self._dwgparams.update(dwgparams)
+        if not self._positioned:
+            self._position()
 
-        totlen = self._cparams.get('l', self._cparams.get('unit', 3))
-        endpts = self._cparams.get('endpts', None)
-        to = self._cparams.get('to', None)
-        tox = self._cparams.get('tox', None)
-        toy = self._cparams.get('toy', None)
-        anchor = self._cparams.get('anchor', None)
-        zoom = self._cparams.get('zoom', self._cparams.get('scale', 1))
-        xy = Point(self._cparams.get('at', dwgxy))
+        totlen = self.params.get('l', self.params.get('unit', 3))
+        endpts = self.params.get('endpts', None)
+        to = self.params.get('to', None)
+        tox = self.params.get('tox', None)
+        toy = self.params.get('toy', None)
+        anchor = self.params.get('anchor', None)
+        zoom = self.params.get('zoom', self.params.get('scale', 1))
+        xy = Point(self.params.get('at', dwgxy))
 
         # set up transformation
-        theta = self._cparams.get('theta', dwgtheta)
+        theta = self.params.get('theta', dwgtheta)
         if endpts is not None:
             theta = util.angle(endpts[0], endpts[1])
         elif to is not None:
             theta = util.angle(xy, to)
-        elif self._cparams.get('d') is not None:
-            d = self._cparams.get('d')
+        elif self.params.get('d') is not None:
+            d = self.params.get('d')
             if str(d).lstrip('-').isnumeric():
                 theta = d
             else:
@@ -884,7 +912,7 @@ class Element2Term(Element):
 
         self.anchors['istart'] = self.segments[0].path[0]  # type: ignore
         self.anchors['iend'] = self.segments[0].path[-1]  # type: ignore
-        if self._cparams.get('extend', True):
+        if self.params.get('extend', True):
             in_path = self.segments[0].path  # type: ignore
             dz = util.delta(in_path[-1], in_path[0])   # Defined delta of path
             in_len = math.hypot(*dz)    # Defined length of path
@@ -913,12 +941,14 @@ class Element2Term(Element):
             start = Point(self.segments[0].path[0])  # type: ignore
             end = Point(self.segments[0].path[-1])  # type: ignore
 
-        if self._cparams.get('dot', False):
-            fill: Union[bool, str] = 'bg' if self._cparams['dot'] == 'open' else True
-            self.segments.append(SegmentCircle(end, radius=0.075, fill=fill, zorder=3))
-        if self._cparams.get('idot', False):
-            fill = 'bg' if self._cparams['idot'] == 'open' else True
-            self.segments.append(SegmentCircle(start, radius=0.075, fill=fill, zorder=3))
+        if self.params.get('dot', False):
+            fill: Union[bool, str] = 'bg' if self.params['dot'] == 'open' else True
+            radius = self.params.get('dotradius', 0.075)
+            self.segments.append(SegmentCircle(end, radius=radius, fill=fill, zorder=3))
+        if self.params.get('idot', False):
+            fill = 'bg' if self.params['idot'] == 'open' else True
+            radius = self.params.get('dotradius', 0.075)
+            self.segments.append(SegmentCircle(start, radius=radius, fill=fill, zorder=3))
 
         self._place_anchors(start, end)
         if anchor is not None:

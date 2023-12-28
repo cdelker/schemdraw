@@ -19,7 +19,9 @@ def labelsize(label, pad):
 
 
 class Box(Element):
-    ''' Flowchart Process Box
+    ''' Flowchart Process Box. Default box has minimum size (3, 2)
+        but will expand to fit the label text. Size may be manually
+        fixed using w and h arguments.
 
         Args:
             w: Width of box
@@ -28,15 +30,17 @@ class Box(Element):
         Anchors:
             * 16 compass points (N, S, E, W, NE, NNE, etc.)
     '''
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self._size = 3, 2
-        self.params['lblloc'] = 'center'
-        self.params['lblofst'] = 0
-        self.params['theta'] = 0
-
+    _element_defaults = {
+        'w': 3,
+        'h': 2,
+        'minsize': (3, 2),
+        'pad': 0.25,
+        'lblloc': 'center',
+        'lblofst': 0,
+        'theta': 0
+    }
     def _set_anchors(self):
-        w, h = self._size
+        w, h = self.params['w'], self.params['h']
         self.anchors['center'] = (w/2, 0)
         self.anchors['N'] = (w/2, h/2)
         self.anchors['E'] = (w, 0)
@@ -55,23 +59,20 @@ class Box(Element):
         self.anchors['WNW'] = (0, h/3)
         self.anchors['WSW'] = (0, -h/3)
 
-    def _set_size(self):
-        w, h = self._size
-        pad = self._userparams.get('pad', .25)
-        padw = padh = pad
+    def _set_size(self) -> tuple[float, float]:
+        minw, minh = self.params['minsize']
         mainlabels = [label for label in self._userlabels if label.loc is None]
         if mainlabels:
-            w, h = labelsize(mainlabels[0], pad)
-            w = max(w, self._size[0])
-            h = max(h, self._size[1])
+            minw, minh = labelsize(mainlabels[0], self.params['pad'])
+            minw = max(minw, self.params['minsize'][0])
+            minh = max(minh, self.params['minsize'][1])
 
-        w = self._userparams.get('w', w)
-        h = self._userparams.get('h', h)
-        self._size = w, h
-        return self._size
+        self._userparams.setdefault('w', minw)
+        self._userparams.setdefault('h', minh)
+        return self._userparams['w'], self._userparams['h']
 
     def _set_segments(self):
-        w, h = self._size
+        w, h = self.params['w'], self.params['h']
         self.segments.append(Segment([(0, 0), (0, h/2), (w, h/2),
                                       (w, -h/2), (0, -h/2), (0, 0)]))
     
@@ -81,7 +82,7 @@ class Box(Element):
         self._set_segments()
         self._set_anchors()
 
-        if 'anchor' not in self._userparams and 'drop' not in self.params:
+        if 'anchor' not in self.params:
             while dwgtheta < 0:
                 dwgtheta += 360
 
@@ -90,10 +91,10 @@ class Box(Element):
             anchors = ['W', 'SW', 'S', 'SE', 'E', 'NE', 'N', 'NW']
             idx = min(range(len(thetas)), key=lambda i: abs(thetas[i]-dwgtheta))
             anchor = anchors[idx]
-            self.params['anchor'] = anchor
+            self.elmparams['anchor'] = anchor
             dropanchor = anchor.translate(anchor.maketrans('NESW', 'SWNE'))
             if dropanchor in self.anchors:
-                self.params['drop'] = self.anchors[dropanchor]
+                self.elmparams['drop'] = self.anchors[dropanchor]
         return super()._place(dwgxy, dwgtheta, **dwgparams)
 
 
@@ -103,36 +104,40 @@ class RoundBox(Box):
         Args:
             w: Width of box
             h: Height of box
+            cornerradius: Radius of round corners [default: 0.3]
 
         Anchors:
             * 16 compass points (N, S, E, W, NE, NNE, etc.)
     '''
-    def __init__(self, cornerradius: float = 0.3, **kwargs):
+    _element_defaults = {
+        'cornerradius': 0.3
+    }
+    def __init__(self, cornerradius: Optional[float] = None, **kwargs):
         super().__init__(**kwargs)
-        self.cornerradius = cornerradius
 
     def _set_segments(self):
-        w, h = self._size
+        w, h = self.params['w'], self.params['h']
         self.segments = [SegmentPoly(
             [(0, h/2), (w, h/2), (w, -h/2), (0, -h/2)],
-            cornerradius=self.cornerradius)]
+            cornerradius=self.params['cornerradius'])]
         
     def _set_anchors(self):
         super()._set_anchors()
-        w, h = self._size
-        k = self.cornerradius - self.cornerradius*math.sqrt(2)/2
+        w, h = self.params['w'], self.params['h']
+        cornerradius = self.params['cornerradius']
+        k = cornerradius - cornerradius*math.sqrt(2)/2
         self.anchors['NE'] = (w-k, h/2-k)
         self.anchors['NW'] = (k, h/2-k)
         self.anchors['SE'] = (w-k, -h/2+k)
         self.anchors['SW'] = (k, -h/2+k)
-        self.anchors['NNE'] = (3*w/4 if self.cornerradius < w/4 else w-self.cornerradius, h/2)
-        self.anchors['NNW'] = (w/4 if self.cornerradius < w/4 else self.cornerradius, h/2)
-        self.anchors['SSE'] = (3*w/4 if self.cornerradius < w/4 else w-self.cornerradius, -h/2)
-        self.anchors['SSW'] = (w/4 if self.cornerradius < w/4 else self.cornerradius, -h/2)
-        self.anchors['ENE'] = (w, h/4 if self.cornerradius < h/4 else h/2-self.cornerradius)
-        self.anchors['ESE'] = (w, -h/4 if self.cornerradius < h/4 else -h/2+self.cornerradius)
-        self.anchors['WNW'] = (0, h/4 if self.cornerradius < h/4 else h/2-self.cornerradius)
-        self.anchors['WSW'] = (0, -h/4 if self.cornerradius < h/4 else -h/2+self.cornerradius)
+        self.anchors['NNE'] = (3*w/4 if cornerradius < w/4 else w-cornerradius, h/2)
+        self.anchors['NNW'] = (w/4 if cornerradius < w/4 else cornerradius, h/2)
+        self.anchors['SSE'] = (3*w/4 if cornerradius < w/4 else w-cornerradius, -h/2)
+        self.anchors['SSW'] = (w/4 if cornerradius < w/4 else cornerradius, -h/2)
+        self.anchors['ENE'] = (w, h/4 if cornerradius < h/4 else h/2-cornerradius)
+        self.anchors['ESE'] = (w, -h/4 if cornerradius < h/4 else -h/2+cornerradius)
+        self.anchors['WNW'] = (0, h/4 if cornerradius < h/4 else h/2-cornerradius)
+        self.anchors['WSW'] = (0, -h/4 if cornerradius < h/4 else -h/2+cornerradius)
 
 
 class Terminal(RoundBox):
@@ -145,20 +150,24 @@ class Terminal(RoundBox):
         Anchors:
             * 16 compass points (N, S, E, W, NE, NNE, etc.)
     '''
+    _element_defaults = {
+        'w': 3,
+        'h': 1.25,
+        'minsize': (3, 1.25),
+        'droptheta': -90,
+        'anchor': 'N'
+    }
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._size = 3, 1.25
-        self.params['droptheta'] = -90
-        self.params['anchor'] = 'N'
 
-    def _set_size(self):
-        super()._set_size()
-        _, h = self._size
-        self.cornerradius = h/2
+    def _set_size(self) -> tuple[float, float]:
+        w, h = super()._set_size()
+        self.elmparams['cornerradius'] = h/2
+        return w, h
 
     def _set_anchors(self):
         super()._set_anchors()
-        self.params['drop'] = self.anchors['S']
+        self.elmparams['drop'] = self.anchors['S']
 
 
 class Subroutine(Box):
@@ -168,25 +177,27 @@ class Subroutine(Box):
         Args:
             w: Width of box
             h: Height of box
-            s: spacing of side lines
+            s: spacing of side lines [default: 0.3]
 
         Anchors:
             * 16 compass points (N, S, E, W, NE, NNE, etc.)
     '''
-    def __init__(self, s: float = 0.3, **kwargs):
-        self.spacing = s
-        self._size = 3.5, 2
+    _element_defaults = {
+        's': 0.3
+    }
+    def __init__(self, s: Optional[float] = None, **kwargs):
         super().__init__(**kwargs)
 
-    def _set_size(self):
+    def _set_size(self) -> tuple[float, float]:
         w, h = super()._set_size()
-        w += self.spacing*2
-        self._size = w, h
-        
+        w += self.params['s']*2
+        self._userparams['w'] = w
+        return w, h
+
     def _set_segments(self):
         super()._set_segments()
-        w, h = self._size
-        s = self.spacing
+        w, h = self.params['w'], self.params['h']
+        s = self.params['s']
         self.segments.append(Segment([(w-s, h/2), (w-s, -h/2)]))
         self.segments.append(Segment([(s, h/2), (s, -h/2)]))
 
@@ -202,19 +213,21 @@ class Data(Box):
         Anchors:
             * 16 compass points (N, S, E, W, NE, NNE, etc.)
     '''
-    def __init__(self, s: float = 0.5, **kwargs):
+    _element_defaults = {
+        'slant': 0.5
+    }
+    def __init__(self, slant: Optional[float] = 0.5, **kwargs):
         super().__init__(**kwargs)
-        self.spacing = s
 
     def _set_segments(self):
-        w, h = self._size
-        s = self.spacing
+        w, h = self.params['w'], self.params['h']
+        s = self.params['slant']
         self.segments.append(SegmentPoly([(0, 0), (s/2, h/2), (w+s/2, h/2),
                                           (w-s/2, -h/2), (-s/2, -h/2)]))
 
     def _set_anchors(self):
-        w, h = self._size
-        s = self.spacing
+        w, h = self.params['w'], self.params['h']
+        s = self.params['slant']
         super()._set_anchors()
         self.anchors['N'] = (w/2+s/2, h/2)
         self.anchors['S'] = (w/2-s/2, -h/2)
@@ -243,7 +256,7 @@ class Ellipse(Box):
             * 16 compass points (N, S, E, W, NE, NNE, etc.)
     '''
     def _set_segments(self):
-        w, h = self._size
+        w, h = self.params['w'], self.params['h']
         # There's no ellipse Segment type, so draw one with a path Segment
         t = linspace(0, math.pi*2, num=50)
         y = [(h/2) * math.sin(t0) for t0 in t]
@@ -254,7 +267,7 @@ class Ellipse(Box):
 
     def _set_anchors(self):
         super()._set_anchors()
-        w, h = self._size
+        w, h = self.params['w'], self.params['h']
         sinpi4 = math.sin(math.pi/4)
         cospi4 = math.cos(math.pi/4)
         sinpi8 = math.sin(math.pi/8)
@@ -301,32 +314,29 @@ class Decision(Box):
         self._W = W
         self._S = S
 
-    def _set_size(self):
-        w, h = self._size
-        pad = self._userparams.get('pad', .25)
-        padw = padh = pad
+    def _set_size(self) -> tuple[float, float]:
+        minw, minh = self.params['minsize']
+        pad = self.params['pad']
         mainlabels = [label for label in self._userlabels if label.loc is None]
         if mainlabels:
-            w, h = labelsize(mainlabels[0], pad)
-            # h is set by pad, adjust w to fit full text
+            minw, minh = labelsize(mainlabels[0], pad)
             tantheta = math.tan(math.radians(25)) # = h/2 / extraw
-            fullw = w + (h/2/tantheta)
-            fullh = h + (tantheta*w)
-            w = max(fullw, self._size[0])
-            h = max(fullh, self._size[1])
+            fullw = minw + (minh/2/tantheta)
+            fullh = minh + (tantheta*minw)
+            minw = max(fullw, self.params['minsize'][0])
+            minh = max(fullh, self.params['minsize'][1])
 
-        w = self._userparams.get('w', w)
-        h = self._userparams.get('h', h)
-        self._size = w, h
-        return self._size
+        self._userparams.setdefault('w', minw)
+        self._userparams.setdefault('h', minh)
+        return self._userparams['w'], self._userparams['h']
         
     def _set_segments(self):
-        w, h = self._size
+        w, h = self.params['w'], self.params['h']
         font = self._font
         fontsize = self._fontsize
         self.segments.append(SegmentPoly([(0, 0), (w/2, h/2), (w, 0), (w/2, -h/2)]))
 
-        lblofst = .13        
+        lblofst = .13
         N, E, S, W = self._N, self._E, self._S, self._W
         if N:
             self.segments.append(SegmentText(
@@ -346,7 +356,7 @@ class Decision(Box):
                 font=font, fontsize=fontsize))
 
     def _set_anchors(self):
-        w, h = self._size
+        w, h = self.params['w'], self.params['h']
         super()._set_anchors()
         self.anchors['NE'] = (3*w/4, h/4)
         self.anchors['NW'] = (w/4, h/4)
@@ -371,35 +381,37 @@ class Connect(Box):
         Anchors:
             * 16 compass points (N, S, E, W, NE, NNE, etc.)
     '''
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self._size = 1.5, 1.5
-
-    def _set_size(self):
-        pad = self._userparams.get('pad', .25)
-
+    _element_defaults = {
+        'h': 1.5,
+        'w': 1.5,
+        'r': 0.75,
+        'minsize': (1.5, 1.5)
+    }
+    def _set_size(self) -> tuple[float, float]:
+        pad = self.params['pad']
         mainlabels = [label for label in self._userlabels if label.loc is None]        
         if mainlabels:
             w, h = labelsize(mainlabels[0], pad)
-            w = max(self._size[0], w)
-            h = max(self._size[1], h)
+            w = max(self.params['minsize'][0], w)
+            h = max(self.params['minsize'][1], h)
         else:
-            w, h = self._size
+            w, h = self.params['minsize']
 
         if 'r' in self._userparams:
             w = h = self._userparams.get('r')*2
-        self._size = w, h
-        return self._size
+        self._userparams.setdefault('w', w)
+        self._userparams.setdefault('h', h)
+        return self._userparams['w'], self._userparams['h']
 
     def _set_segments(self):
-        r2, _ = self._size
+        r2 = self.params['w']
         r = r2/2
         self.segments = []
         self.segments.append(SegmentCircle((r, 0), r))
 
     def _set_anchors(self):
         super()._set_anchors()
-        r2, _ = self._size
+        r2 = self.params['w']
         r = r2/2
         rsqrt2 = r * math.sqrt(2) / 2
         self.anchors['SE'] = (r+rsqrt2, -rsqrt2)
@@ -428,15 +440,16 @@ class StateEnd(Connect):
         Anchors:
             * 16 compass points (N, S, E, W, NE, NNE, etc.)
     '''
-    def _set_size(self):
+    def _set_size(self) -> tuple[float, float]:
         w, h = super()._set_size()
         dr = self._userparams.get('dr', .15)
-        self._size = w+dr*2, h+dr*2
-        return self._size
+        self.elmparams['w'] = w+dr*2
+        self.elmparams['h'] = h+dr*2
+        return self.params['w'], self.params['h']
         
     def _set_segments(self):
         super()._set_segments()
-        r2, _ = self._size
+        r2 = self.params['w']
         r = r2/2
         dr = self._userparams.get('dr', .15)
         self.segments.append(SegmentCircle((r, 0), r-dr))

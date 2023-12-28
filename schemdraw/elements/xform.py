@@ -1,4 +1,5 @@
 ''' Transformer element definitions '''
+from typing import Optional
 
 from ..segments import Segment, SegmentArc
 from .elements import Element
@@ -15,8 +16,8 @@ class Transformer(Element):
         Args:
             t1: Turns on primary (left) side
             t2: Turns on secondary (right) side
-            core: Draw the core (parallel lines)
-            loop: Use spiral/cycloid (loopy) style
+            core: Draw the core (parallel lines) [default: True]
+            loop: Use spiral/cycloid (loopy) style [default: False]
 
         Anchors:
             * p1: primary side 1
@@ -25,9 +26,15 @@ class Transformer(Element):
             * s2: secondary side 2
             * Other anchors defined by `taps` method
     '''
+    _element_defaults = {
+        'core': True,
+        'loop': False
+    }
     def __init__(self, *d,
-                 t1: int = 4, t2: int = 4, core: bool = True,
-                 loop: bool = False, **kwargs):
+                 t1: int = 4, t2: int = 4,
+                 core: Optional[bool] = None,
+                 loop: Optional[bool] = None,
+                 **kwargs):
         super().__init__(*d, **kwargs)
         ind_w = .4
         lbot = 0.
@@ -37,16 +44,16 @@ class Transformer(Element):
 
         # Adjust for loops or core
         ind_gap = .75
-        if loop:
+        if self.params['loop']:
             ind_gap = ind_gap + .4
-        if core:
+        if self.params['core']:
             ind_gap = ind_gap + .25
 
         ltapx = 0.
         rtapx = ind_gap
 
         # Draw coils
-        if loop:
+        if self.params['loop']:
             c1 = cycloid(loops=t1, ofst=(0, 0), norm=False, vertical=True)
             c2 = cycloid(loops=t2, ofst=(ind_gap, -rtop+ltop), norm=False,
                          flip=True, vertical=True)
@@ -66,7 +73,7 @@ class Transformer(Element):
                     (ind_gap, rtop-(i*ind_w+ind_w/2)),
                     theta1=90, theta2=270, width=ind_w, height=ind_w))
         # Add the core
-        if core:
+        if self.params['core']:
             top = max(ltop, rtop)
             bot = min(lbot, rbot)
             center = ind_gap/2

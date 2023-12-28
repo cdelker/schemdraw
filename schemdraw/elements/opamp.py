@@ -1,5 +1,5 @@
 ''' Operation amplifier '''
-
+from typing import Optional
 import math
 
 from .elements import Element, gap
@@ -15,7 +15,7 @@ oa_pluslen = .2
 class Opamp(Element):
     ''' Operational Amplifier.
 
-        Args:
+        Keyword Args:
             sign: Draw +/- labels at each input
             leads: Draw short leads on input/output
 
@@ -30,17 +30,23 @@ class Opamp(Element):
             * n1a
             * n2a
     '''
-    def __init__(self, *d, sign: bool = True, leads: bool = False, **kwargs):
+    _element_defaults = {
+        'sign': True,
+        'leads': False
+    }
+    def __init__(self, *d,
+                 sign: Optional[bool] = None,
+                 leads: Optional[bool] = None,
+                 **kwargs):
         super().__init__(*d, **kwargs)
-
         leadlen = oa_back/4
-        x = 0 if not leads else leadlen
+        x = 0 if not self.params['leads'] else leadlen
 
         self.segments.append(Segment(
             [(x, 0), (x, oa_back/2), (x+oa_xlen, 0), (x, -oa_back/2), (x, 0),
              gap, (x+oa_xlen, 0)]))
 
-        if sign:
+        if self.params['sign']:
             self.segments.append(Segment(
                 [(x+oa_lblx-oa_pluslen/2, oa_back/4),
                  (x+oa_lblx+oa_pluslen/2, oa_back/4)]))
@@ -51,7 +57,7 @@ class Opamp(Element):
                 [(x+oa_lblx, -oa_back/4-oa_pluslen/2),
                  (x+oa_lblx, -oa_back/4+oa_pluslen/2)]))
 
-        if leads:
+        if self.params['leads']:
             self.segments.append(Segment([(0, oa_back/4), (leadlen, oa_back/4)]))
             self.segments.append(Segment([(0, -oa_back/4), (leadlen, -oa_back/4)]))
             self.segments.append(Segment([(leadlen+oa_xlen, 0), (oa_xlen + 2*leadlen, 0)]))
@@ -66,4 +72,4 @@ class Opamp(Element):
         self.anchors['n2'] = (x+oa_xlen*2/3, .42)
         self.anchors['n1a'] = (x+oa_xlen*.9, -.13)
         self.anchors['n2a'] = (x+oa_xlen*.9, .13)
-        self.params['drop'] = (2*x+oa_xlen, 0)
+        self.elmparams['drop'] = (2*x+oa_xlen, 0)

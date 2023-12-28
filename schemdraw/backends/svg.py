@@ -171,8 +171,8 @@ def text_size(text: str, font: str = 'sans', size: float = 16) -> tuple[float, f
         for line in lines:
             maths.append(ziamath.Text(line, size=size, mathstyle=font, textfont=font))
         sizes = [m.getsize() for m in maths]
-        w: float = max([s[0] for s in sizes])
-        h: float = sum([s[1] for s in sizes])
+        w: float = max([s[0] for s in sizes if math.isfinite(s[0])])
+        h: float = sum([s[1] for s in sizes if math.isfinite(s[0])])
         textsize = (w, h, 0.)
     else:
         textsize = svgtext.text_approx_size(text, font=font, size=size)

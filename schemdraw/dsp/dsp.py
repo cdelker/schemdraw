@@ -25,13 +25,13 @@ class Square(Element):
         super().__init__(*d, **kwargs)
         self.segments.append(Segment([(0, 0), (0, .5), (1, .5),
                                       (1, -.5), (0, -0.5), (0, 0)]))
-        self.params['lblloc'] = 'center'
-        self.params['lblofst'] = 0
+        self.elmparams['lblloc'] = 'center'
+        self.elmparams['lblofst'] = 0
         self.anchors['N'] = (0.5, 0.5)
         self.anchors['S'] = (0.5, -0.5)
         self.anchors['E'] = (1, 0)
         self.anchors['W'] = (0, 0)
-        self.params['drop'] = (1, 0)
+        self.elmparams['drop'] = (1, 0)
 
 
 class Circle(Element):
@@ -47,14 +47,17 @@ class Circle(Element):
             * SW
             * SE
     '''
+    _element_defaults = {
+        'radius': 0.5
+    }
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
-        rad = .5
+        rad = self.params['radius']
         k = rad*math.sqrt(2)/2  # Diagonal distance
         self.segments.append(SegmentCircle((rad, 0), rad))
-        self.params['lblloc'] = 'center'
-        self.params['lblofst'] = 0
-        self.params['drop'] = (2*rad, 0)
+        self.elmparams['lblloc'] = 'center'
+        self.elmparams['lblofst'] = 0
+        self.elmparams['drop'] = (2*rad, 0)
         self.anchors['N'] = (rad, rad)
         self.anchors['S'] = (rad, -rad)
         self.anchors['E'] = (2*rad, 0)
@@ -133,8 +136,8 @@ class Mixer(Circle):
         k = rad*math.sqrt(2)/2  # Diagonal distance
         self.segments.append(Segment([(rad+k, k), (rad-k, -k)], lw=1))
         self.segments.append(Segment([(rad+k, -k), (rad-k, k)], lw=1))
-        self.params['lblloc'] = 'top'
-        self.params['lblofst'] = 0.2
+        self.elmparams['lblloc'] = 'top'
+        self.elmparams['lblofst'] = 0.2
         if N:
             self.segments.append(SegmentText(
                 (rad, rad/2+0.01), N,
@@ -176,7 +179,7 @@ class Amp(Element):
         ampl = .75
         self.segments.append(Segment([(0, 0), (0, -amph/2), (ampl, 0),
                                       (0, amph/2), (0, 0)]))
-        self.params['drop'] = (ampl, 0)
+        self.elmparams['drop'] = (ampl, 0)
         self.anchors['input'] = (0, 0)
         self.anchors['out'] = (ampl, 0)
 
@@ -270,9 +273,9 @@ class Adc(Element):
         super().__init__(*d, **kwargs)
         self.segments.append(Segment([(0, 0), (.22, .5), (1.4, .5), (1.4, -.5),
                                       (.22, -.5), (0, 0)]))
-        self.params['lblloc'] = 'center'
-        self.params['lblofst'] = 0
-        self.params['drop'] = (1.4, 0)
+        self.elmparams['lblloc'] = 'center'
+        self.elmparams['lblofst'] = 0
+        self.elmparams['drop'] = (1.4, 0)
         self.anchors['input'] = (0, 0)
         self.anchors['out'] = (1.4, 0)
         self.anchors['E'] = (1.4, 0)
@@ -292,9 +295,9 @@ class Dac(Element):
         super().__init__(*d, **kwargs)
         self.segments.append(Segment([(0, 0), (0, .5), (1.18, .5), (1.4, 0),
                                       (1.18, -.5), (0, -.5), (0, 0)]))
-        self.params['lblloc'] = 'center'
-        self.params['lblofst'] = 0
-        self.params['drop'] = (1.4, 0)
+        self.elmparams['lblloc'] = 'center'
+        self.elmparams['lblofst'] = 0
+        self.elmparams['drop'] = (1.4, 0)
         self.anchors['input'] = (0, 0)
         self.anchors['out'] = (1.4, 0)
         self.anchors['E'] = (1.4, 0)

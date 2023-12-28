@@ -1,5 +1,5 @@
 ''' Other elements '''
-
+from typing import Optional
 from .elements import Element, Element2Term, gap
 from .twoterm import resheight
 from ..segments import Segment, SegmentPoly, SegmentArc, SegmentCircle
@@ -75,7 +75,7 @@ class AudioJack(Element):
             switch: Show switch on tip contact
             ringswitch: Show switch on ring contact
             dots: Show connector dots
-            radius: Radius of connector dots
+            radius: Radius of connector dots [default: 0.075]
 
         Anchors:
             * tip
@@ -84,16 +84,21 @@ class AudioJack(Element):
             * ringswitch
             * tipswitch
     '''
+    _element_defaults = {
+        'radius': 0.075,
+        'open': True
+    }
     def __init__(self, *d,
-                 radius: float = 0.075,
+                 radius: Optional[float] = None,
                  ring: bool = False,
                  ringswitch: bool = False,
                  dots: bool = True,
                  switch: bool = False,
-                 open: bool = True,
+                 open: Optional[bool] = None,
                  **kwargs):
         super().__init__(*d, **kwargs)
-        fill = 'bg' if open else None
+        fill = 'bg' if self.params['open'] else None
+        r = self.params['radius']
 
         length = 2.0
         ringlen = .75
@@ -115,10 +120,10 @@ class AudioJack(Element):
 
         if ring:
             if dots:
-                self.segments.append(SegmentCircle((0, -sleevey), radius,
+                self.segments.append(SegmentCircle((0, -sleevey), r,
                                                    fill=fill, zorder=4))
             self.segments.append(Segment(
-                [(-radius, -sleevey), (-length, -sleevey),
+                [(-r, -sleevey), (-length, -sleevey),
                  (-length, 0), (-length, sleeveheight),
                  (-length-swidth, sleeveheight),
                  (-length-swidth, 0), (-length, 0)]))
@@ -126,35 +131,35 @@ class AudioJack(Element):
 
             if dots:
                 self.segments.append(SegmentCircle(
-                    (0,  ringy), radius, fill=fill, zorder=4))
+                    (0,  ringy), r, fill=fill, zorder=4))
             self.segments.append(Segment(
-                [(-radius, ringy), (-length*.75, ringy),
-                 (-length*ringlen-2*radius, ringy+2*radius),
-                 (-length*ringlen-radius*4, ringy)]))
+                [(-r, ringy), (-length*.75, ringy),
+                 (-length*ringlen-2*r, ringy+2*r),
+                 (-length*ringlen-r*4, ringy)]))
             self.anchors['ring'] = (0, ringy)
 
         else:
             if dots:
                 self.segments.append(SegmentCircle(
-                    (0, 0), radius, fill=fill, zorder=4))
+                    (0, 0), r, fill=fill, zorder=4))
             self.segments.append(Segment(
-                [(-radius, 0), (-length, 0), (-length, sleeveheight),
+                [(-r, 0), (-length, 0), (-length, sleeveheight),
                  (-length+swidth, sleeveheight), (-length+swidth, 0)]))
             self.anchors['sleeve'] = (0, 0)
 
         if dots:
             self.segments.append(SegmentCircle(
-                (0, tipy), radius, fill=fill, zorder=4))
+                (0, tipy), r, fill=fill, zorder=4))
         self.segments.append(Segment(
-            [(-radius, tipy), (-length*.55, tipy),
-             (-length*tiplen-2*radius, tipy-2*radius),
-             (-length*tiplen-radius*4, tipy)]))
+            [(-r, tipy), (-length*.55, tipy),
+             (-length*tiplen-2*r, tipy-2*r),
+             (-length*tiplen-r*4, tipy)]))
         self.anchors['tip'] = (0, tipy)
 
         if switch:
             if dots:
                 self.segments.append(SegmentCircle(
-                    (0, tipy-swdy), radius, fill=fill, zorder=4))
+                    (0, tipy-swdy), r, fill=fill, zorder=4))
             self.segments.append(Segment(
                 [(0, tipy-swdy), (-swlen, tipy-swdy)]))
             self.segments.append(Segment([(-swlen, tipy-swdy), (-swlen, tipy)], arrow='->'))
@@ -163,7 +168,7 @@ class AudioJack(Element):
         if ring and ringswitch:
             if dots:
                 self.segments.append(SegmentCircle(
-                    (0, ringy+swdy), radius, fill=fill, zorder=4))
+                    (0, ringy+swdy), r, fill=fill, zorder=4))
             self.segments.append(Segment(
                 [(0, ringy+swdy), (-swlen, ringy+swdy)]))
             self.segments.append(Segment([(-swlen, ringy+swdy), (-swlen, ringy)], arrow='->'))

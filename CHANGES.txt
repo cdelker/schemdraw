@@ -4,6 +4,7 @@ v0.18 - IN PROGRESS
         - Automatically increase size of flowchart boxes to fit the text
         - Added Container element to automatically draw a box around a group of elements
         - Internally track drawing state so that `d.add` or `d +=` is no longer necessary when adding elements inside a context manager
+        - Default element attributes may be set using `Element.defaults` dictionary. For example, to fill all Diodes, set `elm.Diode.defaults['fill'] = True`.
 
     New Elements:
         - Lamp2

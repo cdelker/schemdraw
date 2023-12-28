@@ -219,8 +219,8 @@ class SwitchRotary(Element):
                  arrowcontact: int = 0,
                  **kwargs):
         super().__init__(*d, **kwargs)
-        self.params['fill'] = 'bg'
-        self.params['zorder'] = 4
+        self.elmparams['fill'] = 'bg'
+        self.elmparams['zorder'] = 4
         self.segments.append(SegmentCircle((0, 0), sw_dot_r))
         self.anchors['P'] = (0, 0)
 
@@ -250,32 +250,38 @@ class SwitchDIP(Element):
         Args:
             n: Number of switches
             pattern: Boolean sequence indicating whether each switch is flipped up or down
-            switchcolor: Fill color for flipped switches
-            swidth: Width of one switch
-            spacing: Spacing between switches
+            switchcolor: Fill color for flipped switches [default: #333333]
+            swidth: Width of one switch [default: 0.4]
+            spacing: Spacing between switches [default: 0.2]
     '''
+    _element_defaults = {
+        'switchcolor': '#333333',
+        'swidth': 0.4,
+        'spacing': 0.2
+    }
     def __init__(self, *d,
                  n: int = 3,
                  pattern: Optional[Sequence[bool]] = None,
-                 switchcolor: str = '#333333',
-                 swidth: float = 0.4,
-                 spacing: float = 0.2,
+                 switchcolor: Optional[str] = None,
+                 swidth: Optional[float] = None,
+                 spacing: Optional[float] = None,
                  **kwargs):
         super().__init__(*d, **kwargs)
-
-        width = swidth * n + spacing*(n+1)
-        height = swidth*2 + spacing * 2
+        _swidth: float = self.params['swidth']
+        _spacing: float = self.params['spacing']
+        width = _swidth * n + _spacing*(n+1)
+        height = _swidth*2 + _spacing * 2
 
         self.segments.append(SegmentPoly(((0, 0), (width, 0), (width, height), (0, height))))
         for i in range(n):
-            x = spacing * (i+1) + swidth * i
+            x = _spacing * (i+1) + _swidth * i
             up = pattern and pattern[i]
             down = pattern and not pattern[i]
-            self.segments.append(SegmentPoly(((x, spacing+swidth), (x+swidth, spacing+swidth),
-                                              (x+swidth, spacing+swidth*2), (x, spacing+swidth*2)),
-                                             fill=switchcolor if up else None))  # Upper
-            self.segments.append(SegmentPoly(((x, spacing), (x+swidth, spacing),
-                                              (x+swidth, spacing+swidth), (x, spacing+swidth)),
-                                             fill=switchcolor if down else None))  # Lower
-            self.anchors[f'a{i+1}'] = (x + swidth/2, 0)
-            self.anchors[f'b{i+1}'] = (x + swidth/2, height)
+            self.segments.append(SegmentPoly(((x, _spacing+_swidth), (x+_swidth, _spacing+_swidth),
+                                              (x+_swidth, _spacing+_swidth*2), (x, _spacing+_swidth*2)),
+                                             fill=self.params['switchcolor'] if up else None))  # Upper
+            self.segments.append(SegmentPoly(((x, _spacing), (x+_swidth, _spacing),
+                                              (x+_swidth, _spacing+_swidth), (x, _spacing+_swidth)),
+                                             fill=self.params['switchcolor'] if down else None))  # Lower
+            self.anchors[f'a{i+1}'] = (x + _swidth/2, 0)
+            self.anchors[f'b{i+1}'] = (x + _swidth/2, height)

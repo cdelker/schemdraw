@@ -123,22 +123,33 @@ class TimingDiagram(Element):
                    'N': WaveClk,
                    'P': WaveClk,
                    }
-
+    _element_defaults = {
+        'yheight': 0.5,
+        'ygap': 0.3,
+        'risetime': 0.15,
+        'fontsize': 12,
+        'nodesize': 8,
+        'namecolor': 'blue',
+        'datacolor': None,  # Inherit
+        'nodecolor': None,  # Inherit
+        'gridcolor': '#DDDDDD',
+        'edgecolor': 'blue',
+        'grid': True,
+    }
     def __init__(self, waved: dict[str, str], **kwargs):
         super().__init__(**kwargs)
         self.wave = waved
-
-        self.yheight = kwargs.pop('yheight', .5)
-        self.ygap = kwargs.pop('ygap', .3)
-        self.risetime = kwargs.pop('risetime', .15)
-        self.fontsize = kwargs.pop('fontsize', 12)
-        self.nodesize = kwargs.pop('nodesize', 8)
-        self.namecolor = kwargs.pop('namecolor', 'blue')
-        self.datacolor = kwargs.pop('datacolor', None)  # default: get color from theme
-        self.nodecolor = kwargs.pop('nodecolor', None)
-        self.gridcolor = kwargs.pop('gridcolor', '#DDDDDD')
-        self.edgecolor = kwargs.pop('edgecolor', 'blue')
-        self.grid = kwargs.pop('grid', True)
+        self.yheight = self.params['yheight']
+        self.ygap = self.params['ygap']
+        self.risetime = self.params['risetime']
+        self.fontsize = self.params['fontsize']
+        self.nodesize = self.params['nodesize']
+        self.namecolor = self.params['namecolor']
+        self.datacolor = self.params['datacolor']  # default: get color from theme
+        self.nodecolor = self.params['nodecolor']
+        self.gridcolor = self.params['gridcolor']
+        self.edgecolor = self.params['edgecolor']
+        self.grid = self.params['grid']
         self.kwargs = kwargs
 
         signals = self.wave.get('signal', [])  # type: ignore
@@ -201,8 +212,8 @@ class TimingDiagram(Element):
         phase = signal.get('phase', 0)
         waverise = signal.get('risetime', None)
         wavekwargs = ChainMap({'color': signal.get('color', None),
-                               'lw': signal.get('lw', 1)}, self.kwargs)
-
+                               'lw': signal.get('lw', 1),
+                               'clip': self.kwargs.get('clip')})
         data = signal.get('data', [])
         if not isinstance(data, list):
             data = data.split()  # Sometimes it's a space-separated string...
@@ -264,7 +275,8 @@ class TimingDiagram(Element):
         wave = signal.get('wave', '')
         waverise = signal.get('risetime', None)
         wavekwargs = ChainMap({'color': signal.get('color', None),
-                               'lw': signal.get('lw', 1)}, self.kwargs)
+                               'lw': signal.get('lw', 1), 
+                               'clip': self.kwargs.get('clip')})
         rise = waverise if waverise is not None else self.risetime
 
         data = signal.get('data', [])

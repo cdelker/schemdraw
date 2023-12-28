@@ -74,7 +74,7 @@ class ElementTwoport(ElementCompound):
         # draw outline
         bbox = self.get_bbox()
         if self.box:
-            self.add(elm.Rect('r', at=[0, 0],
+            self.add(elm.Rect(theta=0, at=[0, 0],
                               corner1=(0, bbox.ymin - self.boxpady), corner2=(self.width, bbox.ymax + self.boxpady),
                               fill=self.boxfill, lw=self.boxlw, ls=self.boxls, zorder=0))
 

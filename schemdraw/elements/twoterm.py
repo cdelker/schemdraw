@@ -1,6 +1,7 @@
 ''' Two-terminal element definitions '''
 
 from __future__ import annotations
+from typing import Optional
 import math
 from typing import Sequence
 
@@ -96,13 +97,16 @@ class Capacitor(Element2Term):
         Args:
             polar: Add polarity + sign
     '''
-    def __init__(self, *d, polar: bool = False, **kwargs):
+    _element_defaults = {
+        'polar': False
+    }
+    def __init__(self, *d, polar: Optional[bool] = None, **kwargs):
         super().__init__(*d, **kwargs)
         capgap = 0.18
         self.segments.append(Segment([(0, 0), gap, (0, resheight), (0, -resheight), gap,
                                      (capgap, resheight), (capgap, -resheight), gap,
                                      (capgap, 0)]))
-        if polar:
+        if self.params['polar']:
             self.segments.append(SegmentText((-capgap*1.2, capgap), '+'))
 
 
@@ -112,7 +116,10 @@ class Capacitor2(Element2Term):
         Args:
             polar: Add polarity + sign
     '''
-    def __init__(self, *d, polar: bool = False, **kwargs):
+    _element_defaults = {
+        'polar': False
+    }
+    def __init__(self, *d, polar: Optional[bool] = None, **kwargs):
         super().__init__(*d, **kwargs)
         capgap = 0.18
         self.segments.append(Segment([(0, 0), gap, (0, resheight),
@@ -120,7 +127,7 @@ class Capacitor2(Element2Term):
         self.segments.append(SegmentArc((capgap*1.5, 0), width=capgap*1.5,
                                         height=resheight*2.5, theta1=105, theta2=-105))
 
-        if polar:
+        if self.params['polar']:
             self.segments.append(SegmentText((-capgap*1.2, capgap), '+'))
 
 
@@ -314,7 +321,7 @@ class PotentiometerIEC(ResistorIEC):
         super().__init__(*d, **kwargs)
         potheight = .72
         self.anchors['tap'] = (reswidth*3, potheight)
-        self.params['lblloc'] = 'bot'
+        self.elmparams['lblloc'] = 'bot'
         self.segments.append(Segment([(reswidth*3, potheight), (reswidth*3, reswidth*2)],
                                      arrow='->', arrowwidth=.15, arrowlength=.22))
 
@@ -404,14 +411,17 @@ class FuseUS(Element2Term):
         Args:
             dots: Show dots on connections to fuse
     '''
-    def __init__(self, *d, dots: bool = True, **kwargs):
+    _element_defaults = {
+        'dots': True
+    }
+    def __init__(self, *d, dots: Optional[bool] = None, **kwargs):
         super().__init__(*d, **kwargs)
         fuser = .12
         fusex = linspace(fuser*2, 1+fuser)
         fusey = [math.sin(x) * resheight for x in linspace(0, 2*math.pi)]
         self.segments.append(Segment(list(zip(fusex, fusey))))
         self.segments.append(Segment([(0, 0), gap, (1+fuser*3, 0)]))
-        if dots:
+        if self.params['dots']:
             self.fill(kwargs.get('fill', 'bg'))
 
     def fill(self, color: bool | str = True) -> 'Element':
@@ -448,7 +458,10 @@ class Breaker(Element2Term):
         Args:
             dots: Show connection dots
     '''
-    def __init__(self, *d, dots: bool = True, **kwargs):
+    _element_defaults = {
+        'dots': True
+    }
+    def __init__(self, *d, dots: Optional[bool] = None, **kwargs):
         super().__init__(*d, **kwargs)
         theta1 = 25 if dots else 10
         theta2 = 155 if dots else 170
@@ -456,7 +469,7 @@ class Breaker(Element2Term):
             [(0, 0), gap, (1, 0)]))
         self.segments.append(SegmentArc(
             (.5, 0), 1, .65, theta1=theta1, theta2=theta2))
-        if dots:
+        if self.params['dots']:
             rad = .12
             self.segments.append(SegmentCircle((rad, 0), rad, zorder=4))
             self.segments.append(SegmentCircle((1-rad, 0), rad, zorder=4))
@@ -519,11 +532,14 @@ class Inductor2(Element2Term):
     ''' Inductor, drawn as cycloid (loopy)
 
         Args:
-            loops: Number of inductor loops
+            loops: Number of inductor loops [default: 4]
     '''
-    def __init__(self, *d, loops: int = 4, **kwargs):
+    _element_defaults = {
+        'loops': 4,
+    }
+    def __init__(self, *d, loops: Optional[int] = None, **kwargs):
         super().__init__(*d, **kwargs)
-        self.segments.append(Segment(cycloid(loops=loops)))
+        self.segments.append(Segment(cycloid(loops=self.params['loops'])))
 
 
 class CPE(Element2Term):
@@ -561,7 +577,7 @@ class Nullator(Element2Term):
         super().__init__(*args, **kwargs)
         self.segments.append(Segment([[0, 0], [0, 0], gap, [1, 0], [1, 0]]))
         self.segments.append(SegmentArc(center=[0.5,0], width=1, height=0.5, theta1=0, theta2=360))
-        self.params['theta'] = 90
+        self.elmparams['theta'] = 90
 
 
 class Norator(Element2Term):
@@ -571,7 +587,7 @@ class Norator(Element2Term):
         self.segments.append(Segment([[0, 0], [0, 0], gap, [1, 0], [1, 0]]))
         self.segments.append(SegmentCircle([0.25, 0], 0.25,))
         self.segments.append(SegmentCircle([1-0.25, 0], 0.25,))
-        self.params['theta'] = 90
+        self.elmparams['theta'] = 90
 
 
 class CurrentMirror(Element2Term):
@@ -582,7 +598,6 @@ class CurrentMirror(Element2Term):
     '''
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
-
         self.segments.append(Segment([(0, 0), (0, 0), gap, (1, 0), (1, 0)]))
         # in order to prevent graphical glitches due to overlapping outlines when filling, draw fill before outline
         # fill is drawn here. The outline is disabled to prevent anti-aliasing glitches
@@ -593,7 +608,7 @@ class CurrentMirror(Element2Term):
         # outline is drawn here, without fill to prevent the glitch
         self.segments.append(SegmentCircle([0.3, 0], 0.3, fill=False))
         self.segments.append(SegmentCircle([1 - 0.3, 0], 0.3, fill=False))
-        self.params['theta'] = 90
+        self.elmparams['theta'] = 90
         self.anchors['common'] = (0.5, math.sqrt(0.3**2 - 0.2**2))
 
 
@@ -607,11 +622,10 @@ class VoltageMirror(Element2Term):
     '''
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
-
         self.segments.append(Segment([[0, 0], [0, 0], gap, [1, 0], [1, 0]]))
         self.segments.append(SegmentArc(center=[0.7, 0], width=0.6, height=0.3, theta1=0, theta2=360))
         self.segments.append(SegmentArc(center=[0.3, 0], width=0.6, height=0.3, theta1=0, theta2=360))
-        self.params['theta'] = 90
+        self.elmparams['theta'] = 90
         self.anchors['common'] = (0.5, math.sqrt(1 - 0.2**2/0.3**2)*0.15)
 
 

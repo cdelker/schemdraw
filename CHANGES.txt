@@ -1,4 +1,4 @@
-v0.18 - IN PROGRESS
+v0.18 - 2023-12-29
 
     Enhancements:
         - Automatically increase size of flowchart boxes to fit the text

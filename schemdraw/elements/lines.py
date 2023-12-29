@@ -1231,8 +1231,8 @@ class EncircleBox(Element):
         self._userparams['at'] = center
         self.segments = [SegmentPoly(
             [(-w/2, h/2), (w/2, h/2), (w/2, -h/2), (-w/2, -h/2)],
-            cornerradius=self.params['cornerradiuss'])]
-        k = self.params['cornerradiuss'] - self.params['cornerradiuss']*math.sqrt(2)/2
+            cornerradius=self.params['cornerradius'])]
+        k = self.params['cornerradius'] - self.params['cornerradius']*math.sqrt(2)/2
         self.anchors['NE'] = (w/2-k, h/2-k)
         self.anchors['NW'] = (-w/2+k, h/2-k)
         self.anchors['SE'] = (w/2-k, -h/2+k)

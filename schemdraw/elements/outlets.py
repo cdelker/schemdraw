@@ -2,6 +2,7 @@
 
     Reference: https://www.worldstandards.eu/electricity/plugs-and-sockets/
 '''
+from __future__ import annotations
 import math
 
 from schemdraw.segments import Segment, SegmentPoly, SegmentCircle

@@ -1,4 +1,5 @@
 ''' One terminal element definitions '''
+from __future__ import annotations
 from typing import Optional
 
 from ..segments import Segment

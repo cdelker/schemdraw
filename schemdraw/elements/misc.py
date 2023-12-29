@@ -1,4 +1,5 @@
 ''' Other elements '''
+from __future__ import annotations
 from typing import Optional
 from .elements import Element, Element2Term, gap
 from .twoterm import resheight

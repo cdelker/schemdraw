@@ -1,5 +1,5 @@
 ''' Karnaugh Map '''
-
+from __future__ import annotations
 from typing import Optional, Sequence, Union
 import math
 

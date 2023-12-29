@@ -1,5 +1,6 @@
 ''' Switches and buttons '''
 
+from __future__ import annotations
 from typing import Optional, Sequence
 import math
 

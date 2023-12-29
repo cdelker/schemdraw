@@ -1,5 +1,6 @@
 ''' Signal processing elements '''
 
+from __future__ import annotations
 import math
 from typing import Optional, Sequence, Literal
 

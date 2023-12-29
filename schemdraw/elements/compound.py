@@ -1,5 +1,6 @@
 ''' Compound elements made from groups of other elements '''
 
+from __future__ import annotations
 from typing import Optional, Sequence, Union
 
 from ..import elements as elm

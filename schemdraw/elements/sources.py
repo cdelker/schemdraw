@@ -1,5 +1,6 @@
 ''' Sources, meters, and lamp elements '''
 
+from __future__ import annotations
 import math
 
 from .elements import Element2Term, gap

@@ -1,5 +1,6 @@
 ''' Matplotlib drawing backend for schemdraw '''
 
+from __future__ import annotations
 from typing import Optional, Sequence
 from io import BytesIO
 import math

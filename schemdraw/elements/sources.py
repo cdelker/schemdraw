@@ -15,7 +15,7 @@ class Source(Element2Term):
         super().__init__(*d, **kwargs)
         self.segments.append(Segment([(0, 0), (0, 0), gap, (1, 0), (1, 0)]))
         self.segments.append(SegmentCircle((0.5, 0), 0.5,))
-        self.params['theta'] = 90
+        self.elmparams['theta'] = 90
 
 
 class SourceV(Source):

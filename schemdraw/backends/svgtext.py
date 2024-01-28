@@ -392,7 +392,7 @@ def text_tosvg(text: str, x: float, y: float, font: str = 'Arial', size: float =
     pymin = min(p1[1], p2[1], p3[1], p4[1])
     pymax = max(p1[1], p2[1], p3[1], p4[1])
 
-    dx = dy = 0
+    dx = dy = 0.
     if rotation != 0 and rotation_mode == 'default':
         if halign == 'left':
             dx = x-pxmin

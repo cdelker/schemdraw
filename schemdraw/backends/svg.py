@@ -418,7 +418,9 @@ class Figure:
 
     def arc(self, center: XY, width: float, height: float,
             theta1: float = 0, theta2: float = 90, angle: float = 0,
-            color: str = 'black', lw: float = 2, ls: Linestyle = '-', zorder: int = 1,
+            color: str = 'black', lw: float = 2, ls: Linestyle = '-',
+            fill: Optional[str] = None,
+            zorder: int = 1,
             arrow: Optional[str] = None, clip: Optional[BBox] = None) -> None:
         ''' Draw an arc or ellipse, with optional arrowhead '''
         centerx, centery = self.xform(*center)
@@ -458,7 +460,7 @@ class Figure:
             et.set('ry', str(height/2))
             if angle != 0:
                 et.set('transform', f'rotate({angle} {centerx} {centery})')
-            et.set('style', getstyle(color=color, ls=ls, lw=lw))
+            et.set('style', getstyle(color=color, ls=ls, lw=lw, fill=fill))
             self.addclip(et, clip)
             self.svgelements.append((zorder, et))
 

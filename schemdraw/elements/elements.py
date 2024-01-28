@@ -177,7 +177,6 @@ class Element:
             Args:
                 xy: (x,y) position or tuple of (Element, anchorname)
         '''
-        xy = Point(xy)
         if 'at' in self._userparams:
             warnings.warn("Duplicate `at` parameter in element: "
                           f"`{self._userparams['at']}` changed to `{xy}`.")
@@ -186,12 +185,23 @@ class Element:
             if dx != 0 or dy != 0:
                 raise ValueError('dx and dy must be zero for anchorname XY')
         else:
+            xy = Point(xy)
             self._userparams['at'] = Point((xy.x + dx, xy.y + dy))
         return self
 
     def scale(self, scale: float = 1) -> 'Element':
         ''' Apply scale/zoom factor to element '''
         self._userparams['zoom'] = scale
+        return self
+
+    def scalex(self, scale: float = 1) -> 'Element':
+        ''' Apply horizontal scale/zoom to element '''
+        self._userparams['zoom'] = Point((scale, 1.))
+        return self
+
+    def scaley(self, scale: float = 1) -> 'Element':
+        ''' Apply vertical scale/zoom to element '''
+        self._userparams['zoom'] = Point((1., scale))
         return self
 
     def flip(self) -> 'Element':
@@ -532,6 +542,7 @@ class Element:
                 label: The label to position
                 theta: Element drawing direction
         '''
+        ##import pdb; pdb.set_trace()
         if label.align is None:
             if label.loc == 'center':
                 align: Align = ('center', 'center')
@@ -921,7 +932,11 @@ class Element2Term(Element):
             in_path = self.segments[0].path  # type: ignore
             dz = util.delta(in_path[-1], in_path[0])   # Defined delta of path
             in_len = math.hypot(*dz)    # Defined length of path
-            lead_len = (totlen - in_len*zoom)/2 / zoom
+            try:
+                # Zoom is a Point
+                lead_len = (totlen - in_len*zoom[0])/2 / zoom[0]
+            except TypeError:
+                lead_len = (totlen - in_len*zoom)/2 / zoom
 
             if lead_len > 0:  # Don't make element shorter
                 start = Point(in_path[0]) - Point((lead_len, 0))

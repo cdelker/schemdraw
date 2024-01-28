@@ -218,8 +218,10 @@ class Figure:
     def arc(self, center: XY, width: float, height: float,
             theta1: float = 0, theta2: float = 90, angle: float = 0,
             color: str = 'black', lw: float = 2, ls: Linestyle = '-',
+            fill: Optional[str] = None,
             zorder: int = 1, clip: Optional[BBox] = None, arrow: Optional[str] = None) -> None:
         ''' Draw an arc or ellipse, with optional arrowhead '''
+        # MPL doesn't support filled arcs
         arc = Arc(center, width=width, height=height, theta1=theta1,
                   theta2=theta2, angle=angle, color=color,
                   lw=lw, ls=ls, zorder=zorder)

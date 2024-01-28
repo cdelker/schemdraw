@@ -567,7 +567,7 @@ class SegmentCircle:
         ''' Flip the segment up/down '''
         self.center = util.flip(self.center)
 
-    def xform(self, transform, **style) -> 'SegmentCircle':
+    def xform(self, transform, **style) -> 'SegmentCircle' | 'SegmentArc':
         ''' Return a new Segment that has been transformed
             to its global position
 
@@ -586,8 +586,18 @@ class SegmentCircle:
             'visible': self.visible}
         style = {k: v for k, v in style.items() if params.get(k) is None and k in params.keys()}
         params.update(style)
-        return SegmentCircle(transform.transform(self.center),
-                             self.radius*transform.zoom, **params)
+        if transform.zoom[0] == transform.zoom[1]:
+            # It stays a circle
+            return SegmentCircle(transform.transform(self.center),
+                                 self.radius*transform.zoom[0], **params)
+        
+        # Asymmetric zoom makes circle into ellipse
+        params.pop('ref', None)  # Not implemented in SegmentArc
+        return SegmentArc(self.center,
+                          width=self.radius*2*transform.zoom[0],
+                          height=self.radius*2*transform.zoom[1],
+                          angle=transform.theta,
+                          theta1=0, theta2=360, **params)
 
     def get_bbox(self) -> BBox:
         ''' Get bounding box (untransformed)
@@ -612,7 +622,6 @@ class SegmentCircle:
         if not self.visible:
             return
         center = transform.transform(self.center)
-        radius = transform.zoom * self.radius
         zorder = self.zorder if self.zorder is not None else style.get('zorder', 1)
         color = self.color if self.color else style.get('color', 'black')
         fill = self.fill if self.fill is not None else style.get('fill', None)
@@ -628,8 +637,18 @@ class SegmentCircle:
                 fill = style.get('bgcolor', 'white')
 
         fill = color if fill is True else None if fill is False else fill
-        fig.circle(center, radius, color=color, fill=fill,
-                   lw=lw, ls=ls, clip=self.clip, zorder=zorder)
+
+        if transform.zoom[0] == transform.zoom[1]:
+            radius = transform.zoom[0] * self.radius
+            fig.circle(center, radius, color=color, fill=fill,
+                       lw=lw, ls=ls, clip=self.clip, zorder=zorder)
+        else:
+            width = self.radius * 2 * transform.zoom[0]
+            height = self.radius * 2 * transform.zoom[1]
+            fig.arc(center, width=width, height=height,
+                    theta1=0, theta2=360, angle=transform.theta,
+                    color=color, lw=lw, ls=ls, fill=fill,
+                    clip=self.clip, zorder=zorder)
 
 
 class SegmentBezier:
@@ -764,6 +783,7 @@ class SegmentArc:
                  color: Optional[str] = None,
                  lw: Optional[float] = None,
                  ls: Optional[Linestyle] = None,
+                 fill: Optional[str] = None,
                  clip: Optional[BBox] = None,
                  zorder: Optional[int] = None,
                  visible: bool = True):
@@ -777,6 +797,7 @@ class SegmentArc:
         self.color = color
         self.lw = lw
         self.ls = ls
+        self.fill = fill
         self.clip = clip
         self.zorder = zorder
         self.visible = visible
@@ -806,13 +827,14 @@ class SegmentArc:
             'color': self.color if self.color else style.get('color', None),
             'lw': self.lw if self.lw else style.get('lw', None),
             'ls': self.ls if self.ls else style.get('ls', None),
+            'fill': self.fill if self.fill else style.get('fill', None),
             'clip': self.clip,
             'zorder': self.zorder if self.zorder is not None else style.get('zorder', None),
             'visible': self.visible}
         style = {k: v for k, v in style.items() if params.get(k) is None and k in params.keys()}
         params.update(style)
         return SegmentArc(transform.transform(self.center),
-                          self.width*transform.zoom, self.height*transform.zoom, angle=angle,
+                          self.width*transform.zoom[0], self.height*transform.zoom[1], angle=angle,
                           theta1=self.theta1, theta2=self.theta2, **params)
 
     def get_bbox(self) -> BBox:
@@ -858,12 +880,14 @@ class SegmentArc:
         color = self.color if self.color else style.get('color', 'black')
         ls = self.ls if self.ls else style.get('ls', '-')
         lw = self.lw if self.lw else style.get('lw', 2)
+        fill = self.fill if self.fill else style.get('fill', None)
 
-        width = self.width * transform.zoom
-        height = self.height * transform.zoom
+        width = self.width * transform.zoom[0]
+        height = self.height * transform.zoom[1]
         fig.arc(center, width=width, height=height,
                 theta1=self.theta1, theta2=self.theta2, angle=angle,
-                color=color, lw=lw, ls=ls, clip=self.clip, zorder=zorder, arrow=self.arrow)
+                color=color, lw=lw, ls=ls, fill=fill,
+                clip=self.clip, zorder=zorder, arrow=self.arrow)
 
 
 class SegmentArrow(Segment):

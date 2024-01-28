@@ -19,10 +19,12 @@ class Transform:
             zoom: Zoom factor
     '''
     def __init__(self, theta: float, globalshift: XY,
-                 localshift: XY = (0, 0), zoom: float = 1):
+                 localshift: XY = (0, 0), zoom: XY | float = Point((1, 1))):
         self.theta = theta
         self.shift = Point(globalshift)
         self.localshift = Point(localshift)
+        if isinstance(zoom, (int, float)):
+            zoom = Point((zoom, zoom))
         self.zoom = zoom
 
     def __repr__(self):

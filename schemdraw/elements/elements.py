@@ -903,6 +903,7 @@ class Element2Term(Element):
             endpt = Point((x, xy[1]))
             totlen = util.dist(xy, endpt)
             theta = 180 if xy.x > x else 0
+            self.elmparams['theta'] = theta
         elif toy is not None:
             # Allow either full coordinate (only keeping y), or just a y value
             if isinstance(toy, (int, float)):
@@ -912,6 +913,7 @@ class Element2Term(Element):
             endpt = Point((xy[0], y))
             totlen = util.dist(xy, endpt)
             theta = -90 if xy.y > y else 90
+            self.elmparams['theta'] = theta
 
         self.anchors['istart'] = self.segments[0].path[0]  # type: ignore
         self.anchors['iend'] = self.segments[0].path[-1]  # type: ignore

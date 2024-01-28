@@ -267,14 +267,21 @@ class Figure:
     def text(self, s: str, x: float, y: float, color: str = 'black',
              fontsize: float = 14, fontfamily: str = 'sans',
              mathfont: Optional[str] = None,
-             rotation: float = 0, halign: Halign = 'center',
+             rotation: float = 0,
+             halign: Halign = 'center',
              valign: Valign = 'center',
-             rotation_mode: RotationMode = 'anchor', clip: Optional[BBox] = None, zorder: int = 3) -> None:
+             rotation_mode: RotationMode = 'anchor',
+             clip: Optional[BBox] = None, zorder: int = 3) -> None:
         ''' Add text to the figure '''
         if s == '':
             return
 
-        y += fontsize/72*2/6  # A bit of baseline shift to match MPL
+        # Add a bit of baseline shift to match MPL
+        if valign == 'bottom':
+            y += fontsize/72*2/6
+        elif valign == 'top':
+            y -= fontsize/72*2/6
+            
         x0, y0 = self.xform(x, y)
         x, y = x0, y0
 

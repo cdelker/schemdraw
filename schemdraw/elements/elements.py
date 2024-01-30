@@ -73,10 +73,6 @@ class Element:
         self.absanchors: MutableMapping[str, Any] = {}  # Transformed, absolute anchors
         self.segments: list[SegmentType] = []
         self.transform = Transform(0, (0, 0))
-
-        # defines whether a current label can be drawn on each side
-        self._allowed_sides = [False, True, False, True]  # right, top, left, bottom
-        self._bias_direction: Optional[str] = None  # defines direction of bias current 'right', 'top', 'left', 'bottom', or None
         self._positioned = False  # Has the element been placed in a drawing via self._position()?
 
         if 'xy' in self._userparams:  # Allow legacy 'xy' parameter
@@ -542,7 +538,6 @@ class Element:
                 label: The label to position
                 theta: Element drawing direction
         '''
-        ##import pdb; pdb.set_trace()
         if label.align is None:
             if label.loc == 'center':
                 align: Align = ('center', 'center')
@@ -734,32 +729,6 @@ class Element:
             self._place((0, 0), 0)
         for segment in self.segments:
             segment.draw(fig, self.transform, **self.params)
-
-    def _get_allowed_sides(self):
-        allowed_sides = self._allowed_sides
-        if self._userparams.get('reverse', False):
-            allowed_sides[0], allowed_sides[2] = allowed_sides[2], allowed_sides[0]
-        if self._userparams.get('flip', False):
-            allowed_sides[1], allowed_sides[3] = allowed_sides[3], allowed_sides[1]
-        return allowed_sides
-
-    def _get_bias_angle(self):
-        bias_direction = self._bias_direction
-        if bias_direction is None:
-            return None
-
-        map_bias = {'top': 'top', 'left': 'left', 'bottom': 'bottom', 'right': 'right'}
-
-        if self._userparams.get('reverse', False):
-            map_bias['left'] = 'right'
-            map_bias['right'] = 'left'
-        if self._userparams.get('flip', False):
-            map_bias['top'] = 'bottom'
-            map_bias['bottom'] = 'top'
-
-        map_angle = {'top': 90, 'left': 180, 'bottom': 270, 'right': 0}
-
-        return map_angle[map_bias[self._bias_direction]]
 
 
 class ElementDrawing(Element):

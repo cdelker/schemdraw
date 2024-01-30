@@ -47,9 +47,7 @@ class _Mosfet(Element):
                     self.__variants, variant))
 
         super().__init__(*d, **kwargs)
-        self._allowed_sides = [True, False, False, False]  # right, top, left, bottom
-        self._bias_direction = 'bottom'
-
+        self.elmparams['ilabel'] = 'right'  # Draw current labels on this side
         u = reswidth*0.5
 
         # gate
@@ -199,11 +197,7 @@ class _Mosfet2(Element2Term):
                     self.__variants, variant))
 
         super().__init__(*d, **kwargs)
-
-        self._allowed_sides = [False, True, False, False]  # right, top, left, bottom
-        self._bias_direction = 'right'
         self.variant = variant
-
         u = reswidth*0.5
 
         # top and bottom leads
@@ -339,9 +333,7 @@ class NFet(Element):
     }
     def __init__(self, *d, bulk: Optional[bool] = None, **kwargs):
         super().__init__(*d, **kwargs)
-
-        # defines whether a current label can be drawn on each side
-        self._allowed_sides = [False, False, True, False]  # right, top, left, bottom
+        self.elmparams['ilabel'] = 'left'  # Draw current labels on this side
 
         self.segments.append(Segment([(0, 0), (0, -fetl), (fetw, -fetl),
                                       (fetw, -fetl-fetw), (0, -fetl-fetw),
@@ -379,9 +371,7 @@ class PFet(Element):
     }
     def __init__(self, *d, bulk: Optional[bool] = None, **kwargs):
         super().__init__(*d, **kwargs)
-
-        # defines whether a current label can be drawn on each side
-        self._allowed_sides = [False, False, True, False]  # right, top, left, bottom
+        self.elmparams['ilabel'] = 'left'  # Draw current labels on this side
 
         self.segments.append(Segment([(0, 0), (0, -fetl), (fetw, -fetl),
                                       (fetw, -fetl-fetw), (0, -fetl-fetw),
@@ -421,9 +411,7 @@ class NFet2(Element2Term):
         }
     def __init__(self, *d, bulk: Optional[bool] = None, **kwargs):
         super().__init__(*d, **kwargs)
-
-        # defines whether a current label can be drawn on each side
-        self._allowed_sides = [False, False, False, True]  # right, top, left, bottom
+        self.elmparams['ilabel'] = 'bottom'  # Draw current labels on this side
 
         self.segments.append(Segment([(0, 0), (fetl, 0), (fetl, fetw),
                                       (fetl+fetw, fetw), (fetl+fetw, 0), (2*fetl+fetw, 0)]))
@@ -467,9 +455,7 @@ class PFet2(Element2Term):
     }
     def __init__(self, *d, bulk: Optional[bool] = None, **kwargs):
         super().__init__(*d, **kwargs)
-
-        # defines whether a current label can be drawn on each side
-        self._allowed_sides = [False, False, False, True]  # right, top, left, bottom
+        self.elmparams['ilabel'] = 'bottom'  # Draw current labels on this side
 
         self.segments.append(Segment([(0, 0), (fetl, 0), (fetl, fetw),
                                       (fetl+fetw, fetw), (fetl+fetw, 0), (2*fetl+fetw, 0)]))
@@ -515,9 +501,7 @@ class _AnalogFet(Element):
     }
     def __init__(self, *d, **kwargs):
         super().__init__(*d, **kwargs)
-        # defines whether a current label can be drawn on each side
-        self._allowed_sides = [False, False, True, False]  # right, top, left, bottom
-        self._bias_direction = 'bottom'
+        self.elmparams['ilabel'] = 'left'  # Draw current labels on this side
 
 
 class AnalogNFet(_AnalogFet):
@@ -565,6 +549,7 @@ class AnalogNFet(_AnalogFet):
         self.anchors['center'] = (0, -afetl - afeth / 2)
         self.elmparams['drop'] = (0, -2 * afetl - afeth)
         self.elmparams['lblloc'] = 'lft'
+
         if self.params['bulk']:
             self.segments.append(Segment([(0, -afetl - afeth / 2), (afetw, -afetl - afeth / 2)],
                                          arrow='->', arrowwidth=afeta, arrowlength=afeta))
@@ -692,10 +677,7 @@ class JFet(Element):
     }
     def __init__(self, *d, circle: Optional[bool] = None, **kwargs):
         super().__init__(*d, **kwargs)
-
-        # defines whether a current label can be drawn on each side
-        self._allowed_sides = [False, False, True, False]  # right, top, left, bottom
-
+        self.elmparams['ilabel'] = 'left'  # Draw current labels on this side
         self.segments.append(Segment(
             [(0, 0), (0, -fetl), (jfetw, -fetl), (jfetw, -fetl+fete),
              (jfetw, -fetl-jfetw-fete), (jfetw, -fetl-jfetw),
@@ -724,7 +706,6 @@ class JFetN(JFet):
     '''
     def __init__(self, *d, circle: Optional[bool] = None, **kwargs):
         super().__init__(*d, circle=circle, **kwargs)
-        self._bias_direction = 'bottom'
         self.segments.append(Segment([(jfetw+.1, -fetl-jfetw), (jfetw+.3, -fetl-jfetw)],
                                      arrow='->', arrowwidth=.2, arrowlength=.2))
 
@@ -744,9 +725,7 @@ class JFet2(Element2Term):
     }
     def __init__(self, *d, circle: Optional[bool] = None, **kwargs):
         super().__init__(*d, **kwargs)
-
-        # defines whether a current label can be drawn on each side
-        self._allowed_sides = [False, False, False, True]  # right, top, left, bottom
+        self.elmparams['ilabel'] = 'bottom'  # Draw current labels on this side
 
         self.segments.append(Segment([
             (0, 0), (fetl, 0), (fetl, jfetw), (fetl+jfetw, jfetw),
@@ -786,7 +765,6 @@ class JFetN2(JFet2):
     '''
     def __init__(self, *d, circle: Optional[bool] = None, **kwargs):
         super().__init__(*d, circle=circle, **kwargs)
-        self._bias_direction = 'right'
         self.segments.append(Segment([(fetl+jfetw, jfetw), (fetl+jfetw, jfetw+0.3)],
                                      arrow='->', arrowwidth=.2, arrowlength=.2))
 
@@ -805,7 +783,6 @@ class JFetP2(JFet2):
     '''
     def __init__(self, *d, circle: Optional[bool] = None, **kwargs):
         super().__init__(*d, circle=circle, **kwargs)
-        self._bias_direction = 'left'
         self.segments.append(Segment([(fetl+jfetw, jfetw+0.3), (fetl+jfetw, jfetw)],
                                      arrow='->', arrowwidth=.2, arrowlength=.2))
 
@@ -824,7 +801,6 @@ class JFetP(JFet):
     '''
     def __init__(self, *d, circle: Optional[bool] = None, **kwargs):
         super().__init__(*d, circle=circle, **kwargs)
-        self._bias_direction = 'top'
         self.segments.append(Segment([(jfetw+.25, -fetl-jfetw), (jfetw, -fetl-jfetw)],
                                      arrow='->', arrowwidth=.2, arrowlength=.2))
 
@@ -856,9 +832,7 @@ class Bjt(Element):
     }
     def __init__(self, *d, circle: Optional[bool] = None, **kwargs):
         super().__init__(*d, **kwargs)
-
-        # defines whether a current label can be drawn on each side
-        self._allowed_sides = [True, False, False, False]  # right, top, left, bottom
+        self.elmparams['ilabel'] = 'right'  # Draw current labels on this side
 
         self.segments.append(Segment([(0, 0), (bjt_v, 0)]))
         self.segments.append(Segment([(bjt_v, bjt_v_len/2), (bjt_v, -bjt_v_len/2)]))
@@ -892,7 +866,6 @@ class BjtNpn(Bjt):
     '''
     def __init__(self, *d, circle: Optional[bool] = None, **kwargs):
         super().__init__(*d, circle=circle, **kwargs)
-        self._bias_direction = 'bottom'
         self.segments.append(Segment([(bjt_v, -bjt_a), (bjt_emx, -bjt_emy)],
                                      arrow='->', arrowwidth=.2))
 
@@ -911,7 +884,6 @@ class BjtPnp(Bjt):
     '''
     def __init__(self, *d, circle: Optional[bool] = None, **kwargs):
         super().__init__(*d, circle=circle, **kwargs)
-        self._bias_direction = 'bottom'
         self.segments.append(Segment([(bjt_emx, bjt_emy), (bjt_v, bjt_a)], arrow='->', arrowwidth=.2))
         self.anchors['base'] = (0, 0)
         self.anchors['collector'] = (bjt_emx, -bjt_emy-bjt_a)
@@ -933,7 +905,6 @@ class BjtPnp2c(BjtPnp):
     '''
     def __init__(self, *d, circle: Optional[bool] = None, **kwargs):
         super().__init__(*d, circle=circle, **kwargs)
-        self._bias_direction = 'bottom'
         bjt_2c_dy = -.25
         self.segments.append(Segment([(bjt_v, -bjt_a-bjt_2c_dy),
                                       (bjt_emx, -bjt_emy-bjt_2c_dy)]))
@@ -969,10 +940,7 @@ class Bjt2(Element2Term):
     }
     def __init__(self, *d, circle: Optional[bool] = None, **kwargs):
         super().__init__(*d, **kwargs)
-
-        # defines whether a current label can be drawn on each side
-        self._allowed_sides = [False, False, False, True]  # right, top, left, bottom
-
+        self.elmparams['ilabel'] = 'bottom'  # Draw current labels on this side
         self.segments.append(Segment(((0, 0),
                                       (bjt_width/2-bjt_diag_ofst, bjt_base_h),
                                       (bjt_width/2+bjt_diag_ofst, bjt_base_h),
@@ -1013,7 +981,6 @@ class BjtNpn2(Bjt2):
     '''
     def __init__(self, *d, circle: Optional[bool] = None, **kwargs):
         super().__init__(*d, circle=circle, **kwargs)
-        self._bias_direction = 'left'
         self.segments.append(Segment([(0, 0), (bjt_width/2-bjt_diag_ofst, bjt_base_h)],
                                      arrow='<-', arrowwidth=.2))
 
@@ -1032,7 +999,6 @@ class BjtPnp2(Bjt2):
     '''
     def __init__(self, *d, circle: Optional[bool] = None, **kwargs):
         super().__init__(*d, circle=circle, **kwargs)
-        self._bias_direction = 'left'
         self.segments.append(Segment([(bjt_width/2+bjt_diag_ofst, bjt_base_h),
                                       (bjt_width, 0)],
                                      arrow='<-', arrowwidth=.2))
@@ -1065,7 +1031,6 @@ class BjtPnp2c2(BjtPnp2):
     '''
     def __init__(self, *d, circle: Optional[bool] = None, **kwargs):
         super().__init__(*d, circle=circle, **kwargs)
-        self._bias_direction = 'left'
         bjt_2c_dy = .25
         self.segments.append(Segment([(bjt_2c_dy, 0),
                                       (bjt_2c_dy+bjt_width/2-bjt_diag_ofst, bjt_base_h)]))

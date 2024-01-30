@@ -742,6 +742,7 @@ class Tag(Element):
         self.anchors['start'] = (0, 0)
 
 
+
 class CurrentLabel(Element):
     ''' Current label arrow drawn above an element
 
@@ -757,7 +758,7 @@ class CurrentLabel(Element):
             headwidth: Width of arrowhead [default: 0.2]
     '''
     _element_defaults = {
-        'ofst': 0.4,
+        'ofst': 0.15,
         'length': 2,
         'top': True,
         'reverse': False,
@@ -775,11 +776,11 @@ class CurrentLabel(Element):
         super().__init__(**kwargs)
         self.elmparams['lblofst'] = -.1
         self.elmparams['drop'] = None
-        self.anchor('center')
+        self.elmparams['anchor'] = 'center'
         self.anchors['center'] = (0, 0)
-        self._reverse_flow = False
+        self._side = 'top'
 
-    def at(self, xy: XY | Element) -> 'Element':  # type: ignore[override]
+    def at(self, xy: XY | Element) -> 'Element':
         ''' Specify CurrentLabel position.
 
             If xy is an Element, arrow will be centered
@@ -791,71 +792,76 @@ class CurrentLabel(Element):
                 Element instance to center the arrow over
         '''
         if isinstance(xy, Element):
-            try:
-                pos = xy.center
-            except AttributeError:
-                bbox = xy.get_bbox(transform=True)
-                pos = Point(((bbox.xmax + bbox.xmin) / 2, (bbox.ymax + bbox.ymin) / 2))
+            side = xy.params.get('ilabel', 'top')
+            if not self.params.get('top', True):
+                side = {'top': 'bottom',
+                        'bottom': 'top',
+                        'left': 'right',
+                        'right': 'left'}.get(side, 'top')                
+
+            if xy.params.get('reverse', False):
+                side = {'left': 'right',
+                        'right': 'left'}.get(side, side)
+                if side not in ['left', 'right']:
+                    self.reverse()
+
+            if xy.params.get('flip', False) and side in ['left', 'right']:
+                self.reverse()
+
+            if side == 'left':
+                self.reverse()
+
+            theta = xy.transform.theta
+            bbox = xy.get_bbox(includetext=False)
+            if side == 'top':
+                pos = Point(((bbox.xmax + bbox.xmin)/2, bbox.ymax))
+                self.elmparams['lblloc'] = 'top'
+            elif side == 'bottom':
+                pos = Point(((bbox.xmax + bbox.xmin)/2, bbox.ymin))
+                self.elmparams['lblloc'] = 'bot'
+            elif side == 'right':
+                pos = Point(((bbox.xmax, (bbox.ymax + bbox.ymin)/2)))
+                self.elmparams['lblloc'] = 'bot'
+                theta -= 90
+            elif side == 'left':
+                pos = Point(((bbox.xmin, (bbox.ymax + bbox.ymin)/2)))
+                self.elmparams['lblloc'] = 'top'
+                theta += 90
+            
+            pos = xy.transform.transform(pos)
+            self._side = side
             super().at(pos)
 
-            # Every element has 4 sides where a current label could be placed, but not all are allowed
-            # In a resistor, the top and bottom are allowed, but not the sides. In a transistor, only the side of the
-            # channel is allowed. Otherwise, the current label would overlap the terminals, which wouldn't make sense.
-            #
-            # This code calculates the angles for the allowed sides of the components. If the current label is desired
-            # to be on top, it picks the closest angle to the top. Otherwise, it picks the closest angle to the
-            # top of the component in the drawing frame. If the label is flipped, it will pick the opposite angle.
-            # If at most two opposite sides are allowed, this gives the user freedom to put the label at any allowed
-            # side.
-            target_theta = xy.transform.theta
-            theta = target_theta
-            allowed_angles = [theta + angle for angle, allowed in zip([0, 90, 180, 270], xy._get_allowed_sides()) if
-                              allowed]
-
-            if self.params['top']:
-                preferred_angle = 90.
-            else:
-                preferred_angle = -90 + theta
-
-            # find which allowed angle is closest to the preferred angle
-            differences_to_top = [abs(((angle - preferred_angle) + 180) % 360 - 180) for angle in allowed_angles]
-            theta = allowed_angles[differences_to_top.index(min(differences_to_top))]
-
-            # since current arrow is drawn on top by default, subtract 90 degree for rotation top to right side
-            theta = theta - 90
             self.theta(theta)
-
-            bias_angle = xy._get_bias_angle()
-            if bias_angle is None:
-                self._reverse_flow = False
-            else:
-                bias_angle_difference = ((bias_angle + target_theta - theta) + 180) % 360 - 180
-                self._reverse_flow = abs(bias_angle_difference) > 90
-
             if 'color' in xy._userparams:
-                self.color(xy._userparams.get('color'))  # type: ignore
+                self.color(xy._userparams.get('color'))
         else:
             super().at(xy)
         return self
 
     def _place(self, dwgxy, dwgtheta, **dwgparams):
-        angle_difference = ((self._userparams.get('theta', 0) - 180) + 180) % 360 - 180
-        change_label = (angle_difference > -90) and (angle_difference <= 90)
-        if change_label:
-            self.elmparams['lblloc'] = 'bot'
+        ofst = self.params['ofst']
+        length = self.params['length']
+        if self._side in ['bottom']:
+            ofst = -ofst
 
-        a = -self.params['length'] / 2, self.params['ofst']
-        b = self.params['length'] / 2, self.params['ofst']
+        theta = self.params.get('theta', 0) % 360
+        loc = self.params.get('lblloc', 'top')
 
-        if self._reverse_flow:
-            a, b = b, a
+        if self._side in ['right'] and (theta <= 90 or theta > 270):
+            loc = self.elmparams['lblloc']
+            self.elmparams['lblloc'] = {'bot': 'top',
+                                        'top': 'bot'}.get(loc)
 
-        if self.params['reverse']:
-            a, b = b, a
+        elif self._side in ['top', 'left', 'bottom'] and (90 < theta <= 270):
+            loc = self.elmparams['lblloc']
+            self.elmparams['lblloc'] = {'bot': 'top',
+                                        'top': 'bot'}.get(loc)
 
-        self.segments.append(Segment((a, b), arrow='->',
-                                     arrowwidth=self.params['headwidth'],
-                                     arrowlength=self.params['headlength']))
+        a, b = (-length/2, ofst), (length/2, ofst)
+        headwidth = self.params['headwidth']
+        headlength = self.params['headlength']
+        self.segments.append(Segment((a, b), arrow='->', arrowwidth=headwidth, arrowlength=headlength))
         return super()._place(dwgxy, dwgtheta, **dwgparams)
 
 
@@ -960,7 +966,7 @@ class ZLabel(Element):
         self.anchors['center'] = (0, 0)
 
     def at(self, xy: XY | Element) -> 'Element':  # type: ignore[override]
-        ''' Specify CurrentLabel position.
+        ''' Specify Element position.
 
             If xy is an Element, arrow will be centered
             along element and its color will also be

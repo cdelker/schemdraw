@@ -7,7 +7,7 @@ import math
 
 import matplotlib  # type: ignore
 import matplotlib.pyplot as plt  # type: ignore
-from matplotlib import font_manager
+from matplotlib import font_manager, transforms
 from matplotlib.patches import Arc, Rectangle, PathPatch, Path  # type: ignore
 
 from .. import util
@@ -251,6 +251,14 @@ class Figure:
             a = self.ax.arrow(s[0], s[1], darrow[0], darrow[1], head_width=.15,
                               head_length=.25, color=color, zorder=zorder)
             self.addclip(a, clip)
+
+    def image(self, fname: str, xy: XY, width: float, height: float,
+              rotate: float = 0, zorder: int = 1):
+        ''' Add an image (read from file) to the figure '''
+        image = plt.imread(fname)
+        tr = transforms.Affine2D().rotate_deg(rotate).translate(xy[0], xy[1])
+        im = self.ax.imshow(image, extent=(0, width, 0, height), zorder=zorder)
+        im.set_transform(tr+self.ax.transData)
 
     def save(self, fname: str, transparent: bool = True, dpi: float = 72) -> None:
         ''' Save the figure to a file '''

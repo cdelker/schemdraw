@@ -11,6 +11,7 @@ import subprocess
 import tempfile
 import math
 import warnings
+import base64
 
 try:
     import ziamath  # type: ignore
@@ -201,6 +202,7 @@ class Figure:
         self.margin = kwargs.get('margin', .1)
         self.set_bbox(bbox)
         self._bgcolor: Optional[str] = None
+        self._need_xlink = False
         self.svgcanvas = kwargs.get('svg')
 
     def set_bbox(self, bbox: BBox) -> None:
@@ -513,6 +515,30 @@ class Figure:
                 self.arrow(xy+darrow, theta, arrowwidth=arrowwidth,
                            arrowlength=arrowlength, color=color, lw=1, zorder=zorder)
 
+    def image(self, fname: str, xy: XY, width: float, height: float,
+              rotate: float = 0, zorder: int = 1):
+        ''' Add an image (read from file) to the figure '''
+
+        with open(fname, 'rb') as f:
+            image = f.read()
+        
+        image_b64 = base64.encodebytes(image).decode()
+        width = width * self.scale
+        height = height * self.scale
+        x0, y0 = self.xform(*xy)
+        y0 -= height
+
+        et = ET.Element('image')
+        et.set('x', str(x0))
+        et.set('y', str(y0))
+        et.set('width', str(width))
+        et.set('height', str(height))
+        et.set('xlink:href', f'data:image/png;base64,{image_b64}')
+        if rotate:
+            et.set('transform', f'rotate({-rotate} {x0} {y0+height})')
+        self.svgelements.append((zorder, et))
+        self._need_xlink = True
+
     def save(self, fname: str, **kwargs) -> None:
         ''' Save the figure to a file '''
         svg = self.getimage().decode()
@@ -533,6 +559,8 @@ class Figure:
         if not self.svgcanvas:
             svg = ET.Element('svg')
             svg.set('xmlns', 'http://www.w3.org/2000/svg')
+            if self._need_xlink:
+                svg.set('xmlns:xlink', 'http://www.w3.org/1999/xlink')
             svg.set('xml:lang', 'en')
             svg.set('height', f'{self.pxheight+2*pad}pt')
             svg.set('width', f'{self.pxwidth+2*pad}pt')

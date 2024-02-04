@@ -907,4 +907,73 @@ class SegmentArrow(Segment):
                          color=color, lw=lw, clip=clip, zorder=zorder)
 
 
-SegmentType = Union[Segment, SegmentText, SegmentPoly, SegmentArc, SegmentCircle, SegmentBezier]
+class SegmentImage:
+    ''' PNG Image '''
+    def __init__(self,
+                 fname: str,
+                 xy: Point = Point((0, 0)),   # Lower Left
+                 width: float = 3,
+                 height: float = 1,
+                 zorder: Optional[int] = None):
+        self.image = fname
+        self.xy = Point(xy)
+        self.width = width
+        self.height = height
+        self.zorder = zorder
+        self.visible = True
+
+    def get_bbox(self) -> BBox:
+        ''' Get bounding box (untransformed)
+
+            Returns:
+                Bounding box limits (xmin, ymin, xmax, ymax)
+        '''
+        return BBox(self.xy.x, self.xy.y, self.xy.x+self.width, self.xy.y+self.height)
+
+    def xform(self, transform, **style) -> 'Segment':
+        ''' Return a new Segment that has been transformed
+            to its global position
+
+            Args:
+                transform: Transformation to apply
+                style: Style parameters from Element to apply as default
+        '''
+        params: dict[str, Any] = {
+            'zorder': self.zorder if self.zorder is not None else style.get('zorder', None)}
+        style = {k: v for k, v in style.items() if params.get(k) is None and k in params.keys()}
+        params.update(style)
+        return SegmentImage(self.image, transform.transform(self.xy),
+                            width=self.width*transform.zoom[0],
+                            height=self.height*transform.zoom[1],
+                             **params)
+
+    def doreverse(self, centerx: float) -> None:
+        ''' Reverse the image '''
+        raise ValueError('Reversing an ElementImage is not supported.')
+
+    def doflip(self) -> None:
+        ''' Vertically flip the element '''
+        raise ValueError('Flipping an ElementImage is not supported.')
+
+    def draw(self, fig, transform, **style) -> None:
+        ''' Draw the image
+
+            Args:
+                fig: schemdraw.Figure to draw on
+                transform: Transform to apply before drawing
+                style: Default style parameters
+        '''
+        if not self.visible:
+            return
+
+        xy = transform.transform(self.xy)
+        width = self.width * transform.zoom[0]
+        height = self.height * transform.zoom[1]
+        zorder = self.zorder if self.zorder is not None else style.get('zorder', 1)
+        fig.image(self.image, xy,
+                  width=width, height=height,
+                  rotate=transform.theta,
+                  zorder=zorder)
+
+
+SegmentType = Union[Segment, SegmentText, SegmentPoly, SegmentArc, SegmentCircle, SegmentBezier, SegmentImage]

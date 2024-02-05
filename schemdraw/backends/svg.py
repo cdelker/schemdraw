@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Sequence, Optional
+from typing import Sequence, Optional, BinaryIO
 from xml.etree import ElementTree as ET
 
 import os
@@ -515,29 +515,54 @@ class Figure:
                 self.arrow(xy+darrow, theta, arrowwidth=arrowwidth,
                            arrowlength=arrowlength, color=color, lw=1, zorder=zorder)
 
-    def image(self, fname: str, xy: XY, width: float, height: float,
-              rotate: float = 0, zorder: int = 1):
-        ''' Add an image (read from file) to the figure '''
-
-        with open(fname, 'rb') as f:
-            image = f.read()
+    def image(self, image: str | BinaryIO, xy: XY, width: float, height: float,
+              rotate: float = 0, zorder: int = 1, imgfmt: Optional[str] = None):
+        ''' Add an image to the figure
         
-        image_b64 = base64.encodebytes(image).decode()
+            Args:
+                image: File name or open file pointer
+                xy: Position for the image
+                width: Image width in data coordinates
+                height: Image height in data coordinates
+                rotate: Image rotation in degrees
+                zorder: Z-Order for image
+                imgfmt: file format of image. Required if image is
+                    open file pointer.
+        '''
+        try:  # File name
+            with open(image, 'rb') as f:  # type: ignore
+                assert(isinstance(image, str))  # For type checking
+                imgdat = f.read()
+                imgfmt = os.path.splitext(image)[1][1:] if imgfmt is None else imgfmt
+        except TypeError:  # Open file pointer
+            assert(isinstance(image, BinaryIO))  # For type checking
+            image.seek(0)
+            imgdat = image.read()
+
+        if imgfmt is None:
+            raise ValueError('Must specify image format when using file pointer with SegmentImage')
+
         width = width * self.scale
         height = height * self.scale
         x0, y0 = self.xform(*xy)
         y0 -= height
 
-        et = ET.Element('image')
+        if imgfmt == 'svg':
+            et = ET.fromstring(imgdat.decode())
+        else:  # Raster images
+            image_b64 = base64.encodebytes(imgdat).decode()
+            et = ET.Element('image')
+            et.set('xlink:href', f'data:image/{imgfmt};base64,{image_b64}')
+            self.svgelements.append((zorder, et))
+            self._need_xlink = True
+
         et.set('x', str(x0))
         et.set('y', str(y0))
         et.set('width', str(width))
         et.set('height', str(height))
-        et.set('xlink:href', f'data:image/png;base64,{image_b64}')
         if rotate:
             et.set('transform', f'rotate({-rotate} {x0} {y0+height})')
         self.svgelements.append((zorder, et))
-        self._need_xlink = True
 
     def save(self, fname: str, **kwargs) -> None:
         ''' Save the figure to a file '''

@@ -1,7 +1,7 @@
 ''' Matplotlib drawing backend for schemdraw '''
 
 from __future__ import annotations
-from typing import Optional, Sequence
+from typing import Optional, Sequence, BinaryIO
 from io import BytesIO
 import math
 
@@ -252,12 +252,29 @@ class Figure:
                               head_length=.25, color=color, zorder=zorder)
             self.addclip(a, clip)
 
-    def image(self, fname: str, xy: XY, width: float, height: float,
-              rotate: float = 0, zorder: int = 1):
-        ''' Add an image (read from file) to the figure '''
-        image = plt.imread(fname)
+    def image(self, image: str | BinaryIO, xy: XY, width: float, height: float,
+              rotate: float = 0, zorder: int = 1, imgfmt: Optional[str] = None):
+        ''' Add an image to the figure
+        
+            Args:
+                image: File name or open file pointer
+                xy: Position for the image
+                width: Image width in data coordinates
+                height: Image height in data coordinates
+                rotate: Image rotation in degrees
+                zorder: Z-Order for image
+                imgfmt: file format of image. Required if image is
+                    open file pointer.
+        '''
+        try:
+            if image.endswith('svg'):  # type: ignore
+                raise ValueError('SVG images not supported in matplotlib backend')
+        except AttributeError:
+            pass
+
+        imdat = plt.imread(image)
         tr = transforms.Affine2D().rotate_deg(rotate).translate(xy[0], xy[1])
-        im = self.ax.imshow(image, extent=(0, width, 0, height), zorder=zorder)
+        im = self.ax.imshow(imdat, extent=(0, width, 0, height), zorder=zorder)
         im.set_transform(tr+self.ax.transData)
 
     def save(self, fname: str, transparent: bool = True, dpi: float = 72) -> None:

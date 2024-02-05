@@ -31,10 +31,11 @@ from .twoports import (ElementTwoport, TwoPort, VoltageTransactor, Transimpedanc
                        TransadmittanceTransactor, Nullor, VMCMPair)
 from .outlets import (OutletA, OutletB, OutletC, OutletD, OutletE, OutletF, OutletG, OutletH, OutletI, OutletJ,
                       OutletK, OutletL)
+from .image import ElementImage
 
 
 __all__ = [
-    "Element", "ElementDrawing", "Element2Term", "Container",
+    "Element", "ElementDrawing", "ElementImage", "Element2Term", "Container",
     "Resistor", "ResistorIEEE", "ResistorIEC", "ResistorVar", "ResistorVarIEEE", "ResistorVarIEC", "Rshunt",
     "Thermistor", "Photoresistor", "PhotoresistorIEEE", "PhotoresistorIEC", "Capacitor", "Capacitor2",
     "CapacitorVar", "CapacitorTrim", "Diode", "Schottky", "DiodeTunnel", "DiodeShockley", "Zener", "Varactor",

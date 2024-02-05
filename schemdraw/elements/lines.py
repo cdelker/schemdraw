@@ -780,7 +780,7 @@ class CurrentLabel(Element):
         self.anchors['center'] = (0, 0)
         self._side = 'top'
 
-    def at(self, xy: XY | Element) -> 'Element':
+    def at(self, xy: XY | tuple['Element', str], dx: float = 0, dy: float = 0) -> 'Element':
         ''' Specify CurrentLabel position.
 
             If xy is an Element, arrow will be centered

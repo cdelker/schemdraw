@@ -908,17 +908,19 @@ class SegmentArrow(Segment):
 
 
 class SegmentImage:
-    ''' PNG Image '''
+    ''' PNG or SVG Image '''
     def __init__(self,
-                 fname: str,
+                 image: str,  # TODO typehint
                  xy: Point = Point((0, 0)),   # Lower Left
                  width: float = 3,
                  height: float = 1,
+                 imgfmt: Optional[str] = None,
                  zorder: Optional[int] = None):
-        self.image = fname
+        self.image = image
         self.xy = Point(xy)
         self.width = width
         self.height = height
+        self.imgfmt = imgfmt
         self.zorder = zorder
         self.visible = True
 
@@ -930,7 +932,7 @@ class SegmentImage:
         '''
         return BBox(self.xy.x, self.xy.y, self.xy.x+self.width, self.xy.y+self.height)
 
-    def xform(self, transform, **style) -> 'Segment':
+    def xform(self, transform, **style) -> 'SegmentImage':
         ''' Return a new Segment that has been transformed
             to its global position
 
@@ -945,6 +947,7 @@ class SegmentImage:
         return SegmentImage(self.image, transform.transform(self.xy),
                             width=self.width*transform.zoom[0],
                             height=self.height*transform.zoom[1],
+                            imgfmt=self.imgfmt,
                              **params)
 
     def doreverse(self, centerx: float) -> None:
@@ -973,6 +976,7 @@ class SegmentImage:
         fig.image(self.image, xy,
                   width=width, height=height,
                   rotate=transform.theta,
+                  imgfmt=self.imgfmt,
                   zorder=zorder)
 
 

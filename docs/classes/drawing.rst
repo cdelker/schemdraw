@@ -28,6 +28,12 @@ ElementDrawing
 .. autoclass:: schemdraw.elements.ElementDrawing
     :members:
 
+ElementImage
+============
+
+.. autoclass:: schemdraw.elements.ElementImage
+    :members:
+
 
 Element Style
 =============

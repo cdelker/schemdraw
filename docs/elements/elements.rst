@@ -8,6 +8,7 @@ Circuit Elements
   intcircuits
   connectors
   compound
+  images
   logic
   timing
   dsp

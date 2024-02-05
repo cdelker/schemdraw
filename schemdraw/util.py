@@ -1,16 +1,15 @@
 ''' Utility functions for point geometry '''
-
 from __future__ import annotations
-from typing import Union
+from typing import Union, Tuple
 
 import math
 from operator import mul
 from itertools import starmap
 
-XY = Union[tuple[float, float], 'Point']
+XY = Union[Tuple[float, float], 'Point']
 
 
-class Point(tuple[float, float]):
+class Point(Tuple[float, float]):
     ''' An (x, y) tuple that can do math operations '''
     @property
     def x(self) -> float:
@@ -74,7 +73,7 @@ class Point(tuple[float, float]):
         return Point(flip(self))
 
 
-def dot(a: XY, b: tuple[tuple[float, float], tuple[float, float]]) -> Point:
+def dot(a: XY, b: Tuple[Tuple[float, float], Tuple[float, float]]) -> Point:
     ''' Dot product of iterables a and b '''
     return Point([sum(starmap(mul, zip(a, col))) for col in zip(*b)])
 

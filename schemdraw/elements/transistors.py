@@ -36,7 +36,7 @@ class _Mosfet(Element):
     }
     __variants = ['nmos', 'pmos']
 
-    def __init__(self, *d,
+    def __init__(self,
                  variant: str,
                  diode: Optional[bool] = False,
                  circle: Optional[bool] = False,
@@ -46,7 +46,7 @@ class _Mosfet(Element):
                 "Parameter 'variant' must be one of {}, not {}.".format(
                     self.__variants, variant))
 
-        super().__init__(*d, **kwargs)
+        super().__init__(**kwargs)
         self.elmparams['ilabel'] = 'right'  # Draw current labels on this side
         u = reswidth*0.5
 
@@ -137,11 +137,11 @@ class NMos(_Mosfet):
 
     Note: vertical orientation.  For horizontal orientation, see NMos2.
     '''
-    def __init__(self, *d,
+    def __init__(self,
                  diode: Optional[bool] = False,
                  circle: Optional[bool] = False,
                  **kwargs):
-        super().__init__(*d, variant='nmos', diode=diode, circle=circle, **kwargs)
+        super().__init__(variant='nmos', diode=diode, circle=circle, **kwargs)
 
 
 class PMos(_Mosfet):
@@ -159,11 +159,11 @@ class PMos(_Mosfet):
     Note: vertical orientation.  For horizontal orientation, see PMos2.
     '''
 
-    def __init__(self, *d,
+    def __init__(self,
                  diode: Optional[bool] = False,
                  circle: Optional[bool] = False,
                  **kwargs):
-        super().__init__(*d, variant='pmos', diode=diode, circle=circle, **kwargs)
+        super().__init__(variant='pmos', diode=diode, circle=circle, **kwargs)
 
 
 class _Mosfet2(Element2Term):
@@ -187,7 +187,7 @@ class _Mosfet2(Element2Term):
     }
     __variants = ['nmos', 'pmos']
 
-    def __init__(self, *d, variant: str,
+    def __init__(self, variant: str,
                  diode: Optional[bool] = False,
                  circle: Optional[bool] = False,
                  **kwargs):
@@ -196,7 +196,7 @@ class _Mosfet2(Element2Term):
                 "Parameter 'variant' must be one of {}, not {}.".format(
                     self.__variants, variant))
 
-        super().__init__(*d, **kwargs)
+        super().__init__(**kwargs)
         self.variant = variant
         u = reswidth*0.5
 
@@ -281,11 +281,11 @@ class NMos2(_Mosfet2):
 
     Note: horizontal orientation.  For vertical orientation, see NMos.
     '''
-    def __init__(self, *d,
+    def __init__(self,
                  diode: Optional[bool] = False,
                  circle: Optional[bool] = False,
                  **kwargs):
-        super().__init__(*d, variant='nmos', diode=diode, circle=circle, **kwargs)
+        super().__init__(variant='nmos', diode=diode, circle=circle, **kwargs)
 
 
 class PMos2(_Mosfet2):
@@ -302,11 +302,11 @@ class PMos2(_Mosfet2):
 
     Note: horizontal orientation.  For vertical orientation, see PMos.
     '''
-    def __init__(self, *d,
+    def __init__(self,
                  diode: Optional[bool] = False,
                  circle: Optional[bool] = False,
                  **kwargs):
-        super().__init__(*d, variant='pmos', diode=diode, circle=circle, **kwargs)
+        super().__init__(variant='pmos', diode=diode, circle=circle, **kwargs)
 
 
 fetw = reswidth * 4
@@ -331,8 +331,8 @@ class NFet(Element):
     _element_defaults = {
         'bulk': False
     }
-    def __init__(self, *d, bulk: Optional[bool] = None, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, bulk: Optional[bool] = None, **kwargs):
+        super().__init__(**kwargs)
         self.elmparams['ilabel'] = 'left'  # Draw current labels on this side
 
         self.segments.append(Segment([(0, 0), (0, -fetl), (fetw, -fetl),
@@ -369,8 +369,8 @@ class PFet(Element):
     _element_defaults = {
         'bulk': False
     }
-    def __init__(self, *d, bulk: Optional[bool] = None, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, bulk: Optional[bool] = None, **kwargs):
+        super().__init__(**kwargs)
         self.elmparams['ilabel'] = 'left'  # Draw current labels on this side
 
         self.segments.append(Segment([(0, 0), (0, -fetl), (fetw, -fetl),
@@ -409,8 +409,8 @@ class NFet2(Element2Term):
     _element_defaults = {
         'bulk': False
         }
-    def __init__(self, *d, bulk: Optional[bool] = None, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, bulk: Optional[bool] = None, **kwargs):
+        super().__init__(**kwargs)
         self.elmparams['ilabel'] = 'bottom'  # Draw current labels on this side
 
         self.segments.append(Segment([(0, 0), (fetl, 0), (fetl, fetw),
@@ -453,8 +453,8 @@ class PFet2(Element2Term):
     _element_defaults = {
         'bulk': False
     }
-    def __init__(self, *d, bulk: Optional[bool] = None, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, bulk: Optional[bool] = None, **kwargs):
+        super().__init__(**kwargs)
         self.elmparams['ilabel'] = 'bottom'  # Draw current labels on this side
 
         self.segments.append(Segment([(0, 0), (fetl, 0), (fetl, fetw),
@@ -499,8 +499,8 @@ class _AnalogFet(Element):
         'offset_gate': True,
         'arrow': True
     }
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.elmparams['ilabel'] = 'left'  # Draw current labels on this side
 
 
@@ -519,12 +519,12 @@ class AnalogNFet(_AnalogFet):
             bulk (if bulk=True)
             center
     '''
-    def __init__(self, *d,
+    def __init__(self,
                  bulk: Optional[bool] = None,
                  offset_gate: Optional[bool] = None,
                  arrow: Optional[bool] = None,
                  **kwargs):
-        super().__init__(*d, **kwargs)
+        super().__init__(**kwargs)
         _arrow = self.params['arrow'] if not self.params['bulk'] else False
         self.segments.append(Segment([(0, 0), (0, -afetl), (afetw, -afetl),
                                       (afetw, -afetl - afeth), (0, -afetl - afeth),
@@ -571,12 +571,12 @@ class AnalogPFet(_AnalogFet):
             bulk (if bulk=True)
             center
     '''
-    def __init__(self, *d,
+    def __init__(self,
                  bulk: Optional[bool] = None,
                  offset_gate: Optional[bool] = None,
                  arrow: Optional[bool] = None,
                  **kwargs):
-        super().__init__(*d, **kwargs)
+        super().__init__(**kwargs)
         _arrow = self.params['arrow'] if not self.params['bulk'] else False
         self.segments.append(Segment([(0, 0), (0, -afetl), (afetw, -afetl),
                                       (afetw, -afetl - afeth), (0, -afetl - afeth),
@@ -621,12 +621,12 @@ class AnalogBiasedFet(_AnalogFet):
             bulk (if bulk=True)
             center
     '''
-    def __init__(self, *d,
+    def __init__(self,
                  bulk: Optional[bool] = None,
                  offset_gate: Optional[bool] = None,
                  arrow: Optional[bool] = None,
                  **kwargs):
-        super().__init__(*d, **kwargs)
+        super().__init__(**kwargs)
         _arrow = self.params['arrow'] if not self.params['bulk'] else False
         self.segments.append(Segment([(0, 0), (0, -afetl), (afetw, -afetl),
                                       (afetw, -afetl - afeth), (0, -afetl - afeth),
@@ -675,8 +675,8 @@ class JFet(Element):
         'circle': False,
         'lblloc': 'lft'
     }
-    def __init__(self, *d, circle: Optional[bool] = None, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, circle: Optional[bool] = None, **kwargs):
+        super().__init__(**kwargs)
         self.elmparams['ilabel'] = 'left'  # Draw current labels on this side
         self.segments.append(Segment(
             [(0, 0), (0, -fetl), (jfetw, -fetl), (jfetw, -fetl+fete),
@@ -704,8 +704,8 @@ class JFetN(JFet):
             * gate
             * center
     '''
-    def __init__(self, *d, circle: Optional[bool] = None, **kwargs):
-        super().__init__(*d, circle=circle, **kwargs)
+    def __init__(self, circle: Optional[bool] = None, **kwargs):
+        super().__init__(circle=circle, **kwargs)
         self.segments.append(Segment([(jfetw+.1, -fetl-jfetw), (jfetw+.3, -fetl-jfetw)],
                                      arrow='->', arrowwidth=.2, arrowlength=.2))
 
@@ -723,8 +723,8 @@ class JFet2(Element2Term):
         'circle': False,
         'lblloc': 'bottom'
     }
-    def __init__(self, *d, circle: Optional[bool] = None, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, circle: Optional[bool] = None, **kwargs):
+        super().__init__(**kwargs)
         self.elmparams['ilabel'] = 'bottom'  # Draw current labels on this side
 
         self.segments.append(Segment([
@@ -763,8 +763,8 @@ class JFetN2(JFet2):
             * drain
             * gate
     '''
-    def __init__(self, *d, circle: Optional[bool] = None, **kwargs):
-        super().__init__(*d, circle=circle, **kwargs)
+    def __init__(self, circle: Optional[bool] = None, **kwargs):
+        super().__init__(circle=circle, **kwargs)
         self.segments.append(Segment([(fetl+jfetw, jfetw), (fetl+jfetw, jfetw+0.3)],
                                      arrow='->', arrowwidth=.2, arrowlength=.2))
 
@@ -781,8 +781,8 @@ class JFetP2(JFet2):
             * drain
             * gate
     '''
-    def __init__(self, *d, circle: Optional[bool] = None, **kwargs):
-        super().__init__(*d, circle=circle, **kwargs)
+    def __init__(self, circle: Optional[bool] = None, **kwargs):
+        super().__init__(circle=circle, **kwargs)
         self.segments.append(Segment([(fetl+jfetw, jfetw+0.3), (fetl+jfetw, jfetw)],
                                      arrow='->', arrowwidth=.2, arrowlength=.2))
 
@@ -799,8 +799,8 @@ class JFetP(JFet):
             * gate
             * center
     '''
-    def __init__(self, *d, circle: Optional[bool] = None, **kwargs):
-        super().__init__(*d, circle=circle, **kwargs)
+    def __init__(self, circle: Optional[bool] = None, **kwargs):
+        super().__init__(circle=circle, **kwargs)
         self.segments.append(Segment([(jfetw+.25, -fetl-jfetw), (jfetw, -fetl-jfetw)],
                                      arrow='->', arrowwidth=.2, arrowlength=.2))
 
@@ -830,8 +830,8 @@ class Bjt(Element):
         'circle': False,
         'lblloc': 'rgt'
     }
-    def __init__(self, *d, circle: Optional[bool] = None, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, circle: Optional[bool] = None, **kwargs):
+        super().__init__(**kwargs)
         self.elmparams['ilabel'] = 'right'  # Draw current labels on this side
 
         self.segments.append(Segment([(0, 0), (bjt_v, 0)]))
@@ -864,8 +864,8 @@ class BjtNpn(Bjt):
             * base
             * center
     '''
-    def __init__(self, *d, circle: Optional[bool] = None, **kwargs):
-        super().__init__(*d, circle=circle, **kwargs)
+    def __init__(self, circle: Optional[bool] = None, **kwargs):
+        super().__init__(circle=circle, **kwargs)
         self.segments.append(Segment([(bjt_v, -bjt_a), (bjt_emx, -bjt_emy)],
                                      arrow='->', arrowwidth=.2))
 
@@ -882,8 +882,8 @@ class BjtPnp(Bjt):
             * base
             * center
     '''
-    def __init__(self, *d, circle: Optional[bool] = None, **kwargs):
-        super().__init__(*d, circle=circle, **kwargs)
+    def __init__(self, circle: Optional[bool] = None, **kwargs):
+        super().__init__(circle=circle, **kwargs)
         self.segments.append(Segment([(bjt_emx, bjt_emy), (bjt_v, bjt_a)], arrow='->', arrowwidth=.2))
         self.anchors['base'] = (0, 0)
         self.anchors['collector'] = (bjt_emx, -bjt_emy-bjt_a)
@@ -903,8 +903,8 @@ class BjtPnp2c(BjtPnp):
             * C2
             * center
     '''
-    def __init__(self, *d, circle: Optional[bool] = None, **kwargs):
-        super().__init__(*d, circle=circle, **kwargs)
+    def __init__(self, circle: Optional[bool] = None, **kwargs):
+        super().__init__(circle=circle, **kwargs)
         bjt_2c_dy = -.25
         self.segments.append(Segment([(bjt_v, -bjt_a-bjt_2c_dy),
                                       (bjt_emx, -bjt_emy-bjt_2c_dy)]))
@@ -938,8 +938,8 @@ class Bjt2(Element2Term):
         'lblofst': 0.1,
         'theta': 90
     }
-    def __init__(self, *d, circle: Optional[bool] = None, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, circle: Optional[bool] = None, **kwargs):
+        super().__init__(**kwargs)
         self.elmparams['ilabel'] = 'bottom'  # Draw current labels on this side
         self.segments.append(Segment(((0, 0),
                                       (bjt_width/2-bjt_diag_ofst, bjt_base_h),
@@ -979,8 +979,8 @@ class BjtNpn2(Bjt2):
             * emitter
             * base
     '''
-    def __init__(self, *d, circle: Optional[bool] = None, **kwargs):
-        super().__init__(*d, circle=circle, **kwargs)
+    def __init__(self, circle: Optional[bool] = None, **kwargs):
+        super().__init__(circle=circle, **kwargs)
         self.segments.append(Segment([(0, 0), (bjt_width/2-bjt_diag_ofst, bjt_base_h)],
                                      arrow='<-', arrowwidth=.2))
 
@@ -997,8 +997,8 @@ class BjtPnp2(Bjt2):
             * emitter
             * base
     '''
-    def __init__(self, *d, circle: Optional[bool] = None, **kwargs):
-        super().__init__(*d, circle=circle, **kwargs)
+    def __init__(self, circle: Optional[bool] = None, **kwargs):
+        super().__init__(circle=circle, **kwargs)
         self.segments.append(Segment([(bjt_width/2+bjt_diag_ofst, bjt_base_h),
                                       (bjt_width, 0)],
                                      arrow='<-', arrowwidth=.2))
@@ -1029,8 +1029,8 @@ class BjtPnp2c2(BjtPnp2):
             * base
             * C2
     '''
-    def __init__(self, *d, circle: Optional[bool] = None, **kwargs):
-        super().__init__(*d, circle=circle, **kwargs)
+    def __init__(self, circle: Optional[bool] = None, **kwargs):
+        super().__init__(circle=circle, **kwargs)
         bjt_2c_dy = .25
         self.segments.append(Segment([(bjt_2c_dy, 0),
                                       (bjt_2c_dy+bjt_width/2-bjt_diag_ofst, bjt_base_h)]))

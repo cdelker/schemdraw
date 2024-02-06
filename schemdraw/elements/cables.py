@@ -30,12 +30,12 @@ class Coax(Element2Term):
         'leadlen': 0.6,
         'radius': 0.3,
     }
-    def __init__(self, *d,
+    def __init__(self,
                  length: Optional[float] = None,
                  radius: Optional[float] = None,
                  leadlen: Optional[float] = None,
                  **kwargs):
-        super().__init__(*d, **kwargs)
+        super().__init__(**kwargs)
         _leadlen = self.params['leadlen']
         _length = self.params['length']
         _radius = self.params['radius']
@@ -98,7 +98,7 @@ class Triax(Element2Term):
         'shieldofststart': 0.3,
         'shieldofstend': 0.3
     }
-    def __init__(self, *d,
+    def __init__(self,
                  length: Optional[float] = None,
                  leadlen: Optional[float] = None,
                  radiusinner: Optional[float] = None,
@@ -106,7 +106,7 @@ class Triax(Element2Term):
                  shieldofststart: Optional[float] = None,
                  shieldofstend: Optional[float] = None,
                  **kwargs):
-        super().__init__(*d, **kwargs)
+        super().__init__(**kwargs)
         r1 = self.params['radiusinner']
         r2 = self.params['radiusouter']
         _length = self.params['length']

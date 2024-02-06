@@ -33,9 +33,9 @@ class And(Element):
         'leadin': 0.35,
         'leadout': 0.35
     }
-    def __init__(self, *d, inputs: int = 2, nand: bool = False, inputnots: Optional[Sequence[int]] = None,
+    def __init__(self, inputs: int = 2, nand: bool = False, inputnots: Optional[Sequence[int]] = None,
                  leadin: Optional[float] = None, leadout: Optional[float] = None, **kwargs):
-        super().__init__(*d, **kwargs)
+        super().__init__(**kwargs)
         _leadin = self.params['leadin']
         _leadout = self.params['leadout']
         rad = gateh/2
@@ -112,10 +112,10 @@ class Or(Element):
         'leadin': 0.35,
         'leadout': 0.35
     }
-    def __init__(self, *d, inputs: int = 2, nor: bool = False,
+    def __init__(self, inputs: int = 2, nor: bool = False,
                  xor: bool = False, inputnots: Optional[Sequence[int]] = None,
                  leadin: float = 0.35, leadout: float = 0.35, **kwargs):
-        super().__init__(*d, **kwargs)
+        super().__init__(**kwargs)
         _leadin = self.params['leadin']
         _leadout = self.params['leadout']
         # Define OR path
@@ -210,8 +210,8 @@ class Buf(Element2Term):
             in
             out
     '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.segments.append(Segment([(0, 0), gap, (gatel, 0)]))
         self.segments.append(Segment([(0, gateh/2), (gatel, 0), (0, -gateh/2), (0, gateh/2)]))
         self.anchors['out'] = (gatel, 0)
@@ -225,8 +225,8 @@ class Not(Element2Term):
             in
             out
     '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.segments.append(Segment([(0, 0), gap, (gatel+notbubble*2, 0)]))
         self.segments.append(Segment([(0, gateh/2), (gatel, 0), (0, -gateh/2), (0, gateh/2)]))
         self.segments.append(SegmentCircle((gatel+notbubble, 0), notbubble))
@@ -245,10 +245,10 @@ class Tristate(Element2Term):
             out
             c
     '''
-    def __init__(self, *d, outputnot: bool = True, controlnot: bool = False, **kwargs):
+    def __init__(self, outputnot: bool = True, controlnot: bool = False, **kwargs):
         kwargs['outputnot'] = outputnot
         kwargs['control'] = controlnot
-        super().__init__(*d, **kwargs)
+        super().__init__(**kwargs)
         if outputnot:
           self.segments.append(Segment([(0, 0), gap, (gatel+notbubble*2, 0)]))
           self.segments.append(SegmentCircle((gatel+notbubble, 0), notbubble))
@@ -272,8 +272,8 @@ class NotNot(Element2Term):
             in
             out
     '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.segments.append(Segment([(-notbubble*2, 0), gap, (gatel+notbubble*2, 0)]))
         self.segments.append(Segment([(0, gateh/2), (gatel, 0), (0, -gateh/2), (0, gateh/2)]))
         self.segments.append(SegmentCircle((gatel+notbubble, 0), notbubble))
@@ -292,8 +292,8 @@ class Tgate(Element2Term):
             c
             cbar
     '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.segments.append(Segment(
             [(0, 0), gap, (gatel, 0)]))
         self.segments.append(Segment(
@@ -320,8 +320,8 @@ class Schmitt(Buf):
             in
             out
     '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.segments.append(Segment([(.07, -.15), (.25, -.15), (.25, .15), gap,
                                       (.33, .15), (.15, .15), (.15, -.15)], lw=1))
 
@@ -333,8 +333,8 @@ class SchmittNot(Not):
             in
             out
     '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.segments.append(Segment([(.07, -.15), (.25, -.15), (.25, .15), gap,
                                       (.33, .15), (.15, .15), (.15, -.15)], lw=1))
 
@@ -347,8 +347,8 @@ class SchmittAnd(And):
             in2
             out
     '''
-    def __init__(self, *d, leadin: float = 0.35, leadout: float = 0.35, **kwargs):
-        super().__init__(*d, leadin=leadin, leadout=leadout, **kwargs)
+    def __init__(self, leadin: float = 0.35, leadout: float = 0.35, **kwargs):
+        super().__init__(leadin=leadin, leadout=leadout, **kwargs)
         xofst = self.params['leadin']+gatel/2
         self.segments.append(Segment([(xofst+.07, -.15), (xofst+.25, -.15),
                                       (xofst+.25, .15), gap,

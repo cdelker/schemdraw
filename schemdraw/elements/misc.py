@@ -13,8 +13,8 @@ class Speaker(Element):
             * in1
             * in2
     '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         sph = .5
         self.segments.append(Segment([(0, 0), (resheight, 0)]))
         self.segments.append(Segment([(0, -sph), (resheight, -sph)]))
@@ -37,8 +37,8 @@ class Mic(Element):
             * in1
             * in2
     '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         sph = .5
         self.segments.append(Segment(  # Upper lead
             [(0, 0), (resheight, 0)]))
@@ -56,8 +56,8 @@ class Mic(Element):
 
 class Motor(Element2Term):
     ''' Motor '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         mw = .22
         self.segments.append(Segment(
             [(-mw, 0), (-mw, 0), gap, (1+mw, 0), (1+mw, 0)]))
@@ -89,7 +89,7 @@ class AudioJack(Element):
         'radius': 0.075,
         'open': True
     }
-    def __init__(self, *d,
+    def __init__(self,
                  radius: Optional[float] = None,
                  ring: bool = False,
                  ringswitch: bool = False,
@@ -97,7 +97,7 @@ class AudioJack(Element):
                  switch: bool = False,
                  open: Optional[bool] = None,
                  **kwargs):
-        super().__init__(*d, **kwargs)
+        super().__init__(**kwargs)
         fill = 'bg' if self.params['open'] else None
         r = self.params['radius']
 

@@ -10,8 +10,8 @@ from .. import drawing_stack
 
 class ElementCompound(elm.Element):
     ''' Element onto which other elements can be added like a drawing '''
-    def __init__(self, *d, **kwargs) -> None:
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs) -> None:
+        super().__init__(**kwargs)
         self.dwgparams = {'unit': kwargs.get('unit', 3),
                           'font': kwargs.get('font', None),
                           'fontsize': kwargs.get('fontsize', 14),
@@ -68,14 +68,14 @@ class Optocoupler(ElementCompound):
             * collector
             * base (if base==True)
     '''
-    def __init__(self, *d, box: bool = True, boxfill: str = 'none',
+    def __init__(self, box: bool = True, boxfill: str = 'none',
                  boxpad: float = 0.2, base: bool = False, **kwargs):
         self.unit = 1.5
         self.box = box
         self.boxfill = boxfill
         self.boxpad = boxpad
         self.base = base
-        super().__init__(*d, unit=self.unit, **kwargs)
+        super().__init__(unit=self.unit, **kwargs)
     
     def setup(self):
         D = self.add(elm.Diode(d='d'))
@@ -125,7 +125,7 @@ class Relay(ElementCompound):
             boxfill: Color to fill the box
             boxpad: Spacing between components and box
     '''
-    def __init__(self, *d, unit: float = 2, cycl: bool = False, switch: str = 'spst',
+    def __init__(self, unit: float = 2, cycl: bool = False, switch: str = 'spst',
                  core: bool = True, box: bool = True, boxfill: str = 'none',
                  boxpad: float = .25, swreverse: bool = False,
                  swflip: bool = False, link: bool = True, **kwargs):
@@ -139,7 +139,7 @@ class Relay(ElementCompound):
         self.swreverse = swreverse
         self.swflip = swflip
         self.link = link
-        super().__init__(*d, unit=unit, **kwargs)
+        super().__init__(unit=unit, **kwargs)
 
     def setup(self) -> None:
         if self.cycl:

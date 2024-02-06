@@ -60,8 +60,8 @@ As an example, here's the definition of our favorite element, the resistor:
 .. code-block:: python
 
     class Resistor(Element2Term):
-        def __init__(self, *d, **kwargs):
-            super().__init__(*d, **kwargs)
+        def __init__(self, **kwargs):
+            super().__init__(**kwargs)
             self.segments.append(Segment([(0, 0),
                                           (0.5*reswidth, resheight),
                                           (1.5*reswidth, -resheight),
@@ -108,11 +108,11 @@ For example, consider the `Dot` element:
         _element_defaults = {
             'radius': 0.075,
             'open': False}
-        def __init__(self, *d,
+        def __init__(self,
                     radius: Optional[float] = None,
                     open: Optional[bool] = None,
                     **kwargs):
-            super().__init__(*d, **kwargs)
+            super().__init__(**kwargs)
             fill = 'bg' if self.params['open'] else True
             self.elmparams['fill'] = fill
             self.segments.append(SegmentCircle((0, 0), self.params['radius']))
@@ -154,8 +154,8 @@ Start by importing the Segments and define the class name and `__init__` functio
     from schemdraw.segments import *
 
     class FluxCapacitor(Element):
-        def __init__(self, *d, **kwargs):
-            super().__init__(*d, **kwargs)
+        def __init__(self, **kwargs):
+            super().__init__(**kwargs)
 
 The `d` and `kwargs` are passed to `super` to initialize the Element.
 
@@ -201,8 +201,8 @@ Here's the Flux Capacitor class all in one:
 .. jupyter-execute::
 
     class FluxCapacitor(elm.Element):
-        def __init__(self, *d, **kwargs):
-            super().__init__(*d, **kwargs)
+        def __init__(self, **kwargs):
+            super().__init__(**kwargs)
             radius = 0.075
             fclen = 0.5
             self.segments.append(SegmentCircle((0, 0), radius))

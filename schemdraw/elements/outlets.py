@@ -22,8 +22,8 @@ class OutletA(Element):
             * hot
             * neutral
     '''
-    def __init__(self, *d, plug: bool = False, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, plug: bool = False, **kwargs):
+        super().__init__(**kwargs)
         self._outletrad = 1.5
         th = linspace(math.pi*3/4, math.pi*5/4)
         xleft = [.15 + self._outletrad * math.cos(t) for t in th]
@@ -67,8 +67,8 @@ class OutletB(OutletA):
             * neutral
             * ground
     '''
-    def __init__(self, *d, plug: bool = False, **kwargs):
-        super().__init__(*d, plug=plug, **kwargs)
+    def __init__(self, plug: bool = False, **kwargs):
+        super().__init__(plug=plug, **kwargs)
         gndw = self._outletrad/4
         gndy = -self._outletrad/2.5
         x = [-gndw/2, -gndw/2, gndw/2, gndw/2]  # Flat part
@@ -99,8 +99,8 @@ class OutletC(Element):
             * hot
             * neutral
     '''
-    def __init__(self, *d, plug: bool = False, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, plug: bool = False, **kwargs):
+        super().__init__(**kwargs)
         fill = 'black' if plug else 'bg'
         self.segments.append(SegmentCircle((0, 0), _outletrad))
         prad = _outletrad/8
@@ -123,8 +123,8 @@ class OutletD(Element):
             * neutral
             * ground
     '''
-    def __init__(self, *d, plug: bool = False, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, plug: bool = False, **kwargs):
+        super().__init__(**kwargs)
         fill = 'black' if plug else 'bg'
         self.segments.append(SegmentCircle((0, 0), _outletrad))
         prad = _outletrad/8
@@ -151,8 +151,8 @@ class OutletE(Element):
             * neutral
             * ground
     '''
-    def __init__(self, *d, plug: bool = False, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, plug: bool = False, **kwargs):
+        super().__init__(**kwargs)
         fill = 'black' if plug else 'bg'
         self.segments.append(SegmentCircle((0, 0), _outletrad))
         prad = _outletrad/8
@@ -178,8 +178,8 @@ class OutletF(OutletC):
             * hot
             * neutral
     '''
-    def __init__(self, *d, plug: bool = False, **kwargs):
-        super().__init__(*d, plug=plug, **kwargs)
+    def __init__(self, plug: bool = False, **kwargs):
+        super().__init__(plug=plug, **kwargs)
         fill = 'black' if plug else 'bg'
         notchw = _outletrad/8
         notchh = _outletrad/6
@@ -204,8 +204,8 @@ class OutletG(Element):
             * neutral
             * ground
     '''
-    def __init__(self, *d, plug: bool = False, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, plug: bool = False, **kwargs):
+        super().__init__(**kwargs)
         fill = 'black' if plug else 'bg'
         self.segments.append(SegmentCircle((0, 0), _outletrad))
         pinw = _outletrad/6
@@ -241,8 +241,8 @@ class OutletH(Element):
             * neutral
             * ground
     '''
-    def __init__(self, *d, plug: bool = False, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, plug: bool = False, **kwargs):
+        super().__init__(**kwargs)
         fill = 'black' if plug else 'bg'
         self.segments.append(SegmentCircle((0, 0), _outletrad))
         pinw = _outletrad/8
@@ -271,8 +271,8 @@ class OutletI(OutletH):
             * neutral
             * ground
     '''
-    def __init__(self, *d, plug: bool = False, **kwargs):
-        super().__init__(*d, plug=plug, **kwargs)
+    def __init__(self, plug: bool = False, **kwargs):
+        super().__init__(plug=plug, **kwargs)
         hotcenter = (.4, .3)
         neutcenter = (-.4, .3)
         self.segments[2].verts = [rotate(v, 90, center=hotcenter) for v in self.segments[2].verts]  # type: ignore
@@ -292,8 +292,8 @@ class OutletJ(Element):
             * neutral
             * ground
     '''
-    def __init__(self, *d, plug: bool = False, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, plug: bool = False, **kwargs):
+        super().__init__(**kwargs)
         fill = 'black' if plug else 'bg'
         fullh = _outletrad*1.5
         fullw = fullh*2
@@ -323,8 +323,8 @@ class OutletK(Element):
             * neutral
             * ground
     '''
-    def __init__(self, *d, plug: bool = False, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, plug: bool = False, **kwargs):
+        super().__init__(**kwargs)
         fill = 'black' if plug else 'bg'
         self.segments.append(SegmentCircle((0, 0), _outletrad))
         prad = _outletrad/8
@@ -358,8 +358,8 @@ class OutletL(Element):
             * neutral
             * ground
     '''
-    def __init__(self, *d, plug: bool = False, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, plug: bool = False, **kwargs):
+        super().__init__(**kwargs)
         fill = 'black' if plug else 'bg'
         fullh = _outletrad*1.2
         fullw = fullh*2.25

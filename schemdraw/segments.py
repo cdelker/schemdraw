@@ -890,23 +890,6 @@ class SegmentArc:
                 clip=self.clip, zorder=zorder, arrow=self.arrow)
 
 
-class SegmentArrow(Segment):
-    ''' Arrow Segment
-
-        [DEPRECATED - use Segment with arrow parameter instead]
-    '''
-    def __init__(self, tail: XY, head: XY,
-                 headwidth: Optional[float] = None, headlength: Optional[float] = None,
-                 color: Optional[str] = None, lw: Optional[float] = None, clip: Optional[BBox] = None,
-                 ref: Optional[EndRef] = None, zorder: Optional[int] = None):        
-        warnings.warn('SegmentArrow is deprecated. Use Segment with arrow parameter.', DeprecationWarning)
-        headwidth = 0.15 if headwidth is None else headwidth
-        headlength = 0.25 if headlength is None else headlength
-        super().__init__(path=(tail, head), arrow='->',
-                         arrowwidth=headwidth, arrowlength=headlength,
-                         color=color, lw=lw, clip=clip, zorder=zorder)
-
-
 class SegmentImage:
     ''' PNG or SVG Image '''
     def __init__(self,

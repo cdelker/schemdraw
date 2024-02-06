@@ -29,13 +29,13 @@ class OrthoLines(Element):
     _element_defaults = {
         'dy': 0.6,
     }
-    def __init__(self, *d,
+    def __init__(self,
                  n: int = 1,
                  dy: Optional[float] = None,
                  xstart: Optional[float] = None,
                  arrow: Optional[str] = None,
                  **kwargs):
-        super().__init__(*d, **kwargs)
+        super().__init__(**kwargs)
         self._userparams.setdefault('to', (1, 1))
 
     def to(self, xy: XY) -> 'Element':
@@ -115,12 +115,12 @@ class RightLines(Element):
         'theta': 0,
         'n': 1
     }
-    def __init__(self, *d,
+    def __init__(self,
                  n: int = 1,
                  dy: Optional[float] = None,
                  arrow: Optional[str] = None,
                  **kwargs):
-        super().__init__(*d, **kwargs)
+        super().__init__(**kwargs)
 
     def to(self, xy: XY) -> 'Element':
         ''' Specify ending position of OrthoLines '''
@@ -204,7 +204,7 @@ class Header(Element):
         'pinalignright': 'bottom',
         'pinrad': 0.1
     }
-    def __init__(self, *d,
+    def __init__(self,
                  rows: int = 4,
                  cols: int = 1,
                  pinsleft: Optional[Sequence[str]] = None,
@@ -220,7 +220,7 @@ class Header(Element):
                  edge: Optional[float] = None,
                  pinfill: Optional[str] = None,
                  **kwargs):
-        super().__init__(*d, **kwargs)
+        super().__init__(**kwargs)
         if pinsleft is None:
             pinsleft = []
         if pinsright is None:
@@ -291,10 +291,10 @@ class Jumper(Element):
         'pinrad': 0.1,
         'theta': 0
     }
-    def __init__(self, *d,
+    def __init__(self,
                  pinspacing: Optional[float] = None,
                  **kwargs):
-        super().__init__(*d, **kwargs)
+        super().__init__(**kwargs)
         pinrad = self.params['pinrad']
         x = pinrad*2.5
         self.segments.append(SegmentPoly([(-x, -x), (self.params['pinspacing']+x, -x),
@@ -325,14 +325,14 @@ class BusConnect(Element):
         'l': 3,
         'slantx': 0.5
     }
-    def __init__(self, *d,
+    def __init__(self,
                  n: int = 1,
                  up: bool = True,
                  dy: Optional[float] = None,
                  lwbus: Optional[float] = None,
                  l: Optional[float] = None,
                  **kwargs):
-        super().__init__(*d, **kwargs)
+        super().__init__(**kwargs)
         self.params['theta'] = 0
 
         deltax = self.params['l']
@@ -362,8 +362,8 @@ class BusLine(Line):
     _element_defaults = {
         'lw': 4
     }
-    def __init__(self, *d, lw: Optional[float] = None, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, lw: Optional[float] = None, **kwargs):
+        super().__init__(**kwargs)
 
 
 class DB9(Element):
@@ -386,13 +386,13 @@ class DB9(Element):
         'number': False,
         'theta': 0,
     }
-    def __init__(self, *d,
+    def __init__(self,
                  pinspacing: Optional[float] = None,
                  edge: Optional[float] = None,
                  number: Optional[bool] = None,
                  pinfill: Optional[str] = None,
                  **kwargs):
-        super().__init__(*d, **kwargs)
+        super().__init__(**kwargs)
         spacing = self.params['pinspacing']
         edgepad = self.params['edge']
         fill = self.params['pinfill']
@@ -441,13 +441,13 @@ class DB25(Element):
         'pinrad': 0.1,
         'theta': 0
     }
-    def __init__(self, *d,
+    def __init__(self,
                  pinspacing: Optional[float] = None,
                  edge: Optional[float] = None,
                  number: Optional[bool] = None,
                  pinfill: Optional[str] = None,
                  **kwargs):
-        super().__init__(*d, **kwargs)
+        super().__init__(**kwargs)
         spacing = self.params['pinspacing']
         edgepad = self.params['edge']
         fill = self.params['pinfill']
@@ -496,12 +496,12 @@ class CoaxConnect(Element):
         'radiusinner': 0.12,
         'fillinner': 'bg'
     }
-    def __init__(self, *d,
+    def __init__(self,
                  radius: Optional[float] = None, 
                  radiusinner: Optional[float] = None,
                  fillinner: Optional[str] = None,
                  **kwargs):
-        super().__init__(*d, **kwargs)
+        super().__init__(**kwargs)
         r1 = self.params['radius']
         r2 = self.params['radiusinner']
         fill = self.params['fillinner']
@@ -519,8 +519,8 @@ class Plug(Element):
     _element_defaults = {
         'pluggap': 0.18
     }
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         pluggap = self.params['pluggap']
         self.segments.append(Segment([(0, 0), (1, 0), gap, (1-resheight, resheight), (1, 0),
                                       (1-resheight, -resheight)]))
@@ -529,8 +529,8 @@ class Plug(Element):
 
 class Jack(Element):
     ''' Jack (female connector) '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.segments.append(Segment([(0, 0), (-resheight, resheight), gap,
                                       (-resheight, -resheight), (0, 0), (1, 0)]))
         self.elmparams['drop'] = (1, 0)
@@ -551,11 +551,11 @@ class Terminal(Element):
         'theta': 0,
         'zorder': 4,
     }
-    def __init__(self, *d,
+    def __init__(self,
                  r: Optional[float] = None,
                  open: Optional[bool] = None,
                  **kwargs):
-        super().__init__(*d, **kwargs)
+        super().__init__(**kwargs)
         radius = self.params['r']
         self.anchors['start'] = (0, 0)
         self.anchors['center'] = (0, 0)

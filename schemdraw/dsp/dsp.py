@@ -22,8 +22,8 @@ class Square(Element):
             * E
             * W
     '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.segments.append(Segment([(0, 0), (0, .5), (1, .5),
                                       (1, -.5), (0, -0.5), (0, 0)]))
         self.elmparams['lblloc'] = 'center'
@@ -51,8 +51,8 @@ class Circle(Element):
     _element_defaults = {
         'radius': 0.5
     }
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         rad = self.params['radius']
         k = rad*math.sqrt(2)/2  # Diagonal distance
         self.segments.append(SegmentCircle((rad, 0), rad))
@@ -83,8 +83,8 @@ class Sum(Circle):
             * SW
             * SE
     '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.segments.append(Segment([(.5, .2), (.5, -.2)]))
         self.segments.append(Segment([(.3, 0), (.7, 0)]))
 
@@ -102,8 +102,8 @@ class SumSigma(Circle):
             * SW
             * SE
     '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.segments.append(SegmentText(label=r'$\Sigma$',
                                          pos=(0.45, 0),
                                          align=('center', 'center')))
@@ -130,9 +130,9 @@ class Mixer(Circle):
             * SW
             * SE
     '''
-    def __init__(self, *d, N: Optional[str] = None, E: Optional[str] = None, S: Optional[str] = None, W: Optional[str] = None,
+    def __init__(self, N: Optional[str] = None, E: Optional[str] = None, S: Optional[str] = None, W: Optional[str] = None,
                  font: Optional[str] = None, fontsize: float = 10, **kwargs):
-        super().__init__(*d, **kwargs)
+        super().__init__(**kwargs)
         rad = .5
         k = rad*math.sqrt(2)/2  # Diagonal distance
         self.segments.append(Segment([(rad+k, k), (rad-k, -k)], lw=1))
@@ -159,8 +159,8 @@ class Mixer(Circle):
 
 class Speaker(Element):
     ''' Speaker with only one terminal '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.segments.append(Segment([(0, 0), (0, 0.25), (0.25, 0.25),
                                       (0.25, -.25), (0, -.25), (0, 0)]))
         self.segments.append(Segment([(0.25, 0.25), (0.5, 0.5), (0.5, -0.5),
@@ -174,8 +174,8 @@ class Amp(Element):
             * in
             * out
     '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         amph = 1.
         ampl = .75
         self.segments.append(Segment([(0, 0), (0, -amph/2), (ampl, 0),
@@ -202,8 +202,8 @@ class OscillatorBox(Square):
             * E
             * W
     '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         path = _makesine()
         self.segments.append(Segment(path))
 
@@ -221,8 +221,8 @@ class Oscillator(Circle):
             * SW
             * SE
     '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         path = _makesine()
         self.segments.append(Segment(path))
 
@@ -240,8 +240,8 @@ class Filter(Square):
             * E
             * W
     '''
-    def __init__(self, *d, response: Optional[FilterType] = None, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, response: Optional[FilterType] = None, **kwargs):
+        super().__init__(**kwargs)
         path = _makesine()
         path1 = [Point((p[0], p[1]+.25)) for p in path]
         path2 = [Point((p[0], p[1]-.25)) for p in path]
@@ -270,8 +270,8 @@ class Adc(Element):
             * E (same as in)
             * W (same as out)
     '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.segments.append(Segment([(0, 0), (.22, .5), (1.4, .5), (1.4, -.5),
                                       (.22, -.5), (0, 0)]))
         self.elmparams['lblloc'] = 'center'
@@ -292,8 +292,8 @@ class Dac(Element):
             * E (same as in)
             * W (same as out)
     '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.segments.append(Segment([(0, 0), (0, .5), (1.18, .5), (1.4, 0),
                                       (1.18, -.5), (0, -.5), (0, 0)]))
         self.elmparams['lblloc'] = 'center'
@@ -314,8 +314,8 @@ class Demod(Square):
             * E
             * W
     '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.segments.append(Segment([(.15, 0), (.3, 0)]))
         self.segments.append(Segment([(.3, .25), (.7, 0), (.3, -.25), (.3, .25)]))
         self.segments.append(Segment([(.7, .25), (.7, -.25)]))
@@ -331,8 +331,8 @@ class Circulator(Circle):
             * E
             * W
     '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         radius = 0.5
         self.segments.append(
             SegmentArc((0.5, 0), 0.9 * radius, 0.9 * radius, 20, 200, "cw"))
@@ -347,8 +347,8 @@ class Isolator(Square):
             * E
             * W
     '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         margin = 0.25
         path = ((margin, 0), (1 - margin, 0))
         self.segments.append(Segment(path, arrow="->"))
@@ -365,8 +365,8 @@ class VGA(Amp):
             * out
             * tune
     '''
-    def __init__(self, tuneup: bool = True, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, tuneup: bool = True, **kwargs):
+        super().__init__(**kwargs)
         path = ((-0.1, -0.5), (0.75, 0.5))
         self.segments.append(Segment(path, arrow="->"))
         self.anchors['tune'] = (0.325, 0.5 if tuneup else -0.5)

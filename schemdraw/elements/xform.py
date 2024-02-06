@@ -31,12 +31,12 @@ class Transformer(Element):
         'core': True,
         'loop': False
     }
-    def __init__(self, *d,
+    def __init__(self,
                  t1: int = 4, t2: int = 4,
                  core: Optional[bool] = None,
                  loop: Optional[bool] = None,
                  **kwargs):
-        super().__init__(*d, **kwargs)
+        super().__init__(**kwargs)
         ind_w = .4
         lbot = 0.
         ltop = t1*ind_w

@@ -35,11 +35,11 @@ class Opamp(Element):
         'sign': True,
         'leads': False
     }
-    def __init__(self, *d,
+    def __init__(self,
                  sign: Optional[bool] = None,
                  leads: Optional[bool] = None,
                  **kwargs):
-        super().__init__(*d, **kwargs)
+        super().__init__(**kwargs)
         leadlen = oa_back/4
         x = 0 if not self.params['leads'] else leadlen
 

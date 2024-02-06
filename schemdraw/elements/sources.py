@@ -11,8 +11,8 @@ from .. import util
 
 class Source(Element2Term):
     ''' Generic source element '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.segments.append(Segment([(0, 0), (0, 0), gap, (1, 0), (1, 0)]))
         self.segments.append(SegmentCircle((0.5, 0), 0.5,))
         self.elmparams['theta'] = 90
@@ -20,8 +20,8 @@ class Source(Element2Term):
 
 class SourceV(Source):
     ''' Voltage source '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         plus_len = .2
         self.segments.append(Segment([(.25, -plus_len/2),
                                       (.25, plus_len/2)]))    # '-' sign
@@ -33,15 +33,15 @@ class SourceV(Source):
 
 class SourceI(Source):
     ''' Current source '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.segments.append(Segment([(.25, 0), (.75, 0)], arrow='->'))
 
 
 class SourceSin(Source):
     ''' Source with sine '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         sin_y = util.linspace(-.25, .25, num=25)
         sin_x = [.2 * math.sin((sy-.25)*math.pi*2/.5) + 0.5 for sy in sin_y]
         self.segments.append(Segment(list(zip(sin_x, sin_y))))
@@ -49,8 +49,8 @@ class SourceSin(Source):
 
 class SourcePulse(Source):
     ''' Pulse source '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         sq = .15
         x = .4
         self.segments.append(Segment(
@@ -60,30 +60,30 @@ class SourcePulse(Source):
 
 class SourceTriangle(Source):
     ''' Triangle source '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.segments.append(Segment([(.4, .25), (.7, 0), (.4, -.25)]))
 
 
 class SourceRamp(Source):
     ''' Ramp/sawtooth source '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.segments.append(Segment([(.4, .25), (.8, -.2), (.4, -.2)]))
 
 
 class SourceSquare(Source):
     ''' Square wave source '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.segments.append(Segment([(.5, .25), (.7, .25), (.7, 0),
                                       (.3, 0), (.3, -.25), (.5, -.25)]))
 
 
 class SourceControlled(Element2Term):
     ''' Generic controlled source '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.segments.append(Segment([(0, 0), (.5, .5), (1, 0),
                                       (.5, -.5), (0, 0), gap, (1, 0)]))
         self.params['theta'] = 90
@@ -91,8 +91,8 @@ class SourceControlled(Element2Term):
 
 class SourceControlledV(SourceControlled):
     ''' Controlled voltage source '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         plus_len = .2
         self.segments.append(Segment([(.25, -plus_len/2),
                                       (.25, plus_len/2)]))  # '-' sign
@@ -104,8 +104,8 @@ class SourceControlledV(SourceControlled):
 
 class SourceControlledI(SourceControlled):
     ''' Controlled current source '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.segments.append(Segment([(.25, 0), (.75, 0)], arrow='->'))
 
 
@@ -116,8 +116,8 @@ bat2 = resheight*.75
 
 class BatteryCell(Element2Term):
     ''' Cell '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.segments.append(Segment([(0, 0), gap, (batw, 0)]))
         self.segments.append(Segment([(0, bat1), (0, -bat1)]))
         self.segments.append(Segment([(batw, bat2), (batw, -bat2)]))
@@ -125,8 +125,8 @@ class BatteryCell(Element2Term):
 
 class Battery(Element2Term):
     ''' Battery '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.segments.append(Segment([(0, 0), gap, (batw*3, 0)]))
         self.segments.append(Segment([(0, bat1), (0, -bat1)]))
         self.segments.append(Segment([(batw, bat2), (batw, -bat2)]))
@@ -136,8 +136,8 @@ class Battery(Element2Term):
 
 class Solar(Source):
     ''' Solar source '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         cellw = resheight*.5
         cellw2 = cellw + .15
         cellx = .4
@@ -155,36 +155,36 @@ class Solar(Source):
 
 class MeterV(Source):
     ''' Volt meter '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.segments.append(SegmentText((.5, 0), 'V'))
 
 
 class MeterI(Source):
     ''' Current Meter (I) '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.segments.append(SegmentText((.5, 0), 'I'))
 
 
 class MeterA(Source):
     ''' Ammeter '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.segments.append(SegmentText((.5, 0), 'A'))
 
 
 class MeterOhm(Source):
     ''' Ohm meter '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.segments.append(SegmentText((.5, 0), r'$\Omega$'))
 
 
 class Lamp(Source):
     ''' Incandescent Lamp '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         a = .25
         b = .7
         t = util.linspace(1.4, 3.6*math.pi, 100)
@@ -198,8 +198,8 @@ class Lamp(Source):
 
 class Lamp2(Source):
     ''' Incandescent Lamp (with X through a Source) '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         r=0.5
         self.segments.append(Segment(
             [(r-r/2**.5, -r/2**.5),
@@ -211,8 +211,8 @@ class Lamp2(Source):
 
 class Neon(Source):
     ''' Neon bulb '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         cellw = resheight
         cellx = .4
         self.segments.append(Segment([(cellx, cellw), (cellx, -cellw)]))

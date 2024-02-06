@@ -1,3 +1,15 @@
+v0.19 - (unreleased)
+
+    Enhancements:
+        - Added `scalex` and `scaley` for asymmetric zooming/scaling of Elements
+        - Added ElementImage for placing PNG and SVG images as an Element
+
+    Fixes:
+        - Fixed `tox` and `toy` methods when the Elemnet defines a theta
+        - Fixed vertical offset of labels below an Element
+        - Fixed reversing of CurrentLabel.
+
+
 v0.18 - 2023-12-29
 
     Enhancements:

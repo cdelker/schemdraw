@@ -64,7 +64,7 @@ class Element:
     '''
     _element_defaults: dict[str, Any] = {}     # Default parameters for subclassed elements
     defaults: ChainMap[str, Any] = ChainMap()  # Subclasses will chainmap this with parents  
-    def __init__(self, *d, **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
         self._userparams.update(kwargs)         # Specified by user
         self._localshift: XY = Point((0, 0))
         self._userlabels: list[Label] = []
@@ -77,12 +77,6 @@ class Element:
 
         if 'xy' in self._userparams:  # Allow legacy 'xy' parameter
             self._userparams.setdefault('at', self._userparams.pop('xy'))
-        if d:
-            warnings.warn('Positional argument d is deprecated. Use keyword direction or direction method.',
-                          DeprecationWarning, stacklevel=2)
-            self._userparams['d'] = d[0]
-            if len(d) > 1:
-                warnings.warn('Unused positional arguments in Element.')
 
         drawing_stack.push_element(self)
 

@@ -25,8 +25,8 @@ class Line(Element2Term):
     _element_defaults = {
         'arrowwidth': 0.15,
         'arrowlength': 0.25}
-    def __init__(self, *d, arrow: Optional[str] = None, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, arrow: Optional[str] = None, **kwargs):
+        super().__init__(**kwargs)
         arrowwidth: float = self.params['arrowwidth']
         arrowlength: float = self.params['arrowlength']
         self.segments.append(Segment([(0, 0)], arrow=arrow,
@@ -36,8 +36,8 @@ class Line(Element2Term):
 bus_stroke = 0.25
 class DataBusLine(Element2Term):
     ''' Straight Line with bus indication stripe '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.segments.append(Segment(
             [(0, 0), gap, (-bus_stroke/2, bus_stroke), (bus_stroke/2, -bus_stroke),
              gap, (0, 0)]))
@@ -54,7 +54,7 @@ class Arrow(Line):
             headwidth: Width of arrow head [default: 0.15]
             headlength: Length of arrow head [default: 0.25]
     '''
-    def __init__(self, *d,
+    def __init__(self,
                  double: bool = False,
                  headwidth: Optional[float] = None,
                  headlength: Optional[float] = None,
@@ -63,7 +63,7 @@ class Arrow(Line):
             kwargs.setdefault('arrow', '<->')
         else:
             kwargs.setdefault('arrow', '->')
-        super().__init__(*d, **kwargs)
+        super().__init__(**kwargs)
 
         # Explicitly define center so reverses work
         self.anchors['center'] = (0, 0)
@@ -83,8 +83,8 @@ class Gap(Element2Term):
         'lblalign': ('center', 'center'),
         'lblofst': 0
     }
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.segments.append(Segment([(0, 0), gap, (1, 0)], visible=False))
 
 
@@ -98,11 +98,11 @@ class Dot(Element):
     _element_defaults = {
         'radius': 0.075,
         'open': False}
-    def __init__(self, *d,
+    def __init__(self,
                  radius: Optional[float] = None,
                  open: Optional[bool] = None,
                  **kwargs):
-        super().__init__(*d, **kwargs)
+        super().__init__(**kwargs)
         fill = 'bg' if self.params['open'] else True
         self.anchors['start'] = (0, 0)
         self.anchors['center'] = (0, 0)
@@ -126,8 +126,8 @@ class Arrowhead(Element):
         'headlength': 0.25,
         'lblofst': 0.25
     }
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         headwidth = self.params['headwidth']
         headlength = self.params['headlength'] 
         self.segments.append(Segment([
@@ -151,11 +151,11 @@ class DotDotDot(Element):
         'radius': 0.075,
         'open': False,
     }
-    def __init__(self, *d,
+    def __init__(self,
                  radius: Optional[float] = None,
                  open: Optional[bool] = None,
                  **kwargs) -> None:
-        super().__init__(*d, **kwargs)
+        super().__init__(**kwargs)
         r: float = self.params['radius']
         fill = 'bg' if self.params['open'] else True
         self.elmparams['fill'] = fill
@@ -701,8 +701,8 @@ class Label(Element):
         Args:
             label: text to display.
     '''
-    def __init__(self, *d, label: Optional[str] = None, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, label: Optional[str] = None, **kwargs):
+        super().__init__(**kwargs)
         self.elmparams['lblloc'] = 'center'
         self.elmparams['lblofst'] = 0
         if label:
@@ -726,11 +726,11 @@ class Tag(Element):
         'fontsize': 12,
         'lblofst': 0
     }
-    def __init__(self, *d,
+    def __init__(self,
                  width: Optional[float] = None,
                  height: Optional[float] = 0.625,
                  **kwargs) -> None:
-        super().__init__(*d, **kwargs)
+        super().__init__(**kwargs)
         w: float = self.params['width']
         h: float = self.params['height']
         h = h / 2
@@ -1114,14 +1114,14 @@ class Rect(Element):
     _element_defaults = {
         'zorder': 0,  # Put on bottom
     }
-    def __init__(self, *d,
+    def __init__(self,
                  corner1: XY = (0, 0),
                  corner2: XY = (1, 1),
                  fill: Optional[str] = None,
                  lw: Optional[float] = None,
                  ls: Optional[Linestyle] = None,
                  **kwargs):
-        super().__init__(*d, **kwargs)
+        super().__init__(**kwargs)
         c1a = (corner1[0], corner2[1])
         c2a = (corner2[0], corner1[1])
         self.segments.append(Segment([corner1, c1a, corner2, c2a, corner1], zorder=0))

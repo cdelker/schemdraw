@@ -18,8 +18,8 @@ class Switch(Element2Term):
         Args:
             action: action arrow ('open' or 'close')
     '''
-    def __init__(self, *d, action: Optional[ActionType] = None, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, action: Optional[ActionType] = None, **kwargs):
+        super().__init__(**kwargs)
         self.segments.append(Segment(
             [(0, 0), gap, (sw_dot_r*2, .1), (.8, .45), gap, (1, 0)]))
         self.segments.append(SegmentCircle((sw_dot_r, 0), sw_dot_r, fill='bg', zorder=3))
@@ -45,8 +45,8 @@ class SwitchSpdt(Switch):
             * b
             * c
     '''
-    def __init__(self, *d, action: Optional[ActionType] = None, **kwargs):
-        super().__init__(*d, action=action, **kwargs)
+    def __init__(self, action: Optional[ActionType] = None, **kwargs):
+        super().__init__(action=action, **kwargs)
         self.segments.append(SegmentCircle((1-sw_dot_r, .7), sw_dot_r, fill='bg', zorder=3))
         self.anchors['a'] = Point((sw_dot_r, 0))
         self.anchors['b'] = Point((1-sw_dot_r, 0))
@@ -64,8 +64,8 @@ class SwitchSpdt2(Element):
             * b
             * c
     '''
-    def __init__(self, *d, action: Optional[ActionType] = None, **kwargs):
-        super().__init__(*d, action=action, **kwargs)
+    def __init__(self, action: Optional[ActionType] = None, **kwargs):
+        super().__init__(action=action, **kwargs)
         self.segments.append(Segment([(0, 0), gap, (sw_dot_r*2, .1),
                                       (.7, .25), gap, (1, .4)]))
 
@@ -92,8 +92,8 @@ class Button(Element2Term):
         Args:
             nc: Normally closed
     '''
-    def __init__(self, *d, nc: bool = False, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, nc: bool = False, **kwargs):
+        super().__init__(**kwargs)
         if nc:
             self.segments.append(Segment(
                 [(0, 0), gap, (sw_dot_r, -sw_dot_r-.05),
@@ -120,8 +120,8 @@ class SwitchDpst(Element):
             * t1
             * t2
     '''
-    def __init__(self, *d, link: bool = True, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, link: bool = True, **kwargs):
+        super().__init__(**kwargs)
         yofst = -1
         self.segments.append(Segment([(0, 0), gap, (sw_dot_r*2, .1),
                                       (.8, .45), gap, (1, 0)]))
@@ -154,8 +154,8 @@ class SwitchDpdt(Element):
             * t3
             * t4
     '''
-    def __init__(self, *d, link: bool = True, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, link: bool = True, **kwargs):
+        super().__init__(**kwargs)
         yofst = -1.4
         self.segments.append(Segment([(0, 0), gap, (sw_dot_r*2, .1),
                                       (.7, .25), gap, (1, .4)]))
@@ -180,8 +180,8 @@ class SwitchDpdt(Element):
 
 class SwitchReed(Element2Term):
     ''' Reed Switch '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.segments.append(Segment(
             [(0, 0), (.85, .15), gap, (.8, 0)]))
 
@@ -214,12 +214,12 @@ class SwitchRotary(Element):
             * P
             * T[x] for each contact (starting at 1)
     '''
-    def __init__(self, *d,
+    def __init__(self,
                  n: int = 4, dtheta: Optional[float] = None, theta0: Optional[float] = None,
                  radius: float = 1, arrowlen: float = 0.75,
                  arrowcontact: int = 0,
                  **kwargs):
-        super().__init__(*d, **kwargs)
+        super().__init__(**kwargs)
         self.elmparams['fill'] = 'bg'
         self.elmparams['zorder'] = 4
         self.segments.append(SegmentCircle((0, 0), sw_dot_r))
@@ -260,14 +260,14 @@ class SwitchDIP(Element):
         'swidth': 0.4,
         'spacing': 0.2
     }
-    def __init__(self, *d,
+    def __init__(self,
                  n: int = 3,
                  pattern: Optional[Sequence[bool]] = None,
                  switchcolor: Optional[str] = None,
                  swidth: Optional[float] = None,
                  spacing: Optional[float] = None,
                  **kwargs):
-        super().__init__(*d, **kwargs)
+        super().__init__(**kwargs)
         _swidth: float = self.params['swidth']
         _spacing: float = self.params['spacing']
         width = _swidth * n + _spacing*(n+1)

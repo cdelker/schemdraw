@@ -362,7 +362,7 @@ class IcDIP(Element):
         'fontsize': 12,
         'pfontsize': 10
     }
-    def __init__(self, *d,
+    def __init__(self,
                  pins: Optional[int] = None,
                  names: Optional[Sequence[str]] = None,
                  notch: Optional[bool] = None,
@@ -373,7 +373,7 @@ class IcDIP(Element):
                  fontsize: Optional[float]= None,
                  pfontsize: Optional[float] = None,
                  **kwargs):
-        super().__init__(*d, **kwargs)
+        super().__init__(**kwargs)
         w: float = self.params['width']
         pw: float = self.params['pinw']
         space: float = self.params['spacing']
@@ -444,7 +444,7 @@ class DFlipFlop(Ic):
     _element_defaults = {
         'size': (2, 3)
     }
-    def __init__(self, *d, preclr: bool = False, preclrinvert: bool = True, **kwargs):
+    def __init__(self, preclr: bool = False, preclrinvert: bool = True, **kwargs):
         pins = [IcPin('D', side='left', slot='2/2'),
                 IcPin('>', side='left', slot='1/2'),
                 IcPin('Q', side='right', slot='2/2'),
@@ -478,7 +478,7 @@ class JKFlipFlop(Ic):
     _element_defaults = {
         'size': (2, 3)
     }
-    def __init__(self, *d, preclr: bool = False, preclrinvert: bool = True, **kwargs):
+    def __init__(self, preclr: bool = False, preclrinvert: bool = True, **kwargs):
         pins = [IcPin('J', side='left', slot='3/3'),
                 IcPin('>', side='left', slot='2/3'),
                 IcPin('K', side='left', slot='1/3'),
@@ -506,7 +506,7 @@ class VoltageRegulator(Ic):
     _element_defaults = {
         'size': (2, 1.5)
     }
-    def __init__(self, *d, **kwargs):
+    def __init__(self, **kwargs):
         pins = [IcPin('in', side='left', slot='3/3'),
                 IcPin('out', side='right', slot='3/3'),
                 IcPin('gnd', side='bottom')]
@@ -520,7 +520,7 @@ class Ic555(Ic):
         'pinspacing': 1.5,
         'leadlen': 1
     }
-    def __init__(self, *d, **kwargs):
+    def __init__(self, **kwargs):
         pins = [IcPin(name='TRG', side='left', pin='2'),
                 IcPin(name='THR', side='left', pin='6'),
                 IcPin(name='DIS', side='left', pin='7'),
@@ -700,7 +700,7 @@ class SevenSegment(Ic):
         'cathode': False,
         'w': 3,
     }
-    def __init__(self, *d,
+    def __init__(self,
                  decimal: Optional[bool] = None,
                  digit: Optional[int | str] = None,
                  segcolor: Optional[str] = None,

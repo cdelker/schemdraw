@@ -21,10 +21,10 @@ class Ground(Element):
         'theta': 0,
         'drop': (0, 0)
     }
-    def __init__(self, *d,
+    def __init__(self,
                  lead: Optional[bool] = None,
                  **kwargs):
-        super().__init__(*d, **kwargs)
+        super().__init__(**kwargs)
         gnd_lead = _gnd_lead if self.params['lead'] else 0
         self.segments.append(Segment(
             [(0, 0), (0, -gnd_lead), (-resheight, -gnd_lead),
@@ -48,10 +48,10 @@ class GroundSignal(Element):
         'theta': 0,
         'drop': (0, 0)
     }
-    def __init__(self, *d,
+    def __init__(self,
                  lead: bool = True,
                  **kwargs):
-        super().__init__(*d, **kwargs)
+        super().__init__(**kwargs)
         gnd_lead = _gnd_lead if self.params['lead'] else 0
         self.segments.append(Segment(
             [(0, 0), (0, -gnd_lead), (-resheight, -gnd_lead), (0, -gnd_lead-resheight),
@@ -72,8 +72,8 @@ class GroundChassis(Element):
         'drop': (0, 0),
         'theta': 0
     }
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         gnd_lead = _gnd_lead if self.params['lead'] else 0
         dx = resheight*.75
         dy = resheight
@@ -92,8 +92,8 @@ class GroundChassis(Element):
 
 class Antenna(Element):
     ''' Antenna '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         lead = 0.6
         h = 0.6
         w = 0.38
@@ -108,8 +108,8 @@ class Antenna(Element):
 
 class AntennaLoop(Element):
     ''' Loop antenna (diamond style) '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         lead = 0.2
         h = 0.5
         self.segments.append(Segment(
@@ -123,8 +123,8 @@ class AntennaLoop(Element):
 
 class AntennaLoop2(Element):
     ''' Loop antenna (square style) '''
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         lead = .25
         h = 1
         x1 = -h/2-lead/2
@@ -156,8 +156,8 @@ class Vss(Element):
         'theta': 0,
         'lblloc': 'bottom'
     }
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         dx = resheight*.75
         gnd_lead = _gnd_lead if self.params['lead'] else 0
         self.segments.append(Segment([(0, 0), (0, -gnd_lead)]))
@@ -179,8 +179,8 @@ class Vdd(Element):
         'drop': (0, 0),
         'theta': 0
     }
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         dx = resheight*.75
         gnd_lead = _gnd_lead if self.params['lead'] else 0
         self.segments.append(Segment([(0, 0), (0, gnd_lead)]))

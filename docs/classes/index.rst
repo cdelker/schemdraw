@@ -12,4 +12,5 @@ Class Definitions
     electrical
     logic
     dsp
+    pictorial
     flow

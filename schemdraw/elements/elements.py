@@ -8,7 +8,7 @@ import warnings
 import math
 
 from .. import default_canvas
-from ..segments import SegmentText, SegmentCircle, BBox, SegmentType
+from ..segments import Segment, SegmentText, SegmentCircle, BBox, SegmentType
 from ..transform import Transform
 from .. import util
 from ..util import Point
@@ -20,6 +20,8 @@ try:
     from ..backends.mpl import Figure as mplFigure
 except ImportError:
     mplFigure = None  # type: ignore
+
+
 
 
 gap = (math.nan, math.nan)  # Put a gap in a path
@@ -431,7 +433,7 @@ class Element:
                 rotate = (theta if lblrotate else 0)
                 self.label(label, loc, fontsize=lblsize, rotate=rotate, color=lblcolor)
 
-        for label in self._userlabels:   # THIS MOVES to place_label.
+        for label in self._userlabels:
             self._place_label(label, theta)
 
         # Add element-specific anchors
@@ -750,6 +752,7 @@ class Element2Term(Element):
             * end
     '''
     _element_defaults = {
+        'leadcolor': None,  # Inherit
         'dotradius': 0.075
     }
     def to(self, xy: XY, dx: float = 0, dy: float = 0) -> 'Element2Term':
@@ -892,7 +895,8 @@ class Element2Term(Element):
         self.anchors['istart'] = self.segments[0].path[0]  # type: ignore
         self.anchors['iend'] = self.segments[0].path[-1]  # type: ignore
         if self.params.get('extend', True):
-            in_path = self.segments[0].path  # type: ignore
+            assert isinstance(self.segments[0], Segment)
+            in_path = self.segments[0].path
             dz = util.delta(in_path[-1], in_path[0])   # Defined delta of path
             in_len = math.hypot(*dz)    # Defined length of path
             try:
@@ -906,6 +910,8 @@ class Element2Term(Element):
                 end = Point(in_path[-1]) + Point((lead_len, 0))
                 self._localshift = -start
                 self.segments[0].path = [start] + self.segments[0].path + [end]  # type: ignore
+                if in_len > 0 and (leadcolor := self.params.get('leadcolor')):
+                    self.segments[0].color = leadcolor
 
             else:
                 start = Point(in_path[0])

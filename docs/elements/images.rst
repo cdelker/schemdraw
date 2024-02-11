@@ -18,20 +18,23 @@ For example, an Arduino Board element may be created from an image:
 
 .. jupyter-execute::
 
-    class ArduinoBoard(elm.ElementImage):
+    class ArduinoUno(elm.ElementImage):
+        ''' Arduino Element '''
         def __init__(self):
-            width = 8
-            height = width/1.397  # Based on image dimensions
-            # use xy to shift so (0, 0) is lower left corner of the board
+            # Dimensions based on image size to make it about the right
+            # size relative to other components
+            width = 10.3
+            height = width/1.397
+            pinspacing = .35   # Spacing between header pins
+
             super().__init__('ArduinoUNO.png', width=width, height=height, xy=(-.75, 0))
-        
-            top = height * .956  # y-value of top pin header
-            arefx = 2.5          # x-value of aref pin
-            pinspace = 0.273     # spacing between pins
+
+            # Only defining the top header pins as anchors for now
+            top = height * .956
+            arefx = 3.4
             for i, pinname in enumerate(['aref', 'gnd', 'pin13', 'pin12', 'pin11',
-                                         'pin10', 'pin9', 'pin8']):
-                self.anchors[pinname] = (arefx + i*pinspace, top)
-            # TODO - add other pin locations
+                                        'pin10', 'pin9', 'pin8']):
+                self.anchors[pinname] = (arefx + i*pinspacing, top)
 
 
 The Arduino element is used like any other element:
@@ -40,7 +43,7 @@ The Arduino element is used like any other element:
 
     with schemdraw.Drawing() as d:
         d.config(color='#dd2222', unit=2)
-        arduino = ArduinoBoard()
+        arduino = ArduinoUno()
         elm.Dot().at(arduino.gnd)
         elm.Resistor().up().scale(.7)
         elm.Line().right().tox(arduino.pin8)
@@ -49,3 +52,6 @@ The Arduino element is used like any other element:
 
 
 `Arduino Image Source <https://commons.wikimedia.org/wiki/File:ArduinoUNO.png>`_ , CC-BY-SA-3.0.
+
+
+See :ref:`pictorial` for using Image Elements with other graphical schematic components.

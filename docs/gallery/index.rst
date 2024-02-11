@@ -14,6 +14,7 @@ Circuit Gallery
    solidstate
    ic
    signalproc
+   pictorial
    flowcharting
    styles
 

@@ -890,6 +890,107 @@ class SegmentArc:
                 clip=self.clip, zorder=zorder, arrow=self.arrow)
 
 
+class SegmentPath:
+    ''' Segment defined like svg <path> element made of
+        M, L, C, Q, Z, etc....
+    '''
+    def __init__(self,
+                 path: Sequence[XY | str], 
+                 color: Optional[str] = None,
+                 lw: Optional[float] = None,
+                 ls: Optional[Linestyle] = None,
+                 capstyle: Optional[Capstyle] = None,
+                 joinstyle: Optional[Joinstyle] = None,
+                 fill: Optional[str] = None,
+                 clip: Optional[BBox] = None,
+                 zorder: Optional[int] = None,
+                 visible: bool = True):
+        self.path: Sequence[XY | str] = path  # Control points and strings 'M', 'L', 'C', etc.
+        #drawing on SVG backend simply builds d into a <path>
+        #drawing on MPL backend uses matplotlib.patches.PathPatch
+
+        self.zorder = zorder
+        self.color = color
+        self.fill = fill
+        self.lw = lw
+        self.ls = ls
+        self.clip = clip
+        self.capstyle = capstyle
+        self.joinstyle = joinstyle
+        self.visible = visible
+
+    def xform(self, transform, **style) -> 'SegmentPath':
+        params: dict[str, Any] = {
+            'zorder': self.zorder if self.zorder is not None else style.get('zorder', None),
+            'color': self.color if self.color else style.get('color', None),
+            'fill': self.fill if self.fill is not None else style.get('fill', None),
+            'lw': self.lw if self.lw else style.get('lw', None),
+            'ls': self.ls if self.ls else style.get('ls', None),
+            'capstyle': self.capstyle if self.capstyle else style.get('capstyle', None),
+            'joinstyle': self.joinstyle if self.joinstyle else style.get('joinstyle', None),
+            'visible': self.visible}
+        style = {k: v for k, v in style.items() if params.get(k) is None and k in params.keys()}
+        params.update(style)
+
+        xpath = []
+        for p in self.path:
+            try:  # Point
+                xpath.append(transform.transform(Point(p)))  # type: ignore
+            except TypeError:
+                xpath.append(p)  # String
+
+        return SegmentPath(xpath, **params)
+
+    def get_bbox(self) -> BBox:
+        ''' Get bounding box (untransformed)
+
+            Returns:
+                Bounding box limits: (xmin, ymin, xmax, ymax)
+        '''
+        x = [p[0] for p in self.path if not isinstance(p, str)]
+        y = [p[1] for p in self.path if not isinstance(p, str)]
+        return BBox(min(x), min(y), max(x), max(y))
+
+    def doreverse(self, centerx: float) -> None:
+        ''' Reverse the path (flip horizontal about the center of the path) '''
+        #self.path = [util.mirrorx(p, centerx) for p in self.path[::-1]]
+        
+    def doflip(self) -> None:
+        ''' Vertically flip the element '''
+        #self.path = [util.flip(p) for p in self.path]
+
+    def draw(self, fig, transform, **style) -> None:
+        ''' Draw the segment
+
+            Args:
+                fig: schemdraw.Figure to draw on
+                transform: Transform to apply before drawing
+                style: Default style parameters
+        '''
+        if not self.visible:
+            return
+
+        xpath = []
+        for p in self.path:
+            try:  # Point
+                xpath.append(transform.transform(Point(p)))  # type: ignore
+            except TypeError:
+                xpath.append(p)  # String
+
+        zorder = self.zorder if self.zorder is not None else style.get('zorder', 2)
+        color = self.color if self.color else style.get('color', 'black')
+        fill = self.fill if self.fill is not None else style.get('fill', None)
+        ls = self.ls if self.ls else style.get('ls', '-')
+        lw = self.lw if self.lw else style.get('lw', 2)
+        capstyle = self.capstyle if self.capstyle else style.get('capstyle', 'round')
+        joinstyle = self.joinstyle if self.joinstyle else style.get('joinstyle', 'round')
+
+        fig.path(xpath, color=color, fill=fill,
+                 ls=ls, lw=lw, capstyle=capstyle, joinstyle=joinstyle,
+                 clip=self.clip, zorder=zorder)
+
+
+
 class SegmentImage:
     ''' PNG or SVG Image '''
     def __init__(self,
@@ -963,4 +1064,4 @@ class SegmentImage:
                   zorder=zorder)
 
 
-SegmentType = Union[Segment, SegmentText, SegmentPoly, SegmentArc, SegmentCircle, SegmentBezier, SegmentImage]
+SegmentType = Union[Segment, SegmentText, SegmentPoly, SegmentArc, SegmentCircle, SegmentBezier, SegmentPath, SegmentImage]

@@ -8,7 +8,7 @@ import math
 import matplotlib  # type: ignore
 import matplotlib.pyplot as plt  # type: ignore
 from matplotlib import font_manager, transforms
-from matplotlib.patches import Arc, Rectangle, PathPatch, Path  # type: ignore
+from matplotlib.patches import Arc, Rectangle, PathPatch, Path # type: ignore
 
 from .. import util
 from ..types import Capstyle, Joinstyle, Linestyle, BBox, XY
@@ -215,18 +215,73 @@ class Figure:
                 self.circle(p[-1], radius=arrowwidth/2, color=color, fill=color, lw=0,
                             clip=clip, zorder=zorder)
 
+    def path(self, path: Sequence[XY | str],
+            color: str = 'black', lw: float = 2, ls: Linestyle = '-',
+            fill: Optional[str] = None,
+            capstyle: Capstyle = 'round',
+            joinstyle: Joinstyle = 'round', 
+            zorder: int = 1,
+            clip: Optional[BBox] = None,
+            ) -> None:
+        CODES = {
+            'M': [Path.MOVETO],
+            'C': [Path.CURVE4, Path.CURVE4, Path.CURVE4], 
+            'Q': [Path.CURVE3, Path.CURVE3],
+            'L': [Path.LINETO],
+            'Z': [Path.CLOSEPOLY]}
+
+        points = [p for p in path if not isinstance(p, str)]
+        strcodes =  [p for p in path if isinstance(p, str)]
+        codes: list[int] = []
+        for s in strcodes:
+            codes.extend(CODES.get(s, [Path.MOVETO]))  # type: ignore
+
+        if strcodes[-1] == 'Z':
+            points.append((0, 0))  # Ingored point, but required by MPL
+
+        curve = PathPatch(Path(points, codes),
+                          fc='none' if fill is None else fill,
+                          ec=color, ls=ls, lw=lw,
+                          fill=(fill is not None),
+                          capstyle=fix_capstyle(capstyle),
+                          joinstyle=joinstyle,
+                          zorder=zorder,
+                          transform=self.ax.transData)
+        self.ax.add_patch(curve)
+        self.addclip(curve, clip)
+
     def arc(self, center: XY, width: float, height: float,
             theta1: float = 0, theta2: float = 90, angle: float = 0,
             color: str = 'black', lw: float = 2, ls: Linestyle = '-',
             fill: Optional[str] = None,
             zorder: int = 1, clip: Optional[BBox] = None, arrow: Optional[str] = None) -> None:
         ''' Draw an arc or ellipse, with optional arrowhead '''
-        # MPL doesn't support filled arcs
-        arc = Arc(center, width=width, height=height, theta1=theta1,
-                  theta2=theta2, angle=angle, color=color,
-                  lw=lw, ls=ls, zorder=zorder)
-        self.ax.add_patch(arc)
-        self.addclip(arc, clip)
+
+        if fill is None:
+            arc = Arc(center, width=width, height=height, theta1=theta1,
+                    theta2=theta2, angle=angle, color=color,
+                    lw=lw, ls=ls, zorder=zorder)
+            self.ax.add_patch(arc)
+            self.addclip(arc, clip)
+        else:
+            # Matplotlib doesn't support filled arcs, so make one using Polygon
+            while theta1 > theta2:
+                theta1 -= 360
+
+            theta = util.linspace(math.radians(theta2), math.radians(theta1), 50)
+            points = [(width/2*math.cos(th) + center[0], 
+                       height/2*math.sin(th) + center[1]) for th in theta]
+            poly = plt.Polygon(points, closed=False,
+                              ec=color,
+                              fc=fill, fill=fill is not None,
+                              lw=lw, ls=ls, zorder=zorder)
+
+            if angle:
+                tr = transforms.Affine2D().translate(-center[0], -center[1]).rotate_deg(angle).translate(center[0], center[1])
+                poly.set_transform(tr+self.ax.transData)
+
+            self.ax.add_patch(poly)
+            self.addclip(poly, clip)
 
         if arrow is not None:
             x, y = math.cos(math.radians(theta2)), math.sin(math.radians(theta2))

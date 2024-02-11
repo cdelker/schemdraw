@@ -418,6 +418,29 @@ class Figure:
                 self.circle(p[-1], radius=arrowwidth/2, color=color, fill=color, lw=0,
                             clip=clip, zorder=zorder)
 
+    def path(self, path: Sequence[XY | str],
+            color: str = 'black', lw: float = 2, ls: Linestyle = '-',
+            fill: Optional[str] = None,
+            capstyle: Capstyle = 'round',
+            joinstyle: Joinstyle = 'round', 
+            zorder: int = 1,
+            clip: Optional[BBox] = None,
+            ) -> None:
+        dstrs = []
+        for point in path:
+            if isinstance(point, str):
+                dstrs.append(point)
+            else:
+                x, y = self.xform(*point)
+                dstrs.append(f'{x}')
+                dstrs.append(f'{y}')
+        et = ET.Element('path')
+        et.set('d', ' '.join(dstrs))
+        et.set('style', getstyle(color=color, ls=ls, lw=lw, capstyle=capstyle,
+                                 joinstyle=joinstyle, fill=fill))
+        self.addclip(et, clip)
+        self.svgelements.append((zorder, et))
+
     def arc(self, center: XY, width: float, height: float,
             theta1: float = 0, theta2: float = 90, angle: float = 0,
             color: str = 'black', lw: float = 2, ls: Linestyle = '-',
@@ -472,7 +495,7 @@ class Figure:
             d = f'M {startx} {starty}'
             d += f' a {width/2} {height/2} {angle} {flags} {dx} {dy}'
             et.set('d', d)
-            et.set('style', getstyle(color=color, ls=ls, lw=lw))
+            et.set('style', getstyle(color=color, ls=ls, lw=lw, fill=fill))
             self.addclip(et, clip)
             self.svgelements.append((zorder, et))
 

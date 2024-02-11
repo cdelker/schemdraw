@@ -3,6 +3,7 @@ v0.19 - (unreleased)
     Enhancements:
         - Added `scalex` and `scaley` for asymmetric zooming/scaling of Elements
         - Added ElementImage for placing PNG and SVG images as an Element
+        - Added pictorial elements
 
     Fixes:
         - Fixed `tox` and `toy` methods when the Elemnet defines a theta

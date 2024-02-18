@@ -183,17 +183,19 @@ class Element:
 
     def scale(self, scale: float = 1) -> 'Element':
         ''' Apply scale/zoom factor to element '''
-        self._userparams['zoom'] = scale
+        self._userparams['zoom'] = Point((scale, scale))
         return self
 
     def scalex(self, scale: float = 1) -> 'Element':
         ''' Apply horizontal scale/zoom to element '''
-        self._userparams['zoom'] = Point((scale, 1.))
+        oldscale = self._userparams.get('zoom', Point((1, 1)))
+        self._userparams['zoom'] = Point((scale, oldscale.y))
         return self
 
     def scaley(self, scale: float = 1) -> 'Element':
         ''' Apply vertical scale/zoom to element '''
-        self._userparams['zoom'] = Point((1., scale))
+        oldscale = self._userparams.get('zoom', Point((1, 1)))
+        self._userparams['zoom'] = Point((oldscale.x, scale))
         return self
 
     def flip(self) -> 'Element':

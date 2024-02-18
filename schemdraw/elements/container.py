@@ -28,7 +28,7 @@ class Container(Element):
         'lblofst': (.1, -.1),
         'lblalign': ('left', 'top'),
         'theta': 0,
-        'anchor': 'NW'
+        'anchor': 'boxNW'
     }
     def __init__(self,
                  drawing: Union['Drawing', 'Container'],
@@ -56,7 +56,7 @@ class Container(Element):
             padx: Spacing from element to box in x direction [default: 0.75]
             pady: Spacing from element to box in y direction [default: 0.75]
         '''
-        return Container(self, cornerradius, padx, pady)
+        return Container(self, cornerradius=cornerradius, padx=padx, pady=pady)
 
     def __iadd__(self, element: Element) -> 'Container':
         return self.add(element)
@@ -113,11 +113,12 @@ class Container(Element):
         if cornerradius > 0:
             self.segments = [SegmentPoly(
                 [(0, h/2), (w, h/2), (w, -h/2), (0, -h/2)],
-                cornerradius=cornerradius)]
+                 cornerradius=cornerradius)]
         else:
             self.segments.append(Segment([(0, 0), (0, h/2), (w, h/2),
                                           (w, -h/2), (0, -h/2), (0, 0)]))
         self.anchors['center'] = (w/2, 0)
+        self.anchors['boxNW'] = (0, h/2)
         self.anchors['N'] = (w/2, h/2)
         self.anchors['E'] = (w, 0)
         self.anchors['S'] = (w/2, -h/2)

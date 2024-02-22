@@ -70,6 +70,13 @@ def config(unit: float = 3.0, inches_per_unit: float = 0.5,
         schemdrawstyle['bgcolor'] = bgcolor
 
 
+def debug(dwgbbox: bool = True,
+          elmbbox: bool = True):
+    ''' Debug - draw element and/or drawing bounding boxes '''
+    schemdrawstyle['dwgbbox'] = dwgbbox
+    schemdrawstyle['elmbbox'] = elmbbox
+
+
 schemdrawstyle: dict[str, Any] = {}  # Global style
 config()  # Initialize default configuration
 
@@ -209,7 +216,7 @@ class Drawing:
                 padx: space between contents and border in x direction
                 pady: space between contents and border in y direction
         '''
-        return Container(self, cornerradius, padx, pady)
+        return Container(self, cornerradius=cornerradius, padx=padx, pady=pady)
 
     def __enter__(self):
         drawing_stack.push_drawing(self)
@@ -405,34 +412,34 @@ class Drawing:
         for element in self.elements:
             element._draw(self.fig)
 
-    def _drawmpl(self, ax=None, showframe=False):
+    def _drawmpl(self, ax=None):
         ''' Draw on Matplotlib Axis '''
         if self.fig is None or ax is not None:
             self.fig = mplFigure(ax=ax,
                                  inches_per_unit=self.dwgparams.get('inches_per_unit'),
                                  margin=self.dwgparams['margin'],
-                                 showframe=showframe)
+                                 showbbox=self.dwgparams.get('dwgbbox', False))
             if 'bgcolor' in self.dwgparams:
                 self.fig.bgcolor(self.dwgparams['bgcolor'])
+        self.fig.set_bbox(self.get_bbox())  # type: ignore
         self._drawelements()
 
-    def _drawsvg(self, svg=None, showframe=False):
+    def _drawsvg(self, svg=None):
         ''' Draw on SVG canvas '''
         if self.fig is None or svg is not None:
             self.fig = svgFigure(svg=svg, bbox=self.get_bbox(),
                                  inches_per_unit=self.dwgparams.get('inches_per_unit'),
                                  margin=self.dwgparams.get('margin'),
-                                 showframe=showframe)
+                                 showbbox=self.dwgparams.get('dwgbbox', False))
         if 'bgcolor' in self.dwgparams:
             self.fig.bgcolor(self.dwgparams['bgcolor'])
         self._drawelements()
 
-    def draw(self, showframe: bool = False, show: bool = True,
+    def draw(self, show: bool = True,
              canvas=None, backend: Optional[Backends] = None):
         ''' Draw the schematic
 
             Args:
-                showframe: Show axis frame. Useful for debugging a drawing.
                 show: Show the schematic in a GUI popup window (when
                     outside of a Jupyter inline environment)
                 canvas: 'matplotlib', 'svg', or Axis instance to draw on
@@ -452,13 +459,13 @@ class Drawing:
             canvas = default_canvas.default_canvas
 
         if canvas == 'matplotlib':
-            self._drawmpl(showframe=showframe)
+            self._drawmpl()
         elif hasattr(canvas, 'plot'):
-            self._drawmpl(ax=canvas, showframe=showframe)
+            self._drawmpl(ax=canvas)
         elif canvas == 'svg':
-            self._drawsvg(showframe=showframe)
+            self._drawsvg()
         else:
-            self._drawsvg(canvas, showframe=showframe)
+            self._drawsvg(canvas)
 
         if show:
             # Show figure in window if not inline/Jupyter mode

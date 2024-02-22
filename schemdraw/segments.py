@@ -347,25 +347,36 @@ class SegmentText:
             Returns:
                 Bounding box limits (xmin, ymin, xmax, ymax)
         '''
-        w, h, _ = svg.text_size(self.text, 'Arial', self.fontsize)
+        SCALE = 2/72
+        w, h, dy = svg.text_size(self.text, font=self.font,
+                                 mathfont=self.mathfont, size=self.fontsize)
         # h, w are in points, convert back to inches (/72)
         # then convert back to drawing units (*2)
         # This makes text the same point size regardless of inches_per_unit
-        w = w/72*2
-        h = h/72*2
+        w *= SCALE
+        h *= SCALE
+        dy *= SCALE
         x = self.xy[0]
         y = self.xy[1]
+        nlines = len(self.text.splitlines())
+
         if self.align is not None:
             if self.align[0] == 'center':
                 x -= w/2
             elif self.align[0] == 'right':
                 x -= w
+
             if self.align[1] == 'center':
                 y -= h/2
             elif self.align[1] == 'top':
                 y -= h
+            elif self.align[1] == 'bottom':
+                pass
+            else:  # base/baseline
+                # y += dy  # If baseline is base of TOP row
+                y += (dy + self.fontsize*SCALE*(nlines-1))  # If baseline is base of BOTTOM row
 
-        return BBox(x-.2, y-.2, x+w+.4, y+h+.4)
+        return BBox(x, y, x+w, y+h)
 
     def draw(self, fig, transform, **style) -> None:
         ''' Draw the segment
@@ -397,6 +408,14 @@ class SegmentText:
                  color=color, fontsize=fontsize, fontfamily=font, mathfont=mathfont,
                  rotation=rotation, rotation_mode=rotmode,
                  halign=align[0], valign=align[1], clip=self.clip, zorder=zorder)
+
+        # Debug Text Bounding Box
+        # (doesn't work when label is not rotated with element)
+        #bbox = self.get_bbox()
+        #xy = transform.transform((bbox.xmin, bbox.ymin))
+        #xy2 = transform.transform((bbox.xmax, bbox.ymax))
+        #fig.poly((xy, (xy.x, xy2.y), xy2, (xy2.x, xy.y)),
+        #         color='orange', lw=2)
 
 
 class SegmentPoly:

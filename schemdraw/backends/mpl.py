@@ -30,11 +30,11 @@ class Figure:
             bbox: Coordinate bounding box for drawing, used to
                 override Matplotlib's autoscale
             inches_per_unit: Scale for the drawing
-            showframe: Show Matplotlib axis frame
+            showbbox: Draw bounding box and margin box
             ax: Existing Matplotlib axis to draw on
     '''
     def __init__(self, **kwargs):
-        self.showframe = kwargs.get('showframe', False)
+        self.showbbox = kwargs.get('showbbox', False)
         self.bbox = kwargs.get('bbox', None)
         self.inches_per_unit = kwargs.get('inches_per_unit', .5)
         if kwargs.get('ax'):
@@ -58,13 +58,12 @@ class Figure:
             self.ax = self.fig.add_subplot()
             self.userfig = False
             self.ax.set_aspect('equal')
-            if not self.showframe:
-                self.ax.axes.get_xaxis().set_visible(False)
-                self.ax.axes.get_yaxis().set_visible(False)
-                self.ax.set_frame_on(False)
+            self.ax.axes.get_xaxis().set_visible(False)
+            self.ax.axes.get_yaxis().set_visible(False)
+            self.ax.set_frame_on(False)
 
         # whitespace around contents
-        self.margin = kwargs.get('margin', .1)
+        self.margin = kwargs.get('margin', .1) + .03  # Plus half a line width for linecaps
 
     def set_bbox(self, bbox: BBox):
         ''' Set bounding box, to override Matplotlib's autoscale '''
@@ -110,6 +109,7 @@ class Figure:
              halign: str = 'center', valign: str = 'center',
              rotation_mode: str = 'anchor', clip: Optional[BBox] = None, zorder=3) -> None:
         ''' Add text to the figure '''
+        valign = 'baseline' if valign == 'base' else valign
         if fontfamily.endswith('.ttf') or fontfamily.endswith('otf'):
             if fontfamily not in [f.fname for f in font_manager.fontManager.ttflist]:
                 font_manager.fontManager.addfont(fontfamily)
@@ -117,8 +117,8 @@ class Figure:
             fontfamily = font_manager.fontManager.ttflist[idx].name
 
         t = self.ax.text(x, y, s, transform=self.ax.transData, color=color,
-                         fontsize=fontsize-1.5, fontfamily=fontfamily,
-                         math_fontfamily=mathfont,
+                         fontsize=fontsize, fontfamily=fontfamily,
+                         math_fontfamily=mathfont, linespacing=1,
                          rotation=rotation, rotation_mode=rotation_mode,
                          horizontalalignment=halign, verticalalignment=valign,
                          zorder=zorder, clip_on=False)
@@ -336,23 +336,32 @@ class Figure:
         ''' Save the figure to a file '''
         fig = self.getfig()
         fig.subplots_adjust(0, 0, 1, 1)
-        fig.savefig(fname, bbox_inches='tight', transparent=transparent, dpi=dpi,
+        fig.savefig(fname,
+                    bbox_inches='tight',
+                    transparent=transparent, dpi=dpi,
                     bbox_extra_artists=self.ax.get_default_bbox_extra_artists(),
-                    pad_inches=self.margin*self.inches_per_unit)
+                    pad_inches=0)
 
     def getfig(self):
         ''' Get the Matplotlib figure '''
+        if self.showbbox:
+            self.plot((self.bbox.xmin, self.bbox.xmin, self.bbox.xmax, self.bbox.xmax, self.bbox.xmin),
+                      (self.bbox.ymin, self.bbox.ymax, self.bbox.ymax, self.bbox.ymin, self.bbox.ymin),
+                      color='red', lw=.5)
+            self.plot((self.bbox.xmin-self.margin, self.bbox.xmin-self.margin, self.bbox.xmax+self.margin, self.bbox.xmax+self.margin, self.bbox.xmin-self.margin),
+                      (self.bbox.ymin-self.margin, self.bbox.ymax+self.margin, self.bbox.ymax+self.margin, self.bbox.ymin-self.margin, self.bbox.ymin-self.margin),
+                      color='black', lw=.5)
+
         if not self.userfig:
-            self.ax.autoscale_view()
-            x1, x2 = self.ax.get_xlim()
-            y1, y2 = self.ax.get_ylim()
+            x1, x2 = self.bbox.xmin - self.margin, self.bbox.xmax + self.margin
+            y1, y2 = self.bbox.ymin - self.margin, self.bbox.ymax + self.margin
+            self.ax.set_xlim(x1, x2)
+            self.ax.set_ylim(y1, y2)
             w = x2-x1
             h = y2-y1
-
-            if not self.showframe:
-                self.ax.axes.get_xaxis().set_visible(False)
-                self.ax.axes.get_yaxis().set_visible(False)
-                self.ax.set_frame_on(False)
+            self.ax.axes.get_xaxis().set_visible(False)
+            self.ax.axes.get_yaxis().set_visible(False)
+            self.ax.set_frame_on(False)
             try:
                 self.ax.get_figure().set_size_inches(self.inches_per_unit*w,
                                                      self.inches_per_unit*h)
@@ -364,9 +373,10 @@ class Figure:
         ''' Get the image as SVG or PNG bytes array '''
         fig = self.getfig()
         output = BytesIO()
-        fig.savefig(output, format=ext, bbox_inches='tight',
+        fig.savefig(output, format=ext,
+                    bbox_inches='tight',
                     bbox_extra_artists=self.ax.get_default_bbox_extra_artists(),
-                    pad_inches=self.margin*self.inches_per_unit)
+                    pad_inches=0)
 
         return output.getvalue()
 

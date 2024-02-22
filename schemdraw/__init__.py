@@ -1,4 +1,4 @@
-from .schemdraw import Drawing, use, config, theme
+from .schemdraw import Drawing, use, config, theme, debug
 from .segments import Segment, SegmentCircle, SegmentArc, SegmentText, SegmentPoly, SegmentBezier, SegmentPath
 from .transform import Transform
 from .types import ImageFormat

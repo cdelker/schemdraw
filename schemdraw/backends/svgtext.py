@@ -320,7 +320,8 @@ def text_approx_size(text: str, font: str = 'Arial', size: float = 16) -> tuple[
         Returns:
             w: Width of text box, in points
             h: Height of text box, in points
-            dy: Spacing between lines of text, in points
+            descent: distance from baseline to descender (always 0, included
+                to match return of ziamath.getsize())
     '''
     w = 0.
     h = 0.
@@ -330,7 +331,7 @@ def text_approx_size(text: str, font: str = 'Arial', size: float = 16) -> tuple[
         math = ' '.join(mathtextsvg(line).itertext())  # itertext strips all the tags
         w = max(w, string_width(math, fontsize=size, font=font))
         h += dy
-    return w, h, dy
+    return w, h, 0
 
 
 def text_tosvg(text: str, x: float, y: float, font: str = 'Arial', size: float = 16, color: str = 'black',
@@ -357,14 +358,15 @@ def text_tosvg(text: str, x: float, y: float, font: str = 'Arial', size: float =
         Returns:
             Text formatted in svg <text> element string.
     '''
-    w, h, dy = text_approx_size(text, font=font, size=size)
+    w, h, _ = text_approx_size(text, font=font, size=size)
+    nlines = len(text.splitlines())
 
     textelm = ET.Element('text')
 
     for line in text.splitlines():
         tspan = mathtextsvg(line)
         tspan.set('x', str(x))
-        tspan.set('dy', str(dy))
+        tspan.set('dy', str(size))
         textelm.append(tspan)
 
     boxx = x
@@ -378,6 +380,8 @@ def text_tosvg(text: str, x: float, y: float, font: str = 'Arial', size: float =
         ytext += h/2
     elif valign == 'top':
         ytext += h
+    elif valign == 'base':
+        ytext += size*(nlines-1)
     anchor = {'center': 'middle', 'left': 'start', 'right': 'end'}.get(halign, 'start')
 
     org = Point((x, y))
@@ -393,6 +397,7 @@ def text_tosvg(text: str, x: float, y: float, font: str = 'Arial', size: float =
     pymax = max(p1[1], p2[1], p3[1], p4[1])
 
     dx = dy = 0.
+    xform = None
     if rotation != 0 and rotation_mode == 'default':
         if halign == 'left':
             dx = x-pxmin
@@ -407,7 +412,7 @@ def text_tosvg(text: str, x: float, y: float, font: str = 'Arial', size: float =
         else:  # bottom
             dy = y-pymax
         xform = f'translate({dx} {dy}) rotate({-rotation} {x} {y})'
-    else:
+    elif rotation != 0:
         xform = f'rotate({-rotation} {x} {y})'
 
     textelm.set('x', str(x))
@@ -416,7 +421,8 @@ def text_tosvg(text: str, x: float, y: float, font: str = 'Arial', size: float =
     textelm.set('font-size', str(size))
     textelm.set('font-family', font)
     textelm.set('text-anchor', anchor)
-    textelm.set('transform', xform)
+    if xform is not None:
+        textelm.set('transform', xform)
 
     if testmode:
         pxmin += dx   # Final bounding box

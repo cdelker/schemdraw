@@ -319,20 +319,8 @@ class Element:
                 mathfont: Name/font-family of math text
                 color: Color of label
         '''
-        if not halign and not valign:
-            align: Optional[Align] = None
-        else:
-            if not halign:
-                halign = {'top': 'center',
-                          'bottom': 'center',
-                          'left': 'right',
-                          'right': 'left'}.get(loc, 'left')  # type: ignore
-            if not valign:
-                valign = {'top': 'baseline',
-                          'bottom': 'top',
-                          'left': 'center',
-                          'right': 'center'}.get(loc, 'bottom')  # type: ignore
-            align = (halign, valign)  # type: ignore
+        align = (halign, valign)
+
         if not rotate:
             rotate = 0
         elif isinstance(rotate, bool):
@@ -528,94 +516,99 @@ class Element:
                 label.loc = 'left'
         return label
 
-    def _align_label(self, label: Label, theta: float = 0) -> Label:
+    def _align_label(self, label: Label, theta: float = 0) -> tuple[Align, Point]:
         ''' Calculate label alignment and offset based on angle and location
             relative to the element
 
             Args:
                 label: The label to position
                 theta: Element drawing direction
+
+            Returns:
+                Align: suggested horizontal and vertical alignment
+                Offset: suggested horizontal and vertical offset from label position
         '''
-        if label.align is None:
-            if label.loc == 'center':
-                align: Align = ('center', 'center')
-
-            elif label.loc and label.loc in self.anchors: 
-                # Anchor is on an edge
-                x1, y1, x2, y2 = self.get_bbox(includetext=False)
-                align = ('center', 'center')
-                if math.isclose(self.anchors[label.loc][0], x1, abs_tol=.15):
-                    # Label on left edge
-                    align = ('right', align[1])
-                elif math.isclose(self.anchors[label.loc][0], x2, abs_tol=.15):
-                    # Label on right edge
-                    align = ('left', align[1])
-                else:
-                    # Not on left or right edge
-                    align = ('center', align[1])
-
-                if math.isclose(self.anchors[label.loc][1], y1, abs_tol=.15):
-                    # Label on bottom edge
-                    align = (align[0], 'top')
-                elif math.isclose(self.anchors[label.loc][1], y2, abs_tol=.15):
-                    # Label on top edge
-                    align = (align[0], 'bottom')
-                else:
-                    # Not on top or bottom edge
-                    align = (align[0], 'center')
-
-                label.align = align
-
-                # Fix offset if provided as single value
-                if isinstance(label.ofst, (float, int)):
-                    pofst = label.ofst
-                    label.ofst = {
-                        ('center', 'bottom'): (0, pofst),
-                        ('right', 'bottom'): (-pofst, pofst),
-                        ('right', 'center'): (-pofst, 0),
-                        ('right', 'top'): (-pofst, -pofst),
-                        ('center', 'top'): (0, -pofst),
-                        ('left', 'top'): (pofst, -pofst),
-                        ('left', 'center'): (pofst, 0),
-                        ('left', 'bottom'): (pofst, pofst)
-                    }.get(label.align, (0, pofst))
-                    label.ofst = Point(label.ofst)
-
-            else:
-                # Align based on position relative to the element
-                # Below alignment dictionary works for label on top.
-                # Rotate angle for other sides.
-                th = theta - label.rotate
-                th = {'left': th+90,
-                      'bottom': th+180,
-                      'right': th+270}.get(label.loc, th)  # type: ignore
-                th = (th+360) % 360  # Normalize angle so it's positive, clockwise
-
-                # Alignment for label in different positions
-                rotalign: list[Align] = [
-                    ('center', 'bottom'),  # label on top
-                    ('right', 'bottom'),
-                    ('right', 'center'),   # label on left
-                    ('right', 'top'),
-                    ('center', 'top'),     # label on bottom
-                    ('left', 'top'),
-                    ('left', 'center'),    # label on right
-                    ('left', 'bottom')]
-                label.align = rotalign[int(round((th/360)*8) % 8)]
-            
-        # Ensure label.ofst is a Point (x,y) pair
+        newofst = label.ofst
         if isinstance(label.ofst, (float, int)):
-            if label.loc == 'bottom':
-                label.ofst = (0, -label.ofst)
-            elif label.loc == 'left':
-                label.ofst = (-label.ofst, 0)
-            elif label.loc == 'right':
-                label.ofst = (label.ofst, 0)
-            else:
-                label.ofst = (0, label.ofst)
+            newofst = Point((label.ofst, label.ofst))
 
-        label.ofst = Point(label.ofst)  # type: ignore
-        return label
+        if label.loc == 'center':
+            newalign: Align = ('center', 'center')
+
+        elif label.loc and label.loc in self.anchors: 
+            # Anchor is on an edge
+            x1, y1, x2, y2 = self.get_bbox(includetext=False)
+            newalign = ('center', 'center')
+            if math.isclose(self.anchors[label.loc][0], x1, abs_tol=.15):
+                # Label on left edge
+                newalign = ('right', newalign[1])
+            elif math.isclose(self.anchors[label.loc][0], x2, abs_tol=.15):
+                # Label on right edge
+                newalign = ('left', newalign[1])
+            else:
+                # Not on left or right edge
+                newalign = ('center', newalign[1])
+
+
+            if math.isclose(self.anchors[label.loc][1], y1, abs_tol=.15):
+                # Label on bottom edge
+                newalign = (newalign[0], 'top')
+            elif math.isclose(self.anchors[label.loc][1], y2, abs_tol=.15):
+                # Label on top edge
+                newalign = (newalign[0], 'bottom')
+            else:
+                # Not on top or bottom edge
+                newalign = (newalign[0], 'center')
+
+            # Fix offset if provided as single value
+            if isinstance(label.ofst, (float, int)):
+                pofst = label.ofst
+                newofst = {
+                    ('center', 'bottom'): (0, pofst),
+                    ('right', 'bottom'): (-pofst, pofst),
+                    ('right', 'center'): (-pofst, 0),
+                    ('right', 'top'): (-pofst, -pofst),
+                    ('center', 'top'): (0, -pofst),
+                    ('left', 'top'): (pofst, -pofst),
+                    ('left', 'center'): (pofst, 0),
+                    ('left', 'bottom'): (pofst, pofst)
+                }.get(newalign, (0, pofst))
+                newofst = Point(newofst)
+
+        else:
+            # Align based on position relative to the element
+            # Below alignment dictionary works for label on top.
+            # Rotate angle for other sides.
+            th = theta - label.rotate
+            th = {'left': th+90,
+                  'bottom': th+180,
+                  'right': th+270}.get(label.loc, th)  # type: ignore
+            th = (th+360) % 360  # Normalize angle so it's positive, clockwise
+
+            # Alignment for label in different positions
+            rotalign: list[Align] = [
+                ('center', 'bottom'),  # label on top
+                ('right', 'bottom'),
+                ('right', 'center'),   # label on left
+                ('right', 'top'),
+                ('center', 'top'),     # label on bottom
+                ('left', 'top'),
+                ('left', 'center'),    # label on right
+                ('left', 'bottom')]
+            newalign = rotalign[int(round((th/360)*8) % 8)]
+            
+            # Ensure label.ofst is a Point (x,y) pair
+            if isinstance(label.ofst, (float, int)):
+                if label.loc == 'bottom':
+                    newofst = (0, -label.ofst)
+                elif label.loc == 'left':
+                    newofst = (-label.ofst, 0)
+                elif label.loc == 'right':
+                    newofst = (label.ofst, 0)
+                else:
+                    newofst = (0, label.ofst)
+                newofst = Point(newofst)  # type: ignore
+        return newalign, newofst
 
     def _place_label(self, label: Label, theta: float = 0) -> None:
         ''' Adds the label SegmentText to the element, after element placement
@@ -629,13 +622,16 @@ class Element:
                       label.rotate, label.fontsize,
                       label.font, label.mathfont, label.color)
 
-        if label.align is None:
+        if label.align == (None, None):
             label.align = self.params.get('lblalign', None)
         if label.ofst is None:
             label.ofst = self.params.get('lblofst', .1)
-
+        
         label = self._position_label(label, theta)
-        label = self._align_label(label, theta)
+        align, ofst = self._align_label(label, theta)
+        label.align = Point((label.align[0] if label.align and label.align[0] is not None else align[0],
+                             label.align[1] if label.align and label.align[1] is not None else align[1]))
+        label.ofst = Point(ofst)
 
         # Parameters to send to SegmentText
         segment_params = {
@@ -727,6 +723,13 @@ class Element:
             self._place((0, 0), 0)
         for segment in self.segments:
             segment.draw(fig, self.transform, **self.params)
+
+        if self.params.get('elmbbox', False):
+            # Draw element bounding box
+            bbox = self.get_bbox()
+            Segment(((bbox.xmin, bbox.ymin), (bbox.xmax, bbox.ymin),
+                     (bbox.xmax, bbox.ymax), (bbox.xmin, bbox.ymax), (bbox.xmin, bbox.ymin)),
+                     color='blue', lw=.5).draw(fig, self.transform)
 
 
 class ElementDrawing(Element):

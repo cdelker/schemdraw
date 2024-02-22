@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Sequence, Optional, BinaryIO
 from xml.etree import ElementTree as ET
+from collections import namedtuple
 
 import os
 import sys
@@ -21,6 +22,11 @@ except ImportError:
 from ..types import Capstyle, Joinstyle, Linestyle, BBox, Halign, Valign, RotationMode, TextMode, XY
 from ..util import Point
 from . import svgtext
+
+
+PTS_PER_INCH = 72  # Matplotlib uses inches as unit, so we will to make sizes match
+PX_PER_PT = 4/3    # Pixels to points
+LINE_WIDTH = 2     # Default line width is 2 points
 
 
 class Config:
@@ -147,7 +153,7 @@ def getstyle(color: Optional[str] = None, ls: Optional[Linestyle] = None, lw: Op
     return s
 
 
-def text_size(text: str, font: str = 'sans', size: float = 16) -> tuple[float, float, float]:
+def text_size(text: str, font: str = 'sans', mathfont: Optional[str] = None, size: float = 14) -> tuple[float, float, float]:
     ''' Get size of text. Size will be exact bounding box if ziamath installed and
         using path text mode. Otherwise size will be estimated based on character
         widths.
@@ -158,26 +164,19 @@ def text_size(text: str, font: str = 'sans', size: float = 16) -> tuple[float, f
             size: Font size in points
 
         Returns:
-            width, height, linespacing
+            width, height, descender
     '''
     if ziamath:
         if text == '':
-            return 0, 0, 0
+            return (0, 0, 0)
 
-        if font.lower() in ['sans-serif', 'Arial']:
+        if font is None or font.lower() in ['sans-serif', 'Arial']:
             font = 'sans'
 
-        lines = text.splitlines()
-        maths = []
-        for line in lines:
-            maths.append(ziamath.Text(line, size=size, mathstyle=font, textfont=font))
-        sizes = [m.getsize() for m in maths]
-        w: float = max([s[0] for s in sizes if math.isfinite(s[0])])
-        h: float = sum([s[1] for s in sizes if math.isfinite(s[0])])
-        textsize = (w, h, 0.)
-    else:
-        textsize = svgtext.text_approx_size(text, font=font, size=size)
-    return textsize
+        m = ziamath.Text(text, size=size, mathstyle=font, textfont=font, mathfont=mathfont)
+        return (*m.getsize(), m.getyofst())
+
+    return svgtext.text_approx_size(text, font=font, size=size)
 
 
 class Figure:
@@ -186,9 +185,8 @@ class Figure:
         Args:
             bbox: Coordinate bounding box for drawing
             inches_per_unit: Scale for the drawing
-            showframe: Show frame around entire drawing
+            showbbox: Show frame around entire drawing
     '''
-
     # Keep track of clipid's across all figures so they don't conflict
     # when multiple figures are in one Jupyter notebook/html file.
     total_clips = 0
@@ -197,9 +195,9 @@ class Figure:
         self.svgelements: list[tuple[int, ET.Element]] = []  # (zorder, element)
         self.hatch: bool = False
         self.clips: dict[BBox, int] = {}
-        self.showframe = kwargs.get('showframe', False)
-        self.scale = 64.8 * kwargs.get('inches_per_unit', .5)  # Magic scale factor that matches what MPL did
-        self.margin = kwargs.get('margin', .1)
+        self.showbbox = kwargs.get('showbbox', False)
+        self.scale = PTS_PER_INCH * kwargs.get('inches_per_unit', 0.5)   # Converts drawing units to points
+        self.margin = kwargs.get('margin', 0.1) + LINE_WIDTH/PTS_PER_INCH  # Margin in drawing units. Add line width (2pt) to include linecaps in bbox
         self.set_bbox(bbox)
         self._bgcolor: Optional[str] = None
         self._need_xlink = False
@@ -278,17 +276,16 @@ class Figure:
         if s == '':
             return
 
-        # Add a bit of baseline shift to match MPL
-        if valign == 'bottom':
-            y += fontsize/72*2/6
-        elif valign == 'top':
-            y -= fontsize/72*2/6
-            
         x0, y0 = self.xform(x, y)
-        x, y = x0, y0
-
         if fontfamily.lower() in ['sans-serif', 'Arial']:
             fontfamily = 'sans'
+
+        if valign in ['base', 'baseline']:
+            # Matplotlib's "base" valign aligns to the bottom row
+            # Ziafont valign aligns to top row.. shift y to compensate and
+            # match MPL.
+            nlines = len(s.splitlines())
+            y0 -= (nlines-1)*fontsize
 
         if ziamath and config.text == 'path':
             texttag = ET.Element('g')
@@ -298,10 +295,11 @@ class Figure:
             ztext.drawon(texttag, x0, y0,
                          halign=halign, valign=valign)
         else:
-            texttag = svgtext.text_tosvg(s, x, y, font=fontfamily, size=fontsize,
+            texttag = svgtext.text_tosvg(s, x0, y0, font=fontfamily, size=fontsize,
                                          halign=halign, valign=valign, color=color,
                                          rotation=rotation, rotation_mode=rotation_mode,
                                          testmode=False)
+        
         self.addclip(texttag, clip)
         self.svgelements.append((zorder, texttag))
 
@@ -596,23 +594,19 @@ class Figure:
         with open(fname, 'w', encoding='utf-8') as f:
             f.write(svg)
 
-    def getimage(self, ext: str = 'svg') -> bytes:
-        ''' Get the image as SVG or PNG bytes array '''
-        if ext.lower() != 'svg':
-            raise ValueError('SVG backend only supports generating SVG format figures.')
-
-        pad = 2
-        x0 = self.bbox.xmin * self.scale - pad
-        y0 = -self.bbox.ymax * self.scale - pad
+    def getsvg(self) -> ET.Element:
+        ''' Get the image as SVG XML Tree '''
+        x0 = self.bbox.xmin * self.scale
+        y0 = -self.bbox.ymax * self.scale
         if not self.svgcanvas:
             svg = ET.Element('svg')
             svg.set('xmlns', 'http://www.w3.org/2000/svg')
             if self._need_xlink:
                 svg.set('xmlns:xlink', 'http://www.w3.org/1999/xlink')
             svg.set('xml:lang', 'en')
-            svg.set('height', f'{self.pxheight+2*pad}pt')
-            svg.set('width', f'{self.pxwidth+2*pad}pt')
-            svg.set('viewBox', f'{x0} {y0} {self.pxwidth+2*pad} {self.pxheight+2*pad}')
+            svg.set('height', f'{self.pxheight}pt')
+            svg.set('width', f'{self.pxwidth}pt')
+            svg.set('viewBox', f'{x0} {y0} {self.pxwidth} {self.pxheight}')
             if self._bgcolor:
                 svg.set('style', f'background-color:{self._bgcolor};')
         else:
@@ -621,18 +615,33 @@ class Figure:
         if self.hatch:
             svg.append(ET.fromstring(hatchpattern))
 
-        if self.showframe:
+        if self.showbbox:
             rect = ET.SubElement(svg, 'rect')
-            rect.set('x', str(x0))
-            rect.set('y', str(y0))
-            rect.set('width', str(self.pxwidth))
-            rect.set('height', str(self.pxheight))
-            rect.set('style', 'fill:none; stroke-width:1; stroke:black;')
+            rect.set('x', str(self.bbox.xmin*self.scale))
+            rect.set('y', str(-self.bbox.ymax*self.scale))
+            rect.set('width', str(self.bbox.xmax*self.scale - self.bbox.xmin*self.scale))
+            rect.set('height', str(-self.bbox.ymin*self.scale + self.bbox.ymax*self.scale))
+            rect.set('style', 'fill:none; stroke-width:0.5; stroke:black;')
+
+            rect = ET.SubElement(svg, 'rect')
+            rect.set('x', str((self.bbox.xmin+self.margin)*self.scale))
+            rect.set('y', str(-(self.bbox.ymax-self.margin)*self.scale))
+            rect.set('width', str((self.bbox.xmax-self.margin)*self.scale - (self.bbox.xmin+self.margin)*self.scale))
+            rect.set('height', str(-(self.bbox.ymin+self.margin)*self.scale + (self.bbox.ymax-self.margin)*self.scale))
+            rect.set('style', 'fill:none; stroke-width:1; stroke:red;')
 
         # sort by zorder
         elements = [k[1] for k in sorted(self.svgelements, key=lambda x: x[0])]
         for elm in elements:
             svg.append(elm)
+        return svg
+
+    def getimage(self, ext: str = 'svg') -> bytes:
+        ''' Get image as SVG bytes '''
+        if ext.lower() != 'svg':
+            raise ValueError('SVG backend only supports generating SVG format figures.')
+
+        svg = self.getsvg()
         return ET.tostring(svg, encoding='utf-8')
 
     def clear(self) -> None:

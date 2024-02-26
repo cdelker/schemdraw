@@ -22,10 +22,9 @@ except ImportError:
 from ..types import Capstyle, Joinstyle, Linestyle, BBox, Halign, Valign, RotationMode, TextMode, XY
 from ..util import Point
 from . import svgtext
+from .svgunits import parse_size_to_px, PT_PER_IN, PX_PER_PT
 
 
-PTS_PER_INCH = 72  # Matplotlib uses inches as unit, so we will to make sizes match
-PX_PER_PT = 4/3    # Pixels to points
 LINE_WIDTH = 2     # Default line width is 2 points
 
 
@@ -153,7 +152,10 @@ def getstyle(color: Optional[str] = None, ls: Optional[Linestyle] = None, lw: Op
     return s
 
 
-def text_size(text: str, font: str = 'sans', mathfont: Optional[str] = None, size: float = 14) -> tuple[float, float, float]:
+def text_size(text: str,
+              font: Optional[str] = 'sans',
+              mathfont: Optional[str] = None,
+              size: float = 14) -> tuple[float, float, float]:
     ''' Get size of text. Size will be exact bounding box if ziamath installed and
         using path text mode. Otherwise size will be estimated based on character
         widths.
@@ -166,12 +168,12 @@ def text_size(text: str, font: str = 'sans', mathfont: Optional[str] = None, siz
         Returns:
             width, height, descender
     '''
+    if font is None or font.lower() in ['sans-serif', 'Arial']:
+        font = 'sans'
+
     if ziamath:
         if text == '':
             return (0, 0, 0)
-
-        if font is None or font.lower() in ['sans-serif', 'Arial']:
-            font = 'sans'
 
         m = ziamath.Text(text, size=size, mathstyle=font, textfont=font, mathfont=mathfont)
         return (*m.getsize(), m.getyofst())
@@ -196,8 +198,8 @@ class Figure:
         self.hatch: bool = False
         self.clips: dict[BBox, int] = {}
         self.showbbox = kwargs.get('showbbox', False)
-        self.scale = PTS_PER_INCH * kwargs.get('inches_per_unit', 0.5)   # Converts drawing units to points
-        self.margin = kwargs.get('margin', 0.1) + LINE_WIDTH/PTS_PER_INCH  # Margin in drawing units. Add line width (2pt) to include linecaps in bbox
+        self.scale = PT_PER_IN * kwargs.get('inches_per_unit', 0.5)   # Converts drawing units to points
+        self.margin = kwargs.get('margin', 0.1) + LINE_WIDTH/PT_PER_IN  # Margin in drawing units. Add line width (2pt) to include linecaps in bbox
         self.set_bbox(bbox)
         self._bgcolor: Optional[str] = None
         self._need_xlink = False
@@ -550,26 +552,30 @@ class Figure:
                 imgfmt: file format of image. Required if image is
                     open file pointer.
         '''
-        try:  # File name
-            with open(image, 'rb') as f:  # type: ignore
-                assert(isinstance(image, str))  # For type checking
+        if isinstance(image, str):
+            with open(image, 'rb') as f:
                 imgdat = f.read()
                 imgfmt = os.path.splitext(image)[1][1:] if imgfmt is None else imgfmt
-        except TypeError:  # Open file pointer
-            assert(isinstance(image, BinaryIO))  # For type checking
+
+        else:
             image.seek(0)
             imgdat = image.read()
 
         if imgfmt is None:
             raise ValueError('Must specify image format when using file pointer with SegmentImage')
 
-        width = width * self.scale
+        width = width * self.scale  # Width/height in pixels
         height = height * self.scale
         x0, y0 = self.xform(*xy)
         y0 -= height
 
         if imgfmt == 'svg':
-            et = ET.fromstring(imgdat.decode())
+            et = ET.Element('g')
+            imageelm = ET.fromstring(imgdat.decode())
+            imgwidth = parse_size_to_px(imageelm.get('width', '0'))
+            s = width / imgwidth
+            et.set('transform', f'translate({x0}, {y0}) scale({s})')
+            et.append(imageelm)
         else:  # Raster images
             image_b64 = base64.encodebytes(imgdat).decode()
             et = ET.Element('image')
@@ -577,12 +583,12 @@ class Figure:
             self.svgelements.append((zorder, et))
             self._need_xlink = True
 
-        et.set('x', str(x0))
-        et.set('y', str(y0))
-        et.set('width', str(width))
-        et.set('height', str(height))
-        if rotate:
-            et.set('transform', f'rotate({-rotate} {x0} {y0+height})')
+            et.set('x', str(x0))
+            et.set('y', str(y0))
+            et.set('width', str(width))
+            et.set('height', str(height))
+            if rotate:
+                et.set('transform', f'rotate({-rotate} {x0} {y0+height})')
         self.svgelements.append((zorder, et))
 
     def save(self, fname: str, **kwargs) -> None:

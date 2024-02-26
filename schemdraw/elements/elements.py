@@ -22,8 +22,6 @@ except ImportError:
     mplFigure = None  # type: ignore
 
 
-
-
 gap = (math.nan, math.nan)  # Put a gap in a path
 
 

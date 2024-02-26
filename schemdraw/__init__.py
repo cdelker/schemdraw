@@ -6,7 +6,7 @@ from .backends.svg import config as svgconfig
 from .backends.svg import settextmode
 
 __all__ = [
-    "Drawing", "use", "config", "theme", "Segment", "SegmentCircle", "SegmentArc", "SegmentText",
+    "Drawing", "use", "config", "theme", "debug", "Segment", "SegmentCircle", "SegmentArc", "SegmentText",
     "SegmentPath",
     "SegmentPoly", "SegmentBezier", "Transform", "ImageFormat", "settextmode", "svgconfig"
 ]

@@ -5,8 +5,7 @@
 '''
 
 from __future__ import annotations
-from typing import Optional, Sequence, Any, Union
-import warnings
+from typing import Optional, Sequence, Any, Union, BinaryIO
 import math
 
 from .types import BBox, XY, Linestyle, Capstyle, Joinstyle, Align, Arcdirection, EndRef, RotationMode, Halign, Valign
@@ -1009,11 +1008,10 @@ class SegmentPath:
                  clip=self.clip, zorder=zorder)
 
 
-
 class SegmentImage:
     ''' PNG or SVG Image '''
     def __init__(self,
-                 image: str,  # TODO typehint
+                 image: str | BinaryIO,
                  xy: Point = Point((0, 0)),   # Lower Left
                  width: float = 3,
                  height: float = 1,

@@ -438,7 +438,8 @@ def text_tosvg(text: str, x: float, y: float, font: str = 'Arial', size: float =
         box.set('width', str(w))
         box.set('height', str(h))
         box.set('style', 'stroke:blue;stroke-width:1;fill:none')
-        box.set('transform', xform)
+        if xform is not None:
+            box.set('transform', xform)
         circ = ET.SubElement(topelm, 'circle')
         circ.set('cx', str(x))
         circ.set('cy', str(y))

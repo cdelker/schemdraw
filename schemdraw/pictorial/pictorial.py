@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Optional
 import math
 
+from ..backends.svgunits import parse_size_to_px, PX_PER_IN
 from ..segments import (Segment,
                         SegmentPath,
                         SegmentPoly,
@@ -12,13 +13,23 @@ from ..segments import (Segment,
 from ..elements import Element, Element2Term
 
 
-INCH = 3.5  # Inches in terns of Drawing units
-MILLIMETER = INCH / 25.4
+# Scale factors in terms of drawing units
+# INCH chosen to scale the dimensioned pictorial elements to 
+# approximately the right size relative to other schemdraw elements
+INCH = 3.5  # Drawing units per inch
+MILLIMETER = INCH / 25.4   # Drawing units per millimeter
 PINSPACING = 0.1 * INCH  # Spacing between breadboard pins
 
 HOUSING_COLOR = '#333'  # Color of ICs, Diodes, etc.
 BORDER_COLOR = '#777'   # Border around housings
 LEAD_COLOR = '#A0A0A0'  # Color of leads/metal
+
+
+def parse_size_to_units(value: str) -> float:
+    ''' Parse a SVG size string (sunh as '2in') to drawing units '''
+    value_px = parse_size_to_px(value)
+    value_units = value_px / PX_PER_IN * INCH
+    return value_units
 
 
 def resistor_colors(value: float,
@@ -579,4 +590,3 @@ class Breadboard(Element):
         self.segments.append(Segment(((left+strip_w-edgepad*.4, top-PINSPACING*2), (left+strip_w-edgepad*.4, top-height+PINSPACING)), color='blue', lw=.5))
         self.segments.append(Segment(((right-edgepad*.4, top-PINSPACING*2), (right-edgepad*.4, top-height+PINSPACING)), color='blue', lw=.5))
         self.segments.append(Segment(((right-strip_w+edgepad*.4, top-PINSPACING*2), (right-strip_w+edgepad*.4, top-height+PINSPACING)), color='red', lw=.5))
-        

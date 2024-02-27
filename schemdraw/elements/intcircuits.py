@@ -1,7 +1,7 @@
 ''' Integrated Circuit Element '''
 
 from __future__ import annotations
-from typing import Optional, Sequence, cast
+from typing import Optional, Sequence, Tuple, cast
 import math
 from dataclasses import dataclass
 from copy import copy
@@ -218,7 +218,7 @@ class Ic(Element):
                              'T': Point((0, -self.params['lofst'])),
                              'B': Point((0, self.params['lofst']))}.get(side)
 
-                    align = cast(Optional[tuple[Halign, Valign]], {'L': ('left', 'center'),
+                    align = cast(Optional[Tuple[Halign, Valign]], {'L': ('left', 'center'),
                                                    'R': ('right', 'center'),
                                                    'T': ('center', 'top'),
                                                    'B': ('center', 'bottom')}.get(side))
@@ -242,7 +242,7 @@ class Ic(Element):
                              'B': Point((plbl, -plbl-invertradius*2))
                              }.get(side)
 
-                    align = cast(Optional[tuple[Halign, Valign]], {'L': ('right', 'bottom'),
+                    align = cast(Optional[Tuple[Halign, Valign]], {'L': ('right', 'bottom'),
                                                    'R': ('left', 'bottom'),
                                                    'T': ('left', 'bottom'),
                                                    'B': ('left', 'top')}.get(side))

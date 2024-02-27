@@ -1,11 +1,12 @@
 ''' Affine transformation matrix operations for SVG `transform` attributes '''
-from typing import Sequence, Optional
+from __future__ import annotations
+from typing import Sequence, Optional, Tuple
 import math
 
 from ..util import Point
 
 
-Matrix3x3 = tuple[tuple[float, float, float], tuple[float, float, float], tuple[float, float, float]]
+Matrix3x3 = Tuple[Tuple[float, float, float], Tuple[float, float, float], Tuple[float, float, float]]
 
 
 def matrix_translate(dx: float = 0, dy: float = 0) -> Matrix3x3:

@@ -16,7 +16,7 @@ Direction = Union[Literal['up', 'down', 'left', 'right',
                           'u', 'd', 'l', 'r'], int]
 Halign = Literal['center', 'left', 'right']
 Valign = Literal['center', 'top', 'bottom']
-Align = Tuple[Halign, Valign]
+# Align = Tuple[Halign, Valign]
 Arcdirection = Literal['cw', 'ccw']
 Side = Literal['top', 'bot', 'lft', 'rgt', 'bottom', 'left', 'right', 'L', 'R', 'T', 'B']
 LabelLoc = Union[Side, str]

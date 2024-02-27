@@ -8,7 +8,7 @@ from __future__ import annotations
 from typing import Optional, Sequence, Any, Union, BinaryIO
 import math
 
-from .types import BBox, XY, Linestyle, Capstyle, Joinstyle, Align, Arcdirection, EndRef, RotationMode, Halign, Valign
+from .types import BBox, XY, Linestyle, Capstyle, Joinstyle, Arcdirection, EndRef, RotationMode, Halign, Valign
 from . import util
 from .util import Point
 from .backends import svg
@@ -268,7 +268,7 @@ class SegmentText:
             visible: Show the segment when drawn
     '''
     def __init__(self, pos: XY, label: str,
-                 align: Optional[Align] = None,
+                 align: Optional[tuple[Halign, Valign]] = None,
                  rotation: Optional[float] = None,
                  rotation_mode: Optional[RotationMode] = None,
                  rotation_global: bool = True,

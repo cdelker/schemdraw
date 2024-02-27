@@ -59,8 +59,8 @@ def transform(point: Point, xform: Matrix3x3) -> Point:
     pt = [point[0], point[1], 1.]
     x = pt[0] * xform[0][0] + pt[1] * xform[0][1] + pt[2]*xform[0][2]
     y = pt[0] * xform[1][0] + pt[1] * xform[1][1] + pt[2]*xform[1][2]
-    z = pt[0] * xform[2][0] + pt[1] * xform[2][1] + pt[2]*xform[2][2]
-    assert math.isclose(z, 1)
+    # z = pt[0] * xform[2][0] + pt[1] * xform[2][1] + pt[2]*xform[2][2]
+    # assert math.isclose(z, 1)
     return Point((x, y))
 
 

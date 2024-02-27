@@ -9,7 +9,7 @@ from copy import copy
 from ..segments import Segment, SegmentText, SegmentCircle, SegmentPoly, SegmentType
 from ..elements import Element
 from ..util import linspace, Point
-from ..types import XY, Align, Side
+from ..types import XY, Side, Halign, Valign
 
 
 @dataclass
@@ -218,7 +218,7 @@ class Ic(Element):
                              'T': Point((0, -self.params['lofst'])),
                              'B': Point((0, self.params['lofst']))}.get(side)
 
-                    align = cast(Optional[Align], {'L': ('left', 'center'),
+                    align = cast(Optional[tuple[Halign, Valign]], {'L': ('left', 'center'),
                                                    'R': ('right', 'center'),
                                                    'T': ('center', 'top'),
                                                    'B': ('center', 'bottom')}.get(side))
@@ -242,7 +242,7 @@ class Ic(Element):
                              'B': Point((plbl, -plbl-invertradius*2))
                              }.get(side)
 
-                    align = cast(Optional[Align], {'L': ('right', 'bottom'),
+                    align = cast(Optional[tuple[Halign, Valign]], {'L': ('right', 'bottom'),
                                                    'R': ('left', 'bottom'),
                                                    'T': ('left', 'bottom'),
                                                    'B': ('left', 'top')}.get(side))

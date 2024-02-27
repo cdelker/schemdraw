@@ -45,6 +45,17 @@ def extract(elm: ET.Element, tag: str) -> Optional[str]:
 
 
 class FritzingPart(ElementImage):
+    ''' Load a Fritzing Part File as a Schemdraw Element
+
+        Anchors will be extracted from the Part definition file.
+        Note some anchors are not valid Python identifiers and
+        therefore must be accessed through the Element.absanchors
+        dictionary rather than an attribute of the element instance.
+
+        Args:
+            fname: Filename of fritzing .fzpz archive
+            scale: Scale factor
+    '''
     def __init__(self, fname: str, scale: float = 1.0):
         self.fname = fname
         self.zip = zipfile.ZipFile(self.fname)
@@ -156,9 +167,9 @@ class FritzingPart(ElementImage):
                     m = matrix.matrix_rotate(*values)
                 elif xfmode == 'scale':
                     m = matrix.matrix_scale(*values)
-                elif xfmode == 'skewx':
+                elif xfmode == 'skewX':
                     m = matrix.matrix_skewx(values[0])
-                elif xfmode == 'skewy':
+                elif xfmode == 'skewY':
                     m = matrix.matrix_skewy(values[0])
                 elif xfmode == 'matrix':
                     m = matrix.matrix(*values)

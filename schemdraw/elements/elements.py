@@ -12,7 +12,7 @@ from ..segments import Segment, SegmentText, SegmentCircle, BBox, SegmentType
 from ..transform import Transform
 from .. import util
 from ..util import Point
-from ..types import XY, Linestyle, Align, Halign, Valign, LabelLoc
+from ..types import XY, Linestyle, Halign, Valign, LabelLoc
 from .. import drawing_stack
 
 from ..backends.svg import Figure as svgFigure
@@ -31,7 +31,8 @@ class Label:
     label: str | Sequence[str]
     loc: LabelLoc | None = None   # top, bot, lft, rgt, OR anchor
     ofst: XY | float | None = None
-    align: Align | None = None
+    halign: Halign | None = None
+    valign: Valign | None = None
     rotate: bool | float = False  # True=same angle as element; False = 0
     fontsize: float | None = None
     font: str | None = None
@@ -317,13 +318,11 @@ class Element:
                 mathfont: Name/font-family of math text
                 color: Color of label
         '''
-        align = (halign, valign)
-
         if not rotate:
             rotate = 0
         elif isinstance(rotate, bool):
             rotate = True
-        self._userlabels.append(Label(label, loc, ofst, align, rotate, fontsize, font, mathfont, color))
+        self._userlabels.append(Label(label, loc, ofst, halign, valign, rotate, fontsize, font, mathfont, color))
         return self
 
     def _position(self) -> None:
@@ -514,7 +513,7 @@ class Element:
                 label.loc = 'left'
         return label
 
-    def _align_label(self, label: Label, theta: float = 0) -> tuple[Align, Point]:
+    def _align_label(self, label: Label, theta: float = 0) -> tuple[Halign, Valign, Point]:
         ''' Calculate label alignment and offset based on angle and location
             relative to the element
 
@@ -527,36 +526,39 @@ class Element:
                 Offset: suggested horizontal and vertical offset from label position
         '''
         newofst = label.ofst
+        assert newofst is not None
         if isinstance(label.ofst, (float, int)):
             newofst = Point((label.ofst, label.ofst))
+        else:
+            newofst = Point(newofst)  # type: ignore
 
         if label.loc == 'center':
-            newalign: Align = ('center', 'center')
+            newhalign: Halign = 'center'
+            newvalign: Valign = 'center'
 
         elif label.loc and label.loc in self.anchors: 
             # Anchor is on an edge
             x1, y1, x2, y2 = self.get_bbox(includetext=False)
-            newalign = ('center', 'center')
+            newhalign = newvalign = 'center'
             if math.isclose(self.anchors[label.loc][0], x1, abs_tol=.15):
                 # Label on left edge
-                newalign = ('right', newalign[1])
+                newhalign = 'right'
             elif math.isclose(self.anchors[label.loc][0], x2, abs_tol=.15):
                 # Label on right edge
-                newalign = ('left', newalign[1])
+                newhalign = 'left'
             else:
                 # Not on left or right edge
-                newalign = ('center', newalign[1])
-
+                newhalign = 'center'
 
             if math.isclose(self.anchors[label.loc][1], y1, abs_tol=.15):
                 # Label on bottom edge
-                newalign = (newalign[0], 'top')
+                newvalign = 'top'
             elif math.isclose(self.anchors[label.loc][1], y2, abs_tol=.15):
                 # Label on top edge
-                newalign = (newalign[0], 'bottom')
+                newvalign = 'bottom'
             else:
                 # Not on top or bottom edge
-                newalign = (newalign[0], 'center')
+                newvalign = 'center'
 
             # Fix offset if provided as single value
             if isinstance(label.ofst, (float, int)):
@@ -570,7 +572,7 @@ class Element:
                     ('left', 'top'): (pofst, -pofst),
                     ('left', 'center'): (pofst, 0),
                     ('left', 'bottom'): (pofst, pofst)
-                }.get(newalign, (0, pofst))
+                }.get((newhalign, newvalign), (0, pofst))
                 newofst = Point(newofst)
 
         else:
@@ -584,7 +586,7 @@ class Element:
             th = (th+360) % 360  # Normalize angle so it's positive, clockwise
 
             # Alignment for label in different positions
-            rotalign: list[Align] = [
+            rotalign: list[tuple[Halign, Valign]] = [
                 ('center', 'bottom'),  # label on top
                 ('right', 'bottom'),
                 ('right', 'center'),   # label on left
@@ -593,8 +595,8 @@ class Element:
                 ('left', 'top'),
                 ('left', 'center'),    # label on right
                 ('left', 'bottom')]
-            newalign = rotalign[int(round((th/360)*8) % 8)]
-            
+            newhalign, newvalign = rotalign[int(round((th/360)*8) % 8)]
+
             # Ensure label.ofst is a Point (x,y) pair
             if isinstance(label.ofst, (float, int)):
                 if label.loc == 'bottom':
@@ -605,8 +607,8 @@ class Element:
                     newofst = (label.ofst, 0)
                 else:
                     newofst = (0, label.ofst)
-                newofst = Point(newofst)  # type: ignore
-        return newalign, newofst
+                newofst = Point(newofst)
+        return newhalign, newvalign, newofst
 
     def _place_label(self, label: Label, theta: float = 0) -> None:
         ''' Adds the label SegmentText to the element, after element placement
@@ -616,20 +618,23 @@ class Element:
                 theta: Current drawing angle
         '''
         # Make a copy of the label to modify with auto-placement values
-        label = Label(label.label, label.loc, label.ofst, label.align,
-                      label.rotate, label.fontsize,
+        label = Label(label.label, label.loc, label.ofst, label.halign,
+                      label.valign, label.rotate, label.fontsize,
                       label.font, label.mathfont, label.color)
 
-        if label.align == (None, None):
-            label.align = self.params.get('lblalign', None)
+        if label.halign is None:
+            label.halign = self.params.get('lblalign', (None, None))[0]
+        if label.valign is None:
+            label.valign = self.params.get('lblalign', (None, None))[1]
+
         if label.ofst is None:
             label.ofst = self.params.get('lblofst', .1)
         
         label = self._position_label(label, theta)
-        align, ofst = self._align_label(label, theta)
-        label.align = Point((label.align[0] if label.align and label.align[0] is not None else align[0],
-                             label.align[1] if label.align and label.align[1] is not None else align[1]))
-        label.ofst = Point(ofst)
+        halign, valign, ofst = self._align_label(label, theta)
+        label.halign = label.halign if label.halign is not None else halign
+        label.valign = label.valign if label.valign is not None else valign
+        label.ofst = ofst
 
         # Parameters to send to SegmentText
         segment_params = {
@@ -637,7 +642,7 @@ class Element:
             'font': label.font if label.font else self.params.get('font'),
             'mathfont': label.mathfont if label.mathfont else self.params.get('mathfont'),
             'fontsize': label.fontsize if label.fontsize else self.params.get('fontsize', 14),
-            'align': label.align,
+            'align': (label.halign, label.valign),
             'rotation': label.rotate}
 
         xmax = self.bbox.xmax

@@ -156,3 +156,29 @@ with pictorial elements.
         pictorial.Resistor(330).at(bb.D15).to(bb.L2_15)
 
 `Arduino Image Source <https://commons.wikimedia.org/wiki/File:ArduinoUNO.png>`_ , CC-BY-SA-3.0.
+
+
+Fritzing Part Files
+-------------------
+
+Schemdraw can import part files in the `Fritzing <https://fritzing.org/>`_ format and use them in pictorial schematics.
+Use :py:class:`schemdraw.pictorial.FritzingPart` and provide the file name of an `.fzpz` part file.
+Schemdraw's anchors will be set based on the part "connectors" defined in the part file.
+In this example, a part is downloaded from the `Adafruit Fritzing Library <https://github.com/adafruit/Fritzing-Library>`_ and used in a drawing.
+
+.. jupyter-execute::
+
+    from urllib.request import urlretrieve
+    part = 'https://github.com/adafruit/Fritzing-Library/raw/master/parts/Adafruit%20OLED%20Monochrome%20128x32%20SPI.fzpz'
+    fname, msg = urlretrieve(part)
+
+    with schemdraw.Drawing() as d:
+        oled = pictorial.FritzingPart(fname)
+        elm.Line().down().at(oled.GND).length(.5)
+        elm.Ground()
+        elm.Line().down().at(oled.absanchors['3.3V']).color('red').length(1.5).label('3.3V', loc='left')
+        elm.Button().at(oled.RESET)
+        elm.Ground(lead=False)
+
+Note that occasionally anchor names defined in Fritzing parts are not valid as Python identifiers, such as the `3.3V` anchor above, and therefore cannot be used as attributes of the element instance (`f.3.3V` doesn't work, obviously). In these cases, the anchor must be accessed through the `absanchors` dictionary.
+

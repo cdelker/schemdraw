@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 from typing import Optional, Sequence, Tuple, cast
+import warnings
 import math
 from dataclasses import dataclass
 from copy import copy
@@ -74,7 +75,7 @@ class Ic(Element):
         does not conflict with other attributes).
     '''
     _element_defaults = {
-        'pinspacing': 0.6,
+        'pinspacing': 0.0,  # 0.6
         'edgepadH': 0.25,
         'edgepadW': 0.25,
         'leadlen': 0.5,
@@ -95,48 +96,14 @@ class Ic(Element):
                  plblofst: Optional[float] = None,
                  plblsize: Optional[float] = None,
                  slant: float = 0,
-                 w: Optional[float] = None,
-                 h: Optional[float] = None,
                  **kwargs):
         super().__init__(**kwargs)
-        spacing: float = self.params['pinspacing']
-        padh: float = self.params['edgepadH']
-        padw: float = self.params['edgepadW']
-        # Sort pins by side
         if pins is None:
-            pins = []
-        pins = [copy(p) for p in pins]  # Make copy so user's IcPin instances don't change
-        for pin in pins:
-            # Convert pin designations to uppercase, single letter
-            pin.side = pin.side[:1].upper()   # type: ignore
-        sidepins = {}
-        pincount = {}
+             pins = []
 
-        for side in ['L', 'R', 'T', 'B']:
-            sidepins[side] = [p for p in pins if p.side == side]
-            slotnames = [p.slot for p in sidepins[side]]
-            # Add a 0 - can't max an empty list
-            slots = [int(p.split('/')[1]) for p in slotnames if p is not None] + [0]
-            pincount[side] = max(len(sidepins[side]), max(slots))
-
-        if size is None:
-            hcnt = max(pincount.get('L', 1), pincount.get('R', 1))
-            wcnt = max(pincount.get('T', 1), pincount.get('B', 1))
-            if h is None:
-                try:
-                    h = (hcnt-1)*spacing/(1-2/(hcnt+2)) + padh*2
-                except ZeroDivisionError:
-                    h = 2 + padh
-            if w is None:
-                try:
-                    w = (wcnt-1)*spacing/(1-2/(wcnt+2)) + padw*2
-                except ZeroDivisionError:
-                    w = 2 + padw
-            # Keep a minimum width for cases with 0-1 pins
-            w = max(w, 2)
-            h = max(h, 2)
-        else:
-            w, h = size
+        sidepins, pincount = self._sortpins(pins)
+        size, spacing, padw, padh = self._setsize(size, pincount)
+        w, h = size
 
         # Main box, adjusted for slant
         paths: list[list[Point]]
@@ -155,11 +122,6 @@ class Ic(Element):
 
         # Add each pin
         for side, sidepin in sidepins.items():
-            if side in ['L', 'R']:
-                sidelen = h-padh*2
-            else:
-                sidelen = w-padw*2
-
             leadext = {'L': Point((-self.params['leadlen'], 0)),
                        'R': Point((self.params['leadlen'], 0)),
                        'T': Point((0, self.params['leadlen'])),
@@ -168,17 +130,13 @@ class Ic(Element):
             for i, pin in enumerate(sidepin):
                 # Determine pin position
                 if pin.pos is not None:
-                    z = pin.pos * sidelen
+                    z = pin.pos * h
                 elif pin.slot is None:
                     pin.slot = f'{i+1}/{len(sidepin)}'
 
                 if pin.slot is not None:
-                    num, tot = [int(k) for k in pin.slot.split('/')]
-                    if tot == 1:
-                        z = sidelen/2  # Single pin, center it
-                    else:
-                        # Evenly spaced along side
-                        z = linspace(1/(tot+2), 1-1/(tot+2), num=tot)[num-1] * sidelen
+                    num = int(pin.slot.split('/')[0])
+                    z = (num-1) * spacing
 
                 pinxy = {'L': Point((0, z+padh)),
                          'R': Point((w, z+padh)),
@@ -279,10 +237,85 @@ class Ic(Element):
                 if pin.pin:
                     self.anchors[f'pin{pin.pin}'] = anchorpos
 
+        # Add all the segments
         for p in paths:
             self.segments.append(Segment(p))
         self.elmparams['lblloc'] = 'center'
         self.anchors['center'] = (w/2, h/2)
+
+    def _sortpins(self, pins: Sequence[IcPin]
+                  ) -> tuple[dict[str, list[IcPin]], dict[str, int]]:
+        ''' Sort pins into pins on each side of the box '''
+        pins = [copy(p) for p in pins]  # Make copy so user's IcPin instances don't change
+        for pin in pins:
+            # Convert pin designations to uppercase, single letter
+            pin.side = pin.side[:1].upper()  # type: ignore
+        sidepins = {}
+        pincount = {}
+        for side in ['L', 'R', 'T', 'B']:
+            sidepins[side] = [p for p in pins if p.side == side]
+            slotnames = [p.slot for p in sidepins[side]]
+            # Add a 0 - can't max an empty list
+            slots = [int(p.split('/')[1]) for p in slotnames if p is not None] + [0]
+            pincount[side] = max(len(sidepins[side]), max(slots))
+        return sidepins, pincount
+
+    def _setsize(self,
+                 size: Optional[XY] = None,
+                 pincount: dict[str, int] = {},
+                ) -> tuple[XY, float, float, float]:
+        ''' Determine Box size, pinspacing, and edgepad distances
+
+            Returns:
+                size: Size of box
+                pinspacing: Spacing between pins
+                padw: Distance from box edge to pin
+                padh: Distance from box edge to pin
+        '''
+        padw = self.params.get('edgepadW', 0.25)
+        padh = self.params.get('edgepadH', 0.25)
+        spacing = self.params.get('pinspacing', 0)
+        hcnt = max(pincount.get('L', 0), pincount.get('R', 0))
+        wcnt = max(pincount.get('T', 0), pincount.get('B', 0))
+
+        if size is None:
+            # Size based on pinspacing
+            if spacing == 0:  # 0 means 'auto'
+                spacing = 0.6
+
+            # TODO: account for label widths here too?
+            try:
+                h = (hcnt-1)*spacing/(1-2/(hcnt+2)) + padh*2
+            except ZeroDivisionError:
+                h = 2 + padh
+            try:
+                w = (wcnt-1)*spacing/(1-2/(wcnt+2)) + padw*2
+            except ZeroDivisionError:
+                w = 2 + padw
+            w, h = max(w, 2+padw), max(h, 2+padh)
+            size = (w, h)
+
+        else:
+            if spacing == 0:  # Size is given
+                # Set spacing based on edge size and edgepads
+                try:
+                    spacingh = (size[1] - padh*2) / (hcnt)
+                except ZeroDivisionError:
+                    spacingh = 0.6
+                try:
+                    spacingw = (size[0] - padw*2) / (wcnt)
+                except ZeroDivisionError:
+                    spacingw = 0.6
+                spacing = min(spacingw, spacingh)
+
+        # Set edgepad based on size and spacing
+        padw = (size[0] - spacing*(wcnt-1)) / 2
+        padh = (size[1] - spacing*(hcnt-1)) / 2
+        if padw < 0 or padh < 0:
+            warnings.warn('pinspacing too large to fit on edge of Ic')
+
+        self.pinspacing = spacing
+        return size, spacing, padw, padh
 
 
 class Multiplexer(Ic):
@@ -698,7 +731,7 @@ class SevenSegment(Ic):
         'labelsegments': True,
         'anode': False,
         'cathode': False,
-        'w': 3,
+        'pinspacing': 0.6
     }
     def __init__(self,
                  decimal: Optional[bool] = None,
@@ -711,12 +744,14 @@ class SevenSegment(Ic):
                  **kwargs) -> None:
 
         dec = self.params['decimal']
+        boxwidth = 3
         if dec:
             slots = '8'
             boxheight = 5.9
         else:
             slots = '7'
             boxheight = 5.3
+        size = self.params.get('size', (boxwidth, boxheight))
 
         pins = [IcPin(pin='a', side='left', slot=f'{7+dec}/{slots}', anchorname='a'),
                 IcPin(pin='b', side='left', slot=f'{6+dec}/{slots}', anchorname='b'),
@@ -732,7 +767,7 @@ class SevenSegment(Ic):
         if self.params['cathode']:
             pins.append(IcPin(pin='cc', side='bottom', anchorname='cathode'))
 
-        super().__init__(pins=pins, w=self.params['w'])
+        super().__init__(pins=pins, size=size)
 
         left = 0.8
         seglen = 1.5

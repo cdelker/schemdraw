@@ -15,22 +15,22 @@ Using the :py:class:`schemdraw.elements.intcircuits.Ic` class to define a custom
 
 .. jupyter-execute::
     :code-below:
-    
+
     with schemdraw.Drawing() as d:
         d.config(fontsize=12)
-        T = elm.Ic(pins=[elm.IcPin(name='TRG', side='left', pin='2'),
-                         elm.IcPin(name='THR', side='left', pin='6'),
-                         elm.IcPin(name='DIS', side='left', pin='7'),
-                         elm.IcPin(name='CTL', side='right', pin='5'),
-                         elm.IcPin(name='OUT', side='right', pin='3'),
-                         elm.IcPin(name='RST', side='top', pin='4'),
-                         elm.IcPin(name='Vcc', side='top', pin='8'),
-                         elm.IcPin(name='GND', side='bot', pin='1'),],
-                    edgepadW=.5,
-                    edgepadH=1,
-                    pinspacing=1.5,
-                    leadlen=1,
-                    label='555')
+        T = (elm.Ic()
+             .side('L', spacing=1.5, pad=1.5, leadlen=1)
+             .side('R', spacing=2)
+             .side('T', pad=1.5, spacing=1)
+             .pin(name='TRG', side='left', pin='2')
+             .pin(name='THR', side='left', pin='6')
+             .pin(name='DIS', side='left', pin='7')
+             .pin(name='CTL', side='right', pin='5')
+             .pin(name='OUT', side='right', pin='3')
+             .pin(name='RST', side='top', pin='4')
+             .pin(name='Vcc', side='top', pin='8')
+             .pin(name='GND', side='bot', pin='1')
+             .label('555'))
         BOT = elm.Ground().at(T.GND)
         elm.Dot()
         elm.Resistor().endpoints(T.DIS, T.THR).label('Rb').idot()
@@ -54,11 +54,11 @@ Seven-Segment Display Counter
 
 .. jupyter-execute::
     :code-below:
-    
+
     with schemdraw.Drawing() as d:
         d.config(fontsize=12)
-        IC555 = elm.Ic555()
-        gnd = elm.Ground(xy=IC555.GND)
+        IC555 = elm.Ic555(size=(5,8))
+        gnd = elm.Ground().at(IC555.GND)
         elm.Dot()
         elm.Resistor().endpoints(IC555.DIS, IC555.THR).label('100 kΩ')
         elm.Resistor().up().at(IC555.DIS).label('1 kΩ').label('+Vcc', 'right')
@@ -67,32 +67,34 @@ Seven-Segment Display Counter
         elm.Line().tox(gnd.start)
         elm.Capacitor().at(IC555.CTL).toy(gnd.start).label('.01 μF', 'bottom')
         elm.Line().tox(gnd.start)
-
+    
         elm.Dot().at(IC555.DIS)
         elm.Dot().at(IC555.THR)
         elm.Dot().at(IC555.TRG)
         elm.Line().endpoints(IC555.RST,IC555.Vcc).dot()
         elm.Line().up(d.unit/4).label('+Vcc', 'right')
         d.move_from(IC555.OUT, dx=5, dy=-1)
-
-        IC4026 = elm.Ic(pins=[elm.IcPin('CLK', pin='1', side='left'),
-                              elm.IcPin('INH', pin='2', side='left'), # Inhibit
-                              elm.IcPin('RST', pin='15', side='left'),
-                              elm.IcPin('DEI', pin='3', side='left'), # Display Enable In
-                              elm.IcPin('Vss', pin='8', side='bot'),
-                              elm.IcPin('Vdd', pin='16', side='top'),
-                              elm.IcPin('UCS', pin='14', side='bot'), # Ungated C Segment
-                              elm.IcPin('DEO', pin='4', side='bot'),  # Display Enable Out
-                              elm.IcPin('Co', pin='4', side='bot'),   # Carry out
-                              elm.IcPin('g', pin='7', side='right'),
-                              elm.IcPin('f', pin='6', side='right'),                      
-                              elm.IcPin('e', pin='11', side='right'),
-                              elm.IcPin('d', pin='9', side='right'),
-                              elm.IcPin('c', pin='13', side='right'),
-                              elm.IcPin('b', pin='12', side='right'),
-                              elm.IcPin('a', pin='10', side='right'),
-                             ],
-                       w=4, leadlen=.8).label('4026').right().anchor('center')
+    
+        IC4026 = (elm.Ic()
+                  .pin('L', 'CLK', pin='1')
+                  .pin('L', 'INH', pin='2') # Inhibit
+                  .pin('L', 'RST', pin='15')
+                  .pin('L', 'DEI', pin='3') # Display Enable In
+                  .pin('B', 'Vss', pin='8')
+                  .pin('T', 'Vdd', pin='16')
+                  .pin('B', 'UCS', pin='14') # Ungated C Segment
+                  .pin('B', 'DEO', pin='4')  # Display Enable Out
+                  .pin('B', 'Co', pin='4')   # Carry out
+                  .pin('R', 'g', pin='7')
+                  .pin('R', 'f', pin='6')                      
+                  .pin('R', 'e', pin='11')
+                  .pin('R', 'd', pin='9')
+                  .pin('R', 'c', pin='13')
+                  .pin('R', 'b', pin='12')
+                  .pin('R', 'a', pin='10')
+                  .side('B', spacing=1, pad=.75, leadlen=.75)
+                  .side('L', spacing=1, pad=1.5, leadlen=.6)
+                  .label('4026').right().anchor('center'))
         elm.Wire('c').at(IC555.OUT).to(IC4026.CLK)
         elm.Line().endpoints(IC4026.INH, IC4026.RST).dot()
         elm.Line().left(d.unit/4)
@@ -103,7 +105,7 @@ Seven-Segment Display Counter
         elm.Ground()
         elm.Line().tox(IC4026.DEO).dot()
         elm.Line().tox(IC4026.Co)
-
+    
         elm.Resistor().right().at(IC4026.a)
         disp = elm.SevenSegment(cathode=True).anchor('a')
         elm.Resistor().at(IC4026.b)
@@ -113,7 +115,6 @@ Seven-Segment Display Counter
         elm.Resistor().at(IC4026.f)
         elm.Resistor().at(IC4026.g).label('7 x 330', loc='bottom')
         elm.Ground(lead=False).at(disp.cathode)
-
 
 Arduino Board
 ^^^^^^^^^^^^^

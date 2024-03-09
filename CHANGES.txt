@@ -5,11 +5,13 @@ v0.19 - (unreleased)
         - Added ElementImage for placing PNG and SVG images as an Element
         - Added pictorial elements
         - Load Fritzing Part files (breadboard view)
+        - Added `.pin` and `.side` methods to Ic Element
 
     Fixes:
         - Fixed `tox` and `toy` methods when the Elemnet defines a theta
         - Fixed vertical offset of labels below an Element
         - Fixed reversing of CurrentLabel.
+        - Update Ic Element to respect `pinspacing` when `size` is also provided
 
 
 v0.18 - 2023-12-29

@@ -2,15 +2,15 @@
 
 from __future__ import annotations
 from typing import Optional, Sequence, Tuple, cast
-import warnings
+from collections import namedtuple
 import math
-from dataclasses import dataclass
-from copy import copy
+from dataclasses import dataclass, replace
 
 from ..segments import Segment, SegmentText, SegmentCircle, SegmentPoly, SegmentType
 from ..elements import Element
 from ..util import linspace, Point
 from ..types import XY, Side, Halign, Valign
+from ..backends.svg import text_size
 
 
 @dataclass
@@ -41,43 +41,29 @@ class IcPin:
     rotation: float = 0
     anchorname: str | None = None
     lblsize: float | None = None
+    pinlblsize: float | None = None
+
+
+@dataclass
+class IcSide:
+    ''' Pin layout parameters for one side of an Ic '''
+    spacing: float = 0.0  # 0 for auto
+    pad: float = .25
+    leadlen: float = 0.5
+    label_ofst: float = 0.15
+    label_size: float = 14.
+    pinlabel_ofst: float = 0.05
+    pinlabel_size: float = 11.
+
+
+IcBox = namedtuple('IcBox', 'w h y1 y2')
 
 
 class Ic(Element):
-    ''' Integrated Circuit element, or any other black-box element
-        with arbitrary pins on any side.
-
-        Args:
-            size: (Width, Height) of box
-            pins: List of IcPin instances defining the inputs/outputs
-            slant: Slant angle of top/bottom edges (e.g. for multiplexers)
-
-        Keyword Args:            
-            pinspacing: Spacing between pins [default: 0.6]
-            edgepadH: Padding between top/bottom and first pin [default: 0.25]
-            edgepadW: Padding between left/right and first pin [default: 0.25]
-            lofst: Offset between edge and label (inside box) [default: 0.15]
-            lsize: Font size of labels (inside box) [default: 14]
-            plblofst: Offset between edge and pin label (outside box) [default: 0.05]
-            plblsize: Font size of pin labels (outside box) [default: 11]
-
-        If a pin is named '>', it will be drawn as a proper clock signal input.
-
-        Anchors:
-            * inL[X] - Each pin on left side
-            * inR[X] - Each pin on right side
-            * inT[X] - Each pin on top side
-            * inB[X] - Each pin on bottom side
-            * pin[X] - Each pin with a number
-            * CLK (if clock pin is defined with '>' name)
-
-        Pins with names are also defined as anchors (if the name
-        does not conflict with other attributes).
-    '''
     _element_defaults = {
-        'pinspacing': 0.0,  # 0.6
-        'edgepadH': 0.25,
-        'edgepadW': 0.25,
+        'pinspacing': 0.0,
+        'edgepadH': 0.5,
+        'edgepadW': 0.5,
         'leadlen': 0.5,
         'lsize': 14,
         'lofst': 0.15,
@@ -87,235 +73,338 @@ class Ic(Element):
     def __init__(self,
                  size: Optional[XY] = None,
                  pins: Optional[Sequence[IcPin]] = None,
-                 pinspacing: Optional[float] = None,
-                 edgepadH: Optional[float] = None,
-                 edgepadW: Optional[float] = None,
-                 leadlen: Optional[float] = None,
-                 lofst: Optional[float] = None,
-                 lsize: Optional[float] = None,
-                 plblofst: Optional[float] = None,
-                 plblsize: Optional[float] = None,
                  slant: float = 0,
                  **kwargs):
         super().__init__(**kwargs)
-        if pins is None:
-             pins = []
+        self.size = size if size is not None else self.params.get('size')
+        self._sizeauto: Optional[tuple[float, float]] = None
+        self.slant = slant
+        self.pins: dict[Side, list[IcPin]] = {'L': [], 'R': [], 'T': [], 'B': []}
+        self.usersides: dict[Side, IcSide] = {}
+        self.sides: dict[Side, IcSide] = {}
+        self._dflt_side = IcSide(
+            self.params.get('pinspacing', 0),
+            self.params.get('edgepadH', .25),
+            self.params.get('leadlen', .5),
+            self.params.get('lofst', .15),
+            self.params.get('lsize', 14),
+            self.params.get('plblofst', .05),
+            self.params.get('plblsize', 11))
 
-        sidepins, pincount = self._sortpins(pins)
-        size, spacing, padw, padh = self._setsize(size, pincount)
-        w, h = size
+        if pins is not None:
+            for pin in pins:
+                side = cast(Side, pin.side[0].upper())
+                self.pins[side].append(pin)
 
-        # Main box, adjusted for slant
-        paths: list[list[Point]]
-        if slant > 0:
-            y1 = 0 - w * math.tan(math.radians(slant))
-            y2 = h + w * math.tan(math.radians(slant))
-            paths = [[Point((0, 0)), Point((w, y1)), Point((w, y2)), Point((0, h)), Point((0, 0))]]
-        elif slant < 0:
-            y1 = 0 + w * math.tan(math.radians(slant))
-            y2 = h - w * math.tan(math.radians(slant))
-            paths = [[Point((0, y1)), Point((w, 0)), Point((w, h)), Point((0, y2)), Point((0, y1))]]
+        self._icbox = IcBox(0,0,0,0)
+        self._setsize()
+
+    def pin(self,
+            side: Side = 'L',
+            name: str | None = None,
+            pin: str | None = None,
+            pos: float | None = None,
+            slot: str | None = None,
+            invert: bool = False,
+            invertradius: float = 0.15,
+            color: str | None = None,
+            rotation: float = 0,
+            anchorname: str | None = None,
+            lblsize: float | None = None):
+        ''' Add a pin to the IC
+
+            Args:
+                name: Input/output name (inside the box)
+                pin: Pin name/number (outside the box)
+                side: Side of box for the pin, 'left', 'right', 'top', 'bottom'
+                pos: Pin position along the side, fraction from 0-1
+                slot: Slot definition of pin location, given in 'X/Y' format.
+                    '2/4' is the second pin on a side with 4 pins.
+                invert:Add an invert bubble to the pin
+                invertradius: Radius of invert bubble
+                color: Color for the pin and label
+                rotation: Rotation for label text
+                anchorname: Named anchor for the pin
+                lblsize: Font size for label
+        '''
+        side = cast(Side, side[0].upper())
+        self.pins[side].append(IcPin(name, pin, side, pos, slot, invert,
+                                    invertradius, color, rotation, anchorname, lblsize))
+        self._setsize()
+        return self
+
+    def side(self,
+             side: Side = 'L',
+             spacing: float = 0,
+             pad: float = 0.5,
+             leadlen: float = .5,
+             label_ofst: float = 0.15,
+             label_size: float = 14.,
+             pinlabel_ofst: float = 0.05,
+             pinlabel_size: float = 11.):
+        ''' Set parameters for spacing/layout of one side
+
+            Args:
+                side: Side of box to define
+                spacing: Distance between pins
+                pad: Distance from box edge to first pin
+                leadlen: Length of pin lead extensions
+                label_ofst: Offset between box and label (inside box)
+                label_size: Font size of label (inside box)
+                pinlabel_ofst: Offset between box and pin label (outside box)
+                pinlabel_size: Font size of pin label (outside box)
+        '''
+        side = cast(Side, side[0].upper())
+        self.usersides[side] = IcSide(spacing, pad, leadlen,
+                                      label_ofst, label_size,
+                                      pinlabel_ofst, pinlabel_size)
+        self._setsize()
+        return self
+
+    def _countpins(self) -> dict[Side, int]:
+        ''' Count the number of pins (or slots) on each side '''
+        pincount = {}
+        for side, pins in self.pins.items():
+            slotnames = [p.slot for p in pins]
+            # Add a 0 - can't max an empty list
+            slots = [int(p.split('/')[1]) for p in slotnames if p is not None] + [0]
+            pincount[side] = max(len(pins), max(slots))
+        return pincount
+
+    def _autosize(self) -> None:
+        ''' Determine size of box if not provided '''
+        lengths: dict[str, float] = {}
+        labelwidths: dict[str, float] = {}
+
+        # Determine length of each side given spacing and pad
+        for side in ['L', 'R', 'T', 'B']:
+            side = cast(Side, side)
+            sideparam = replace(self.usersides.get(side, self._dflt_side))
+            self.sides[side] = sideparam
+            if sideparam.spacing == 0:
+                sideparam.spacing = 0.6
+            lengths[side] = sideparam.pad * 2 + sideparam.spacing * (self.pincount[side] - 1)
+
+            # Expand to fit pin labels if necessary
+            labelw = 0.
+            for p in self.pins[side]:
+                if p.name:
+                    lblsize = p.lblsize if p.lblsize else self.params['lsize']
+                    labelw = max(labelw, text_size(p.name, size=lblsize)[0]/72*2)
+            labelwidths[side] = labelw
+
+        # Box is larger of the two sides, with minimum of 2
+        labelw = labelwidths['L'] + labelwidths['R'] + 4*self.params['lofst']
+        boxh = max(lengths.get('L', 0.), lengths.get('R', 0.), 2+self.params['edgepadH'])
+        boxw = max(lengths.get('T', 0.), lengths.get('B', 0.), 2+self.params['edgepadW'], labelw)
+        self._sizeauto = boxw, boxh
+
+        # Adjust pad for the shorter of the two parallel sides
+        for side in ['L', 'R']:
+            side = cast(Side, side)
+            sideparam = self.sides.get(side, self._dflt_side)
+            sideparam.pad = (boxh - sideparam.spacing * (self.pincount[side] - 1)) / 2
+
+        for side in ['T', 'B']:
+            side = cast(Side, side)
+            sideparam = self.sides.get(side, self._dflt_side)
+            sideparam.pad = (boxw - sideparam.spacing * (self.pincount[side] - 1)) / 2
+
+    def _autopinlayout(self) -> None:
+        ''' Determine pin layout when box size is specified '''
+        for side in ['L', 'R', 'T', 'B']:
+            side = cast(Side, side)
+            sideparam = replace(self.usersides.get(side, self._dflt_side))
+            self.sides[side] = sideparam
+            length = self.size[0] if side in ['T', 'B'] else self.size[1]
+            pad = sideparam.pad
+            if sideparam.spacing == 0:
+                #use PAD to evenly space pins over (length-2*pad)
+                if self.pincount[side] > 1:
+                    sideparam.spacing = (length - 2*pad) / (self.pincount[side] - 1)
+                else:
+                    sideparam.pad = length/2
+            else:
+                # Addjust PAD center the group of pins
+                sideparam.pad = (length - sideparam.spacing*(self.pincount[side]-1)) / 2
+
+    def _drawbox(self) -> IcBox:
+        ''' Draw main box and return its size '''
+        if self.size:
+            w, h = self.size
+        elif self._sizeauto:
+            w, h = self._sizeauto
+        else:
+            w, h = (2, 3)
+
+        tanslant = w * math.tan(math.radians(self.slant))
+        if self.slant > 0:
+            y1 = 0 - tanslant
+            y2 = h + tanslant
+            path = [Point((0, 0)), Point((w, y1)), Point((w, y2)), Point((0, h)), Point((0, 0))]
+        elif self.slant < 0:
+            y1 = 0 + tanslant
+            y2 = h - tanslant
+            path = [Point((0, y1)), Point((w, 0)), Point((w, h)), Point((0, y2)), Point((0, y1))]
         else:
             y1 = 0
             y2 = h
-            paths = [[Point((0, 0)), Point((w, 0)), Point((w, h)), Point((0, h)), Point((0, 0))]]
+            path = [Point((0, 0)), Point((w, 0)), Point((w, h)), Point((0, h)), Point((0, 0))]
+        self.segments.append(Segment(path))
+        return IcBox(w, h, y1, y2)
 
-        # Add each pin
-        for side, sidepin in sidepins.items():
-            leadext = {'L': Point((-self.params['leadlen'], 0)),
-                       'R': Point((self.params['leadlen'], 0)),
-                       'T': Point((0, self.params['leadlen'])),
-                       'B': Point((0, -self.params['leadlen']))}.get(side, Point((0, 0)))
+    def _pinpos(self, side: Side, pin: IcPin, num: int) -> Point:
+        ''' Get XY position of pin '''
+        sidesetup = self.sides.get(side, self._dflt_side)
+        spacing = sidesetup.spacing if sidesetup.spacing > 0 else 0.6
+        if pin.slot:
+            num = int(pin.slot.split('/')[0]) - 1
+        z = sidesetup.pad + num*spacing
+        if pin.pos:
+            z = sidesetup.pad + pin.pos * (self.pincount[side]-1)*spacing
+        xy = {'L': Point((0, z)),
+              'R': Point((self._icbox.w, z)),
+              'T': Point((z, self._icbox.h)),
+              'B': Point((z, 0))
+              }.get(side, Point((0, 0)))
 
-            for i, pin in enumerate(sidepin):
-                # Determine pin position
-                if pin.pos is not None:
-                    z = pin.pos * h
-                elif pin.slot is None:
-                    pin.slot = f'{i+1}/{len(sidepin)}'
+        # Adjust pin position for slant
+        if side == 'T' and self.slant > 0:
+            xy = Point((xy[0], xy[1] - xy[0] * math.tan(-math.radians(self.slant))))
+        elif side == 'T' and self.slant < 0:
+            xy = Point(((xy[0], xy[1] + (self._icbox.y2-self._icbox.h) - xy[0] * math.tan(-math.radians(self.slant)))))
+        elif side == 'B' and self.slant < 0:
+            xy = Point((xy[0], xy[1] - (self._icbox.y2-self._icbox.h) - xy[0] * math.tan(math.radians(self.slant))))
+        elif side == 'B' and self.slant > 0:
+            xy = Point((xy[0], xy[1] - xy[0] * math.tan(math.radians(self.slant))))
+        return xy
 
-                if pin.slot is not None:
-                    num = int(pin.slot.split('/')[0])
-                    z = (num-1) * spacing
+    def _drawpin(self, side: Side, pin: IcPin, num: int) -> None:
+        ''' Draw one pin and its labels '''
+        # num is index of where pin is along side
+        sidesetup = self.sides.get(side, self._dflt_side)
+        xy = self._pinpos(side, pin, num)
+        leadext = {'L': Point((-sidesetup.leadlen, 0)),
+                   'R': Point((sidesetup.leadlen, 0)),
+                   'T': Point((0, sidesetup.leadlen)),
+                   'B': Point((0, -sidesetup.leadlen))}.get(side, Point((0, 0)))
 
-                pinxy = {'L': Point((0, z+padh)),
-                         'R': Point((w, z+padh)),
-                         'T': Point((z+padw, h)),
-                         'B': Point((z+padw, 0))}.get(side, Point((0, 0)))
+        # Anchor
+        anchorpos = xy+leadext
+        self.anchors[f'in{side[0].upper()}{num+1}'] = anchorpos
+        if pin.anchorname:
+            self.anchors[pin.anchorname] = anchorpos
+        elif pin.name:
+            if pin.name == '>':
+                self.anchors['CLK'] = anchorpos
+            self.anchors[pin.name] = anchorpos
+        if pin.pin:
+            self.anchors[f'pin{pin.pin}'] = anchorpos
 
-                # Adjust pin position for slant
-                if side == 'T' and slant > 0:
-                    pinxy = Point((pinxy[0], pinxy[1] - pinxy[0] * math.tan(-math.radians(slant))))
-                elif side == 'T' and slant < 0:
-                    pinxy = Point(((pinxy[0], pinxy[1] + (y2-h) - pinxy[0] * math.tan(-math.radians(slant)))))
-                elif side == 'B' and slant < 0:
-                    pinxy = Point((pinxy[0], pinxy[1] - (y2-h) - pinxy[0] * math.tan(math.radians(slant))))
-                elif side == 'B' and slant > 0:
-                    pinxy = Point((pinxy[0], pinxy[1] - pinxy[0] * math.tan(math.radians(slant))))
+        # Lead        
+        if sidesetup.leadlen > 0:
+            if pin.invert:  # Add invert-bubble
+                invertradius = pin.invertradius
+                invertofst = {'L': Point((-invertradius, 0)),
+                              'R': Point((invertradius, 0)),
+                              'T': Point((0, invertradius)),
+                              'B': Point((0, -invertradius))}.get(side, Point((0, 0)))
+                self.segments.append(SegmentCircle(
+                    xy+invertofst, invertradius))
+                self.segments.append(Segment([xy+invertofst*2, xy+leadext]))
+            else:
+                self.segments.append(Segment([xy, xy+leadext]))
 
-                if pin.name == '>':
-                    # Draw clock pin
-                    clkxy = pinxy
-                    clkw, clkh = 0.4 * self.params['lsize']/16, 0.2 * self.params['lsize']/16
-                    if side in ['T', 'B']:
-                        clkw = math.copysign(clkw, leadext[1]) if leadext[1] != 0 else clkw
-                        clkpath = [Point((clkxy[0]-clkh, clkxy[1])),
-                                   Point((clkxy[0], clkxy[1]-clkw)),
-                                   Point((clkxy[0]+clkh, clkxy[1]))]
-                    else:
-                        clkw = math.copysign(clkw, -leadext[0]) if leadext[0] != 0 else clkw
-                        clkpath = [Point((clkxy[0], clkxy[1]+clkh)),
-                                   Point((clkxy[0]+clkw, clkxy[1])),
-                                   Point((clkxy[0], clkxy[1]-clkh))]
-                    paths.append(clkpath)
+        # Pin Number (outside the box)
+        if pin.pin and pin.pin != '':
+            # Account for any invert-bubbles
+            invertradius = pin.invertradius * pin.invert
+            plbl = sidesetup.pinlabel_ofst
+            pofst = {'L': Point((-plbl-invertradius*2, plbl)),
+                     'R': Point((plbl+invertradius*2, plbl)),
+                     'T': Point((plbl, plbl+invertradius*2)),
+                     'B': Point((plbl, -plbl-invertradius*2))
+                     }.get(side)
 
-                elif pin.name and pin.name != '':
-                    # Add pin label
-                    pofst = {'L': Point((self.params['lofst'], 0)),
-                             'R': Point((-self.params['lofst'], 0)),
-                             'T': Point((0, -self.params['lofst'])),
-                             'B': Point((0, self.params['lofst']))}.get(side)
+            align = cast(Optional[Tuple[Halign, Valign]],
+                         {'L': ('right', 'bottom'),
+                          'R': ('left', 'bottom'),
+                          'T': ('left', 'bottom'),
+                          'B': ('left', 'top')}.get(side))
+            self.segments.append(SegmentText(
+                pos=xy+pofst,
+                label=pin.pin,
+                align=align,
+                fontsize=pin.pinlblsize if pin.pinlblsize is not None else sidesetup.pinlabel_size))
 
-                    align = cast(Optional[Tuple[Halign, Valign]], {'L': ('left', 'center'),
-                                                   'R': ('right', 'center'),
-                                                   'T': ('center', 'top'),
-                                                   'B': ('center', 'bottom')}.get(side))
+        if pin.name == '>':
+            self._drawclkpin(xy, leadext, side, pin, num)
+            return
 
-                    self.segments.append(SegmentText(pos=pinxy+pofst,
-                                         label=pin.name,
-                                         align=align,
-                                         fontsize=pin.lblsize if pin.lblsize is not None else self.params['plblsize'],
-                                         color=pin.color,
-                                         rotation=pin.rotation,
-                                         rotation_mode='default'))
+        # Label (inside the box)
+        if pin.name and pin.name != '':
+            pofst = {'L': Point((sidesetup.label_ofst, 0)),
+                     'R': Point((-sidesetup.label_ofst, 0)),
+                     'T': Point((0, -sidesetup.label_ofst)),
+                     'B': Point((0, sidesetup.label_ofst))}.get(side)
 
-                # Add pin number outside the IC
-                if pin.pin and pin.pin != '':
-                    # Account for any invert-bubbles
-                    invertradius = pin.invertradius * pin.invert
-                    plbl = self.params['plblofst']
-                    pofst = {'L': Point((-plbl-invertradius*2, plbl)),
-                             'R': Point((plbl+invertradius*2, plbl)),
-                             'T': Point((plbl, plbl+invertradius*2)),
-                             'B': Point((plbl, -plbl-invertradius*2))
-                             }.get(side)
+            align = cast(Optional[Tuple[Halign, Valign]],
+                         {'L': ('left', 'center'),
+                          'R': ('right', 'center'),
+                          'T': ('center', 'top'),
+                          'B': ('center', 'bottom')}.get(side))
 
-                    align = cast(Optional[Tuple[Halign, Valign]], {'L': ('right', 'bottom'),
-                                                   'R': ('left', 'bottom'),
-                                                   'T': ('left', 'bottom'),
-                                                   'B': ('left', 'top')}.get(side))
-                    self.segments.append(SegmentText(pos=pinxy+pofst,
-                                                     label=pin.pin,
-                                                     align=align,
-                                                     fontsize=pin.lblsize if pin.lblsize is not None else self.params['plblsize']))
+            self.segments.append(SegmentText(
+                pos=xy+pofst,
+                label=pin.name,
+                align=align,
+                fontsize=pin.lblsize if pin.lblsize is not None else sidesetup.label_size,
+                color=pin.color,
+                rotation=pin.rotation,
+                rotation_mode='default'))
 
-                # Draw leads
-                if self.params['leadlen'] > 0:
-                    if pin.invert:
-                        # Add invert-bubble
-                        invertradius = pin.invertradius
-                        invertofst = {'L': Point((-invertradius, 0)),
-                                      'R': Point((invertradius, 0)),
-                                      'T': Point((0, invertradius)),
-                                      'B': Point((0, -invertradius))}.get(side, Point((0, 0)))
-
-                        self.segments.append(SegmentCircle(
-                            pinxy+invertofst, invertradius))
-                        paths.append([pinxy+invertofst*2, pinxy+leadext])
-                    else:
-                        paths.append([pinxy, pinxy+leadext])
-
-                # Define anchors
-                anchorpos = pinxy+leadext
-                self.anchors[f'in{side[0].upper()}{i+1}'] = anchorpos
-                if pin.anchorname:
-                    self.anchors[pin.anchorname] = anchorpos
-                elif pin.name:
-                    if pin.name == '>':
-                        self.anchors['CLK'] = anchorpos
-                    self.anchors[pin.name] = anchorpos
-                if pin.pin:
-                    self.anchors[f'pin{pin.pin}'] = anchorpos
-
-        # Add all the segments
-        for p in paths:
-            self.segments.append(Segment(p))
-        self.elmparams['lblloc'] = 'center'
-        self.anchors['center'] = (w/2, h/2)
-
-    def _sortpins(self, pins: Sequence[IcPin]
-                  ) -> tuple[dict[str, list[IcPin]], dict[str, int]]:
-        ''' Sort pins into pins on each side of the box '''
-        pins = [copy(p) for p in pins]  # Make copy so user's IcPin instances don't change
-        for pin in pins:
-            # Convert pin designations to uppercase, single letter
-            pin.side = pin.side[:1].upper()  # type: ignore
-        sidepins = {}
-        pincount = {}
-        for side in ['L', 'R', 'T', 'B']:
-            sidepins[side] = [p for p in pins if p.side == side]
-            slotnames = [p.slot for p in sidepins[side]]
-            # Add a 0 - can't max an empty list
-            slots = [int(p.split('/')[1]) for p in slotnames if p is not None] + [0]
-            pincount[side] = max(len(sidepins[side]), max(slots))
-        return sidepins, pincount
-
-    def _setsize(self,
-                 size: Optional[XY] = None,
-                 pincount: dict[str, int] = {},
-                ) -> tuple[XY, float, float, float]:
-        ''' Determine Box size, pinspacing, and edgepad distances
-
-            Returns:
-                size: Size of box
-                pinspacing: Spacing between pins
-                padw: Distance from box edge to pin
-                padh: Distance from box edge to pin
-        '''
-        padw = self.params.get('edgepadW', 0.25)
-        padh = self.params.get('edgepadH', 0.25)
-        spacing = self.params.get('pinspacing', 0)
-        hcnt = max(pincount.get('L', 0), pincount.get('R', 0))
-        wcnt = max(pincount.get('T', 0), pincount.get('B', 0))
-
-        if size is None:
-            # Size based on pinspacing
-            if spacing == 0:  # 0 means 'auto'
-                spacing = 0.6
-
-            # TODO: account for label widths here too?
-            try:
-                h = (hcnt-1)*spacing/(1-2/(hcnt+2)) + padh*2
-            except ZeroDivisionError:
-                h = 2 + padh
-            try:
-                w = (wcnt-1)*spacing/(1-2/(wcnt+2)) + padw*2
-            except ZeroDivisionError:
-                w = 2 + padw
-            w, h = max(w, 2+padw), max(h, 2+padh)
-            size = (w, h)
-
+    def _drawclkpin(self, xy: Point, leadext: Point,
+                    side: Side, pin: IcPin, num: int) -> None:
+        ''' Draw clock pin > '''
+        sidesetup = self.sides.get(side, self._dflt_side)
+        sidesetup.label_size
+        clkw, clkh = 0.4 * sidesetup.label_size/16, 0.2 * sidesetup.label_size/16
+        if side in ['T', 'B']:
+            clkw = math.copysign(clkw, leadext[1]) if leadext[1] != 0 else clkw
+            clkpath = [Point((xy[0]-clkh, xy[1])),
+                        Point((xy[0], xy[1]-clkw)),
+                        Point((xy[0]+clkh, xy[1]))]
         else:
-            if spacing == 0:  # Size is given
-                # Set spacing based on edge size and edgepads
-                try:
-                    spacingh = (size[1] - padh*2) / (hcnt)
-                except ZeroDivisionError:
-                    spacingh = 0.6
-                try:
-                    spacingw = (size[0] - padw*2) / (wcnt)
-                except ZeroDivisionError:
-                    spacingw = 0.6
-                spacing = min(spacingw, spacingh)
+            clkw = math.copysign(clkw, -leadext[0]) if leadext[0] != 0 else clkw
+            clkpath = [Point((xy[0], xy[1]+clkh)),
+                        Point((xy[0]+clkw, xy[1])),
+                        Point((xy[0], xy[1]-clkh))]
+        self.segments.append(Segment(clkpath))
 
-        # Set edgepad based on size and spacing
-        padw = (size[0] - spacing*(wcnt-1)) / 2
-        padh = (size[1] - spacing*(hcnt-1)) / 2
-        if padw < 0 or padh < 0:
-            warnings.warn('pinspacing too large to fit on edge of Ic')
+    def _drawpins(self) -> None:
+        ''' Draw all the pins '''
+        for side, pins in self.pins.items():
+            for i, pin in enumerate(pins):
+                self._drawpin(side, pin, i)
 
-        self.pinspacing = spacing
-        return size, spacing, padw, padh
+    def _setsize(self) -> None:
+        ''' Set size based on pins added so far '''
+        self.pincount = self._countpins()
+        if self.size is None:
+            self._autosize()
+        else:
+            self._autopinlayout()
+        self.pinspacing = {'L': self.sides['L'].spacing,
+                           'R': self.sides['R'].spacing,
+                           'T': self.sides['T'].spacing,
+                           'B': self.sides['B'].spacing}
+
+    def _place(self, dwgxy: XY, dwgtheta: float, **dwgparams) -> tuple[Point, float]:
+        self._icbox = self._drawbox()
+        self._drawpins()
+        self.elmparams['lblloc'] = 'center'
+        self.anchors['center'] = (self._icbox.w/2, self._icbox.h/2)
+        return super()._place(dwgxy, dwgtheta, **dwgparams)
 
 
 class Multiplexer(Ic):

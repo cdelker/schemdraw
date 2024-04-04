@@ -235,7 +235,7 @@ class Drawing:
             try:
                 display(self.fig)
             except NameError:  # Not in Jupyter/IPython
-                pass
+                self.fig.show()
 
     def __getattr__(self, name: str) -> Any:
         ''' Allow getting anchor position as attribute '''
@@ -452,6 +452,8 @@ class Drawing:
             warnings.warn('Use of `backend` is deprecated. Use `canvas`.',
                           DeprecationWarning, stacklevel=2)
             canvas = backend
+
+        drawing_stack.push_element(None)
 
         if canvas is None:
             canvas = self.canvas

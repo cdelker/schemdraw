@@ -370,7 +370,8 @@ class Drawing:
                fontsize: Optional[float] = None, font: Optional[str] = None,
                color: Optional[str] = None, lw: Optional[float] = None, ls: Optional[Linestyle] = None,
                fill: Optional[str] = None, bgcolor: Optional[str] = None,
-               margin: Optional[float] = None) -> None:
+               margin: Optional[float] = None,
+               mathfont: Optional[str] = None) -> None:
         ''' Set Drawing configuration, overriding schemdraw global config.
 
             Args:
@@ -379,11 +380,12 @@ class Drawing:
                 inches_per_unit: Inches per drawing unit for setting drawing scale
                 fontsize: Default font size for text labels
                 font: Default font family for text labels
+                mathfont: Default font family or filename math text delimited by $..$
                 color: Default color name or RGB (0-1) tuple
                 lw: Default line width for elements
                 ls: Default line style
                 fill: Deault fill color for closed elements
-            margin: White space around the drawing in drawing units
+                margin: White space around the drawing in drawing units
         '''
         if unit is not None:
             self.unit = unit
@@ -406,6 +408,8 @@ class Drawing:
             self.dwgparams['bgcolor'] = bgcolor
         if margin is not None:
             self.dwgparams['margin'] = margin
+        if mathfont is not None:
+            self.dwgparams['mathfont'] = mathfont
 
     def _drawelements(self):
         ''' Draw all the elements on self.fig '''

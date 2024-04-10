@@ -171,7 +171,8 @@ def text_size(text: str,
     if font is None or font.lower() in ['sans-serif', 'Arial']:
         font = 'sans'
 
-    if ziamath:
+    if (ziamath and
+        (mathfont is None or os.path.exists(mathfont))):
         if text == '':
             return (0, 0, 0)
 

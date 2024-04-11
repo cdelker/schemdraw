@@ -40,7 +40,7 @@ def config(unit: float = 3.0, inches_per_unit: float = 0.5,
            font: str = 'sans-serif', color: str = 'black',
            lw: float = 2., ls: Linestyle = '-',
            fill: Optional[str] = None, bgcolor: Optional[str] = None,
-           margin: float = 0.1) -> None:
+           margin: float = 0.1, mathfont: Optional[str] = None) -> None:
     ''' Set global schemdraw style configuration
 
         Args:
@@ -55,6 +55,7 @@ def config(unit: float = 3.0, inches_per_unit: float = 0.5,
             ls: Default line style
             fill: Deault fill color for closed elements
             margin: White space around the drawing in drawing units
+            mathont: Font for math delimited by $..$
     '''
     schemdrawstyle['unit'] = unit
     schemdrawstyle['inches_per_unit'] = inches_per_unit
@@ -68,6 +69,8 @@ def config(unit: float = 3.0, inches_per_unit: float = 0.5,
     schemdrawstyle['margin'] = margin
     if bgcolor:
         schemdrawstyle['bgcolor'] = bgcolor
+    if mathfont:
+        schemdrawstyle['mathfont'] = mathfont
 
 
 def debug(dwgbbox: bool = True,

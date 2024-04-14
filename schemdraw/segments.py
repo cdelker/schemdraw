@@ -96,7 +96,7 @@ class Segment:
             visible: Show the segment when drawn
     '''
     def __init__(self, path: Sequence[XY],
-                 color: Optional[str] = None,
+                 color: Optional[str | tuple[float, float, float]] = None,
                  lw: Optional[float] = None,
                  ls: Optional[Linestyle] = None,
                  capstyle: Optional[Capstyle] = None,
@@ -272,7 +272,7 @@ class SegmentText:
                  rotation: Optional[float] = None,
                  rotation_mode: Optional[RotationMode] = None,
                  rotation_global: bool = True,
-                 color: Optional[str] = None,
+                 color: Optional[str | tuple[float, float, float]] = None,
                  fontsize: float = 14,
                  font: Optional[str] = None,
                  mathfont: Optional[str] = None,
@@ -438,7 +438,7 @@ class SegmentPoly:
     def __init__(self, verts: Sequence[XY],
                  closed: bool = True,
                  cornerradius: float = 0,
-                 color: Optional[str] = None,
+                 color: Optional[str | tuple[float, float, float]] = None,
                  fill: Optional[str] = None,
                  lw: Optional[float] = None,
                  ls: Optional[Linestyle] = None,
@@ -555,7 +555,7 @@ class SegmentCircle:
     '''
     def __init__(self, center: XY,
                  radius: float,
-                 color: Optional[str] = None,
+                 color: Optional[str | tuple[float, float, float]] = None,
                  lw: Optional[float] = None,
                  ls: Optional[Linestyle] = None,
                  fill: bool | str | None = None,
@@ -688,7 +688,7 @@ class SegmentBezier:
             visible: Show the segment when drawn
     '''
     def __init__(self, p: Sequence[XY],
-                 color: Optional[str] = None,
+                 color: Optional[str | tuple[float, float, float]] = None,
                  lw: Optional[float] = None,
                  ls: Optional[Linestyle] = None,
                  capstyle: Optional[Capstyle] = None,
@@ -798,7 +798,7 @@ class SegmentArc:
                  theta1: float = 35, theta2: float = -35,
                  arrow: Optional[Arcdirection] = None,
                  angle: float = 0,
-                 color: Optional[str] = None,
+                 color: Optional[str | tuple[float, float, float]] = None,
                  lw: Optional[float] = None,
                  ls: Optional[Linestyle] = None,
                  fill: Optional[str] = None,
@@ -914,7 +914,7 @@ class SegmentPath:
     '''
     def __init__(self,
                  path: Sequence[XY | str], 
-                 color: Optional[str] = None,
+                 color: Optional[str | tuple[float, float, float]] = None,
                  lw: Optional[float] = None,
                  ls: Optional[Linestyle] = None,
                  capstyle: Optional[Capstyle] = None,

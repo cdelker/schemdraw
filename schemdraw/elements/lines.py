@@ -849,12 +849,12 @@ class CurrentLabel(Element):
         loc = self.params.get('lblloc', 'top')
 
         if self._side in ['right'] and (theta <= 90 or theta > 270):
-            loc = self.elmparams['lblloc']
+            loc = self.elmparams.get('lblloc', 'top')
             self.elmparams['lblloc'] = {'bot': 'top',
                                         'top': 'bot'}.get(loc)
 
         elif self._side in ['top', 'left', 'bottom'] and (90 < theta <= 270):
-            loc = self.elmparams['lblloc']
+            loc = self.elmparams.get('lblloc', 'top')
             self.elmparams['lblloc'] = {'bot': 'top',
                                         'top': 'bot'}.get(loc)
 

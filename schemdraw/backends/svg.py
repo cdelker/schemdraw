@@ -125,7 +125,9 @@ def getstyle(color: Optional[str] = None, ls: Optional[Linestyle] = None, lw: Op
     # Note: styles are added to every SVG element, rather than in a global <style>
     # tag, since multiple images in one HTML page may share <styles>.
     s = ''
-    if color:
+    if isinstance(color, tuple):
+        s += f'stroke:rgb({int(color[0]*255)},{int(color[1]*255)},{int(color[2]*255)});'  
+    elif color:
         s += f'stroke:{color};'
     if hatch:
         s += 'fill:url(#hatch);'

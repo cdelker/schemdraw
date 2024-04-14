@@ -149,6 +149,13 @@ class FritzingPart(ElementImage):
             pointstrs = [p for p in pointstrs if p]
             anchorx = float(pointstrs[0])
             anchory = float(pointstrs[1])
+        elif anchorelm.tag.endswith('g'):
+            # Set anchor based on first element within the group
+            if len(anchorelm) > 0:
+                return self._anchor_position(name, anchorelm[0])
+            else:
+                warnings.warn(f'Connector {name} is empty')
+                return None, None
         else:
             warnings.warn(f'Connector {name} unimplemented connector tag: {anchorelm.tag}')
             return None, None
@@ -156,7 +163,7 @@ class FritzingPart(ElementImage):
         # Pick out SVG transforms leading up to the anchor element
         xforms = find_transforms(anchorelm, self.imagexml)
         for xf in xforms:
-            for xfmode, value in re.findall('(.*?)\((.*?)\)', xf):
+            for xfmode, value in re.findall(r'(.*?)\((.*?)\)', xf):
                 xfmode = xfmode.strip()
                 valuestrs = re.split(',| ', value)
                 values = [float(v) for v in valuestrs if v]

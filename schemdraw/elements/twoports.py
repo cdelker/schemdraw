@@ -80,10 +80,10 @@ class ElementTwoport(ElementCompound):
 
         bbox = self.get_bbox()
 
-        out_p = self.add(elm.Line('r', at=self.output_component.start, tox=bbox.xmax))
-        out_n = self.add(elm.Line('r', at=self.output_component.end, tox=bbox.xmax))
-        in_p = self.add(elm.Line('l', at=self.input_component.start, tox=bbox.xmin))
-        in_n = self.add(elm.Line('l', at=self.input_component.end, tox=bbox.xmin))
+        out_p = self.add(elm.Line().at(self.output_component.start).tox(bbox.xmax).right())
+        out_n = self.add(elm.Line().at(self.output_component.end).tox(bbox.xmax).right())
+        in_p = self.add(elm.Line().at(self.input_component.start).tox(bbox.xmin).left())
+        in_n = self.add(elm.Line().at(self.input_component.end).tox(bbox.xmin).left())
 
         self.anchors['in_p'] = in_p.end
         self.anchors['in_n'] = in_n.end

@@ -151,7 +151,7 @@ class Diode(ElementPictorial):
         'fill': HOUSING_COLOR,
         'stripe_color': 'silver'
     }
-    def __init__(self, stripe_color: Optional[str] = None, **kwargs):
+    def __init__(self, *, stripe_color: Optional[str] = None, **kwargs):
         super().__init__(**kwargs)
         h = PINSPACING/2
         w = PINSPACING * 2.5
@@ -281,7 +281,7 @@ class CapacitorElectrolytic(Element):
         'stripe_color': '#dff1f6',
         'theta': 0,
     }
-    def __init__(self, lead_length: Optional[float] = None,
+    def __init__(self, *, lead_length: Optional[float] = None,
                  cap_color: Optional[str] = None,
                  stripe_color: Optional[str] = None, **kwargs):
         super().__init__(**kwargs)
@@ -337,7 +337,7 @@ class CapacitorMylar(Element):
         'lead_length': 0.4*INCH,
         'theta': 0,
     }
-    def __init__(self, lead_length: Optional[float] = None, **kwargs):
+    def __init__(self, *, lead_length: Optional[float] = None, **kwargs):
         super().__init__(**kwargs)
         width = PINSPACING*1.75
         height = width*.75
@@ -375,7 +375,7 @@ class CapacitorCeramic(Element):
         'lead_length': 0.4*INCH,
         'theta': 0,
     }
-    def __init__(self, radius: Optional[float] = None,
+    def __init__(self, *, radius: Optional[float] = None,
                  lead_length: Optional[float] = None, **kwargs):
         super().__init__(**kwargs)
         rad = self.params['radius']
@@ -495,7 +495,7 @@ class Breadboard(Element):
         'shadow_color': '#E5E5E5',
         'text_color': '#666',
     }
-    def __init__(self,
+    def __init__(self, *,
                  shadow_color: Optional[str] = None,
                  text_color: Optional[str] = None,
                  **kwargs):

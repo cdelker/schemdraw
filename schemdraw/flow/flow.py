@@ -113,7 +113,7 @@ class RoundBox(Box):
     _element_defaults = {
         'cornerradius': 0.3
     }
-    def __init__(self, cornerradius: Optional[float] = None, **kwargs):
+    def __init__(self, *, cornerradius: Optional[float] = None, **kwargs):
         super().__init__(**kwargs)
 
     def _set_segments(self):
@@ -186,7 +186,7 @@ class Subroutine(Box):
     _element_defaults = {
         's': 0.3
     }
-    def __init__(self, s: Optional[float] = None, **kwargs):
+    def __init__(self, *, s: Optional[float] = None, **kwargs):
         super().__init__(**kwargs)
 
     def _set_size(self) -> tuple[float, float]:
@@ -217,7 +217,7 @@ class Data(Box):
     _element_defaults = {
         'slant': 0.5
     }
-    def __init__(self, slant: Optional[float] = 0.5, **kwargs):
+    def __init__(self, *, slant: Optional[float] = 0.5, **kwargs):
         super().__init__(**kwargs)
 
     def _set_segments(self):

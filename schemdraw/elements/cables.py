@@ -30,7 +30,7 @@ class Coax(Element2Term):
         'leadlen': 0.6,
         'radius': 0.3,
     }
-    def __init__(self,
+    def __init__(self, *,
                  length: Optional[float] = None,
                  radius: Optional[float] = None,
                  leadlen: Optional[float] = None,
@@ -98,7 +98,7 @@ class Triax(Element2Term):
         'shieldofststart': 0.3,
         'shieldofstend': 0.3
     }
-    def __init__(self,
+    def __init__(self, *,
                  length: Optional[float] = None,
                  leadlen: Optional[float] = None,
                  radiusinner: Optional[float] = None,

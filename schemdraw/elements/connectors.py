@@ -29,7 +29,7 @@ class OrthoLines(Element):
     _element_defaults = {
         'dy': 0.6,
     }
-    def __init__(self,
+    def __init__(self, *,
                  n: int = 1,
                  dy: Optional[float] = None,
                  xstart: Optional[float] = None,
@@ -115,7 +115,7 @@ class RightLines(Element):
         'theta': 0,
         'n': 1
     }
-    def __init__(self,
+    def __init__(self, *,
                  n: int = 1,
                  dy: Optional[float] = None,
                  arrow: Optional[str] = None,
@@ -209,6 +209,7 @@ class Header(Element):
                  cols: int = 1,
                  pinsleft: Optional[Sequence[str]] = None,
                  pinsright: Optional[Sequence[str]] = None,
+                 *,
                  style: Optional[HeaderStyle] = None,
                  numbering: Optional[HeaderNumbering] = None,
                  shownumber: Optional[bool] = None,
@@ -291,7 +292,7 @@ class Jumper(Element):
         'pinrad': 0.1,
         'theta': 0
     }
-    def __init__(self,
+    def __init__(self, *,
                  pinspacing: Optional[float] = None,
                  **kwargs):
         super().__init__(**kwargs)
@@ -328,6 +329,7 @@ class BusConnect(Element):
     def __init__(self,
                  n: int = 1,
                  up: bool = True,
+                 *,
                  dy: Optional[float] = None,
                  lwbus: Optional[float] = None,
                  l: Optional[float] = None,
@@ -386,7 +388,7 @@ class DB9(Element):
         'number': False,
         'theta': 0,
     }
-    def __init__(self,
+    def __init__(self, *,
                  pinspacing: Optional[float] = None,
                  edge: Optional[float] = None,
                  number: Optional[bool] = None,
@@ -441,7 +443,7 @@ class DB25(Element):
         'pinrad': 0.1,
         'theta': 0
     }
-    def __init__(self,
+    def __init__(self, *,
                  pinspacing: Optional[float] = None,
                  edge: Optional[float] = None,
                  number: Optional[bool] = None,
@@ -496,7 +498,7 @@ class CoaxConnect(Element):
         'radiusinner': 0.12,
         'fillinner': 'bg'
     }
-    def __init__(self,
+    def __init__(self, *,
                  radius: Optional[float] = None, 
                  radiusinner: Optional[float] = None,
                  fillinner: Optional[str] = None,
@@ -551,7 +553,7 @@ class Terminal(Element):
         'theta': 0,
         'zorder': 4,
     }
-    def __init__(self,
+    def __init__(self, *,
                  r: Optional[float] = None,
                  open: Optional[bool] = None,
                  **kwargs):

@@ -484,7 +484,7 @@ class IcDIP(Element):
         'fontsize': 12,
         'pfontsize': 10
     }
-    def __init__(self,
+    def __init__(self, *,
                  pins: Optional[int] = None,
                  names: Optional[Sequence[str]] = None,
                  notch: Optional[bool] = None,
@@ -822,7 +822,7 @@ class SevenSegment(Ic):
         'cathode': False,
         'pinspacing': 0.6
     }
-    def __init__(self,
+    def __init__(self, *,
                  decimal: Optional[bool] = None,
                  digit: Optional[int | str] = None,
                  segcolor: Optional[str] = None,

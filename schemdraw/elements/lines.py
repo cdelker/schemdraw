@@ -25,7 +25,7 @@ class Line(Element2Term):
     _element_defaults = {
         'arrowwidth': 0.15,
         'arrowlength': 0.25}
-    def __init__(self, arrow: Optional[str] = None, **kwargs):
+    def __init__(self, *, arrow: Optional[str] = None, **kwargs):
         super().__init__(**kwargs)
         arrowwidth: float = self.params['arrowwidth']
         arrowlength: float = self.params['arrowlength']
@@ -54,7 +54,7 @@ class Arrow(Line):
             headwidth: Width of arrow head [default: 0.15]
             headlength: Length of arrow head [default: 0.25]
     '''
-    def __init__(self,
+    def __init__(self, *,
                  double: bool = False,
                  headwidth: Optional[float] = None,
                  headlength: Optional[float] = None,
@@ -98,7 +98,7 @@ class Dot(Element):
     _element_defaults = {
         'radius': 0.075,
         'open': False}
-    def __init__(self,
+    def __init__(self, *,
                  radius: Optional[float] = None,
                  open: Optional[bool] = None,
                  **kwargs):
@@ -151,7 +151,7 @@ class DotDotDot(Element):
         'radius': 0.075,
         'open': False,
     }
-    def __init__(self,
+    def __init__(self, *,
                  radius: Optional[float] = None,
                  open: Optional[bool] = None,
                  **kwargs) -> None:
@@ -180,7 +180,8 @@ class Wire(Element):
             k: Distance before the wire changes directions in `n` and `c` shapes.
             arrow: arrowhead specifier, such as '->', '<-', '<->', or '-o'
     '''
-    def __init__(self, shape: str = '-', k: float = 1, arrow: Optional[str] = None, **kwargs):
+    def __init__(self, shape: str = '-', k: float = 1, *,
+                 arrow: Optional[str] = None, **kwargs):
         super().__init__(**kwargs)
         self._userparams['shape'] = shape
         self._userparams['k'] = k
@@ -401,6 +402,7 @@ class Arc3(Element):
                  th1: float = 0.,
                  th2: float = 180,
                  arrow: Optional[str] = None,
+                 *,
                  arrowlength: Optional[float] = None,
                  arrowwidth: Optional[float] = None,
                  **kwargs):
@@ -492,6 +494,7 @@ class Annotate(Arc3):
                  th1: float = 75,
                  th2: float = 180,
                  arrow: str = '<-',
+                 *,
                  arrowlength: Optional[float] = None,
                  arrowwidth: Optional[float] = None,
                  **kwargs):
@@ -542,6 +545,7 @@ class ArcZ(Arc3):
     def __init__(self,
                  k: float = 0.75,
                  arrow: Optional[str] = None,
+                 *,
                  arrowlength: Optional[float] = None,
                  arrowwidth: Optional[float] = None,
                  **kwargs):
@@ -571,6 +575,7 @@ class ArcN(Arc3):
     def __init__(self,
                  k: float = 0.75,
                  arrow: Optional[str] = None,
+                 *,
                  arrowlength: Optional[float] = None,
                  arrowwidth: Optional[float] = None,
                  **kwargs):
@@ -612,6 +617,7 @@ class ArcLoop(Element):
     def __init__(self,
                  radius: float = 0.6,
                  arrow: Optional[str] = None,
+                 *,
                  arrowlength: Optional[float] = None,
                  arrowwidth: Optional[float] = None,
                  **kwargs):
@@ -726,7 +732,7 @@ class Tag(Element):
         'fontsize': 12,
         'lblofst': 0
     }
-    def __init__(self,
+    def __init__(self, *,
                  width: Optional[float] = None,
                  height: Optional[float] = 0.625,
                  **kwargs) -> None:
@@ -740,7 +746,6 @@ class Tag(Element):
                                           (w, -h),
                                           (h, -h)]))
         self.anchors['start'] = (0, 0)
-
 
 
 class CurrentLabel(Element):
@@ -766,6 +771,7 @@ class CurrentLabel(Element):
         'headwidth': 0.2,
     }
     def __init__(self,
+                 *,
                  length: Optional[float] = None,
                  top: Optional[bool] = None,
                  reverse: Optional[bool] = None,
@@ -885,6 +891,7 @@ class CurrentLabelInline(Element):
                  direction: BilateralDirection = 'in',
                  ofst: float = 0.8,
                  start: bool = True,
+                 *,
                  headlength: Optional[float] = None,
                  headwidth: Optional[float] = None,
                  **kwargs):
@@ -953,7 +960,7 @@ class ZLabel(Element):
         'headwidth': 0.15,
         'drop': None,
     }
-    def __init__(self,
+    def __init__(self, *,
                  ofst: Optional[float] = None,
                  hofst: Optional[float] = None,
                  length: Optional[float] = None,
@@ -1117,6 +1124,7 @@ class Rect(Element):
     def __init__(self,
                  corner1: XY = (0, 0),
                  corner2: XY = (1, 1),
+                 *,
                  fill: Optional[str] = None,
                  lw: Optional[float] = None,
                  ls: Optional[Linestyle] = None,
@@ -1143,6 +1151,7 @@ class Encircle(Element):
     }
     def __init__(self,
                  elm_list: Optional[Sequence[Element]] = None,
+                 *,
                  padx: Optional[float] = None,
                  pady: Optional[float] = None,
                  includelabels: bool = True,
@@ -1209,6 +1218,7 @@ class EncircleBox(Element):
     }
     def __init__(self,
                  elm_list: Optional[Sequence[Element]] = None,
+                 *,
                  cornerradius: float = 0.3,
                  padx: Optional[float] = None,
                  pady: Optional[float] = None,

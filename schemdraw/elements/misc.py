@@ -89,7 +89,7 @@ class AudioJack(Element):
         'radius': 0.075,
         'open': True
     }
-    def __init__(self,
+    def __init__(self, *,
                  radius: Optional[float] = None,
                  ring: bool = False,
                  ringswitch: bool = False,

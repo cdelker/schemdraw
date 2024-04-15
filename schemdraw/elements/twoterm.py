@@ -100,7 +100,7 @@ class Capacitor(Element2Term):
     _element_defaults = {
         'polar': False
     }
-    def __init__(self, polar: Optional[bool] = None, **kwargs):
+    def __init__(self, *, polar: Optional[bool] = None, **kwargs):
         super().__init__(**kwargs)
         capgap = 0.18
         self.segments.append(Segment([(0, 0), gap, (0, resheight), (0, -resheight), gap,
@@ -119,7 +119,7 @@ class Capacitor2(Element2Term):
     _element_defaults = {
         'polar': False
     }
-    def __init__(self, polar: Optional[bool] = None, **kwargs):
+    def __init__(self, *, polar: Optional[bool] = None, **kwargs):
         super().__init__(**kwargs)
         capgap = 0.18
         self.segments.append(Segment([(0, 0), gap, (0, resheight),
@@ -414,7 +414,7 @@ class FuseUS(Element2Term):
     _element_defaults = {
         'dots': True
     }
-    def __init__(self, dots: Optional[bool] = None, **kwargs):
+    def __init__(self, *, dots: Optional[bool] = None, **kwargs):
         super().__init__(**kwargs)
         fuser = .12
         fusex = linspace(fuser*2, 1+fuser)
@@ -461,7 +461,7 @@ class Breaker(Element2Term):
     _element_defaults = {
         'dots': True
     }
-    def __init__(self, dots: Optional[bool] = None, **kwargs):
+    def __init__(self, *, dots: Optional[bool] = None, **kwargs):
         super().__init__(**kwargs)
         theta1 = 25 if dots else 10
         theta2 = 155 if dots else 170
@@ -537,7 +537,7 @@ class Inductor2(Element2Term):
     _element_defaults = {
         'loops': 4,
     }
-    def __init__(self, loops: Optional[int] = None, **kwargs):
+    def __init__(self, *, loops: Optional[int] = None, **kwargs):
         super().__init__(**kwargs)
         self.segments.append(Segment(cycloid(loops=self.params['loops'])))
 

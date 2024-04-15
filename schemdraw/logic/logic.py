@@ -34,6 +34,7 @@ class And(Element):
         'leadout': 0.35
     }
     def __init__(self, inputs: int = 2, nand: bool = False, inputnots: Optional[Sequence[int]] = None,
+                 *,
                  leadin: Optional[float] = None, leadout: Optional[float] = None, **kwargs):
         super().__init__(**kwargs)
         _leadin = self.params['leadin']
@@ -114,6 +115,7 @@ class Or(Element):
     }
     def __init__(self, inputs: int = 2, nor: bool = False,
                  xor: bool = False, inputnots: Optional[Sequence[int]] = None,
+                 *,
                  leadin: float = 0.35, leadout: float = 0.35, **kwargs):
         super().__init__(**kwargs)
         _leadin = self.params['leadin']
@@ -347,7 +349,7 @@ class SchmittAnd(And):
             in2
             out
     '''
-    def __init__(self, leadin: float = 0.35, leadout: float = 0.35, **kwargs):
+    def __init__(self, *, leadin: float = 0.35, leadout: float = 0.35, **kwargs):
         super().__init__(leadin=leadin, leadout=leadout, **kwargs)
         xofst = self.params['leadin']+gatel/2
         self.segments.append(Segment([(xofst+.07, -.15), (xofst+.25, -.15),

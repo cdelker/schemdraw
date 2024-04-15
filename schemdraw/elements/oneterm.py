@@ -21,7 +21,7 @@ class Ground(Element):
         'theta': 0,
         'drop': (0, 0)
     }
-    def __init__(self,
+    def __init__(self, *,
                  lead: Optional[bool] = None,
                  **kwargs):
         super().__init__(**kwargs)
@@ -48,7 +48,7 @@ class GroundSignal(Element):
         'theta': 0,
         'drop': (0, 0)
     }
-    def __init__(self,
+    def __init__(self, *,
                  lead: bool = True,
                  **kwargs):
         super().__init__(**kwargs)

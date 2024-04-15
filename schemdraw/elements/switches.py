@@ -214,7 +214,7 @@ class SwitchRotary(Element):
             * P
             * T[x] for each contact (starting at 1)
     '''
-    def __init__(self,
+    def __init__(self, *,
                  n: int = 4, dtheta: Optional[float] = None, theta0: Optional[float] = None,
                  radius: float = 1, arrowlen: float = 0.75,
                  arrowcontact: int = 0,
@@ -260,7 +260,7 @@ class SwitchDIP(Element):
         'swidth': 0.4,
         'spacing': 0.2
     }
-    def __init__(self,
+    def __init__(self, *,
                  n: int = 3,
                  pattern: Optional[Sequence[bool]] = None,
                  switchcolor: Optional[str] = None,

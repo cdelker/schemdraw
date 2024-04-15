@@ -35,7 +35,7 @@ class Opamp(Element):
         'sign': True,
         'leads': False
     }
-    def __init__(self,
+    def __init__(self, *,
                  sign: Optional[bool] = None,
                  leads: Optional[bool] = None,
                  **kwargs):

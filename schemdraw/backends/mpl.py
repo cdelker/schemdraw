@@ -327,7 +327,11 @@ class Figure:
         except AttributeError:
             pass
 
-        imdat = plt.imread(image)
+        try:
+            imdat = plt.imread(image)
+        except SyntaxError as ex:
+            raise ValueError('SVG images not supported in matplotlib backend') from ex
+
         tr = transforms.Affine2D().rotate_deg(rotate).translate(xy[0], xy[1])
         im = self.ax.imshow(imdat, extent=(0, width, 0, height), zorder=zorder)
         im.set_transform(tr+self.ax.transData)

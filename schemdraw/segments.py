@@ -1015,12 +1015,14 @@ class SegmentImage:
                  xy: Point = Point((0, 0)),   # Lower Left
                  width: float = 3,
                  height: float = 1,
+                 rotate: float = 0,
                  imgfmt: Optional[str] = None,
                  zorder: Optional[int] = None):
         self.image = image
         self.xy = Point(xy)
         self.width = width
         self.height = height
+        self.rotate = rotate
         self.imgfmt = imgfmt
         self.zorder = zorder
         self.visible = True
@@ -1031,7 +1033,21 @@ class SegmentImage:
             Returns:
                 Bounding box limits (xmin, ymin, xmax, ymax)
         '''
-        return BBox(self.xy.x, self.xy.y, self.xy.x+self.width, self.xy.y+self.height)
+        if self.rotate % 360 == 0:
+            return BBox(self.xy.x, self.xy.y, self.xy.x+self.width, self.xy.y+self.height)
+
+        p1 = self.xy.rotate(self.rotate)
+        p2 = (self.xy + Point((self.width, 0))).rotate(self.rotate)
+        p3 = (self.xy + Point((self.width, self.height))).rotate(self.rotate)
+        p4 = (self.xy + Point((0, self.height))).rotate(self.rotate)
+
+        return BBox(
+            min(p.x for p in (p1, p2, p3, p4)),
+            min(p.y for p in (p1, p2, p3, p4)),
+            max(p.x for p in (p1, p2, p3, p4)),
+            max(p.y for p in (p1, p2, p3, p4))
+            )
+
 
     def xform(self, transform, **style) -> 'SegmentImage':
         ''' Return a new Segment that has been transformed
@@ -1043,11 +1059,13 @@ class SegmentImage:
         '''
         params: dict[str, Any] = {
             'zorder': self.zorder if self.zorder is not None else style.get('zorder', None)}
+        
         style = {k: v for k, v in style.items() if params.get(k) is None and k in params.keys()}
         params.update(style)
         return SegmentImage(self.image, transform.transform(self.xy),
                             width=self.width*transform.zoom[0],
                             height=self.height*transform.zoom[1],
+                            rotate=self.rotate+transform.theta,
                             imgfmt=self.imgfmt,
                              **params)
 
@@ -1076,7 +1094,7 @@ class SegmentImage:
         zorder = self.zorder if self.zorder is not None else style.get('zorder', 1)
         fig.image(self.image, xy,
                   width=width, height=height,
-                  rotate=transform.theta,
+                  rotate=self.rotate+transform.theta,
                   imgfmt=self.imgfmt,
                   zorder=zorder)
 

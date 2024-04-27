@@ -577,7 +577,10 @@ class Figure:
             imageelm = ET.fromstring(imgdat.decode())
             imgwidth = parse_size_to_px(imageelm.get('width', '0'))
             s = width / imgwidth
-            et.set('transform', f'translate({x0}, {y0}) scale({s})')
+            xform = f'translate({x0}, {y0}) scale({s})'
+            if rotate:
+                xform = f'rotate({-rotate} {x0} {y0+height}) ' + xform
+            et.set('transform', xform)
             et.append(imageelm)
         else:  # Raster images
             image_b64 = base64.encodebytes(imgdat).decode()

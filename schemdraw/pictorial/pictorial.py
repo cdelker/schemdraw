@@ -509,10 +509,10 @@ class Breadboard(Element):
         def hole(x, y):
             self.segments.append(SegmentPoly(((x-outer_radius, y+outer_radius), (x+outer_radius, y+outer_radius),
                                                 (x+outer_radius, y-outer_radius)),
-                                                fill=True, color=shadow_color))
+                                                fill=True, color=shadow_color, lw=2))
             self.segments.append(SegmentPoly(((x-inner_radius, y-inner_radius), (x-inner_radius, y+inner_radius),
                                                 (x+inner_radius, y+inner_radius), (x+inner_radius, y-inner_radius)),
-                                                fill=True, color=HOUSING_COLOR))
+                                                fill=True, color=HOUSING_COLOR, lw=2))
 
         nrows = 30
         ncols = 5
@@ -529,7 +529,7 @@ class Breadboard(Element):
         # Frame - inherit color from element
         self.segments.append(
             SegmentPoly(((left, top), (right, top),
-                         (right, top-height), (left, top-height))))
+                         (right, top-height), (left, top-height)), lw=2))
 
         x = y = 0.
         # Left power strip holes

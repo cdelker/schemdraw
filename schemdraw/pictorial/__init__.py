@@ -17,4 +17,4 @@ from .pictorial import (
     TO92,
     DIP,
     Breadboard)
-from .fritz import FritzingPart
+from .fritz import FritzingPart, fritz_parts

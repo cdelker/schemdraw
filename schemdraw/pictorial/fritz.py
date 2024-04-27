@@ -44,6 +44,19 @@ def extract(elm: ET.Element, tag: str) -> Optional[str]:
     return item.text if item is not None else None
 
 
+def fritz_parts(fname: str) -> list[str | None]:
+    ''' List titles of all Fritzing parts in the file '''
+    zip = zipfile.ZipFile(fname)
+    parts = [f.filename for f in zip.infolist() if f.filename.endswith('.fzp')]
+    names = []
+    for part in parts:    
+        module = ET.fromstring(zip.read(part))
+        title = module.find('title')
+        if title is not None:
+            names.append(title.text)
+    return names
+
+
 class FritzingPart(ElementImage):
     ''' Load a Fritzing Part File as a Schemdraw Element
 
@@ -54,12 +67,26 @@ class FritzingPart(ElementImage):
 
         Args:
             fname: Filename of fritzing .fzpz archive
+            partname: Name of part within the file. Use `listparts` to
+                show all names. If not provided, first part is drawn.
+            partidx: Index of part within the file. If not provided,
+                first part is drawn. Overrides `partname`.
             scale: Scale factor
     '''
-    def __init__(self, fname: str, scale: float = 1.0):
+    def __init__(self, fname: str,
+                 partname: Optional[str] = None,
+                 partidx: Optional[int] = None,
+                 scale: float = 1.0):
         self.fname = fname
         self.zip = zipfile.ZipFile(self.fname)
-        part = [f.filename for f in self.zip.infolist() if f.filename.endswith('.fzp')][0]
+        parts = [f.filename for f in self.zip.infolist() if f.filename.endswith('.fzp')]
+
+        if partidx is not None:
+            part = parts[partidx]
+        elif partname is not None:
+            part = parts[fritz_parts(fname).index(partname)]
+        else:
+            part = parts[0]
 
         self.module = ET.fromstring(self.zip.read(part))
         self.info = FritzingInfo(

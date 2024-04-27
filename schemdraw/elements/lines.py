@@ -216,7 +216,8 @@ class Wire(Element):
 
     def _place(self, dwgxy: XY, dwgtheta: float, **dwgparams) -> tuple[Point, float]:
         ''' Calculate absolute placement of Element '''
-        self._dwgparams = dwgparams
+        self._dwgparams.clear()
+        self._dwgparams.update(dwgparams)
         if not self._positioned:
             self._position()
 

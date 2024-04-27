@@ -33,6 +33,7 @@ class Transformer(Element):
     }
     def __init__(self,
                  t1: int = 4, t2: int = 4,
+                 *,
                  core: Optional[bool] = None,
                  loop: Optional[bool] = None,
                  **kwargs):

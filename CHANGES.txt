@@ -1,4 +1,4 @@
-v0.19 - (unreleased)
+v0.19 - 2024-04-27
 
     Enhancements:
         - Added `scalex` and `scaley` for asymmetric zooming/scaling of Elements
@@ -6,12 +6,15 @@ v0.19 - (unreleased)
         - Added pictorial elements
         - Load Fritzing Part files (breadboard view)
         - Added `.pin` and `.side` methods to Ic Element
+        - Added `mathfont` parameter to drawing config method
 
     Fixes:
         - Fixed `tox` and `toy` methods when the Elemnet defines a theta
         - Fixed vertical offset of labels below an Element
         - Fixed reversing of CurrentLabel.
         - Update Ic Element to respect `pinspacing` when `size` is also provided
+        - SVG backend accepts color tuples (r, g, b) in the range 0-1, mirroring Matplotlib
+        - Tighten bounding box around text elements (when using ziamath)
 
 
 v0.18 - 2023-12-29

@@ -162,7 +162,7 @@ Fritzing Part Files
 -------------------
 
 Schemdraw can import part files in the `Fritzing <https://fritzing.org/>`_ format and use them in pictorial schematics.
-Use :py:class:`schemdraw.pictorial.FritzingPart` and provide the file name of an `.fzpz` part file.
+Use :py:class:`schemdraw.pictorial.fritz.FritzingPart` and provide the file name of an `.fzpz` or `.fzbz` part file.
 Schemdraw's anchors will be set based on the part "connectors" defined in the part file.
 In this example, a part is downloaded from the `Adafruit Fritzing Library <https://github.com/adafruit/Fritzing-Library>`_ and used in a drawing.
 

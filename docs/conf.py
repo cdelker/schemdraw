@@ -19,7 +19,7 @@ import pkg_resources
 # -- Project information -----------------------------------------------------
 
 project = 'Schemdraw'
-copyright = '2023, Collin J. Delker'
+copyright = '2024, Collin J. Delker'
 author = 'Collin J. Delker'
 
 # The full version, including alpha/beta/rc tags
@@ -35,8 +35,8 @@ extensions = [
     'jupyter_sphinx',
     'sphinx.ext.autodoc',
     'sphinx.ext.autodoc.typehints',
-    'sphinx.ext.imgconverter',
-    'sphinx.ext.napoleon'
+    'sphinx.ext.napoleon',
+    'sphinxcontrib.cairosvgconverter',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -73,5 +73,6 @@ latex_elements = {
                  r'\DeclareUnicodeCharacter{22BB}{\ensuremath{\veebar}}' +
                  r'\DeclareUnicodeCharacter{01C1}{\ensuremath{\parallel}}' +
                  r'\DeclareUnicodeCharacter{2220}{\ensuremath{\angle}}' +
-                 r'\DeclareUnicodeCharacter{2227}{\ensuremath{\wedge}}'
+                 r'\DeclareUnicodeCharacter{2227}{\ensuremath{\wedge}}' +
+                 r'\DeclareUnicodeCharacter{2212}{\ensuremath{-}}'
 }

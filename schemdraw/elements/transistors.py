@@ -51,11 +51,7 @@ class _Mosfet(Element):
         self.elmparams['ilabel'] = 'right'  # Draw current labels on this side
         u = reswidth*0.5
 
-        # gate
-        self.segments.extend([
-            Segment([(-10*u, -6*u), (-5*u, -6*u)]),
-            Segment([(-5*u, -6*u), (-5*u, -14*u)]),
-            ])
+
 
         # ---
         self.segments.extend([
@@ -77,7 +73,11 @@ class _Mosfet(Element):
             ])
 
         if variant == 'nmos':
-
+            # gate
+            self.segments.extend([
+            Segment([(-10*u, -14*u), (-5*u, -14*u)]),
+            Segment([(-5*u, -14*u), (-5*u, -6*u)]),
+            ])
             # source
             self.segments.extend([
                 Segment(
@@ -87,12 +87,16 @@ class _Mosfet(Element):
                 ])
 
             self.anchors['drain'] = (0, 0)
-            self.anchors['gate'] = (-10*u, -6*u)
+            self.anchors['gate'] = (-10*u, -14*u)
             self.anchors['center'] = (0, -10*u)
             self.anchors['source'] = (0, -20*u)
 
         elif variant == 'pmos':
-
+            # gate
+            self.segments.extend([
+            Segment([(-10*u, -6*u), (-5*u, -6*u)]),
+            Segment([(-5*u, -6*u), (-5*u, -14*u)]),
+            ])
             # source
             self.segments.extend([
                 Segment(
@@ -208,11 +212,7 @@ class _Mosfet2(Element2Term):
                 (13*u, -3*u), (13*u, 0), (20*u, 0),
                 ]))
 
-        # gate
-        self.segments.extend([
-            Segment([(6*u, -10*u), (6*u, -5*u)]),
-            Segment([(6*u, -5*u), (14*u, -5*u)]),
-            ])
+
 
         # ---
         self.segments.extend([
@@ -222,7 +222,11 @@ class _Mosfet2(Element2Term):
             ])
 
         if variant == 'nmos':
-
+            # gate
+            self.segments.extend([
+            Segment([(14*u, -10*u), (14*u, -5*u)]),
+            Segment([(14*u, -5*u), (6*u, -5*u)]),
+            ])
             # source
             self.segments.extend([
                 Segment(
@@ -232,10 +236,15 @@ class _Mosfet2(Element2Term):
                 ])
 
             self.anchors['drain'] = (0, 0)
-            self.anchors['gate'] = (6*u, -10*u)
+            self.anchors['gate'] = (14*u, -10*u)
             self.anchors['source'] = (20*u, 0)
 
         elif variant == 'pmos':
+            # gate
+            self.segments.extend([
+            Segment([(6*u, -10*u), (6*u, -5*u)]),
+            Segment([(6*u, -5*u), (14*u, -5*u)]),
+            ])
 
             # source
             self.segments.extend([
@@ -246,7 +255,7 @@ class _Mosfet2(Element2Term):
                 ])
 
             self.anchors['source'] = (0, 0)
-            self.anchors['gate'] = (6*u, -10*u)
+            self.anchors['gate'] = (14*u, -10*u)
             self.anchors['drain'] = (20*u, 0)
 
         self.anchors['center'] = (10*u, 0)

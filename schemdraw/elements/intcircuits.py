@@ -1,7 +1,7 @@
 ''' Integrated Circuit Element '''
 
 from __future__ import annotations
-from typing import Optional, Sequence, Tuple, cast
+from typing import Any, Optional, Sequence, Tuple, cast
 from collections import namedtuple
 import math
 from dataclasses import dataclass, replace
@@ -11,6 +11,7 @@ from ..elements import Element
 from ..util import linspace, Point
 from ..types import XY, Side, Halign, Valign
 from ..backends.svg import text_size
+from .. import drawing_stack
 
 
 @dataclass
@@ -98,6 +99,29 @@ class Ic(Element):
 
         self._icbox = IcBox(0,0,0,0)
         self._setsize()
+
+    def __getattr__(self, name: str) -> Any:
+        ''' Allow getting anchor position as attribute '''
+        anchornames = ['start', 'end', 'center', 'istart', 'iend',
+                       'N', 'S', 'E', 'W', 'NE', 'NW', 'SE', 'SW',
+                       'NNE', 'NNW', 'ENE', 'WNW', 'SSE', 'SSW', 'ESE', 'WSW']
+        anchornames += list(vars(self).get('anchors', {}).keys())
+        anchornames += self.pinnames
+        if (name in anchornames and not name in vars(self).get('absanchors', {})):
+                # Not placed yet
+                drawing_stack.push_element(self)
+
+        if name in vars(self).get('absanchors', {}):
+            return vars(self).get('absanchors')[name]  # type: ignore
+        raise AttributeError(f'{name} not defined in Element')
+
+    @property
+    def pinnames(self) -> list[str]:
+        ''' List of all pin names '''
+        names: list[str] = []
+        for _, pins in self.pins.items():
+            names.extend(p.name for p in pins if p.name)
+        return names
 
     def pin(self,
             side: Side = 'L',

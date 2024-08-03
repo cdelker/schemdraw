@@ -68,7 +68,7 @@ class Ic(Element):
         'leadlen': 0.5,
         'lsize': 14,
         'lofst': 0.15,
-        'plblofst': 0.05,
+        'plblofst': 0.075,
         'plblsize': 11
     }
     def __init__(self,
@@ -704,6 +704,7 @@ def sevensegdigit(bottom: float = 0, left: float = 0,
             List of Segments making the digit
     '''
     halfw = segw/2  # Half segment width
+    marginy = segw/5  # Margin between label and segment
     halfspace = spacing/2
     tilt = math.radians(tilt)
 
@@ -727,9 +728,9 @@ def sevensegdigit(bottom: float = 0, left: float = 0,
     segCy = segEy
 
     # Label positions
-    segAlabel = (seglen/2 + halfspace, seglen*2+halfw)
-    segGlabel = (seglen/2 + halfspace, seglen+halfw)
-    segDlabel = (seglen/2 + halfspace, halfw)
+    segAlabel = (seglen/2 + halfspace, seglen*2+halfw+marginy)
+    segGlabel = (seglen/2 + halfspace, seglen+halfw+marginy)
+    segDlabel = (seglen/2 + halfspace, halfw+marginy)
     segBlabel = (seglen + halfw + halfspace, seglen*1.5)
     segClabel = (seglen + halfw + halfspace, seglen*.5)
     segElabel = (-halfw - halfspace, seglen*.5)

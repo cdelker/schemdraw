@@ -326,11 +326,10 @@ def text_approx_size(text: str, font: str = 'Arial', size: float = 16) -> tuple[
     w = 0.
     h = 0.
     lines = text.splitlines()
-    dy = size if len(lines) > 1 else size * 0.8
     for line in lines:
         math = ' '.join(mathtextsvg(line).itertext())  # itertext strips all the tags
         w = max(w, string_width(math, fontsize=size, font=font))
-        h += dy
+        h += size
     return w, h, 0
 
 
@@ -376,12 +375,17 @@ def text_tosvg(text: str, x: float, y: float, font: str = 'Arial', size: float =
         boxx -= w
 
     ytext = y
+    baseline = 'alphabetic'
     if valign == 'center':
-        ytext += h/2
+        ytext += h/2 - size/2
+        baseline = 'central'
     elif valign == 'top':
-        ytext += h
+        ytext += h - size
+        baseline = 'hanging'
     elif valign == 'base':
         ytext += size*(nlines-1)
+    elif valign == 'bottom':
+        baseline = 'ideographic'
     anchor = {'center': 'middle', 'left': 'start', 'right': 'end'}.get(halign, 'start')
 
     org = Point((x, y))
@@ -417,6 +421,7 @@ def text_tosvg(text: str, x: float, y: float, font: str = 'Arial', size: float =
 
     textelm.set('x', str(x))
     textelm.set('y', str(ytext-h))
+    textelm.set('dominant-baseline', baseline)
     textelm.set('fill', color)
     textelm.set('font-size', str(size))
     textelm.set('font-family', font)
@@ -432,14 +437,6 @@ def text_tosvg(text: str, x: float, y: float, font: str = 'Arial', size: float =
 
         topelm = ET.Element('g')  # Put everything in a group
         topelm.append(textelm)
-        box = ET.SubElement(topelm, 'rect')
-        box.set('x', str(boxx))
-        box.set('y', str(ytext-h))
-        box.set('width', str(w))
-        box.set('height', str(h))
-        box.set('style', 'stroke:blue;stroke-width:1;fill:none')
-        if xform is not None:
-            box.set('transform', xform)
         circ = ET.SubElement(topelm, 'circle')
         circ.set('cx', str(x))
         circ.set('cy', str(y))

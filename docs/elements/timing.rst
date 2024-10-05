@@ -195,3 +195,17 @@ When placing edge labels above or below the wave, it can be useful to add the `y
 See the :ref:`gallerytiming` Gallery for more examples.
 
 
+.. note::
+
+    `TimingDiagram` is an `Element`, meaning it may be added to a
+    schemdraw `Drawing` with other schematic components.
+    To save a standalone `TimingDiagram` to an image file, first add it to a drawing, and
+    save the drawing:
+
+        .. code-block:: python
+
+            with schemdraw.Drawing(file='timing.svg'):
+                logic.TimingDiagram(
+                    {'signal': [
+                        {'name': 'A', 'wave': '0..1..01.'},
+                        {'name': 'B', 'wave': '101..0...'}]})

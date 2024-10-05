@@ -153,3 +153,15 @@ Parameters of the style dictionary include `color`, `fill`, `lw`, and `ls`.
                groups={'11..': {'color': 'red', 'fill': '#ff000033'},
                        '.1.1': {'color': 'blue', 'fill': '#0000ff33'},
                        '.000': {'color': 'green', 'fill': '#00ff0033'}})
+
+.. note::
+
+    `Kmap` and `Table` are both Elements, meaning they may be added to a
+    schemdraw `Drawing` with other schematic components.
+    To save a standalone `Kmap` or `Table` to an image file, first add it to a drawing, and
+    save the drawing:
+
+        .. code-block:: python
+
+            with schemdraw.Drawing(file='truthtable.svg'):
+                logic.Table(table, colfmt='cc||c')

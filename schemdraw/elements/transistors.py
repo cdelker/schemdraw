@@ -255,7 +255,7 @@ class _Mosfet2(Element2Term):
                 ])
 
             self.anchors['source'] = (0, 0)
-            self.anchors['gate'] = (14*u, -10*u)
+            self.anchors['gate'] = (6*u, -10*u)
             self.anchors['drain'] = (20*u, 0)
 
         self.anchors['center'] = (10*u, 0)

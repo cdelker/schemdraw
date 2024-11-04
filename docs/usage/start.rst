@@ -65,7 +65,7 @@ These operators are still functional and are needed if drawing outside a `with` 
         drawing += elm.Capacitor()
         drawing.add(elm.Diode())   # Same as `drawing +=`
 
-Element placement and other properties and are set using a chained method interface, for example:
+Element placement and other properties are set using a chained method interface, for example:
 
 .. jupyter-execute::
 

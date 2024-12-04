@@ -13,7 +13,7 @@ with schemdraw.Drawing(file='schematic.svg') as d:
     elm.SourceV().up().label('10V')
 ```
 
-Included are symbols for basic electrical components (resistors, capacitors, diodes, transistors, etc.), opamps and signal processing elements. Additionally, Schemdraw can produce digital timing diagras, state machine diagrams, and flowcharts.
+Included are symbols for basic electrical components (resistors, capacitors, diodes, transistors, etc.), opamps and signal processing elements. Additionally, Schemdraw can produce digital timing diagrams, state machine diagrams, and flowcharts.
 
 Documentation is available at [readthedocs](https://schemdraw.readthedocs.io)
 

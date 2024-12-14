@@ -51,13 +51,13 @@ class Arrow(Line):
 
         Keyword Args:
             arrow: arrowhead specifier, such as '->', '<-', '<->', '-o', or '\|->'
-            headwidth: Width of arrow head [default: 0.15]
-            headlength: Length of arrow head [default: 0.25]
+            arrowwidth: Width of arrow head [default: 0.15]
+            arrowlength: Length of arrow head [default: 0.25]
     '''
     def __init__(self, *,
                  double: bool = False,
-                 headwidth: Optional[float] = None,
-                 headlength: Optional[float] = None,
+                 arrowwidth: Optional[float] = None,
+                 arrowlength: Optional[float] = None,
                  **kwargs):
         if double:
             kwargs.setdefault('arrow', '<->')
@@ -770,6 +770,9 @@ class CurrentLabel(Element):
         'reverse': False,
         'headlength': 0.3,
         'headwidth': 0.2,
+        'anchor': 'center',
+        'drop': None,
+        'lblofost': -0.1
     }
     def __init__(self,
                  *,
@@ -781,9 +784,6 @@ class CurrentLabel(Element):
                  headwidth: Optional[float] = None,
                  **kwargs):
         super().__init__(**kwargs)
-        self.elmparams['lblofst'] = -.1
-        self.elmparams['drop'] = None
-        self.elmparams['anchor'] = 'center'
         self.anchors['center'] = (0, 0)
         self._side = 'top'
 

@@ -83,9 +83,9 @@ class Optocoupler(ElementCompound):
         bjt.segments.pop(0)  # Remove base contact
         B = self.add(bjt)
         self.add(elm.Arrow(d='r', at=(.5, -self.unit/2 + .2), l=.6,
-                           headwidth=.15, headlength=.2))
+                           arrowwidth=.15, arrowlength=.2))
         self.add(elm.Arrow(d='r', at=(.5, -self.unit/2 - .2), l=.6,
-                           headwidth=.15, headlength=.2))
+                           arrowwidth=.15, arrowlength=.2))
 
         bbox = self.get_bbox()
         if self.box:

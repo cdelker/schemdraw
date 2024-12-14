@@ -852,8 +852,12 @@ class SegmentArc:
         style = {k: v for k, v in style.items() if params.get(k) is None and k in params.keys()}
         params.update(style)
         return SegmentArc(transform.transform(self.center),
-                          self.width*transform.zoom[0], self.height*transform.zoom[1], angle=angle,
-                          theta1=self.theta1, theta2=self.theta2, **params)
+                          self.width*transform.zoom[0],
+                          self.height*transform.zoom[1],
+                          angle=angle,
+                          arrow=self.arrow,
+                          theta1=self.theta1,
+                          theta2=self.theta2, **params)
 
     def get_bbox(self) -> BBox:
         ''' Get bounding box (untransformed)

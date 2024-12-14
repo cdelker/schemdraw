@@ -108,6 +108,9 @@ class TimingDiagram(Element):
             datacolor: Color for wave data text
             nodecolor: Color for node text
             gridcolor: Color of background grid
+            edgecolor: Color of edge notations (default blue)
+            tickcolor: Color of tick/tock labels in head/foot
+            grid: Enable grid lines (default True)
     '''
     _wavelookup = {'0': Wave0,
                    '1': Wave1,
@@ -134,6 +137,7 @@ class TimingDiagram(Element):
         'nodecolor': None,  # Inherit
         'gridcolor': '#DDDDDD',
         'edgecolor': 'blue',
+        'tickcolor': '#888888',
         'grid': True,
     }
     def __init__(self, waved: dict[str, str], **kwargs):
@@ -149,13 +153,17 @@ class TimingDiagram(Element):
         self.nodecolor = self.params['nodecolor']
         self.gridcolor = self.params['gridcolor']
         self.edgecolor = self.params['edgecolor']
+        self.tickcolor = self.params['tickcolor']
         self.grid = self.params['grid']
+        self.anchors['topleft'] = (0, 0)
         self.kwargs = kwargs
 
         signals = self.wave.get('signal', [])  # type: ignore
         signals_flat = flatten(signals)
         config = self.wave.get('config', {})  # type: ignore
         self.hscale = config.get('hscale', 1)  # type: ignore
+        head = self.wave.get('head', {})
+        foot = self.wave.get('foot', {})
 
         height = (self.yheight+self.ygap)*len(signals_flat)
         periods = max(len(w.get('wave', [])) for w in signals_flat)
@@ -184,6 +192,42 @@ class TimingDiagram(Element):
 
         self._drawedges()
         self._drawgroups(signals, labelwidth)
+
+        if head:
+            tk = None
+            if 'tick' in head or 'tock' in head:
+                tk = head.get('tick', head.get('tock', 0))
+                every = head.get('every', 1)
+                startx = 0 if 'tick' in head else self.hscale/2
+                for p in range(0, periods, every):
+                    self.label(
+                        str(tk+p),
+                        loc='topleft',
+                        ofst=(startx+p*self.hscale, self.yheight+self.ygap),
+                        color=self.tickcolor,
+                        halign='center', valign='bottom')
+            if 'text' in head:
+                if isinstance(head['text'], (list, tuple)):
+                    raise NotImplementedError('tspan in head/foot text not implemented')
+                self.label(head['text'], ofst=(0, 0 if tk is None else self.ygap*2))
+
+        if foot:
+            tk = None
+            if 'tick' in foot or 'tock' in foot:
+                tk = foot.get('tick', foot.get('tock', 0))
+                every = foot.get('every', 1)
+                startx = 0 if 'tick' in foot else self.hscale/2
+                for p in range(0, periods, every):
+                    self.label(
+                        str(tk+p),
+                        loc='topleft',
+                        ofst=(startx+p*self.hscale, y0+self.yheight),
+                        color=self.tickcolor,
+                        halign='center', valign='top')
+            if 'text' in foot:
+                if isinstance(foot['text'], (list, tuple)):
+                    raise NotImplementedError('tspan in head/foot text not implemented')
+                self.label(foot['text'], loc='bottom', ofst=(0, 0 if tk is None else -self.ygap*2))
 
     def _drawgrid(self, periods, height):
         ''' Draw grid (vertical dotted lines) '''

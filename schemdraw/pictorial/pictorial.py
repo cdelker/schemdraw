@@ -11,6 +11,7 @@ from ..segments import (Segment,
                         SegmentCircle,
                         SegmentText)
 from ..elements import Element, Element2Term
+from ..style import validate_color
 
 
 # Scale factors in terms of drawing units
@@ -158,6 +159,7 @@ class Diode(ElementPictorial):
         stripex = w * .78
         stripew = .08
         stripe_color = self.params['stripe_color']
+        validate_color(stripe_color)
 
         self.segments.append(Segment(((0, 0), (math.nan, math.nan), (w, 0))))  # 2-term endpoints
         self.segments.append(SegmentPoly(((0, h), (w, h), (w, -h), (0, -h)), closed=True, lw=1, color='black', zorder=2))
@@ -505,6 +507,8 @@ class Breadboard(Element):
         outer_radius = .1
         shadow_color = self.params.get('shadow_color')
         text_color = self.params.get('text_color')
+        validate_color(shadow_color)
+        validate_color(text_color)
 
         def hole(x, y):
             self.segments.append(SegmentPoly(((x-outer_radius, y+outer_radius), (x+outer_radius, y+outer_radius),

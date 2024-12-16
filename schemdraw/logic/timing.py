@@ -1,6 +1,7 @@
 ''' Timing Diagrams, based on WaveJSON format '''
 
 from __future__ import annotations
+from typing import Any
 import re
 import io
 import ast
@@ -13,6 +14,7 @@ from ..segments import Segment, SegmentText, SegmentPoly, SegmentBezier
 from ..backends.svg import text_size
 from ..types import BBox
 from ..util import Point
+from ..style import validate_color, validate_linestyle
 from .timingwaves import Wave0, Wave1, WaveL, WaveH, Wavez, WaveV, WaveU, WaveD, WaveClk, getsplit
 
 LabelInfo = namedtuple('LabelInfo', ['name', 'row', 'height', 'level'])
@@ -140,7 +142,7 @@ class TimingDiagram(Element):
         'tickcolor': '#888888',
         'grid': True,
     }
-    def __init__(self, waved: dict[str, str], **kwargs):
+    def __init__(self, waved: dict, **kwargs):
         super().__init__(**kwargs)
         self.wave = waved
         self.yheight = self.params['yheight']
@@ -154,6 +156,13 @@ class TimingDiagram(Element):
         self.gridcolor = self.params['gridcolor']
         self.edgecolor = self.params['edgecolor']
         self.tickcolor = self.params['tickcolor']
+        validate_color(self.namecolor)
+        validate_color(self.datacolor)
+        validate_color(self.namecolor)
+        validate_color(self.gridcolor)
+        validate_color(self.edgecolor)
+        validate_color(self.tickcolor)
+
         self.grid = self.params['grid']
         self.anchors['topleft'] = (0, 0)
         self.kwargs = kwargs
@@ -162,8 +171,8 @@ class TimingDiagram(Element):
         signals_flat = flatten(signals)
         config = self.wave.get('config', {})  # type: ignore
         self.hscale = config.get('hscale', 1)  # type: ignore
-        head = self.wave.get('head', {})
-        foot = self.wave.get('foot', {})
+        head: dict = self.wave.get('head', {})
+        foot: dict = self.wave.get('foot', {})
 
         height = (self.yheight+self.ygap)*len(signals_flat)
         periods = max(len(w.get('wave', [])) for w in signals_flat)
@@ -436,6 +445,7 @@ class TimingDiagram(Element):
                 style = style[0].split(',')
                 color = style[0]
                 ls = '-' if len(style) == 1 else style[1]
+                validate_linestyle(ls)
 
             if '<' in edge and '>' in edge:
                 arrow = '<>'

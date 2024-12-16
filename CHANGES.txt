@@ -1,3 +1,15 @@
+v0.20 - IN PROGRESS
+
+    Enhancements:
+        - Validate colors and linestyles when set instead of waiting for matplotlib to draw, or SVG to silently fail
+
+    Fixes:
+        - Gate anchor position on Pmos2
+        - Updated `Arrow` docstring with correct `arrowwidth` and `arrowlength` parameters
+        - Fixed Arc arrowheads post-transformation
+        - Fixed CurrentLabel arrow offset
+
+
 v0.19 - 2024-04-27
 
     Enhancements:

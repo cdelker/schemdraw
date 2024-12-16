@@ -135,14 +135,14 @@ def getstyle(color: Optional[str] = None, ls: Optional[Linestyle] = None, lw: Op
         s += f'fill:{str(fill).lower()};'
     if lw:
         s += f'stroke-width:{lw};'
-    dash = {'--': '7.4,3.2',
-            'dashed': '7.4,3.2',
-            ':': '2,3.3',
-            'dotted': '2,3.3',
-            '-.': '12.8,3.2,2,3.2',
-            'dashdot': '12.8,3.2,2,3.2',
-            }.get(ls, None)  # type: ignore
-    if dash is not None:
+    if ls:
+        dash = {'--': '7.4,3.2',
+                'dashed': '7.4,3.2',
+                ':': '2,3.3',
+                'dotted': '2,3.3',
+                '-.': '12.8,3.2,2,3.2',
+                'dashdot': '12.8,3.2,2,3.2',
+                }.get(ls, ls)  # type: ignore
         s += f'stroke-dasharray:{dash};'
     if capstyle:
         if capstyle == 'projecting':  # Matplotlib notation

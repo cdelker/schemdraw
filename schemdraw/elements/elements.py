@@ -14,6 +14,7 @@ from .. import util
 from ..util import Point
 from ..types import XY, Linestyle, Halign, Valign, LabelLoc
 from .. import drawing_stack
+from ..style import validate_color, validate_linestyle
 
 from ..backends.svg import Figure as svgFigure
 try:
@@ -227,6 +228,7 @@ class Element:
             Args:
                 color: color name or hex value (ie '#FFFFFF')
         '''
+        validate_color(color)
         self._userparams['color'] = color
         return self
 
@@ -236,6 +238,7 @@ class Element:
             Args:
                 ls: Line style ('-', ':', '--', '-.').
         '''
+        validate_linestyle(ls)
         self._userparams['ls'] = ls
         return self
 
@@ -255,6 +258,7 @@ class Element:
                 color: Color string name or hex value, or
                 `True` to fill with the element line color.
         '''
+        validate_color(color)
         self._userparams['fill'] = color
         return self
 

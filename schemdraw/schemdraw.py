@@ -152,6 +152,8 @@ class Drawing:
             file: optional filename to save on exiting context manager
                 or calling draw method.
             show: Show the drawing after exiting context manager
+            transparent: Save to file with a transparent background
+            dpi: Dots-per-inch when saving to a raster graphics file
 
         Attributes:
             here: (xy tuple) Current drawing position. The next element will
@@ -163,10 +165,15 @@ class Drawing:
     def __init__(self, canvas: Optional[Union[Backends,
                                         xml.etree.ElementTree.Element,
                                         matplotlib.pyplot.Axes]] = None,
-                 file: Optional[str] = None, show: bool = True, **kwargs):
+                 file: Optional[str] = None,
+                 show: bool = True,
+                 transparent: bool = False,
+                 dpi: float = 72,
+                 **kwargs):
         self.outfile = file
         self.canvas = canvas
         self.show = show
+        self.saveopts = {'transparent': transparent, 'dpi': dpi}
         self.elements: list[Element] = []
         self.anchors: MutableMapping[str, Union[Point, tuple[float, float]]] = {}  # Untransformed anchors
 
@@ -231,7 +238,7 @@ class Drawing:
         drawing_stack.pop_drawing(self)
 
         if self.outfile is not None:
-            self.save(self.outfile)
+            self.save(self.outfile, **self.saveopts)
         if not self.fig:
             self.draw(show=False)
         if self.show and not hasattr(self.canvas, 'plot'):
@@ -481,7 +488,7 @@ class Drawing:
             self.fig.show()  # type: ignore
 
         if self.outfile is not None:
-            self.save(self.outfile)
+            self.save(self.outfile, **self.saveopts)
 
         return self.fig  # Return Figure and let _repr_ display it
 

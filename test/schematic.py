@@ -8,7 +8,7 @@ with schemdraw.Drawing(file='cap.svg') as d:
     d.add(elm.Resistor().label('1K'))
     d.add(elm.Capacitor().down())
 
-with schemdraw.Drawing(file='res.svg') as d2:
+with schemdraw.Drawing(file='res.svg', transparent=True) as d2:
     d2.add(elm.Diode().fill(True))
 
 fig, ax = plt.subplots()

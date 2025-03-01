@@ -489,7 +489,7 @@ class Drawing:
             self.fig.show()  # type: ignore
 
         if self.outfile is not None:
-            self.save(self.outfile, **self.saveopts)
+            self.save(self.outfile, **self.saveopts)  # type: ignore
 
         return self.fig  # Return Figure and let _repr_ display it
 

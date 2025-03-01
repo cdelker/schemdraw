@@ -1,4 +1,5 @@
 ''' Validate drawing style strings '''
+from typing import Union
 import re
 
 from . import default_canvas
@@ -221,7 +222,7 @@ def dasharray(ls: str) -> bool:
     return match is not None
 
 
-def validate_color(color: str|bool|tuple[int,int,int]|None) -> None:
+def validate_color(color: Union[str, bool, tuple[int,int,int], None]) -> None:
     ''' Raise if not a valid CSS color '''
     if color in [None, True, False]:
         return

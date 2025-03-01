@@ -1,6 +1,7 @@
 v0.20 - IN PROGRESS
 
     Enhancements:
+        - Added `transparent` and `dpi` parameters to `Drawing` constructor, to be used when saving to a file from the context manager
         - Validate colors and linestyles when set instead of waiting for matplotlib to draw, or SVG to silently fail
 
     Fixes:
@@ -8,6 +9,9 @@ v0.20 - IN PROGRESS
         - Updated `Arrow` docstring with correct `arrowwidth` and `arrowlength` parameters
         - Fixed Arc arrowheads post-transformation
         - Fixed CurrentLabel arrow offset
+        - Fix user-supplied label rotation angles when going upside-down
+        - Clear the figure when calling `draw` to prevent double-drawing
+        - Fix arrow direction in timing diagrams
 
 
 v0.19 - 2024-04-27

@@ -663,27 +663,27 @@ class Element:
                 xdiv = (xmax-xmin)/(len(label.label)+1)
                 for i, lbltxt in enumerate(label.label):
                     xy = Point((xmin+xdiv*(i+1), ymax))
-                    self.segments.append(SegmentText(xy+label.ofst, lbltxt, **segment_params))
+                    self.segments.append(SegmentText(xy+label.ofst, lbltxt, **segment_params))  # type: ignore
             elif label.loc == 'bottom':
                 xdiv = (xmax-xmin)/(len(label.label)+1)
                 for i, lbltxt in enumerate(label.label):
                     xy = Point((xmin+xdiv*(i+1), ymin))
-                    self.segments.append(SegmentText(xy+label.ofst, lbltxt, **segment_params))
+                    self.segments.append(SegmentText(xy+label.ofst, lbltxt, **segment_params))  # type: ignore
             elif label.loc == 'left':
                 ydiv = (ymax-ymin)/(len(label.label)+1)
                 for i, lbltxt in enumerate(label.label):
                     xy = Point((xmin, ymin+ydiv*(i+1)))
-                    self.segments.append(SegmentText(xy+label.ofst, lbltxt, **segment_params))
+                    self.segments.append(SegmentText(xy+label.ofst, lbltxt, **segment_params))  # type: ignore
             elif label.loc == 'right':
                 ydiv = (ymax-ymin)/(len(label.label)+1)
                 for i, lbltxt in enumerate(label.label):
                     xy = Point((xmax, ymin+ydiv*(i+1)))
-                    self.segments.append(SegmentText(xy+label.ofst, lbltxt, **segment_params))
+                    self.segments.append(SegmentText(xy+label.ofst, lbltxt, **segment_params))  # type: ignore
             elif label.loc == 'center':
                 xdiv = (xmax-xmin)/(len(label.label)+1)
                 for i, lbltxt in enumerate(label.label):
                     xy = Point((xmin+xdiv*(i+1), 0))
-                    self.segments.append(SegmentText(xy+label.ofst, lbltxt, **segment_params))
+                    self.segments.append(SegmentText(xy+label.ofst, lbltxt, **segment_params))  # type: ignore
 
         elif isinstance(label.label, str):  # keep the elif instead of else for type hinting
             if label.loc and label.loc in self.anchors:
@@ -700,7 +700,7 @@ class Element:
                 xy = Point(((xmax+xmin)/2, (ymax+ymin)/2))
             else:
                 raise ValueError(f'Undefined location {label.loc}')
-            self.segments.append(SegmentText(xy+label.ofst, label.label, **segment_params))
+            self.segments.append(SegmentText(xy+label.ofst, label.label, **segment_params))  # type: ignore
 
     def _draw_on_figure(self):
         ''' Draw the element on a new figure. Useful for _repr_ functions. '''

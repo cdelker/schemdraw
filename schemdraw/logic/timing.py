@@ -450,9 +450,9 @@ class TimingDiagram(Element):
             if '<' in edge and '>' in edge:
                 arrow = '<>'
             elif '<' in edge:
-                arrow = '>'
-            elif '>' in edge:
                 arrow = '<'
+            elif '>' in edge:
+                arrow = '>'
             else:
                 arrow = None
 
@@ -463,7 +463,7 @@ class TimingDiagram(Element):
                 th0 = math.atan2((pn.y-p0.y), (pn.x-p0.x))
                 p0 = Point((p0.x + chrrad * math.cos(th0), p0.y + chrrad * math.sin(th0)))
                 pn = Point((pn.x - chrrad * math.cos(th0), pn.y - chrrad * math.sin(th0)))
-                self.segments.append(Segment([pn, p0], lw=1, ls=ls, color=color,
+                self.segments.append(Segment([p0, pn], lw=1, ls=ls, color=color,
                                              arrow=arrow, zorder=3))
 
             elif mode == '+':  # Straight line with endcaps, full length

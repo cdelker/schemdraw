@@ -474,6 +474,7 @@ class Drawing:
         if canvas is None:
             canvas = default_canvas.default_canvas
 
+        self.fig = None
         if canvas == 'matplotlib':
             self._drawmpl()
         elif hasattr(canvas, 'plot'):

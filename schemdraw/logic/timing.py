@@ -302,7 +302,7 @@ class TimingDiagram(Element):
                       'y0': y0,
                       'y1': y1,
                       'rise': waverise if waverise is not None else self.risetime,
-                      'data': data,
+                      'data': data.copy(),
                       'datacolor': self.datacolor,
                       'kwargs': wavekwargs}
 
@@ -363,7 +363,7 @@ class TimingDiagram(Element):
                       'y0': y0,
                       'y1': y1,
                       'rise': rise,
-                      'data': data,
+                      'data': data.copy(),
                       'datacolor': self.datacolor,
                       'kwargs': wavekwargs}
 

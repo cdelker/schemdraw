@@ -488,9 +488,11 @@ class Element:
             label.rotate = 0
         elif label.rotate is True:
             label.rotate = theta
-        label.rotate = (label.rotate + 360) % 360
-        if 90 < label.rotate < 270:
-            label.rotate -= 180  # Keep the label from going upside down
+            label.rotate = (label.rotate + 360) % 360
+            if 90 < label.rotate < 270:
+                label.rotate -= 180  # Keep the label from going upside down
+        else:
+            label.rotate = (label.rotate + 360) % 360
 
         # Set label default location if not specified
         if label.loc is None:

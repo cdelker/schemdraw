@@ -138,5 +138,5 @@ class Table(Element):
                 else:
                     cellx += colpad/2
                 self.segments.append(
-                    SegmentText((cellx, celly), cell, font=font, fontsize=fontsize,
+                    SegmentText((cellx, celly+rowpad/3), cell, font=font, fontsize=fontsize,
                                 align=(halign, 'bottom')))    # type: ignore

@@ -356,17 +356,25 @@ class Arc2(Element):
         valign = 'bottom'
         halign = 'left'
         vofst = 0.1
+        hofst = 0.0
         if math.isclose(mid.y, pa.y, abs_tol=.01):
             valign = 'center'
             vofst = 0
         elif mid.y > pa.y:
             valign = 'top'
             vofst = -0.1
+
         if math.isclose(mid.x, pa.x, abs_tol=.01):
             halign = 'center'
         elif mid.x > pa.x:
             halign = 'right'
-        self.elmparams['lblofst'] = vofst
+            vofst = 0.0
+            hofst = -0.1
+        elif mid.x < pa.x:
+            hofst = 0.1
+            vofst = 0.0
+
+        self.elmparams['lblofst'] = (hofst, vofst)
         self.elmparams['lblalign'] = (halign, valign)
         return super()._place(dwgxy, dwgtheta, **dwgparams)
 
@@ -689,14 +697,9 @@ class ArcLoop(Element):
         self.anchors['TR'] = Point((max(x), max(y)))
         self.elmparams['lblloc'] = 'mid'
         self.elmparams['drop'] = to
-        valign = 'bottom'
-        halign = 'left'
+        self.elmparams['lblofst'] = (0, .2)
         if y[mid] < y[0]:
-            valign = 'top'
-            self.elmparams['lblofst'] = -.1
-        if x[mid] < x[0] and x[mid] < x[-1]:
-            halign = 'right'
-        self.elmparams['lblalign'] = (halign, valign)
+            self.elmparams['lblofst'] = (0, -.25)
         return super()._place(dwgxy, dwgtheta, **dwgparams)
 
 

@@ -749,9 +749,21 @@ class SegmentBezier:
             Returns:
                 Bounding box limits (xmin, ymin, xmax, ymax)
         '''
-        x = [p.x for p in self.p]
-        y = [p.y for p in self.p]
-        # This Might be too big, but will enclose the curve..
+        # Brute-force approximate from Bezier curve parametric equation
+        t = util.linspace(0, 1, 50)
+        px = [p.x for p in self.p]
+        py = [p.y for p in self.p]
+        if len(self.p) == 3:
+            x = [(1-tt)**2 * px[0] + 2*(1-tt)*tt*px[1] + tt**2*px[2]
+                 for tt in t]
+            y = [(1-tt)**2 * py[0] + 2*(1-tt)*tt*py[1] + tt**2*py[2]
+                 for tt in t]
+        else:
+            assert len(self.p) == 4
+            x = [(1-tt)**3 * px[0] + 3*(1-tt)**2*tt*px[1] + 3*(1-tt)*tt**2*px[2] + tt**3*px[3]
+                 for tt in t]
+            y = [(1-tt)**3 * py[0] + 3*(1-tt)**2*tt*py[1] + 3*(1-tt)*tt**2*py[2] + tt**3*py[3]
+                 for tt in t]
         return BBox(min(x), min(y), max(x), max(y))
 
     def draw(self, fig, transform, **style) -> None:

@@ -7,6 +7,7 @@ import io
 import ast
 import tokenize
 import math
+import copy
 from collections import namedtuple, ChainMap
 
 from ..elements import Element
@@ -267,7 +268,7 @@ class TimingDiagram(Element):
         wavekwargs = ChainMap({'color': signal.get('color', None),
                                'lw': signal.get('lw', 1),
                                'clip': self.kwargs.get('clip')})
-        data = signal.get('data', [])
+        data = copy.copy(signal.get('data', []))
         if not isinstance(data, list):
             data = data.split()  # Sometimes it's a space-separated string...
 
@@ -302,7 +303,7 @@ class TimingDiagram(Element):
                       'y0': y0,
                       'y1': y1,
                       'rise': waverise if waverise is not None else self.risetime,
-                      'data': data.copy(),
+                      'data': data,
                       'datacolor': self.datacolor,
                       'kwargs': wavekwargs}
 
@@ -332,7 +333,7 @@ class TimingDiagram(Element):
                                'clip': self.kwargs.get('clip')})
         rise = waverise if waverise is not None else self.risetime
 
-        data = signal.get('data', [])
+        data = copy.copy(signal.get('data', []))
         if not isinstance(data, list):
             data = data.split()  # Sometimes it's a space-separated string...
         if not isinstance(times, list):
@@ -363,7 +364,7 @@ class TimingDiagram(Element):
                       'y0': y0,
                       'y1': y1,
                       'rise': rise,
-                      'data': data.copy(),
+                      'data': data,
                       'datacolor': self.datacolor,
                       'kwargs': wavekwargs}
 

@@ -107,6 +107,10 @@ class Ic(Element):
                        'NNE', 'NNW', 'ENE', 'WNW', 'SSE', 'SSW', 'ESE', 'WSW']
         anchornames += list(vars(self).get('anchors', {}).keys())
         anchornames += self.pinnames
+        anchornames += [f'pin{p.pin}' for p in self.pins.get('L', [])]
+        anchornames += [f'pin{p.pin}' for p in self.pins.get('R', [])]
+        anchornames += [f'pin{p.pin}' for p in self.pins.get('T', [])]
+        anchornames += [f'pin{p.pin}' for p in self.pins.get('B', [])]
         if (name in anchornames and not name in vars(self).get('absanchors', {})):
                 # Not placed yet
                 drawing_stack.push_element(self)

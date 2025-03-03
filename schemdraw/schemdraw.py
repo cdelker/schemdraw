@@ -194,6 +194,7 @@ class Drawing:
 
     @property
     def here(self):
+        drawing_stack.push_element(None)
         return self._here
 
     @here.setter

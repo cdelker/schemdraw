@@ -396,13 +396,29 @@ class Memristor2(Element2Term):
 
 
 class Josephson(Element2Term):
-    ''' Josephson Junction '''
-    def __init__(self, **kwargs):
+    ''' Josephson Junction
+
+        Args:
+            box: Draw a square around the Josephson X symbol
+    '''
+    _element_defaults = {
+        'box': False
+    }
+    def __init__(self, *, box: Optional[bool] = None, **kwargs):
         super().__init__(**kwargs)
-        self.segments.append(Segment(
-            [(0, 0), gap, (-resheight, resheight), (resheight, -resheight),
-             gap, (resheight, resheight), (-resheight, -resheight),
-             gap, (0, 0)]))
+        if self.params['box']:
+            self.segments.append(Segment([(-resheight, 0), gap, (resheight, 0)]))
+            self.segments.append(Segment([
+                (-resheight, resheight), (resheight, -resheight),
+                gap, (resheight, resheight), (-resheight, -resheight)]))
+            self.segments.append(SegmentPoly(
+                [(-resheight, resheight), (-resheight, -resheight),
+                 (resheight, -resheight), (resheight, resheight)]))
+        else:
+            self.segments.append(Segment(
+                [(0, 0), gap, (-resheight, resheight), (resheight, -resheight),
+                gap, (resheight, resheight), (-resheight, -resheight),
+                gap, (0, 0)]))
 
 
 class FuseUS(Element2Term):

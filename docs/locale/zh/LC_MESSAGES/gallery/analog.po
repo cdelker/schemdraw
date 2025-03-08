@@ -1,0 +1,105 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Collin J. Delker
+# This file is distributed under the same license as the Schemdraw package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Schemdraw \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-02 17:27-0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh\n"
+"Language-Team: zh <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../gallery/analog.rst:2
+msgid "Analog Circuits"
+msgstr ""
+
+#: ../../gallery/analog.rst:13
+msgid "Discharging capacitor"
+msgstr ""
+
+#: ../../gallery/analog.rst:15
+msgid "Shows how to connect to a switch with anchors."
+msgstr ""
+
+#: ../../gallery/analog.rst:31
+msgid "Capacitor Network"
+msgstr ""
+
+#: ../../gallery/analog.rst:33
+msgid "Shows how to use endpoints to specify exact start and end placement."
+msgstr ""
+
+#: ../../gallery/analog.rst:51
+msgid "ECE201-Style Circuit"
+msgstr ""
+
+#: ../../gallery/analog.rst:53
+msgid ""
+"This example demonstrate use of `push()` and `pop()` and using the 'tox' "
+"and 'toy' methods."
+msgstr ""
+
+#: ../../gallery/analog.rst:80
+msgid "Loop Currents"
+msgstr ""
+
+#: ../../gallery/analog.rst:82
+msgid ""
+"Using the :py:class:`schemdraw.elements.lines.LoopCurrent` element to add"
+" loop currents, and rotating a label to make it fit."
+msgstr ""
+
+#: ../../gallery/analog.rst:104
+msgid "AC Loop Analysis"
+msgstr ""
+
+#: ../../gallery/analog.rst:106
+msgid "Another good problem for ECE students..."
+msgstr ""
+
+#: ../../gallery/analog.rst:127
+msgid "Infinite Transmission Line"
+msgstr ""
+
+#: ../../gallery/analog.rst:129
+msgid ""
+"Elements can be added inside for-loops if you need multiples. The "
+"ellipsis is just another circuit element, called `DotDotDot` since "
+"Ellipsis is a reserved keyword in Python. This also demonstrates the "
+":py:class:`schemdraw.elements.ElementDrawing` class to merge multiple "
+"elements into a single definition."
+msgstr ""
+
+#: ../../gallery/analog.rst:158
+msgid "Power supply"
+msgstr ""
+
+#: ../../gallery/analog.rst:160
+msgid ""
+"Notice the diodes could be added individually, but here the built-in "
+"`Rectifier` element is used instead. Also note the use of newline "
+"characters inside resistor and capacitor labels."
+msgstr ""
+
+#: ../../gallery/analog.rst:211
+msgid "5-transistor Operational Transconductance Amplifer (OTA)"
+msgstr ""
+
+#: ../../gallery/analog.rst:213
+msgid "Note the use of current labels to show the bias currents."
+msgstr ""
+
+#: ../../gallery/analog.rst:268
+msgid "Quadruple loop negative feedback amplifier"
+msgstr ""
+

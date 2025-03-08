@@ -1,0 +1,169 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Collin J. Delker
+# This file is distributed under the same license as the Schemdraw package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Schemdraw \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-02 17:27-0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh\n"
+"Language-Team: zh <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../usage/labels.rst:12
+msgid "Labels"
+msgstr ""
+
+#: ../../usage/labels.rst:14
+msgid ""
+"Labels are added to elements using the "
+":py:meth:`schemdraw.elements.Element.label` method. Some unicode utf-8 "
+"characters are allowed, such as :code:`'1μF'` and :code:`'1MΩ'` if the "
+"character is included in your font set. Alternatively, full LaTeX math "
+"expressions can be rendered when enclosed in `$..$` For a description of "
+"supported math expressions, in the Matplotlib backend see `Matplotlib "
+"Mathtext <https://matplotlib.org/stable/tutorials/text/mathtext.html>`_, "
+"and the SVG backend refer to the `Ziamath "
+"<https://ziamath.readthedocs.io>`_ package. Subscripts and superscripts "
+"are also added using LaTeX math mode, enclosed in `$..$`:"
+msgstr ""
+
+#: ../../usage/labels.rst:30
+msgid "Location"
+msgstr ""
+
+#: ../../usage/labels.rst:32
+msgid ""
+"The label location is specified with the `loc` parameter to the `label` "
+"method. It can be `left`, `right`, `top`, `bottom`, or the name of a "
+"defined anchor within the element. These directions do not depend on "
+"rotation. A label with `loc='left'` is always on the leftmost terminal of"
+" the element."
+msgstr ""
+
+#: ../../usage/labels.rst:45
+msgid ""
+"Labels may also be placed near an element anchor by giving the anchor "
+"name as the `loc` parameter."
+msgstr ""
+
+#: ../../usage/labels.rst:55
+msgid ""
+"The :py:meth:`schemdraw.elements.Element.label` method also takes "
+"parameters that control the label's rotation, offset, font, alignment, "
+"and color. Label text stays horizontal by default, but may be rotated to "
+"the same angle as the element using `rotate=True`, or any angle `X` in "
+"degrees with `rotate=X`. Offsets apply vertically if a float value is "
+"given, or in both x and y if a tuple is given."
+msgstr ""
+
+#: ../../usage/labels.rst:70
+msgid ""
+"Labels may also be added anywhere using the "
+":py:class:`schemdraw.elements.lines.Label` element. The element itself "
+"draws nothing, but labels can be added to it:"
+msgstr ""
+
+#: ../../usage/labels.rst:78
+msgid "Voltage Labels"
+msgstr ""
+
+#: ../../usage/labels.rst:80
+msgid ""
+"A label may also be a list/tuple of strings, which will be evenly-spaced "
+"along the length of the element. This allows for labeling positive and "
+"negative along with a component name, for example:"
+msgstr ""
+
+#: ../../usage/labels.rst:88
+msgid "Use the `Gap` element to label voltage across a terminal:"
+msgstr ""
+
+#: ../../usage/labels.rst:99
+msgid "Current Arrow Labels"
+msgstr ""
+
+#: ../../usage/labels.rst:102
+msgid "Current Arrow"
+msgstr ""
+
+#: ../../usage/labels.rst:104
+msgid ""
+"To label the current through an element, the "
+":py:class:`schemdraw.elements.lines.CurrentLabel` element can be added. "
+"The `at` method of this element can take an Element instance to label, "
+"and the arrow will be placed over the center of that Element."
+msgstr ""
+
+#: ../../usage/labels.rst:114
+msgid "For transistors, the label will follow sensible bias currents by default."
+msgstr ""
+
+#: ../../usage/labels.rst:127
+msgid "Inline Current Arrow"
+msgstr ""
+
+#: ../../usage/labels.rst:129
+msgid ""
+"Alternatively, current labels can be drawn inline as arrowheads on the "
+"leads of 2-terminal elements using "
+":py:class:`schemdraw.elements.lines.CurrentLabelInline`. Parameters "
+"`direction` and `start` control whether the arrow is shown pointing into "
+"or out of the element, and which end to place the arrowhead on."
+msgstr ""
+
+#: ../../usage/labels.rst:140
+msgid "Loop Current"
+msgstr ""
+
+#: ../../usage/labels.rst:142
+msgid ""
+"Loop currents can be added using "
+":py:class:`schemdraw.elements.lines.LoopCurrent`, given a list of 4 "
+"existing elements surrounding the loop."
+msgstr ""
+
+#: ../../usage/labels.rst:153
+msgid ""
+"Alternatively, loop current arrows can be added anywhere with any size "
+"using :py:class:`schemdraw.elements.lines.LoopArrow`."
+msgstr ""
+
+#: ../../usage/labels.rst:163
+msgid "Impedance Arrow Label"
+msgstr ""
+
+#: ../../usage/labels.rst:165
+msgid ""
+"A right-angle arrow label, often used to indicate impedance looking into "
+"a node, is added using :py:class:`schemdraw.elements.lines.ZLabel`."
+msgstr ""
+
+#: ../../usage/labels.rst:175
+msgid "Annotations"
+msgstr ""
+
+#: ../../usage/labels.rst:177
+msgid ""
+"To make text and arrow annotations to a schematic, the "
+":py:class:`schemdraw.elements.lines.Annotate` element draws a curvy arrow"
+" with label placed at it's end. It is based on the "
+":py:class:`schemdraw.elements.lines.Arc3` element."
+msgstr ""
+
+#: ../../usage/labels.rst:179
+msgid ""
+"The :py:class:`schemdraw.elements.lines.Encircle` and "
+":py:class:`schemdraw.elements.lines.EncircleBox` elements draw an "
+"ellipse, or rounded rectangle, surrounding a list of elements."
+msgstr ""
+

@@ -1,0 +1,54 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Collin J. Delker
+# This file is distributed under the same license as the Schemdraw package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Schemdraw \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-02 17:27-0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh\n"
+"Language-Team: zh <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../gallery/ic.rst:2
+msgid "Integrated Circuits"
+msgstr ""
+
+#: ../../gallery/ic.rst:12
+msgid "555 LED Blinker Circuit"
+msgstr ""
+
+#: ../../gallery/ic.rst:14
+msgid ""
+"Using the :py:class:`schemdraw.elements.intcircuits.Ic` class to define a"
+" custom integrated circuit."
+msgstr ""
+
+#: ../../gallery/ic.rst:53
+msgid "Seven-Segment Display Counter"
+msgstr ""
+
+#: ../../gallery/ic.rst:120
+msgid "Arduino Board"
+msgstr ""
+
+#: ../../gallery/ic.rst:122
+msgid ""
+"The Arduino board uses "
+":py:class:`schemdraw.elements.connectors.OrthoLines` to easily add all "
+"connections between data bus and headers."
+msgstr ""
+
+#: ../../gallery/ic.rst:237
+msgid "741 Opamp, DIP Layout"
+msgstr ""
+

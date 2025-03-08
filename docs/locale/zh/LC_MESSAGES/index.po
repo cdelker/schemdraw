@@ -1,0 +1,53 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Collin J. Delker
+# This file is distributed under the same license as the Schemdraw package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Schemdraw \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-02 17:27-0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh\n"
+"Language-Team: zh <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../index.rst:35
+msgid "Contents:"
+msgstr ""
+
+#: ../../index.rst:2
+msgid "Schemdraw documentation"
+msgstr ""
+
+#: ../../index.rst:10
+msgid ""
+"Schemdraw is a Python package for producing high-quality electrical "
+"circuit schematic diagrams. Circuit elements are added, one at a time, "
+"similar to how you might draw them by hand, using Python methods."
+msgstr ""
+
+#: ../../index.rst:13
+msgid "For example,"
+msgstr ""
+
+#: ../../index.rst:20
+msgid ""
+"creates a new schemdraw drawing with a resistor going to the right with a"
+" label of \"1Ω\". The next element added to the drawing will start at the"
+" endpoint of the resistor."
+msgstr ""
+
+#: ../../index.rst:51
+msgid ""
+"Want to support Schemdraw development? Need more circuit examples? Pick "
+"up the Schemdraw Examples Pack on buymeacoffee.com:"
+msgstr ""
+

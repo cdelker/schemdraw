@@ -1,0 +1,83 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Collin J. Delker
+# This file is distributed under the same license as the Schemdraw package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Schemdraw \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-02 17:27-0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh\n"
+"Language-Team: zh <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../gallery/flowcharting.rst:5
+msgid "Flowcharting"
+msgstr ""
+
+#: ../../gallery/flowcharting.rst:16
+msgid "Flowchart elements are defined in the :py:mod:`flow` module."
+msgstr ""
+
+#: ../../gallery/flowcharting.rst:23
+msgid "It's a Trap!"
+msgstr ""
+
+#: ../../gallery/flowcharting.rst:25
+msgid "Recreation of `XKCD 1195 <https://xkcd.com/1195/>`_."
+msgstr ""
+
+#: ../../gallery/flowcharting.rst:39
+msgid "Flowchart for flowcharts"
+msgstr ""
+
+#: ../../gallery/flowcharting.rst:41
+msgid "Recreation of `XKCD 518 <https://xkcd.com/518/>`_."
+msgstr ""
+
+#: ../../gallery/flowcharting.rst:86
+msgid "State Machine Acceptor"
+msgstr ""
+
+#: ../../gallery/flowcharting.rst:88
+msgid ""
+"`Source <https://en.wikipedia.org/wiki/Finite-"
+"state_machine#/media/File:DFAexample.svg>`_"
+msgstr ""
+
+#: ../../gallery/flowcharting.rst:104
+msgid "Door Controller"
+msgstr ""
+
+#: ../../gallery/flowcharting.rst:106
+msgid ""
+"`Diagram Source <https://en.wikipedia.org/wiki/Finite-"
+"state_machine#/media/File:Fsm_Moore_model_door_control.svg>`_"
+msgstr ""
+
+#: ../../gallery/flowcharting.rst:127
+msgid "Another State Machine"
+msgstr ""
+
+#: ../../gallery/flowcharting.rst:160
+msgid "Logical Flow Diagram"
+msgstr ""
+
+#: ../../gallery/flowcharting.rst:186
+msgid "Prime Factorization"
+msgstr ""
+
+#: ../../gallery/flowcharting.rst:188
+msgid ""
+"`Chart Source "
+"<https://commons.wikimedia.org/wiki/File:Factorization_flowchart.svg>`_"
+msgstr ""
+

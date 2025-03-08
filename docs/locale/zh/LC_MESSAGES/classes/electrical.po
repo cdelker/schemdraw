@@ -1,0 +1,2719 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Collin J. Delker
+# This file is distributed under the same license as the Schemdraw package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Schemdraw \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-02 17:27-0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh\n"
+"Language-Team: zh <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../classes/electrical.rst:5
+msgid "Electrical Elements"
+msgstr ""
+
+#: ../../classes/electrical.rst:9
+msgid "Two-Terminal Elements"
+msgstr ""
+
+#: of schemdraw.elements.twoterm:1
+msgid "Two-terminal element definitions"
+msgstr ""
+
+#: of schemdraw.elements.twoterm.Breaker:1
+msgid "Circuit breaker"
+msgstr ""
+
+#: ../../classes/electrical.rst of schemdraw.elements.intcircuits.IcDIP
+#: schemdraw.elements.intcircuits.Multiplexer
+msgid "Parameters"
+msgstr ""
+
+#: of schemdraw.elements.twoterm.Breaker:3
+msgid "Show connection dots"
+msgstr ""
+
+#: of schemdraw.elements.twoterm.CPE:1
+msgid "Constant Phase Element"
+msgstr ""
+
+#: of schemdraw.elements.twoterm.Capacitor:1
+#: schemdraw.elements.twoterm.Capacitor2:3
+msgid "Add polarity + sign"
+msgstr ""
+
+#: of schemdraw.elements.twoterm.Capacitor2:1
+msgid "Capacitor (curved bottom plate)"
+msgstr ""
+
+#: of schemdraw.elements.twoterm.CapacitorTrim:1
+msgid "Trim capacitor"
+msgstr ""
+
+#: of schemdraw.elements.twoterm.CapacitorVar:1
+msgid "Variable capacitor"
+msgstr ""
+
+#: of schemdraw.elements.twoterm.Crystal:1
+msgid "Crystal oscillator"
+msgstr ""
+
+#: of schemdraw.elements.twoterm.CurrentMirror:1
+msgid "Current mirror with optional common terminal"
+msgstr ""
+
+#: of schemdraw.elements.cables.Coax:8 schemdraw.elements.cables.Triax:13
+#: schemdraw.elements.compound.Optocoupler:8
+#: schemdraw.elements.compound.Rectifier:6
+#: schemdraw.elements.compound.Wheatstone:6
+#: schemdraw.elements.connectors.BusConnect:12
+#: schemdraw.elements.connectors.CoaxConnect:7
+#: schemdraw.elements.connectors.DB25:8 schemdraw.elements.connectors.DB9:8
+#: schemdraw.elements.connectors.Header:23
+#: schemdraw.elements.intcircuits.DFlipFlop:8
+#: schemdraw.elements.intcircuits.IcDIP:14
+#: schemdraw.elements.intcircuits.JKFlipFlop:8
+#: schemdraw.elements.intcircuits.Multiplexer:16
+#: schemdraw.elements.intcircuits.SevenSegment:11
+#: schemdraw.elements.intcircuits.VoltageRegulator:5
+#: schemdraw.elements.lines.Arc2:12 schemdraw.elements.lines.Arc3:15
+#: schemdraw.elements.lines.ArcLoop:12 schemdraw.elements.misc.AudioJack:9
+#: schemdraw.elements.misc.Mic:3 schemdraw.elements.misc.Speaker:3
+#: schemdraw.elements.opamp.Opamp:6 schemdraw.elements.switches.SwitchDpdt:5
+#: schemdraw.elements.switches.SwitchDpst:5
+#: schemdraw.elements.switches.SwitchRotary:13
+#: schemdraw.elements.switches.SwitchSpdt:5
+#: schemdraw.elements.switches.SwitchSpdt2:5
+#: schemdraw.elements.transistors.AnalogBiasedFet:7
+#: schemdraw.elements.transistors.AnalogNFet:7
+#: schemdraw.elements.transistors.AnalogPFet:7
+#: schemdraw.elements.transistors.Bjt:5 schemdraw.elements.transistors.Bjt2:6
+#: schemdraw.elements.transistors.BjtNpn:5
+#: schemdraw.elements.transistors.BjtNpn2:6
+#: schemdraw.elements.transistors.BjtPnp:5
+#: schemdraw.elements.transistors.BjtPnp2:6
+#: schemdraw.elements.transistors.BjtPnp2c:5
+#: schemdraw.elements.transistors.BjtPnp2c2:6
+#: schemdraw.elements.transistors.JFet:3 schemdraw.elements.transistors.JFet2:4
+#: schemdraw.elements.transistors.JFetN:5
+#: schemdraw.elements.transistors.JFetN2:6
+#: schemdraw.elements.transistors.JFetP:5
+#: schemdraw.elements.transistors.JFetP2:6
+#: schemdraw.elements.transistors.NFet:5 schemdraw.elements.transistors.NFet2:6
+#: schemdraw.elements.transistors.NMos:7 schemdraw.elements.transistors.NMos2:7
+#: schemdraw.elements.transistors.PFet:5 schemdraw.elements.transistors.PFet2:6
+#: schemdraw.elements.transistors.PMos:7 schemdraw.elements.transistors.PMos2:7
+#: schemdraw.elements.twoports.CurrentTransactor:14
+#: schemdraw.elements.twoports.ElementTwoport:16
+#: schemdraw.elements.twoports.Nullor:11
+#: schemdraw.elements.twoports.TransadmittanceTransactor:14
+#: schemdraw.elements.twoports.TransimpedanceTransactor:14
+#: schemdraw.elements.twoports.TwoPort:15
+#: schemdraw.elements.twoports.VMCMPair:13
+#: schemdraw.elements.twoports.VoltageTransactor:14
+#: schemdraw.elements.twoterm.CurrentMirror:3
+#: schemdraw.elements.twoterm.PotentiometerIEC:3
+#: schemdraw.elements.twoterm.PotentiometerIEEE:3
+#: schemdraw.elements.twoterm.SCR:3 schemdraw.elements.twoterm.Triac:1
+#: schemdraw.elements.twoterm.VoltageMirror:5
+#: schemdraw.elements.xform.Transformer:9
+msgid "Anchors:"
+msgstr ""
+
+#: of schemdraw.elements.twoterm.CurrentMirror:4
+#: schemdraw.elements.twoterm.VoltageMirror:6
+msgid "scommon"
+msgstr ""
+
+#: of schemdraw.elements.twoterm.Diac:1
+msgid "Diac (diode for alternating current)"
+msgstr ""
+
+#: of schemdraw.elements.twoterm.DiodeShockley:1
+msgid "Shockley Diode"
+msgstr ""
+
+#: of schemdraw.elements.twoterm.DiodeTunnel:1
+msgid "Tunnel Diode"
+msgstr ""
+
+#: of schemdraw.elements.twoterm.FuseIEC:1
+msgid "Fuse (IEC Style)"
+msgstr ""
+
+#: of schemdraw.elements.twoterm.FuseIEEE:1
+msgid "Fuse (IEEE Style)"
+msgstr ""
+
+#: of schemdraw.elements.twoterm.FuseUS:1
+msgid "Fuse (U.S. Style)"
+msgstr ""
+
+#: of schemdraw.elements.twoterm.FuseUS:3
+msgid "Show dots on connections to fuse"
+msgstr ""
+
+#: of schemdraw.elements.twoterm.FuseUS.fill:1
+msgid "Set element fill"
+msgstr ""
+
+#: of schemdraw.elements.twoterm.Inductor2:1
+msgid "Inductor, drawn as cycloid (loopy)"
+msgstr ""
+
+#: of schemdraw.elements.twoterm.Inductor2:3
+msgid "Number of inductor loops [default: 4]"
+msgstr ""
+
+#: of schemdraw.elements.twoterm.Josephson:1
+msgid "Josephson Junction"
+msgstr ""
+
+#: of schemdraw.elements.twoterm.LED:1
+msgid "Light emitting diode"
+msgstr ""
+
+#: of schemdraw.elements.twoterm.LED2:1
+msgid "Light emitting diode (curvy light lines)"
+msgstr ""
+
+#: of schemdraw.elements.twoterm.Memristor:1
+msgid "Memristor (resistor with memory)"
+msgstr ""
+
+#: of schemdraw.elements.twoterm.Memristor2:1
+msgid "Memristor (resistor with memory), alternate style"
+msgstr ""
+
+#: of schemdraw.elements.twoterm.Nullator:1
+#: schemdraw.elements.twoterm.VoltageMirror:3
+msgid "This element does not support filling"
+msgstr ""
+
+#: of schemdraw.elements.twoterm.Photodiode:1
+msgid "Photo-sensitive diode"
+msgstr ""
+
+#: of schemdraw.elements.twoterm.PhotoresistorIEC:1
+msgid "Photo-resistor (European style)"
+msgstr ""
+
+#: of schemdraw.elements.twoterm.PhotoresistorIEEE:1
+msgid "Photo-resistor (U.S. style)"
+msgstr ""
+
+#: of schemdraw.elements.twoterm.PotentiometerIEC:1
+msgid "Potentiometer (European style)"
+msgstr ""
+
+#: of schemdraw.elements.twoterm.PotentiometerIEC:4
+#: schemdraw.elements.twoterm.PotentiometerIEEE:4
+msgid "tap"
+msgstr ""
+
+#: of schemdraw.elements.twoterm.PotentiometerIEEE:1
+msgid "Potentiometer (U.S. style)"
+msgstr ""
+
+#: of schemdraw.elements.twoterm.ResistorIEC:1
+msgid "Resistor as box (IEC/European style)"
+msgstr ""
+
+#: of schemdraw.elements.twoterm.ResistorIEEE:1
+msgid "Resistor (IEEE/U.S. style)"
+msgstr ""
+
+#: of schemdraw.elements.twoterm.ResistorVarIEC:1
+msgid "Variable resistor (European style)"
+msgstr ""
+
+#: of schemdraw.elements.twoterm.ResistorVarIEEE:1
+msgid "Variable resistor (U.S. style)"
+msgstr ""
+
+#: of schemdraw.elements.twoterm.Rshunt:1
+msgid "Shunt Resistor"
+msgstr ""
+
+#: of schemdraw.elements.twoterm.SCR:1
+msgid "Silicon controlled rectifier (or thyristor)"
+msgstr ""
+
+#: of schemdraw.elements.transistors.JFet:6
+#: schemdraw.elements.transistors.JFet2:7
+#: schemdraw.elements.transistors.JFetN:8
+#: schemdraw.elements.transistors.JFetN2:9
+#: schemdraw.elements.transistors.JFetP:8
+#: schemdraw.elements.transistors.JFetP2:9
+#: schemdraw.elements.transistors.NFet:8 schemdraw.elements.transistors.NFet2:9
+#: schemdraw.elements.transistors.NMos:10
+#: schemdraw.elements.transistors.NMos2:10
+#: schemdraw.elements.transistors.PFet2:9
+#: schemdraw.elements.transistors.PMos:10
+#: schemdraw.elements.transistors.PMos2:10 schemdraw.elements.twoterm.SCR:4
+#: schemdraw.elements.twoterm.Triac:2
+msgid "gate"
+msgstr ""
+
+#: of schemdraw.elements.twoterm.Schottky:1
+msgid "Schottky Diode"
+msgstr ""
+
+#: of schemdraw.elements.twoterm.SparkGap:1
+msgid "Spark Gap"
+msgstr ""
+
+#: of schemdraw.elements.twoterm.Varactor:1
+msgid "Varactor Diode/Varicap/Variable Capacitance Diode"
+msgstr ""
+
+#: of schemdraw.elements.twoterm.VoltageMirror:1
+msgid "Voltage mirror with optional common terminal"
+msgstr ""
+
+#: of schemdraw.elements.twoterm.Zener:1
+msgid "Zener Diode"
+msgstr ""
+
+#: of schemdraw.elements.sources:1
+msgid "Sources, meters, and lamp elements"
+msgstr ""
+
+#: of schemdraw.elements.sources.BatteryCell:1
+msgid "Cell"
+msgstr ""
+
+#: of schemdraw.elements.sources.Lamp:1
+msgid "Incandescent Lamp"
+msgstr ""
+
+#: of schemdraw.elements.sources.Lamp2:1
+msgid "Incandescent Lamp (with X through a Source)"
+msgstr ""
+
+#: of schemdraw.elements.sources.MeterA:1
+msgid "Ammeter"
+msgstr ""
+
+#: of schemdraw.elements.sources.MeterI:1
+msgid "Current Meter (I)"
+msgstr ""
+
+#: of schemdraw.elements.sources.MeterOhm:1
+msgid "Ohm meter"
+msgstr ""
+
+#: of schemdraw.elements.sources.MeterV:1
+msgid "Volt meter"
+msgstr ""
+
+#: of schemdraw.elements.sources.Neon:1
+msgid "Neon bulb"
+msgstr ""
+
+#: of schemdraw.elements.sources.Solar:1
+msgid "Solar source"
+msgstr ""
+
+#: of schemdraw.elements.sources.Source:1
+msgid "Generic source element"
+msgstr ""
+
+#: of schemdraw.elements.sources.SourceControlled:1
+msgid "Generic controlled source"
+msgstr ""
+
+#: of schemdraw.elements.sources.SourceControlledI:1
+msgid "Controlled current source"
+msgstr ""
+
+#: of schemdraw.elements.sources.SourceControlledV:1
+msgid "Controlled voltage source"
+msgstr ""
+
+#: of schemdraw.elements.sources.SourceI:1
+msgid "Current source"
+msgstr ""
+
+#: of schemdraw.elements.sources.SourcePulse:1
+msgid "Pulse source"
+msgstr ""
+
+#: of schemdraw.elements.sources.SourceRamp:1
+msgid "Ramp/sawtooth source"
+msgstr ""
+
+#: of schemdraw.elements.sources.SourceSin:1
+msgid "Source with sine"
+msgstr ""
+
+#: of schemdraw.elements.sources.SourceSquare:1
+msgid "Square wave source"
+msgstr ""
+
+#: of schemdraw.elements.sources.SourceTriangle:1
+msgid "Triangle source"
+msgstr ""
+
+#: of schemdraw.elements.sources.SourceV:1
+msgid "Voltage source"
+msgstr ""
+
+#: ../../classes/electrical.rst:20
+msgid "One-terminal Elements"
+msgstr ""
+
+#: of schemdraw.elements.oneterm:1
+msgid "One terminal element definitions"
+msgstr ""
+
+#: of schemdraw.elements.oneterm.AntennaLoop:1
+msgid "Loop antenna (diamond style)"
+msgstr ""
+
+#: of schemdraw.elements.oneterm.AntennaLoop2:1
+msgid "Loop antenna (square style)"
+msgstr ""
+
+#: of schemdraw.elements.oneterm.Ground:1
+msgid "Ground connection"
+msgstr ""
+
+#: ../../classes/electrical.rst of schemdraw.elements.intcircuits.IcDIP
+#: schemdraw.elements.intcircuits.Multiplexer
+#: schemdraw.elements.lines.DotDotDot
+msgid "Keyword Arguments"
+msgstr ""
+
+#: of schemdraw.elements.oneterm.Ground:3
+msgid "Show lead wire [default: True]"
+msgstr ""
+
+#: of schemdraw.elements.oneterm.GroundChassis:1
+msgid "Chassis ground"
+msgstr ""
+
+#: of schemdraw.elements.oneterm.GroundChassis:3
+#: schemdraw.elements.oneterm.GroundSignal:3 schemdraw.elements.oneterm.Vdd:3
+#: schemdraw.elements.oneterm.Vss:3
+msgid "Show lead wire"
+msgstr ""
+
+#: of schemdraw.elements.oneterm.GroundSignal:1
+msgid "Signal ground"
+msgstr ""
+
+#: of schemdraw.elements.oneterm.NoConnect:1
+msgid "No Connection"
+msgstr ""
+
+#: of schemdraw.elements.oneterm.Vdd:1
+msgid "Vdd connection"
+msgstr ""
+
+#: of schemdraw.elements.oneterm.Vss:1
+msgid "Vss connection"
+msgstr ""
+
+#: ../../classes/electrical.rst:27
+msgid "Switches"
+msgstr ""
+
+#: of schemdraw.elements.switches:1
+msgid "Switches and buttons"
+msgstr ""
+
+#: of schemdraw.elements.switches.Button:1
+msgid "Push button switch"
+msgstr ""
+
+#: of schemdraw.elements.switches.Button:3
+msgid "Normally closed"
+msgstr ""
+
+#: of schemdraw.elements.switches.Switch:1
+msgid "Toggle Switch"
+msgstr ""
+
+#: of schemdraw.elements.switches.Switch:3
+#: schemdraw.elements.switches.SwitchSpdt:3
+#: schemdraw.elements.switches.SwitchSpdt2:3
+msgid "action arrow ('open' or 'close')"
+msgstr ""
+
+#: of schemdraw.elements.switches.SwitchDIP:1
+msgid "DIP switch"
+msgstr ""
+
+#: of schemdraw.elements.switches.SwitchDIP:3
+msgid "Number of switches"
+msgstr ""
+
+#: of schemdraw.elements.switches.SwitchDIP:4
+msgid "Boolean sequence indicating whether each switch is flipped up or down"
+msgstr ""
+
+#: of schemdraw.elements.switches.SwitchDIP:5
+msgid "Fill color for flipped switches [default: #333333]"
+msgstr ""
+
+#: of schemdraw.elements.switches.SwitchDIP:6
+msgid "Width of one switch [default: 0.4]"
+msgstr ""
+
+#: of schemdraw.elements.switches.SwitchDIP:7
+msgid "Spacing between switches [default: 0.2]"
+msgstr ""
+
+#: of schemdraw.elements.switches.SwitchDpdt:1
+msgid "Double-pole double-throw switch"
+msgstr ""
+
+#: of schemdraw.elements.switches.SwitchDpdt:3
+#: schemdraw.elements.switches.SwitchDpst:3
+msgid "Show dotted line linking switch levers"
+msgstr ""
+
+#: of schemdraw.elements.switches.SwitchDpdt:6
+#: schemdraw.elements.switches.SwitchDpst:6
+msgid "p1"
+msgstr ""
+
+#: of schemdraw.elements.switches.SwitchDpdt:7
+#: schemdraw.elements.switches.SwitchDpst:7
+msgid "p2"
+msgstr ""
+
+#: of schemdraw.elements.switches.SwitchDpdt:8
+#: schemdraw.elements.switches.SwitchDpst:8
+msgid "t1"
+msgstr ""
+
+#: of schemdraw.elements.switches.SwitchDpdt:9
+#: schemdraw.elements.switches.SwitchDpst:9
+msgid "t2"
+msgstr ""
+
+#: of schemdraw.elements.switches.SwitchDpdt:10
+msgid "t3"
+msgstr ""
+
+#: of schemdraw.elements.switches.SwitchDpdt:11
+msgid "t4"
+msgstr ""
+
+#: of schemdraw.elements.switches.SwitchDpst:1
+msgid "Double-pole single-throw switch"
+msgstr ""
+
+#: of schemdraw.elements.switches.SwitchReed:1
+msgid "Reed Switch"
+msgstr ""
+
+#: of schemdraw.elements.switches.SwitchRotary:1
+msgid "Rotary Switch"
+msgstr ""
+
+#: of schemdraw.elements.switches.SwitchRotary:3
+msgid "number of contacts"
+msgstr ""
+
+#: of schemdraw.elements.switches.SwitchRotary:4
+msgid "angle in degrees between each contact"
+msgstr ""
+
+#: of schemdraw.elements.switches.SwitchRotary:5
+msgid "angle in degrees of first contact"
+msgstr ""
+
+#: of schemdraw.elements.switches.SwitchRotary:6
+msgid "radius of switch"
+msgstr ""
+
+#: of schemdraw.elements.switches.SwitchRotary:7
+msgid "length of switch arrow"
+msgstr ""
+
+#: of schemdraw.elements.switches.SwitchRotary:8
+msgid "index of contact to point to"
+msgstr ""
+
+#: of schemdraw.elements.switches.SwitchRotary:10
+msgid ""
+"Values for dtheta and theta will be calculated based on `n` if not "
+"provided."
+msgstr ""
+
+#: of schemdraw.elements.switches.SwitchRotary:14
+msgid "P"
+msgstr ""
+
+#: of schemdraw.elements.switches.SwitchRotary:15
+msgid "T[x] for each contact (starting at 1)"
+msgstr ""
+
+#: of schemdraw.elements.switches.SwitchSpdt:1
+msgid "Single-pole double throw switch."
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.SevenSegment:12
+#: schemdraw.elements.switches.SwitchSpdt:6
+#: schemdraw.elements.switches.SwitchSpdt2:6
+msgid "a"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.SevenSegment:13
+#: schemdraw.elements.switches.SwitchSpdt:7
+#: schemdraw.elements.switches.SwitchSpdt2:7
+msgid "b"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.SevenSegment:14
+#: schemdraw.elements.switches.SwitchSpdt:8
+#: schemdraw.elements.switches.SwitchSpdt2:8
+msgid "c"
+msgstr ""
+
+#: of schemdraw.elements.switches.SwitchSpdt2:1
+msgid "Single-pole double throw switch, throws above and below."
+msgstr ""
+
+#: ../../classes/electrical.rst:33
+msgid "Lines"
+msgstr ""
+
+#: of schemdraw.elements.lines:1
+msgid "Lines, Arrows, and Labels"
+msgstr ""
+
+#: of schemdraw.elements.lines.Annotate:1
+msgid ""
+"Draw a curved arrow pointing to `at` position, ending at `to` position, "
+"with label location at the tail of the arrow (See also `Arc3`)."
+msgstr ""
+
+#: of schemdraw.elements.lines.Annotate:5 schemdraw.elements.lines.Arc3:8
+#: schemdraw.elements.lines.ArcN:8 schemdraw.elements.lines.ArcZ:8
+msgid "Control point factor. Higher k means tighter curve."
+msgstr ""
+
+#: of schemdraw.elements.lines.Annotate:6 schemdraw.elements.lines.Arc3:9
+msgid "Angle at which the arc leaves start point"
+msgstr ""
+
+#: of schemdraw.elements.lines.Annotate:7 schemdraw.elements.lines.Arc3:10
+msgid "Angle at which the arc leaves end point"
+msgstr ""
+
+#: of schemdraw.elements.lines.Annotate:8 schemdraw.elements.lines.Arc2:10
+#: schemdraw.elements.lines.Arc3:11 schemdraw.elements.lines.Wire:12
+msgid "arrowhead specifier, such as '->', '<-', '<->', or '-o'"
+msgstr ""
+
+#: of schemdraw.elements.lines.Annotate:9 schemdraw.elements.lines.Arc3:12
+#: schemdraw.elements.lines.ArcLoop:9 schemdraw.elements.lines.ArcN:10
+#: schemdraw.elements.lines.ArcZ:10
+msgid "Length of arrowhead [default: 0.25]"
+msgstr ""
+
+#: of schemdraw.elements.lines.Annotate:10 schemdraw.elements.lines.Arc3:13
+#: schemdraw.elements.lines.ArcLoop:10 schemdraw.elements.lines.ArcN:11
+#: schemdraw.elements.lines.ArcZ:11 schemdraw.elements.lines.CurrentLabel:11
+msgid "Width of arrowhead [default: 0.2]"
+msgstr ""
+
+#: of schemdraw.elements.lines.Arc2:1 schemdraw.elements.lines.Arc3:1
+msgid "Arc Element"
+msgstr ""
+
+#: of schemdraw.elements.lines.Arc2:3 schemdraw.elements.lines.Arc3:3
+#: schemdraw.elements.lines.ArcLoop:3 schemdraw.elements.lines.ArcN:3
+#: schemdraw.elements.lines.ArcZ:3
+msgid "Use `at` and `to` methods to define endpoints."
+msgstr ""
+
+#: of schemdraw.elements.lines.Arc2:5
+msgid ""
+"Arc2 is a quadratic Bezier curve with control point halfway between the "
+"endpoints, generating a symmetric 'C' curve."
+msgstr ""
+
+#: of schemdraw.elements.lines.Arc2:9
+msgid "Control point factor. Higher k means more curvature."
+msgstr ""
+
+#: of schemdraw.elements.lines.Arc2:13
+msgid "start end ctrl mid"
+msgstr ""
+
+#: of schemdraw.elements.lines.Arc2.delta:1
+#: schemdraw.elements.lines.Arc3.delta:1
+msgid "Specify change in position"
+msgstr ""
+
+#: of schemdraw.elements.lines.Arc2.to:1 schemdraw.elements.lines.Arc3.to:1
+#: schemdraw.elements.lines.ArcLoop.to:1 schemdraw.elements.lines.Wire.to:1
+msgid "Specify ending position"
+msgstr ""
+
+#: of schemdraw.elements.lines.Arc2.to:3 schemdraw.elements.lines.Arc3.to:3
+#: schemdraw.elements.lines.ArcLoop.to:3 schemdraw.elements.lines.Wire.to:3
+msgid "Ending position of element"
+msgstr ""
+
+#: of schemdraw.elements.lines.Arc2.to:4 schemdraw.elements.lines.Arc3.to:4
+#: schemdraw.elements.lines.ArcLoop.to:4 schemdraw.elements.lines.Wire.to:4
+msgid "X-offset from xy position"
+msgstr ""
+
+#: of schemdraw.elements.lines.Arc2.to:5 schemdraw.elements.lines.Arc3.to:5
+#: schemdraw.elements.lines.ArcLoop.to:5 schemdraw.elements.lines.Wire.to:5
+msgid "Y-offset from xy position"
+msgstr ""
+
+#: of schemdraw.elements.lines.Arc3:5
+msgid ""
+"Arc3 is a cubic Bezier curve. Control points are set to extend the curve "
+"at the given angle for each endpoint."
+msgstr ""
+
+#: of schemdraw.elements.lines.Arc3:16
+msgid "start end center ctrl1 ctrl2"
+msgstr ""
+
+#: of schemdraw.elements.lines.ArcLoop:1
+msgid "Loop Arc"
+msgstr ""
+
+#: of schemdraw.elements.lines.ArcLoop:5
+msgid "ArcLoop is an arc drawn as part of a circle."
+msgstr ""
+
+#: of schemdraw.elements.lines.ArcLoop:7
+msgid "Radius of the arc"
+msgstr ""
+
+#: of schemdraw.elements.lines.ArcLoop:8 schemdraw.elements.lines.ArcN:9
+#: schemdraw.elements.lines.ArcZ:9
+msgid "arrowhead specifier, such as '->', '<-', '<->', or '-o' [default: None]"
+msgstr ""
+
+#: of schemdraw.elements.lines.ArcLoop:13
+msgid "start end mid BL BR TL TR"
+msgstr ""
+
+#: of schemdraw.elements.connectors.OrthoLines.delta:1
+#: schemdraw.elements.connectors.RightLines.delta:1
+#: schemdraw.elements.lines.ArcLoop.delta:1
+#: schemdraw.elements.lines.Wire.delta:1
+msgid "Specify ending position relative to start position"
+msgstr ""
+
+#: of schemdraw.elements.lines.ArcN:1
+msgid "N-Curve Arc"
+msgstr ""
+
+#: of schemdraw.elements.lines.ArcN:5
+msgid "ArcN approaches the endpoints vertically, leading to a 'N' shaped curve"
+msgstr ""
+
+#: of schemdraw.elements.lines.ArcZ:1
+msgid "Z-Curve Arc"
+msgstr ""
+
+#: of schemdraw.elements.lines.ArcZ:5
+msgid "ArcZ approaches the endpoints horizontally, leading to a 'Z' shaped curve"
+msgstr ""
+
+#: of schemdraw.elements.lines.Arrow:1
+msgid "Show arrowhead on both ends"
+msgstr ""
+
+#: of schemdraw.elements.lines.Arrow:3 schemdraw.elements.lines.Line:3
+msgid "arrowhead specifier, such as '->', '<-', '<->', '-o', or '\\|->'"
+msgstr ""
+
+#: of schemdraw.elements.lines.Arrow:4
+msgid "Width of arrow head [default: 0.15]"
+msgstr ""
+
+#: of schemdraw.elements.lines.Arrow:5
+msgid "Length of arrow head [default: 0.25]"
+msgstr ""
+
+#: of schemdraw.elements.lines.Arrowhead:1
+msgid "width of arrow head [default: .15]"
+msgstr ""
+
+#: of schemdraw.elements.lines.Arrowhead:2
+msgid "length of arrow head [default: .25]"
+msgstr ""
+
+#: of schemdraw.elements.lines.CurrentLabel:1
+msgid "Current label arrow drawn above an element"
+msgstr ""
+
+#: of schemdraw.elements.lines.CurrentLabel:3 schemdraw.elements.lines.ZLabel:4
+msgid "Use `.at()` method to place the label over an existing element."
+msgstr ""
+
+#: of schemdraw.elements.lines.CurrentLabel:6
+msgid "Reverse the arrow direction"
+msgstr ""
+
+#: of schemdraw.elements.lines.CurrentLabel:7
+msgid "Offset distance from centerline of element [default: 0.4]"
+msgstr ""
+
+#: of schemdraw.elements.lines.CurrentLabel:8
+msgid "Length of the arrow [default: 2]"
+msgstr ""
+
+#: of schemdraw.elements.lines.CurrentLabel:9
+msgid "Draw arrow on top or bottom of element [default: True]"
+msgstr ""
+
+#: of schemdraw.elements.lines.CurrentLabel:10
+#: schemdraw.elements.lines.CurrentLabelInline:8
+msgid "Length of arrowhead [default: 0.3]"
+msgstr ""
+
+#: of schemdraw.elements.lines.CurrentLabel.at:1
+msgid "Specify CurrentLabel position."
+msgstr ""
+
+#: of schemdraw.elements.lines.CurrentLabel.at:3
+#: schemdraw.elements.lines.ZLabel.at:3
+msgid ""
+"If xy is an Element, arrow will be centered along element and its color "
+"will also be inherited."
+msgstr ""
+
+#: of schemdraw.elements.lines.CurrentLabel.at:7
+#: schemdraw.elements.lines.CurrentLabelInline.at:7
+#: schemdraw.elements.lines.ZLabel.at:7
+msgid "The absolute (x, y) position or an"
+msgstr ""
+
+#: of schemdraw.elements.lines.CurrentLabelInline:1
+msgid "Current direction arrow, inline with element."
+msgstr ""
+
+#: of schemdraw.elements.lines.CurrentLabelInline:3
+msgid "Use `.at()` method to place arrow on an Element instance"
+msgstr ""
+
+#: of schemdraw.elements.lines.CurrentLabelInline:5
+msgid "arrow direction 'in' or 'out' of element"
+msgstr ""
+
+#: of schemdraw.elements.lines.CurrentLabelInline:6
+msgid "Offset along lead length"
+msgstr ""
+
+#: of schemdraw.elements.lines.CurrentLabelInline:7
+msgid "Arrow at start or end of element"
+msgstr ""
+
+#: of schemdraw.elements.lines.CurrentLabelInline:9
+msgid "Width of arrowhead [default: 0.3]"
+msgstr ""
+
+#: of schemdraw.elements.lines.CurrentLabelInline.at:1
+msgid "Specify CurrentLabelInline position."
+msgstr ""
+
+#: of schemdraw.elements.lines.CurrentLabelInline.at:3
+msgid ""
+"If xy is an Element, arrow will be placed along the element's leads and "
+"the arrow color will be inherited."
+msgstr ""
+
+#: of schemdraw.elements.lines.DataBusLine:1
+msgid "Straight Line with bus indication stripe"
+msgstr ""
+
+#: of schemdraw.elements.lines.Dot:1
+msgid "Connection Dot"
+msgstr ""
+
+#: of schemdraw.elements.lines.Dot:3
+msgid "Radius of dot [default: 0.075]"
+msgstr ""
+
+#: of schemdraw.elements.lines.Dot:4
+msgid "Draw as an open circle [default: False]"
+msgstr ""
+
+#: of schemdraw.elements.lines.DotDotDot:1
+msgid "Ellipsis element"
+msgstr ""
+
+#: of schemdraw.elements.lines.DotDotDot:3
+msgid "Radius of dots [default 0.075]"
+msgstr ""
+
+#: of schemdraw.elements.lines.DotDotDot:4
+msgid "Draw dots as open circles [default: False]"
+msgstr ""
+
+#: of schemdraw.elements.lines.DotDotDot:6
+msgid ""
+"\"Ellipsis\" is a reserved keyword in Python used for slicing, thus the "
+"name DotDotDot."
+msgstr ""
+
+#: of schemdraw.elements.lines.Encircle:1
+msgid "Draw ellipse around all elements in the list"
+msgstr ""
+
+#: of schemdraw.elements.lines.Encircle:3
+msgid "List of elements to enclose"
+msgstr ""
+
+#: of schemdraw.elements.lines.Encircle:4
+msgid "Horizontal distance from elements to loop [default: .2]"
+msgstr ""
+
+#: of schemdraw.elements.lines.Encircle:5
+msgid "Vertical distance from elements to loop [default: .2]"
+msgstr ""
+
+#: of schemdraw.elements.lines.Encircle:6
+msgid "Include labels in the ellipse"
+msgstr ""
+
+#: of schemdraw.elements.lines.EncircleBox:1
+msgid "Draw rounded box around all elements in the list"
+msgstr ""
+
+#: of schemdraw.elements.lines.EncircleBox:3
+msgid "List elements to enclose"
+msgstr ""
+
+#: of schemdraw.elements.lines.EncircleBox:4
+msgid "radius of corner rounding [default: 0.3]"
+msgstr ""
+
+#: of schemdraw.elements.lines.EncircleBox:5
+msgid "Horizontal distance from elements to loop [default: 0.2]"
+msgstr ""
+
+#: of schemdraw.elements.lines.EncircleBox:6
+msgid "Vertical distance from elements to loop [default: 0.2]"
+msgstr ""
+
+#: of schemdraw.elements.lines.EncircleBox:7
+msgid "Include labels in the box"
+msgstr ""
+
+#: of schemdraw.elements.lines.Gap:1
+msgid ""
+"Gap for labeling port voltages, for example. Draws nothing, but provides "
+"place to attach a label such as ('+', 'V', '-')."
+msgstr ""
+
+#: of schemdraw.elements.lines.Gap:4
+msgid "Label location within the gap [center]"
+msgstr ""
+
+#: of schemdraw.elements.lines.Gap:5
+msgid "Label alignment [(center, center)]"
+msgstr ""
+
+#: of schemdraw.elements.lines.Gap:6
+msgid "Offset to label [0]"
+msgstr ""
+
+#: of schemdraw.elements.lines.Label:1
+msgid "Label element."
+msgstr ""
+
+#: of schemdraw.elements.lines.Label:3
+msgid "For more options, use `Label().label()` method."
+msgstr ""
+
+#: of schemdraw.elements.lines.Label:5
+msgid "text to display."
+msgstr ""
+
+#: of schemdraw.elements.lines.Line:1
+msgid "Straight Line"
+msgstr ""
+
+#: of schemdraw.elements.lines.Line:5
+msgid "Width of arrowhead [default: .15]"
+msgstr ""
+
+#: of schemdraw.elements.lines.Line:6
+msgid "Length of arrowhead [default:  0.25]"
+msgstr ""
+
+#: of schemdraw.elements.lines.LoopArrow:1
+msgid "Loop arrow, for mesh analysis notation"
+msgstr ""
+
+#: of schemdraw.elements.lines.LoopArrow:3
+#: schemdraw.elements.lines.LoopCurrent:6
+msgid "loop direction 'cw' or 'ccw'"
+msgstr ""
+
+#: of schemdraw.elements.lines.LoopArrow:4
+#: schemdraw.elements.lines.LoopCurrent:7
+msgid "Angle of start of loop arrow"
+msgstr ""
+
+#: of schemdraw.elements.lines.LoopArrow:5
+#: schemdraw.elements.lines.LoopCurrent:8
+msgid "Angle of end of loop arrow"
+msgstr ""
+
+#: of schemdraw.elements.lines.LoopArrow:6
+msgid "Width of loop"
+msgstr ""
+
+#: of schemdraw.elements.lines.LoopArrow:7
+msgid "Height of loop"
+msgstr ""
+
+#: of schemdraw.elements.lines.LoopCurrent:1
+msgid ""
+"Loop current label, for mesh analysis notation, placed within a box of 4 "
+"existing elements."
+msgstr ""
+
+#: of schemdraw.elements.lines.LoopCurrent:4
+msgid "List of 4 elements surrounding loop, in order (top, right, bottom, left)"
+msgstr ""
+
+#: of schemdraw.elements.lines.LoopCurrent:9
+msgid "Distance from elements to loop"
+msgstr ""
+
+#: of schemdraw.elements.lines.Rect:1
+msgid "Rectangle Element"
+msgstr ""
+
+#: of schemdraw.elements.lines.Rect:3
+msgid ""
+"Used mainly for buliding more complex elements. Corner arguments are "
+"relative to Element coordinates, not Drawing coordinates."
+msgstr ""
+
+#: of schemdraw.elements.lines.Rect:7
+msgid "Position of top-left corner"
+msgstr ""
+
+#: of schemdraw.elements.lines.Rect:8
+msgid "Position of bottom-right corner"
+msgstr ""
+
+#: of schemdraw.elements.lines.Rect:9
+msgid "Color to fill if not None [default: inherit]"
+msgstr ""
+
+#: of schemdraw.elements.lines.Rect:10
+msgid "Line width [default: inherit]"
+msgstr ""
+
+#: of schemdraw.elements.lines.Rect:11
+msgid "Line style '-', '--', ':', etc. [default: inherit]"
+msgstr ""
+
+#: of schemdraw.elements.lines.Tag:1
+msgid "Tag/flag element for labeling signal names."
+msgstr ""
+
+#: of schemdraw.elements.lines.Tag:3
+msgid ""
+"Because text size is unknown until drawn, must specify width manually to "
+"fit a given text label."
+msgstr ""
+
+#: of schemdraw.elements.lines.Tag:6
+msgid "Width of the tag [default: 1.5]"
+msgstr ""
+
+#: of schemdraw.elements.lines.Tag:7
+msgid "Height of the tag [default: 0.625]"
+msgstr ""
+
+#: of schemdraw.elements.lines.Wire:1
+msgid "Connect the .at() and .to() positions with lines depending on shape"
+msgstr ""
+
+#: of schemdraw.elements.lines.Wire:3
+msgid ""
+"Determines shape of wire: `-`: straight line `|-`: right-angle line "
+"starting vertically `-|`: right-angle line starting horizontally 'z': "
+"diagonal line with horizontal end segments 'N': diagonal line with "
+"vertical end segments `n`: n- or u-shaped lines `c`: c- or ↄ-shaped lines"
+msgstr ""
+
+#: of schemdraw.elements.lines.Wire:11
+msgid "Distance before the wire changes directions in `n` and `c` shapes."
+msgstr ""
+
+#: of schemdraw.elements.lines.Wire.dot:1
+msgid "Add a dot to the end of the element"
+msgstr ""
+
+#: of schemdraw.elements.lines.Wire.idot:1
+msgid "Add a dot to the input/start of the element"
+msgstr ""
+
+#: of schemdraw.elements.lines.ZLabel:1
+msgid "Right-angle arrow, often used to indicate impedance looking in to a node"
+msgstr ""
+
+#: of schemdraw.elements.lines.ZLabel:7
+msgid "Vertical offset from centerline of element"
+msgstr ""
+
+#: of schemdraw.elements.lines.ZLabel:8
+msgid "Horizontal offset from center of element"
+msgstr ""
+
+#: of schemdraw.elements.lines.ZLabel:9
+msgid "Length of the arrow tail [default: 1]"
+msgstr ""
+
+#: of schemdraw.elements.lines.ZLabel:10
+msgid "Length of the arrow tip [default: 0.5]"
+msgstr ""
+
+#: of schemdraw.elements.lines.ZLabel:11
+msgid "Arrowhead length [default: 0.25]"
+msgstr ""
+
+#: of schemdraw.elements.lines.ZLabel:12
+msgid "Arrowhead width [default: 0.15]"
+msgstr ""
+
+#: of schemdraw.elements.lines.ZLabel.at:1
+msgid "Specify Element position."
+msgstr ""
+
+#: ../../classes/electrical.rst:40
+msgid "Cables and Connectors"
+msgstr ""
+
+#: of schemdraw.elements.cables:1
+msgid "Cable elements, coaxial and triaxial"
+msgstr ""
+
+#: of schemdraw.elements.cables.Coax:1
+msgid "Coaxial cable element."
+msgstr ""
+
+#: of schemdraw.elements.cables.Coax:3
+msgid "Total length of the cable, excluding lead extensions. [default: 3]"
+msgstr ""
+
+#: of schemdraw.elements.cables.Coax:4
+msgid "Radius of shield [default: 0.3]"
+msgstr ""
+
+#: of schemdraw.elements.cables.Coax:5
+msgid ""
+"Distance (x) from start of center conductor to start of shield. [default:"
+" 0.6]"
+msgstr ""
+
+#: of schemdraw.elements.cables.Coax:9 schemdraw.elements.cables.Triax:14
+msgid "shieldstart"
+msgstr ""
+
+#: of schemdraw.elements.cables.Coax:10 schemdraw.elements.cables.Triax:15
+msgid "shieldstart_top"
+msgstr ""
+
+#: of schemdraw.elements.cables.Coax:11 schemdraw.elements.cables.Triax:16
+msgid "shieldend"
+msgstr ""
+
+#: of schemdraw.elements.cables.Coax:12 schemdraw.elements.cables.Triax:17
+msgid "shieldend_top"
+msgstr ""
+
+#: of schemdraw.elements.cables.Coax:13 schemdraw.elements.cables.Triax:18
+msgid "shieldcenter"
+msgstr ""
+
+#: of schemdraw.elements.cables.Coax:14 schemdraw.elements.cables.Triax:19
+msgid "shieldcenter_top"
+msgstr ""
+
+#: of schemdraw.elements.cables.Triax:1
+msgid "Triaxial cable element."
+msgstr ""
+
+#: of schemdraw.elements.cables.Triax:3
+msgid "Total length of the cable [default: 3]"
+msgstr ""
+
+#: of schemdraw.elements.cables.Triax:4
+msgid "Radius of inner guard [default: 0.3]"
+msgstr ""
+
+#: of schemdraw.elements.cables.Triax:5
+msgid "Radius of outer shield [default: 0.6]"
+msgstr ""
+
+#: of schemdraw.elements.cables.Triax:6
+msgid ""
+"Distance (x) from start of center conductor to start of guard. [default: "
+"0.6]"
+msgstr ""
+
+#: of schemdraw.elements.cables.Triax:8
+msgid "Distance from start of inner guard to start of outer shield [default: 0.3]"
+msgstr ""
+
+#: of schemdraw.elements.cables.Triax:10
+msgid "Distance from end of outer shield to end of inner guard [default: 0.3]"
+msgstr ""
+
+#: of schemdraw.elements.cables.Triax:20
+msgid "guardstart"
+msgstr ""
+
+#: of schemdraw.elements.cables.Triax:21
+msgid "guardstart_top"
+msgstr ""
+
+#: of schemdraw.elements.cables.Triax:22
+msgid "guardend"
+msgstr ""
+
+#: of schemdraw.elements.cables.Triax:23
+msgid "guardend_top"
+msgstr ""
+
+#: of schemdraw.elements.connectors:1
+msgid "Connectors and bus lines"
+msgstr ""
+
+#: of schemdraw.elements.connectors.BusConnect:1
+msgid "Data bus connection."
+msgstr ""
+
+#: of schemdraw.elements.connectors.BusConnect:3
+msgid ""
+"Adds the short diagonal lines that break out a bus (wide line) to connect"
+" to an Ic or Header element."
+msgstr ""
+
+#: of schemdraw.elements.connectors.BusConnect:6
+#: schemdraw.elements.connectors.OrthoLines:10
+#: schemdraw.elements.connectors.RightLines:10
+msgid "Number of parallel lines"
+msgstr ""
+
+#: of schemdraw.elements.connectors.BusConnect:7
+msgid "Slant up or down"
+msgstr ""
+
+#: of schemdraw.elements.connectors.BusConnect:8
+#: schemdraw.elements.connectors.OrthoLines:11
+#: schemdraw.elements.connectors.RightLines:11
+msgid "Distance between parallel lines [default: 0.6]"
+msgstr ""
+
+#: of schemdraw.elements.connectors.BusConnect:9
+msgid "Line width of bus line [default: 4]"
+msgstr ""
+
+#: of schemdraw.elements.connectors.BusConnect:10
+msgid "length of connection lines [default: 3]"
+msgstr ""
+
+#: of schemdraw.elements.connectors.BusConnect:13
+msgid "start"
+msgstr ""
+
+#: of schemdraw.elements.connectors.BusConnect:14
+msgid "end"
+msgstr ""
+
+#: of schemdraw.elements.connectors.BusConnect:15
+msgid "p[X] where X is int for each data line"
+msgstr ""
+
+#: of schemdraw.elements.connectors.BusLine:1
+msgid "Data bus line. Just a wide line."
+msgstr ""
+
+#: of schemdraw.elements.connectors.BusLine:3
+msgid "Use BusConnect to break out connections to the BusLine."
+msgstr ""
+
+#: of schemdraw.elements.connectors.BusLine:5
+msgid "Line width [default: 4]"
+msgstr ""
+
+#: of schemdraw.elements.connectors.CoaxConnect:1
+msgid "Coaxial connector"
+msgstr ""
+
+#: of schemdraw.elements.connectors.CoaxConnect:3
+msgid "Radius of outer shell [defualt: 0.4]"
+msgstr ""
+
+#: of schemdraw.elements.connectors.CoaxConnect:4
+msgid "Radius of inner conductor [default: 0.12]"
+msgstr ""
+
+#: of schemdraw.elements.connectors.CoaxConnect:5
+msgid "Color to fill inner conductor [default: bg]"
+msgstr ""
+
+#: of schemdraw.elements.connectors.CoaxConnect:8
+#: schemdraw.elements.transistors.Bjt:9 schemdraw.elements.transistors.BjtNpn:9
+#: schemdraw.elements.transistors.BjtPnp:9
+#: schemdraw.elements.transistors.BjtPnp2c:10
+#: schemdraw.elements.transistors.JFet:7 schemdraw.elements.transistors.JFetN:9
+#: schemdraw.elements.transistors.JFetP:9 schemdraw.elements.transistors.NFet:9
+#: schemdraw.elements.twoports.CurrentTransactor:19
+#: schemdraw.elements.twoports.ElementTwoport:21
+#: schemdraw.elements.twoports.Nullor:16
+#: schemdraw.elements.twoports.TransadmittanceTransactor:19
+#: schemdraw.elements.twoports.TransimpedanceTransactor:19
+#: schemdraw.elements.twoports.TwoPort:20
+#: schemdraw.elements.twoports.VMCMPair:18
+#: schemdraw.elements.twoports.VoltageTransactor:19
+msgid "center"
+msgstr ""
+
+#: of schemdraw.elements.compound.Rectifier:7
+#: schemdraw.elements.compound.Wheatstone:7
+#: schemdraw.elements.connectors.CoaxConnect:9
+msgid "N"
+msgstr ""
+
+#: of schemdraw.elements.compound.Rectifier:8
+#: schemdraw.elements.compound.Wheatstone:8
+#: schemdraw.elements.connectors.CoaxConnect:10
+msgid "S"
+msgstr ""
+
+#: of schemdraw.elements.compound.Rectifier:9
+#: schemdraw.elements.compound.Wheatstone:9
+#: schemdraw.elements.connectors.CoaxConnect:11
+msgid "E"
+msgstr ""
+
+#: of schemdraw.elements.compound.Rectifier:10
+#: schemdraw.elements.compound.Wheatstone:10
+#: schemdraw.elements.connectors.CoaxConnect:12
+msgid "W"
+msgstr ""
+
+#: of schemdraw.elements.connectors.DB25:1
+msgid "DB25 Connector"
+msgstr ""
+
+#: of schemdraw.elements.connectors.DB25:3 schemdraw.elements.connectors.DB9:3
+#: schemdraw.elements.connectors.Header:19
+msgid "Distance between pins [default: 0.6]"
+msgstr ""
+
+#: of schemdraw.elements.connectors.DB25:4 schemdraw.elements.connectors.DB9:4
+msgid "Distance between edge and pins [default: 0.3]"
+msgstr ""
+
+#: of schemdraw.elements.connectors.DB25:5
+msgid "Draw pin numbers"
+msgstr ""
+
+#: of schemdraw.elements.connectors.DB25:6 schemdraw.elements.connectors.DB9:6
+#: schemdraw.elements.connectors.Header:21
+msgid "Color to fill pin circles [default: bg]"
+msgstr ""
+
+#: of schemdraw.elements.connectors.DB25:9
+msgid "pin1 thru pin25"
+msgstr ""
+
+#: of schemdraw.elements.connectors.DB9:1
+msgid "DB9 Connector"
+msgstr ""
+
+#: of schemdraw.elements.connectors.DB9:5
+msgid "Draw pin numbers [default: False]"
+msgstr ""
+
+#: of schemdraw.elements.connectors.DB9:9
+msgid "pin1 thru pin9"
+msgstr ""
+
+#: of schemdraw.elements.connectors.Header:1
+msgid "Header connector element"
+msgstr ""
+
+#: of schemdraw.elements.connectors.Header:3
+msgid "Number of rows"
+msgstr ""
+
+#: of schemdraw.elements.connectors.Header:4
+msgid "Number of columns. Pin numbering requires 1 or 2 columns"
+msgstr ""
+
+#: of schemdraw.elements.connectors.Header:5
+msgid "List of pin labels for left side"
+msgstr ""
+
+#: of schemdraw.elements.connectors.Header:6
+msgid "List of pin labels for right side"
+msgstr ""
+
+#: of schemdraw.elements.connectors.Header:7
+msgid "Connector style, 'round', 'square', or 'screw' [default: round]"
+msgstr ""
+
+#: of schemdraw.elements.connectors.Header:8
+msgid ""
+"Pin numbering order. 'lr' for left-to-right numbering, 'ud' for up-down "
+"numbering, or 'ccw' for counter-clockwise (integrated-circuit style) "
+"numbering. Pin 1 is always at the top-left corner, unless `flip` method "
+"is also called. [default: lr]"
+msgstr ""
+
+#: of schemdraw.elements.connectors.Header:12
+msgid "Draw pin numbers outside the header"
+msgstr ""
+
+#: of schemdraw.elements.connectors.Header:13
+msgid ""
+"Vertical alignment for pins on left side ('center', 'top', 'bottom') "
+"[default: 'bottom']"
+msgstr ""
+
+#: of schemdraw.elements.connectors.Header:15
+msgid ""
+"Vertical alignment for pins on right side ('center', 'top', 'bottom') "
+"[default: 'bottom']"
+msgstr ""
+
+#: of schemdraw.elements.connectors.Header:17
+msgid "Font size for pin labels on left [default: 9]"
+msgstr ""
+
+#: of schemdraw.elements.connectors.Header:18
+msgid "Font size for pin labels on right [default: 9]"
+msgstr ""
+
+#: of schemdraw.elements.connectors.Header:20
+msgid "Distance between header edge and first pin row/column [default: 0.3]"
+msgstr ""
+
+#: of schemdraw.elements.connectors.Header:24
+msgid "pin[X] for each pin"
+msgstr ""
+
+#: of schemdraw.elements.connectors.Jack:1
+msgid "Jack (female connector)"
+msgstr ""
+
+#: of schemdraw.elements.connectors.Jumper:1
+msgid "Jumper for use on a Header element"
+msgstr ""
+
+#: of schemdraw.elements.connectors.Jumper:3
+msgid ""
+"Set position using `at()` method with a Header pin location, e.g. "
+"`Jumper().at(H.in1)`"
+msgstr ""
+
+#: of schemdraw.elements.connectors.Jumper:6
+#: schemdraw.elements.intcircuits.Multiplexer:6
+msgid "Spacing between pins [default: 0.6]"
+msgstr ""
+
+#: of schemdraw.elements.connectors.OrthoLines:1
+msgid "Orthogonal multiline connectors"
+msgstr ""
+
+#: of schemdraw.elements.connectors.OrthoLines:3
+msgid ""
+"Use `at()` and `to()` methods to specify starting and ending location of "
+"OrthoLines."
+msgstr ""
+
+#: of schemdraw.elements.connectors.OrthoLines:6
+#: schemdraw.elements.connectors.RightLines:6
+msgid ""
+"The default lines are spaced to provide connection to pins with default "
+"spacing on Ic element or connector such as a Header."
+msgstr ""
+
+#: of schemdraw.elements.connectors.OrthoLines:12
+msgid "Fractional distance (0-1) to start vertical portion of first ortholine"
+msgstr ""
+
+#: of schemdraw.elements.connectors.OrthoLines.to:1
+#: schemdraw.elements.connectors.RightLines.to:1
+msgid "Specify ending position of OrthoLines"
+msgstr ""
+
+#: of schemdraw.elements.connectors.Plug:1
+msgid "Plug (male connector)"
+msgstr ""
+
+#: of schemdraw.elements.connectors.RightLines:1
+msgid "Right-angle multi-line connectors"
+msgstr ""
+
+#: of schemdraw.elements.connectors.RightLines:3
+msgid "Use `at()` and `to()` methods to specify starting and ending location."
+msgstr ""
+
+#: of schemdraw.elements.connectors.Terminal:1
+msgid "Terminal element"
+msgstr ""
+
+#: of schemdraw.elements.connectors.Terminal:3
+msgid "Radius of terminal [default: 0.18]"
+msgstr ""
+
+#: of schemdraw.elements.connectors.Terminal:4
+msgid "Draw as open circle"
+msgstr ""
+
+#: ../../classes/electrical.rst:50
+msgid "Transistors"
+msgstr ""
+
+#: of schemdraw.elements.transistors:1
+msgid "Transistor elements"
+msgstr ""
+
+#: of schemdraw.elements.transistors.AnalogBiasedFet:1
+msgid "Generic biased small-signal Field Effect Transistor, analog style"
+msgstr ""
+
+#: of schemdraw.elements.transistors.AnalogBiasedFet:3
+#: schemdraw.elements.transistors.AnalogNFet:3
+#: schemdraw.elements.transistors.AnalogPFet:3
+#: schemdraw.elements.transistors.PFet:3
+msgid "Draw bulk contact"
+msgstr ""
+
+#: of schemdraw.elements.transistors.AnalogBiasedFet:4
+#: schemdraw.elements.transistors.AnalogNFet:4
+#: schemdraw.elements.transistors.AnalogPFet:4
+msgid "Draw gate on the source side of the transistor, rather than middle"
+msgstr ""
+
+#: of schemdraw.elements.transistors.AnalogBiasedFet:5
+msgid "Draw source dot on the transistor if bulk dot is not drawn"
+msgstr ""
+
+#: of schemdraw.elements.transistors.AnalogBiasedFet:8
+#: schemdraw.elements.transistors.AnalogNFet:8
+#: schemdraw.elements.transistors.AnalogPFet:8
+msgid "source drain gate bulk (if bulk=True) center"
+msgstr ""
+
+#: of schemdraw.elements.transistors.AnalogNFet:1
+msgid "N-type Field Effect Transistor, analog style"
+msgstr ""
+
+#: of schemdraw.elements.transistors.AnalogNFet:5
+#: schemdraw.elements.transistors.AnalogPFet:5
+msgid "Draw source arrow on the transistor if bulk arrow is not drawn"
+msgstr ""
+
+#: of schemdraw.elements.transistors.AnalogPFet:1
+msgid "P-type Field Effect Transistor, analog style"
+msgstr ""
+
+#: of schemdraw.elements.transistors.Bjt:1
+msgid "Bipolar Junction Transistor (untyped)"
+msgstr ""
+
+#: of schemdraw.elements.transistors.Bjt:3
+#: schemdraw.elements.transistors.Bjt2:4
+#: schemdraw.elements.transistors.BjtNpn:3
+#: schemdraw.elements.transistors.BjtNpn2:4
+#: schemdraw.elements.transistors.BjtPnp:3
+#: schemdraw.elements.transistors.BjtPnp2:4
+#: schemdraw.elements.transistors.BjtPnp2c:3
+#: schemdraw.elements.transistors.BjtPnp2c2:4
+#: schemdraw.elements.transistors.JFetN:3
+#: schemdraw.elements.transistors.JFetN2:4
+#: schemdraw.elements.transistors.JFetP:3
+#: schemdraw.elements.transistors.JFetP2:4
+msgid "Draw circle around the transistor"
+msgstr ""
+
+#: of schemdraw.elements.compound.Optocoupler:12
+#: schemdraw.elements.transistors.Bjt:6 schemdraw.elements.transistors.Bjt2:7
+#: schemdraw.elements.transistors.BjtNpn:6
+#: schemdraw.elements.transistors.BjtNpn2:7
+#: schemdraw.elements.transistors.BjtPnp:6
+#: schemdraw.elements.transistors.BjtPnp2:7
+#: schemdraw.elements.transistors.BjtPnp2c:6
+#: schemdraw.elements.transistors.BjtPnp2c2:7
+msgid "collector"
+msgstr ""
+
+#: of schemdraw.elements.compound.Optocoupler:11
+#: schemdraw.elements.transistors.Bjt:7 schemdraw.elements.transistors.Bjt2:8
+#: schemdraw.elements.transistors.BjtNpn:7
+#: schemdraw.elements.transistors.BjtNpn2:8
+#: schemdraw.elements.transistors.BjtPnp:7
+#: schemdraw.elements.transistors.BjtPnp2:8
+#: schemdraw.elements.transistors.BjtPnp2c:7
+#: schemdraw.elements.transistors.BjtPnp2c2:8
+msgid "emitter"
+msgstr ""
+
+#: of schemdraw.elements.transistors.Bjt:8
+#: schemdraw.elements.transistors.Bjt2:9
+#: schemdraw.elements.transistors.BjtNpn:8
+#: schemdraw.elements.transistors.BjtNpn2:9
+#: schemdraw.elements.transistors.BjtPnp:8
+#: schemdraw.elements.transistors.BjtPnp2:9
+#: schemdraw.elements.transistors.BjtPnp2c:8
+#: schemdraw.elements.transistors.BjtPnp2c2:9
+msgid "base"
+msgstr ""
+
+#: of schemdraw.elements.transistors.Bjt2:1
+msgid ""
+"Bipolar Junction Transistor (untyped) which extends collector/emitter "
+"leads to the desired length"
+msgstr ""
+
+#: of schemdraw.elements.transistors.BjtNpn:1
+msgid "NPN Bipolar Junction Transistor"
+msgstr ""
+
+#: of schemdraw.elements.transistors.BjtNpn2:1
+msgid ""
+"NPN Bipolar Junction Transistor which extends collector/emitter leads to "
+"the desired length"
+msgstr ""
+
+#: of schemdraw.elements.transistors.BjtPnp:1
+msgid "PNP Bipolar Junction Transistor"
+msgstr ""
+
+#: of schemdraw.elements.transistors.BjtPnp2:1
+msgid ""
+"PNP Bipolar Junction Transistor which extends collector/emitter leads to "
+"the desired length"
+msgstr ""
+
+#: of schemdraw.elements.transistors.BjtPnp2c:1
+msgid "PNP Bipolar Junction Transistor with 2 collectors"
+msgstr ""
+
+#: of schemdraw.elements.transistors.BjtPnp2c:9
+#: schemdraw.elements.transistors.BjtPnp2c2:10
+msgid "C2"
+msgstr ""
+
+#: of schemdraw.elements.transistors.BjtPnp2c2:1
+msgid ""
+"2-Collector PNP Bipolar Junction Transistor which extends "
+"collector/emitter leads to the desired length"
+msgstr ""
+
+#: of schemdraw.elements.transistors.JFet:1
+msgid "Junction Field Effect Transistor (untyped)"
+msgstr ""
+
+#: of schemdraw.elements.transistors.JFet:4
+#: schemdraw.elements.transistors.JFet2:5
+#: schemdraw.elements.transistors.JFetN:6
+#: schemdraw.elements.transistors.JFetN2:7
+#: schemdraw.elements.transistors.JFetP:6
+#: schemdraw.elements.transistors.JFetP2:7
+#: schemdraw.elements.transistors.NFet:6 schemdraw.elements.transistors.NFet2:7
+#: schemdraw.elements.transistors.NMos:8 schemdraw.elements.transistors.NMos2:8
+#: schemdraw.elements.transistors.PFet2:7 schemdraw.elements.transistors.PMos:8
+#: schemdraw.elements.transistors.PMos2:8
+msgid "source"
+msgstr ""
+
+#: of schemdraw.elements.transistors.JFet:5
+#: schemdraw.elements.transistors.JFet2:6
+#: schemdraw.elements.transistors.JFetN:7
+#: schemdraw.elements.transistors.JFetN2:8
+#: schemdraw.elements.transistors.JFetP:7
+#: schemdraw.elements.transistors.JFetP2:8
+#: schemdraw.elements.transistors.NFet:7 schemdraw.elements.transistors.NFet2:8
+#: schemdraw.elements.transistors.NMos:9 schemdraw.elements.transistors.NMos2:9
+#: schemdraw.elements.transistors.PFet2:8 schemdraw.elements.transistors.PMos:9
+#: schemdraw.elements.transistors.PMos2:9
+msgid "drain"
+msgstr ""
+
+#: of schemdraw.elements.transistors.JFet2:1
+msgid ""
+"Junction Field Effect Transistor (untyped) which extends "
+"collector/emitter leads to the desired length"
+msgstr ""
+
+#: of schemdraw.elements.transistors.JFetN:1
+msgid "N-type Junction Field Effect Transistor"
+msgstr ""
+
+#: of schemdraw.elements.transistors.JFetN2:1
+msgid ""
+"N-type Junction Field Effect Transistor which extends collector/emitter "
+"leads to the desired length"
+msgstr ""
+
+#: of schemdraw.elements.transistors.JFetP:1
+msgid "P-type Junction Field Effect Transistor"
+msgstr ""
+
+#: of schemdraw.elements.transistors.JFetP2:1
+msgid ""
+"P-type Junction Field Effect Transistor which extends collector/emitter "
+"leads to the desired length"
+msgstr ""
+
+#: of schemdraw.elements.transistors.NFet:1
+msgid "N-type Field Effect Transistor"
+msgstr ""
+
+#: of schemdraw.elements.transistors.NFet:3
+#: schemdraw.elements.transistors.NFet2:4
+#: schemdraw.elements.transistors.PFet2:4
+msgid "Draw bulk contact [default: False]"
+msgstr ""
+
+#: of schemdraw.elements.transistors.NFet2:1
+msgid ""
+"N-type Field Effect Transistor which extends source/drain leads to the "
+"desired length"
+msgstr ""
+
+#: of schemdraw.elements.transistors.NMos:1
+#: schemdraw.elements.transistors.NMos2:1
+msgid "N-type Metal Oxide Semiconductor Field Effect Transistor"
+msgstr ""
+
+#: of schemdraw.elements.transistors.NMos:3
+#: schemdraw.elements.transistors.NMos2:3 schemdraw.elements.transistors.PMos:3
+#: schemdraw.elements.transistors.PMos2:3
+msgid "Args:"
+msgstr ""
+
+#: of schemdraw.elements.transistors.NMos:4
+#: schemdraw.elements.transistors.NMos2:4 schemdraw.elements.transistors.PMos:4
+#: schemdraw.elements.transistors.PMos2:4
+msgid "diode: Draw body diode circle: Draw circle around the mosfet"
+msgstr ""
+
+#: of schemdraw.elements.transistors.NMos:12
+msgid "Note: vertical orientation.  For horizontal orientation, see NMos2."
+msgstr ""
+
+#: of schemdraw.elements.transistors.NMos2:12
+msgid "Note: horizontal orientation.  For vertical orientation, see NMos."
+msgstr ""
+
+#: of schemdraw.elements.transistors.PFet:1
+msgid "P-type Field Effect Transistor"
+msgstr ""
+
+#: of schemdraw.elements.transistors.PFet:6
+msgid "source drain gate center"
+msgstr ""
+
+#: of schemdraw.elements.transistors.PFet2:1
+msgid ""
+"P-type Field Effect Transistor which extends source/drain leads to the "
+"desired length"
+msgstr ""
+
+#: of schemdraw.elements.transistors.PMos:1
+#: schemdraw.elements.transistors.PMos2:1
+msgid "P-type Metal Oxide Semiconductor Field Effect Transistor"
+msgstr ""
+
+#: of schemdraw.elements.transistors.PMos:12
+msgid "Note: vertical orientation.  For horizontal orientation, see PMos2."
+msgstr ""
+
+#: of schemdraw.elements.transistors.PMos2:12
+msgid "Note: horizontal orientation.  For vertical orientation, see PMos."
+msgstr ""
+
+#: ../../classes/electrical.rst:57
+msgid "Transformers"
+msgstr ""
+
+#: of schemdraw.elements.xform:1
+msgid "Transformer element definitions"
+msgstr ""
+
+#: of schemdraw.elements.xform.Transformer:1
+msgid "Add taps to the windings on either side using the `.taps` method."
+msgstr ""
+
+#: of schemdraw.elements.xform.Transformer:4
+msgid "Turns on primary (left) side"
+msgstr ""
+
+#: of schemdraw.elements.xform.Transformer:5
+msgid "Turns on secondary (right) side"
+msgstr ""
+
+#: of schemdraw.elements.xform.Transformer:6
+msgid "Draw the core (parallel lines) [default: True]"
+msgstr ""
+
+#: of schemdraw.elements.xform.Transformer:7
+msgid "Use spiral/cycloid (loopy) style [default: False]"
+msgstr ""
+
+#: of schemdraw.elements.xform.Transformer:10
+msgid "p1: primary side 1"
+msgstr ""
+
+#: of schemdraw.elements.xform.Transformer:11
+msgid "p2: primary side 2"
+msgstr ""
+
+#: of schemdraw.elements.xform.Transformer:12
+msgid "s1: secondary side 1"
+msgstr ""
+
+#: of schemdraw.elements.xform.Transformer:13
+msgid "s2: secondary side 2"
+msgstr ""
+
+#: of schemdraw.elements.xform.Transformer:14
+msgid "Other anchors defined by `taps` method"
+msgstr ""
+
+#: of schemdraw.elements.xform.Transformer.tap:1
+msgid "Add a tap"
+msgstr ""
+
+#: of schemdraw.elements.xform.Transformer.tap:3
+msgid ""
+"A tap is simply a named anchor definition along one side of the "
+"transformer."
+msgstr ""
+
+#: of schemdraw.elements.xform.Transformer.tap:6
+msgid "Name of the tap/anchor"
+msgstr ""
+
+#: of schemdraw.elements.xform.Transformer.tap:7
+msgid "Turn number from the top of the tap"
+msgstr ""
+
+#: of schemdraw.elements.xform.Transformer.tap:8
+msgid "Primary (left) or Secondary (right) side"
+msgstr ""
+
+#: ../../classes/electrical.rst:64
+msgid "Opamp and Integrated Circuits"
+msgstr ""
+
+#: of schemdraw.elements.opamp:1
+msgid "Operation amplifier"
+msgstr ""
+
+#: of schemdraw.elements.opamp.Opamp:1
+msgid "Operational Amplifier."
+msgstr ""
+
+#: of schemdraw.elements.opamp.Opamp:3
+msgid "Draw +/- labels at each input"
+msgstr ""
+
+#: of schemdraw.elements.opamp.Opamp:4
+msgid "Draw short leads on input/output"
+msgstr ""
+
+#: of schemdraw.elements.misc.Mic:4 schemdraw.elements.misc.Speaker:4
+#: schemdraw.elements.opamp.Opamp:7
+msgid "in1"
+msgstr ""
+
+#: of schemdraw.elements.misc.Mic:5 schemdraw.elements.misc.Speaker:5
+#: schemdraw.elements.opamp.Opamp:8
+msgid "in2"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.VoltageRegulator:7
+#: schemdraw.elements.opamp.Opamp:9
+msgid "out"
+msgstr ""
+
+#: of schemdraw.elements.opamp.Opamp:10
+msgid "vd"
+msgstr ""
+
+#: of schemdraw.elements.opamp.Opamp:11
+msgid "vs"
+msgstr ""
+
+#: of schemdraw.elements.opamp.Opamp:12
+msgid "n1"
+msgstr ""
+
+#: of schemdraw.elements.opamp.Opamp:13
+msgid "n2"
+msgstr ""
+
+#: of schemdraw.elements.opamp.Opamp:14
+msgid "n1a"
+msgstr ""
+
+#: of schemdraw.elements.opamp.Opamp:15
+msgid "n2a"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits:1
+msgid "Integrated Circuit Element"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.DFlipFlop:1
+msgid "D-Type Flip Flop"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.DFlipFlop:3
+#: schemdraw.elements.intcircuits.JKFlipFlop:3
+msgid "Show preset and clear inputs"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.DFlipFlop:4
+#: schemdraw.elements.intcircuits.JKFlipFlop:4
+msgid "Add invert bubble to preset and clear inputs"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.DFlipFlop:6
+#: schemdraw.elements.intcircuits.JKFlipFlop:6
+msgid "Size of the box [default: (2, 3)]"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.DFlipFlop:9
+msgid "D"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.DFlipFlop:10
+#: schemdraw.elements.intcircuits.JKFlipFlop:11
+msgid "CLK"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.DFlipFlop:11
+#: schemdraw.elements.intcircuits.JKFlipFlop:12
+msgid "Q"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.DFlipFlop:12
+#: schemdraw.elements.intcircuits.JKFlipFlop:13
+msgid "Qbar"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.DFlipFlop:13
+#: schemdraw.elements.intcircuits.JKFlipFlop:14
+msgid "PRE"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.DFlipFlop:14
+#: schemdraw.elements.intcircuits.JKFlipFlop:15
+msgid "CLR"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.Ic.pin:1
+msgid "Add a pin to the IC"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.Ic.pin:3
+#: schemdraw.elements.intcircuits.IcPin:3
+msgid "Input/output name (inside the box)"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.Ic.pin:4
+#: schemdraw.elements.intcircuits.IcPin:4
+msgid "Pin name/number (outside the box)"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.Ic.pin:5
+#: schemdraw.elements.intcircuits.IcPin:5
+msgid "Side of box for the pin, 'left', 'right', 'top', 'bottom'"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.Ic.pin:6
+#: schemdraw.elements.intcircuits.IcPin:6
+msgid "Pin position along the side, fraction from 0-1"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.Ic.pin:7
+#: schemdraw.elements.intcircuits.IcPin:7
+msgid ""
+"Slot definition of pin location, given in 'X/Y' format. '2/4' is the "
+"second pin on a side with 4 pins."
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.Ic.pin:9
+#: schemdraw.elements.intcircuits.IcPin:9
+msgid "Add an invert bubble to the pin"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.Ic.pin:10
+#: schemdraw.elements.intcircuits.IcPin:10
+msgid "Radius of invert bubble"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.Ic.pin:11
+#: schemdraw.elements.intcircuits.IcPin:11
+msgid "Color for the pin and label"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.Ic.pin:12
+#: schemdraw.elements.intcircuits.IcPin:12
+msgid "Rotation for label text"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.Ic.pin:13
+#: schemdraw.elements.intcircuits.IcPin:13
+msgid "Named anchor for the pin"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.Ic.pin:14
+msgid "Font size for label"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.Ic.pinnames:1
+msgid "List of all pin names"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.Ic.side:1
+msgid "Set parameters for spacing/layout of one side"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.Ic.side:3
+msgid "Side of box to define"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.Ic.side:4
+msgid "Distance between pins"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.Ic.side:5
+msgid "Distance from box edge to first pin"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.Ic.side:6
+msgid "Length of pin lead extensions"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.Ic.side:7
+msgid "Offset between box and label (inside box)"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.Ic.side:8
+msgid "Font size of label (inside box)"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.Ic.side:9
+msgid "Offset between box and pin label (outside box)"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.Ic.side:10
+msgid "Font size of pin label (outside box)"
+msgstr ""
+
+#: ../../docstring of schemdraw.elements.intcircuits.IcBox.h:1
+msgid "Alias for field number 1"
+msgstr ""
+
+#: ../../docstring of schemdraw.elements.intcircuits.IcBox.w:1
+msgid "Alias for field number 0"
+msgstr ""
+
+#: ../../docstring of schemdraw.elements.intcircuits.IcBox.y1:1
+msgid "Alias for field number 2"
+msgstr ""
+
+#: ../../docstring of schemdraw.elements.intcircuits.IcBox.y2:1
+msgid "Alias for field number 3"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.IcDIP:1
+msgid "Dual-inline Package Integrated Circuit."
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.IcDIP:3
+msgid "List of names for each pin to display inside the box"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.IcDIP:5
+msgid "number of pins [default: 8]"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.IcDIP:6
+msgid "Show the notch at top of box [default: True]"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.IcDIP:7
+msgid "Width of the box [default: 3]"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.IcDIP:8
+msgid "Width and height of each pin [default: 0.6]"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.IcDIP:9
+msgid "Distance between each pin [default: 0.5]"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.IcDIP:10
+msgid "Show pin numbers inside each pin [default: True]"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.IcDIP:11
+msgid "Size for pin name labels [default: 12]"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.IcDIP:12
+msgid "Size for pin number labels [default: 10]"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.IcDIP:15
+msgid "p[x]  - Each pin"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.IcDIP:16
+msgid "p[x]_in  - Inside contact for each pin"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.IcDIP:18
+msgid ""
+"If signal names are provided, they will also be added as anchors along "
+"with _in inside variants."
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.IcPin:1
+msgid "Integrated Circuit Pin"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.IcSide:1
+msgid "Pin layout parameters for one side of an Ic"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.JKFlipFlop:1
+msgid "J-K Flip Flop"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.JKFlipFlop:9
+msgid "J"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.JKFlipFlop:10
+msgid "K"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.Multiplexer:1
+msgid "Draw as demultiplexer"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.Multiplexer:2
+msgid "(Width, Height) of box"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.Multiplexer:3
+msgid "List of IcPin instances defining the inputs/outputs"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.Multiplexer:4
+msgid "Slant angle of top/bottom edges"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.Multiplexer:7
+msgid "Padding between top/bottom and first pin [default: 0.25]"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.Multiplexer:8
+msgid "Padding between left/right and first pin [default: 0.25]"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.Multiplexer:9
+msgid "Offset between edge and label (inside box) [default: 0.15]"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.Multiplexer:10
+msgid "Font size of labels (inside box) [default: 14]"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.Multiplexer:11
+msgid "Offset between edge and pin label (outside box) [default: 0.05]"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.Multiplexer:12
+msgid "Font size of pin labels (outside box) [default: 11]"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.Multiplexer:14
+msgid "If a pin is named '>', it will be drawn as a proper clock signal input."
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.Multiplexer:17
+msgid "inL[X] - Each pin on left side"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.Multiplexer:18
+msgid "inR[X] - Each pin on right side"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.Multiplexer:19
+msgid "inT[X] - Each pin on top side"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.Multiplexer:20
+msgid "inB[X] - Each pin on bottom side"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.Multiplexer:21
+msgid "pin[X] - Each pin with a number"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.Multiplexer:22
+msgid "CLK (if clock pin is defined with '>' name)"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.Multiplexer:24
+msgid ""
+"Pins with names are also defined as anchors (if the name does not "
+"conflict with other attributes)."
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.SevenSegment:1
+msgid "A seven-segment display digit."
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.SevenSegment:3
+msgid "Show decimal point segment [default: False]"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.SevenSegment:4
+msgid "Number to display [default: 8]"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.SevenSegment:5
+msgid "Color of segments [default: red]"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.SevenSegment:6
+msgid "Tilt angle in degrees [default: 10]"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.SevenSegment:7
+msgid "Add a-g labels to each segment [default: True]"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.SevenSegment:8
+msgid "Add common anode pin [default: False]"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.SevenSegment:9
+msgid "Add common cathode pin [default: False]"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.SevenSegment:15
+msgid "d"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.SevenSegment:16
+msgid "e"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.SevenSegment:17
+msgid "f"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.SevenSegment:18
+msgid "g"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.SevenSegment:19
+msgid "dp"
+msgstr ""
+
+#: of schemdraw.elements.compound.Optocoupler:10
+#: schemdraw.elements.intcircuits.SevenSegment:20
+msgid "cathode"
+msgstr ""
+
+#: of schemdraw.elements.compound.Optocoupler:9
+#: schemdraw.elements.intcircuits.SevenSegment:21
+msgid "anode"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.VoltageRegulator:1
+msgid "Voltage regulator"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.VoltageRegulator:3
+msgid "Size of the box [default: (2, 1.5)]"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.VoltageRegulator:6
+msgid "in"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.VoltageRegulator:8
+msgid "gnd"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.sevensegdigit:1
+msgid ""
+"Generate drawing segments for a 7-segment display digit. Use for building"
+" new elements incorporating a 7-segment display."
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.sevensegdigit:4
+msgid "Location of bottom of digit"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.sevensegdigit:5
+msgid "Location of left side of digit"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.sevensegdigit:6
+msgid "Length of one segment"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.sevensegdigit:7
+msgid "Width of one segment"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.sevensegdigit:8
+msgid "Distance between segments in corners"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.sevensegdigit:9
+msgid "Show decimal point segment"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.sevensegdigit:10
+msgid "Number to display"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.sevensegdigit:11
+msgid "Color of segments"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.sevensegdigit:12
+msgid "Tilt angle in degrees"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.sevensegdigit:13
+msgid "Add a-g labels to each segment"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.sevensegdigit:14
+msgid "Add common anode pin"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.sevensegdigit:15
+msgid "Add common cathode pin"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.sevensegdigit:16
+msgid "Total size of the box"
+msgstr ""
+
+#: ../../classes/electrical.rst
+msgid "Returns"
+msgstr ""
+
+#: of schemdraw.elements.intcircuits.sevensegdigit:18
+msgid "List of Segments making the digit"
+msgstr ""
+
+#: ../../classes/electrical.rst:74
+msgid "Other"
+msgstr ""
+
+#: of schemdraw.elements.misc:1
+msgid "Other elements"
+msgstr ""
+
+#: of schemdraw.elements.misc.AudioJack:1
+msgid "Audio Jack with 2 or 3 connectors and optional switches."
+msgstr ""
+
+#: of schemdraw.elements.misc.AudioJack:3
+msgid "Show ring (third conductor) contact"
+msgstr ""
+
+#: of schemdraw.elements.misc.AudioJack:4
+msgid "Show switch on tip contact"
+msgstr ""
+
+#: of schemdraw.elements.misc.AudioJack:5
+msgid "Show switch on ring contact"
+msgstr ""
+
+#: of schemdraw.elements.misc.AudioJack:6
+msgid "Show connector dots"
+msgstr ""
+
+#: of schemdraw.elements.misc.AudioJack:7
+msgid "Radius of connector dots [default: 0.075]"
+msgstr ""
+
+#: of schemdraw.elements.misc.AudioJack:10
+msgid "tip"
+msgstr ""
+
+#: of schemdraw.elements.misc.AudioJack:11
+msgid "sleeve"
+msgstr ""
+
+#: of schemdraw.elements.misc.AudioJack:12
+msgid "ring"
+msgstr ""
+
+#: of schemdraw.elements.misc.AudioJack:13
+msgid "ringswitch"
+msgstr ""
+
+#: of schemdraw.elements.misc.AudioJack:14
+msgid "tipswitch"
+msgstr ""
+
+#: of schemdraw.elements.misc.Mic:1
+msgid "Microphone element with two inputs."
+msgstr ""
+
+#: of schemdraw.elements.misc.Speaker:1
+msgid "Speaker element with two inputs."
+msgstr ""
+
+#: of schemdraw.elements.compound:1
+msgid "Compound elements made from groups of other elements"
+msgstr ""
+
+#: of schemdraw.elements.compound.ElementCompound:1
+msgid "Element onto which other elements can be added like a drawing"
+msgstr ""
+
+#: of schemdraw.elements.compound.ElementCompound.add:1
+msgid "Add an element to the segments list"
+msgstr ""
+
+#: of schemdraw.elements.compound.ElementCompound.move:1
+msgid "Move relative to current position"
+msgstr ""
+
+#: of schemdraw.elements.compound.ElementCompound.move_from:1
+msgid "Move relative to xy position"
+msgstr ""
+
+#: of schemdraw.elements.compound.Optocoupler:1
+msgid "Optocoupler element"
+msgstr ""
+
+#: of schemdraw.elements.compound.Optocoupler:3
+msgid "Draw a box around the optocoupler"
+msgstr ""
+
+#: of schemdraw.elements.compound.Optocoupler:4
+#: schemdraw.elements.compound.Relay:11
+msgid "Color to fill the box"
+msgstr ""
+
+#: of schemdraw.elements.compound.Optocoupler:5
+msgid "Padding between phototransistor and box"
+msgstr ""
+
+#: of schemdraw.elements.compound.Optocoupler:6
+msgid "Add a base contact to the phototransistor"
+msgstr ""
+
+#: of schemdraw.elements.compound.Optocoupler:13
+msgid "base (if base==True)"
+msgstr ""
+
+#: of schemdraw.elements.compound.Rectifier:1
+msgid "Diode Rectifier Bridge"
+msgstr ""
+
+#: of schemdraw.elements.compound.Rectifier:3
+msgid "Fill the didoes"
+msgstr ""
+
+#: of schemdraw.elements.compound.Rectifier:4
+#: schemdraw.elements.compound.Wheatstone:4
+msgid "Labels to draw on each resistor"
+msgstr ""
+
+#: of schemdraw.elements.compound.Relay:1
+msgid "Relay element with an inductor and switch"
+msgstr ""
+
+#: of schemdraw.elements.compound.Relay:3
+msgid "Unit length of the inductor"
+msgstr ""
+
+#: of schemdraw.elements.compound.Relay:4
+msgid "Use cycloid style inductor"
+msgstr ""
+
+#: of schemdraw.elements.compound.Relay:5
+msgid "Switch style 'spst', 'spdt', 'dpst', 'dpdt'"
+msgstr ""
+
+#: of schemdraw.elements.compound.Relay:6
+msgid "Reverse the switch"
+msgstr ""
+
+#: of schemdraw.elements.compound.Relay:7
+msgid "Flip the switch up/down"
+msgstr ""
+
+#: of schemdraw.elements.compound.Relay:8
+msgid "Show inductor core bar"
+msgstr ""
+
+#: of schemdraw.elements.compound.Relay:9
+msgid "Show dotted line linking inductor and switch"
+msgstr ""
+
+#: of schemdraw.elements.compound.Relay:10
+msgid "Draw a box around the relay"
+msgstr ""
+
+#: of schemdraw.elements.compound.Relay:12
+msgid "Spacing between components and box"
+msgstr ""
+
+#: of schemdraw.elements.compound.Wheatstone:1
+msgid "Wheatstone Resistor Bridge"
+msgstr ""
+
+#: of schemdraw.elements.compound.Wheatstone:3
+msgid "draw output terminals inside the bridge"
+msgstr ""
+
+#: of schemdraw.elements.compound.Wheatstone:11
+msgid "vo1 (if vout==True)"
+msgstr ""
+
+#: of schemdraw.elements.compound.Wheatstone:12
+msgid "vo2 (if vout==True)"
+msgstr ""
+
+#: of schemdraw.elements.twoports:1
+msgid "Twoport elements made from groups of other elements"
+msgstr ""
+
+#: of schemdraw.elements.twoports.CurrentTransactor:1
+msgid "Current transactor"
+msgstr ""
+
+#: of schemdraw.elements.twoports.CurrentTransactor:3
+#: schemdraw.elements.twoports.ElementTwoport:5
+#: schemdraw.elements.twoports.Nullor:1
+#: schemdraw.elements.twoports.TransadmittanceTransactor:3
+#: schemdraw.elements.twoports.TransimpedanceTransactor:3
+#: schemdraw.elements.twoports.TwoPort:3 schemdraw.elements.twoports.VMCMPair:3
+#: schemdraw.elements.twoports.VoltageTransactor:3
+msgid "Horizontal padding from edge of either component"
+msgstr ""
+
+#: of schemdraw.elements.twoports.CurrentTransactor:4
+#: schemdraw.elements.twoports.ElementTwoport:6
+#: schemdraw.elements.twoports.Nullor:2
+#: schemdraw.elements.twoports.TransadmittanceTransactor:4
+#: schemdraw.elements.twoports.TransimpedanceTransactor:4
+#: schemdraw.elements.twoports.TwoPort:4 schemdraw.elements.twoports.VMCMPair:4
+#: schemdraw.elements.twoports.VoltageTransactor:4
+msgid "Vertical padding from edge of either component"
+msgstr ""
+
+#: of schemdraw.elements.twoports.CurrentTransactor:5
+#: schemdraw.elements.twoports.ElementTwoport:7
+#: schemdraw.elements.twoports.Nullor:3
+#: schemdraw.elements.twoports.TransadmittanceTransactor:5
+#: schemdraw.elements.twoports.TransimpedanceTransactor:5
+#: schemdraw.elements.twoports.TwoPort:5 schemdraw.elements.twoports.VMCMPair:5
+#: schemdraw.elements.twoports.VoltageTransactor:5
+msgid "Margin around component if smaller than minw"
+msgstr ""
+
+#: of schemdraw.elements.twoports.CurrentTransactor:6
+#: schemdraw.elements.twoports.ElementTwoport:8
+#: schemdraw.elements.twoports.Nullor:4
+#: schemdraw.elements.twoports.TransadmittanceTransactor:6
+#: schemdraw.elements.twoports.TransimpedanceTransactor:6
+#: schemdraw.elements.twoports.TwoPort:6 schemdraw.elements.twoports.VMCMPair:6
+#: schemdraw.elements.twoports.VoltageTransactor:6
+msgid "Draw with terminals extending past box"
+msgstr ""
+
+#: of schemdraw.elements.twoports.CurrentTransactor:7
+#: schemdraw.elements.twoports.Nullor:5
+#: schemdraw.elements.twoports.TransadmittanceTransactor:7
+#: schemdraw.elements.twoports.TransimpedanceTransactor:7
+#: schemdraw.elements.twoports.TwoPort:7 schemdraw.elements.twoports.VMCMPair:7
+#: schemdraw.elements.twoports.VoltageTransactor:7
+msgid "Offset between input and output element"
+msgstr ""
+
+#: of schemdraw.elements.twoports.CurrentTransactor:8
+#: schemdraw.elements.twoports.ElementTwoport:11
+#: schemdraw.elements.twoports.Nullor:6
+#: schemdraw.elements.twoports.TransadmittanceTransactor:8
+#: schemdraw.elements.twoports.TransimpedanceTransactor:8
+#: schemdraw.elements.twoports.TwoPort:8 schemdraw.elements.twoports.VMCMPair:8
+#: schemdraw.elements.twoports.VoltageTransactor:8
+msgid "Draw twoport outline"
+msgstr ""
+
+#: of schemdraw.elements.twoports.CurrentTransactor:9
+#: schemdraw.elements.twoports.ElementTwoport:12
+#: schemdraw.elements.twoports.Nullor:7
+#: schemdraw.elements.twoports.TransadmittanceTransactor:9
+#: schemdraw.elements.twoports.TransimpedanceTransactor:9
+#: schemdraw.elements.twoports.TwoPort:9 schemdraw.elements.twoports.VMCMPair:9
+#: schemdraw.elements.twoports.VoltageTransactor:9
+msgid "Color to fill the twoport if not None"
+msgstr ""
+
+#: of schemdraw.elements.twoports.CurrentTransactor:10
+#: schemdraw.elements.twoports.ElementTwoport:13
+#: schemdraw.elements.twoports.Nullor:8
+#: schemdraw.elements.twoports.TransadmittanceTransactor:10
+#: schemdraw.elements.twoports.TransimpedanceTransactor:10
+#: schemdraw.elements.twoports.TwoPort:10
+#: schemdraw.elements.twoports.VMCMPair:10
+#: schemdraw.elements.twoports.VoltageTransactor:10
+msgid "Line width of twoport outline"
+msgstr ""
+
+#: of schemdraw.elements.twoports.CurrentTransactor:11
+#: schemdraw.elements.twoports.ElementTwoport:14
+#: schemdraw.elements.twoports.Nullor:9
+#: schemdraw.elements.twoports.TransadmittanceTransactor:11
+#: schemdraw.elements.twoports.TransimpedanceTransactor:11
+#: schemdraw.elements.twoports.TwoPort:11
+#: schemdraw.elements.twoports.VMCMPair:11
+#: schemdraw.elements.twoports.VoltageTransactor:11
+msgid "Line style of twoport outline '-', '--', ':', etc."
+msgstr ""
+
+#: of schemdraw.elements.twoports.CurrentTransactor:12
+#: schemdraw.elements.twoports.TransadmittanceTransactor:12
+#: schemdraw.elements.twoports.TransimpedanceTransactor:12
+#: schemdraw.elements.twoports.VoltageTransactor:12
+msgid "Switch direction of output source, defaults to False"
+msgstr ""
+
+#: of schemdraw.elements.twoports.CurrentTransactor:15
+#: schemdraw.elements.twoports.ElementTwoport:17
+#: schemdraw.elements.twoports.Nullor:12
+#: schemdraw.elements.twoports.TransadmittanceTransactor:15
+#: schemdraw.elements.twoports.TransimpedanceTransactor:15
+#: schemdraw.elements.twoports.TwoPort:16
+#: schemdraw.elements.twoports.VMCMPair:14
+#: schemdraw.elements.twoports.VoltageTransactor:15
+msgid "in_p"
+msgstr ""
+
+#: of schemdraw.elements.twoports.CurrentTransactor:16
+#: schemdraw.elements.twoports.ElementTwoport:18
+#: schemdraw.elements.twoports.Nullor:13
+#: schemdraw.elements.twoports.TransadmittanceTransactor:16
+#: schemdraw.elements.twoports.TransimpedanceTransactor:16
+#: schemdraw.elements.twoports.TwoPort:17
+#: schemdraw.elements.twoports.VMCMPair:15
+#: schemdraw.elements.twoports.VoltageTransactor:16
+msgid "in_n"
+msgstr ""
+
+#: of schemdraw.elements.twoports.CurrentTransactor:17
+#: schemdraw.elements.twoports.ElementTwoport:19
+#: schemdraw.elements.twoports.Nullor:14
+#: schemdraw.elements.twoports.TransadmittanceTransactor:17
+#: schemdraw.elements.twoports.TransimpedanceTransactor:17
+#: schemdraw.elements.twoports.TwoPort:18
+#: schemdraw.elements.twoports.VMCMPair:16
+#: schemdraw.elements.twoports.VoltageTransactor:17
+msgid "out_p"
+msgstr ""
+
+#: of schemdraw.elements.twoports.CurrentTransactor:18
+#: schemdraw.elements.twoports.ElementTwoport:20
+#: schemdraw.elements.twoports.Nullor:15
+#: schemdraw.elements.twoports.TransadmittanceTransactor:18
+#: schemdraw.elements.twoports.TransimpedanceTransactor:18
+#: schemdraw.elements.twoports.TwoPort:19
+#: schemdraw.elements.twoports.VMCMPair:17
+#: schemdraw.elements.twoports.VoltageTransactor:18
+msgid "out_n"
+msgstr ""
+
+#: of schemdraw.elements.twoports.ElementTwoport:1
+msgid "Compound twoport element"
+msgstr ""
+
+#: of schemdraw.elements.twoports.ElementTwoport:3
+msgid "The element forming the input branch of the twoport"
+msgstr ""
+
+#: of schemdraw.elements.twoports.ElementTwoport:4
+msgid "The element forming the output branch of the twoport"
+msgstr ""
+
+#: of schemdraw.elements.twoports.ElementTwoport:9
+msgid "Length of input and output element"
+msgstr ""
+
+#: of schemdraw.elements.twoports.ElementTwoport:10
+msgid "Width of the twoport box"
+msgstr ""
+
+#: of schemdraw.elements.twoports.TransadmittanceTransactor:1
+msgid "Transadmittance transactor"
+msgstr ""
+
+#: of schemdraw.elements.twoports.TransimpedanceTransactor:1
+msgid "Transimpedance transactor"
+msgstr ""
+
+#: of schemdraw.elements.twoports.TwoPort:1
+msgid "Generic Twoport"
+msgstr ""
+
+#: of schemdraw.elements.twoports.TwoPort:12
+msgid "Draw input and output terminal labels"
+msgstr ""
+
+#: of schemdraw.elements.twoports.TwoPort:13
+msgid "Draw arrow from input to output"
+msgstr ""
+
+#: of schemdraw.elements.twoports.VMCMPair:1
+msgid "Nullor"
+msgstr ""
+
+#: of schemdraw.elements.twoports.VoltageTransactor:1
+msgid "Voltage transactor"
+msgstr ""
+

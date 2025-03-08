@@ -19,7 +19,7 @@ import pkg_resources
 # -- Project information -----------------------------------------------------
 
 project = 'Schemdraw'
-copyright = '2024, Collin J. Delker'
+copyright = '2025, Collin J. Delker'
 author = 'Collin J. Delker'
 
 # The full version, including alpha/beta/rc tags
@@ -27,6 +27,9 @@ author = 'Collin J. Delker'
 release = pkg_resources.get_distribution(project).version
 
 # -- General configuration ---------------------------------------------------
+
+locale_dirs = ['locale/']
+gettext_compact = False
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom

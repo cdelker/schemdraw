@@ -1,0 +1,203 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Collin J. Delker
+# This file is distributed under the same license as the Schemdraw package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Schemdraw \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-02 17:27-0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh\n"
+"Language-Team: zh <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../elements/timing.rst:2
+msgid "Timing Diagrams"
+msgstr ""
+
+#: ../../elements/timing.rst:12
+msgid ""
+"Digital timing diagrams may be drawn using the "
+":py:class:`schemdraw.logic.timing.TimingDiagram` Element in the "
+":py:mod:`schemdraw.logic` module."
+msgstr ""
+
+#: ../../elements/timing.rst:14
+msgid ""
+"Timing diagrams are set up using the WaveJSON syntax used by the "
+"`WaveDrom <https://wavedrom.com/>`_ JavaScript application."
+msgstr ""
+
+#: ../../elements/timing.rst:29
+msgid ""
+"The input is a dictionary containing a `signal`, which is a list of each "
+"wave to show in the diagram. Each signal is a dictionary which must "
+"contain a `name` and `wave`. An empty dictionary leaves a blank row in "
+"the diagram."
+msgstr ""
+
+#: ../../elements/timing.rst:32
+msgid ""
+"Every character in the `wave` specifies the state of the wave for one "
+"period. A dot `.` means the previous state is repeated. Wave characters "
+"'n' and 'p' specify clock signals, and 'N', and 'P' draw clocks with "
+"arrows. '1' and '0' are used to define high and low signals. '2' draws a "
+"data block, and '3' through '9' draw data filled with a color. 'x' draws "
+"a don't-care or undefined data state."
+msgstr ""
+
+#: ../../elements/timing.rst:36
+msgid ""
+"Data blocks can be labeled by adding a 'data' item to the wave's "
+"dictionary."
+msgstr ""
+
+#: ../../elements/timing.rst:38
+msgid "This example shows the different wave sections:"
+msgstr ""
+
+#: ../../elements/timing.rst:59
+msgid "Putting them together in a more realistic example:"
+msgstr ""
+
+#: ../../elements/timing.rst:70
+msgid ""
+"The `config` key, containing a dictionary with `hscale`, may be used to "
+"change the width of one period in the diagram:"
+msgstr ""
+
+#: ../../elements/timing.rst:83
+msgid "Signals may also be nested into different groups:"
+msgstr ""
+
+#: ../../elements/timing.rst:98
+msgid ""
+"Using the `node` key in a waveform, plus the `edge` key in the top-level "
+"dictionary, provides a way to show transitions between different edges."
+msgstr ""
+
+#: ../../elements/timing.rst:111
+msgid ""
+"Each string in the edge list must start and end with a node name (single "
+"character). The characters between them define the type of connecting "
+"line: '-' for straight line, '~' for curve, '-\\|' for orthogonal lines, "
+"and \\< or \\> to include arrowheads. For example, 'a-~>b' draws a curved"
+" line with arrowhead between nodes a and b."
+msgstr ""
+
+#: ../../elements/timing.rst:116
+msgid "Using JSON"
+msgstr ""
+
+#: ../../elements/timing.rst:118
+msgid ""
+"Because the examples from WaveDrom use JavaScript and JSON, they "
+"sometimes cannot be directly pasted into Python as dictionaries. The "
+":py:meth:`schemdraw.logic.timing.TimingDiagram.from_json` method allows "
+"input of the WaveJSON as a string pasted directly from the "
+"Javascript/JSON examples without modification."
+msgstr ""
+
+#: ../../elements/timing.rst:121
+msgid ""
+"Notice lack of quoting on the dictionary keys, requiring the `from_json` "
+"method to parse the string."
+msgstr ""
+
+#: ../../elements/timing.rst:134
+msgid "Schemdraw's Customizations"
+msgstr ""
+
+#: ../../elements/timing.rst:136
+msgid "Schemdraw extends the WaveJSON spcification with a few additional options."
+msgstr ""
+
+#: ../../elements/timing.rst:139
+msgid "Style Parameters"
+msgstr ""
+
+#: ../../elements/timing.rst:141
+msgid ""
+"Each wave dictionary accpets a `color` and `lw` parameter. The rise/fall "
+"time for transitions can be set using the `risetime` parameter to "
+"TimingDiagram. Other colors and font sizes may be speficied using keyword"
+" arguments to :py:class:`schemdraw.logic.timing.TimingDiagram`."
+msgstr ""
+
+#: ../../elements/timing.rst:145
+msgid "Asynchronous Signals"
+msgstr ""
+
+#: ../../elements/timing.rst:147
+msgid ""
+"WaveDrom does not have a means for defining asynchronous signals - all "
+"waves must transition on period boundaries. Schemdraw adds asyncrhonous "
+"signals using the `async` parameter, as a list of period multiples for "
+"each transition in the wave. Note the beginning and end time of the wave "
+"must also be specified, so the length of the `async` list must be one "
+"more than the length of `wave`."
+msgstr ""
+
+#: ../../elements/timing.rst:160
+msgid "Extended Edge Notation"
+msgstr ""
+
+#: ../../elements/timing.rst:162
+msgid ""
+"Additional \"edge\" string notations are allowed for more complex "
+"labeling of edge timings, including asynchronous start and end times and "
+"labels just above or below a wave."
+msgstr ""
+
+#: ../../elements/timing.rst:164
+msgid "Each edge string using this syntax takes the form"
+msgstr ""
+
+#: ../../elements/timing.rst:170
+msgid ""
+"Everything after the first space will be drawn as the label in the center"
+" of the line. The values in square brackets designate the start and end "
+"position of the line. `WaveNum` is the integer row number (starting at 0)"
+" of the wave, and `Period` is the possibly fractional number of periods "
+"in time for the node. `WaveNum` may be appended by a `^` or `v` to "
+"designate notations just above, or just below, the wave, respectively."
+msgstr ""
+
+#: ../../elements/timing.rst:174
+msgid ""
+"Between the two square-bracket expressions is the standard line/arrow "
+"type designator. In optional curly braces, the line color and linestyle "
+"may be entered."
+msgstr ""
+
+#: ../../elements/timing.rst:176
+msgid "Some examples are shown here:"
+msgstr ""
+
+#: ../../elements/timing.rst:192
+msgid ""
+"When placing edge labels above or below the wave, it can be useful to add"
+" the `ygap` parameter to TimingDiagram to increase the spacing between "
+"waves."
+msgstr ""
+
+#: ../../elements/timing.rst:195
+msgid "See the :ref:`gallerytiming` Gallery for more examples."
+msgstr ""
+
+#: ../../elements/timing.rst:200
+msgid ""
+"`TimingDiagram` is an `Element`, meaning it may be added to a schemdraw "
+"`Drawing` with other schematic components. To save a standalone "
+"`TimingDiagram` to an image file, first add it to a drawing, and save the"
+" drawing:"
+msgstr ""
+

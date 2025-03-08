@@ -1,0 +1,1280 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Collin J. Delker
+# This file is distributed under the same license as the Schemdraw package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Schemdraw \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-02 17:27-0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh\n"
+"Language-Team: zh <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../changes.rst:2
+msgid "Change Log"
+msgstr ""
+
+#: ../../../CHANGES.txt:1
+msgid "v0.20 - IN PROGRESS"
+msgstr ""
+
+#: ../../../CHANGES.txt:3 ../../../CHANGES.txt:20 ../../../CHANGES.txt:39
+#: ../../../CHANGES.txt:70
+msgid "Enhancements:"
+msgstr ""
+
+#: ../../../CHANGES.txt:4
+msgid ""
+"Added `transparent` and `dpi` parameters to `Drawing` constructor, to be "
+"used when saving to a file from the context manager"
+msgstr ""
+
+#: ../../../CHANGES.txt:5
+msgid ""
+"Validate colors and linestyles when set instead of waiting for matplotlib"
+" to draw, or SVG to silently fail"
+msgstr ""
+
+#: ../../../CHANGES.txt:6
+msgid "Implemented `head` and `foot` parameters of wavedrom TimingDiagrams"
+msgstr ""
+
+#: ../../../CHANGES.txt:8 ../../../CHANGES.txt:28
+msgid "Fixes:"
+msgstr ""
+
+#: ../../../CHANGES.txt:9
+msgid "Gate anchor position on Pmos2"
+msgstr ""
+
+#: ../../../CHANGES.txt:10
+msgid ""
+"Updated `Arrow` docstring with correct `arrowwidth` and `arrowlength` "
+"parameters"
+msgstr ""
+
+#: ../../../CHANGES.txt:11
+msgid "Fixed Arc arrowheads post-transformation"
+msgstr ""
+
+#: ../../../CHANGES.txt:12
+msgid "Fixed CurrentLabel arrow offset"
+msgstr ""
+
+#: ../../../CHANGES.txt:13
+msgid "Fix user-supplied label rotation angles when going upside-down"
+msgstr ""
+
+#: ../../../CHANGES.txt:14
+msgid "Clear the figure when calling `draw` to prevent double-drawing"
+msgstr ""
+
+#: ../../../CHANGES.txt:15
+msgid "Fix arrow direction in timing diagrams"
+msgstr ""
+
+#: ../../../CHANGES.txt:18
+msgid "v0.19 - 2024-04-27"
+msgstr ""
+
+#: ../../../CHANGES.txt:21
+msgid "Added `scalex` and `scaley` for asymmetric zooming/scaling of Elements"
+msgstr ""
+
+#: ../../../CHANGES.txt:22
+msgid "Added ElementImage for placing PNG and SVG images as an Element"
+msgstr ""
+
+#: ../../../CHANGES.txt:23
+msgid "Added pictorial elements"
+msgstr ""
+
+#: ../../../CHANGES.txt:24
+msgid "Load Fritzing Part files (breadboard view)"
+msgstr ""
+
+#: ../../../CHANGES.txt:25
+msgid "Added `.pin` and `.side` methods to Ic Element"
+msgstr ""
+
+#: ../../../CHANGES.txt:26
+msgid "Added `mathfont` parameter to drawing config method"
+msgstr ""
+
+#: ../../../CHANGES.txt:29
+msgid "Fixed `tox` and `toy` methods when the Elemnet defines a theta"
+msgstr ""
+
+#: ../../../CHANGES.txt:30
+msgid "Fixed vertical offset of labels below an Element"
+msgstr ""
+
+#: ../../../CHANGES.txt:31
+msgid "Fixed reversing of CurrentLabel."
+msgstr ""
+
+#: ../../../CHANGES.txt:32
+msgid "Update Ic Element to respect `pinspacing` when `size` is also provided"
+msgstr ""
+
+#: ../../../CHANGES.txt:33
+msgid ""
+"SVG backend accepts color tuples (r, g, b) in the range 0-1, mirroring "
+"Matplotlib"
+msgstr ""
+
+#: ../../../CHANGES.txt:34
+msgid "Tighten bounding box around text elements (when using ziamath)"
+msgstr ""
+
+#: ../../../CHANGES.txt:37
+msgid "v0.18 - 2023-12-29"
+msgstr ""
+
+#: ../../../CHANGES.txt:40
+msgid "Automatically increase size of flowchart boxes to fit the text"
+msgstr ""
+
+#: ../../../CHANGES.txt:41
+msgid ""
+"Added Container element to automatically draw a box around a group of "
+"elements"
+msgstr ""
+
+#: ../../../CHANGES.txt:42
+msgid ""
+"Internally track drawing state so that `d.add` or `d +=` is no longer "
+"necessary when adding elements inside a context manager"
+msgstr ""
+
+#: ../../../CHANGES.txt:43
+msgid ""
+"Default element attributes may be set using `Element.defaults` "
+"dictionary. For example, to fill all Diodes, set "
+"`elm.Diode.defaults['fill'] = True`."
+msgstr ""
+
+#: ../../../CHANGES.txt:45 ../../../CHANGES.txt:55 ../../../CHANGES.txt:192
+#: ../../../CHANGES.txt:244 ../../../CHANGES.txt:294
+msgid "New Elements:"
+msgstr ""
+
+#: ../../../CHANGES.txt:46
+msgid "Lamp2"
+msgstr ""
+
+#: ../../../CHANGES.txt:47
+msgid "Terminal"
+msgstr ""
+
+#: ../../../CHANGES.txt:49 ../../../CHANGES.txt:81
+msgid "Other changes:"
+msgstr ""
+
+#: ../../../CHANGES.txt:50
+msgid ""
+"BREAKING: Subclasses of ElementCompound must add Segments inside a "
+"`setup` method instead of in `__init__`. The `inner_element` and "
+"`outer_element` parameters of `TwoPort` now accept classes instead of "
+"instances of those classes."
+msgstr ""
+
+#: ../../../CHANGES.txt:53
+msgid "v0.17 - 2023-06-03"
+msgstr ""
+
+#: ../../../CHANGES.txt:56
+msgid "Tristate inverter (credit: Jan Genoe)"
+msgstr ""
+
+#: ../../../CHANGES.txt:57
+msgid "NMos and PMos elements (credit: dtmaidenmueller)"
+msgstr ""
+
+#: ../../../CHANGES.txt:58
+msgid "AnalogNFet, AnalogPFet, AnalogBiasedFet"
+msgstr ""
+
+#: ../../../CHANGES.txt:59
+msgid "DataBusLine"
+msgstr ""
+
+#: ../../../CHANGES.txt:60
+msgid "CurrentMirror, VoltageMirror"
+msgstr ""
+
+#: ../../../CHANGES.txt:61
+msgid "Nullator, Norator, VMCMPair"
+msgstr ""
+
+#: ../../../CHANGES.txt:62
+msgid "Compound twoport elements (ElementTwoport base class):"
+msgstr ""
+
+#: ../../../CHANGES.txt:63
+msgid "TwoPort"
+msgstr ""
+
+#: ../../../CHANGES.txt:64
+msgid "VoltageTransactor"
+msgstr ""
+
+#: ../../../CHANGES.txt:65
+msgid "TransimpedanceTransactor"
+msgstr ""
+
+#: ../../../CHANGES.txt:66
+msgid "CurrentTransactor"
+msgstr ""
+
+#: ../../../CHANGES.txt:67
+msgid "TransadmittanceTransactor"
+msgstr ""
+
+#: ../../../CHANGES.txt:68
+msgid "Nullor"
+msgstr ""
+
+#: ../../../CHANGES.txt:71
+msgid ""
+"Added arguments for length/width of CurrentLabel arrows (credit: "
+"Christian Seigel)"
+msgstr ""
+
+#: ../../../CHANGES.txt:72
+msgid "Added config option for setting whitespace margins"
+msgstr ""
+
+#: ../../../CHANGES.txt:74
+msgid "Bug fixes:"
+msgstr ""
+
+#: ../../../CHANGES.txt:75
+msgid ""
+"Fixed regression bug in logicparse where labels were not drawn on "
+"inputs/outputs"
+msgstr ""
+
+#: ../../../CHANGES.txt:76
+msgid "Fix timing diagrams when async times are longer than the wave"
+msgstr ""
+
+#: ../../../CHANGES.txt:77
+msgid "Fixed default style hierarchy on segments"
+msgstr ""
+
+#: ../../../CHANGES.txt:78
+msgid ""
+"Fixed CurrentLabel placement with transistor elements, now follows "
+"biasing current"
+msgstr ""
+
+#: ../../../CHANGES.txt:79
+msgid "Fixed CurrentLabel positioning for elements with no center anchor"
+msgstr ""
+
+#: ../../../CHANGES.txt:82
+msgid "Deprecated positional direction parameter to Element class."
+msgstr ""
+
+#: ../../../CHANGES.txt:83
+msgid "Add nonglobal rotation mode attribute to SegmentText"
+msgstr ""
+
+#: ../../../CHANGES.txt:86
+msgid "v0.16 - 25-Mar-2023"
+msgstr ""
+
+#: ../../../CHANGES.txt:88
+msgid ""
+"Added `canvas` parameter to Drawing and draw method, and deprecated "
+"`backend` parameter."
+msgstr ""
+
+#: ../../../CHANGES.txt:89
+msgid "Removed `elements` argument from Drawing. Use Drawing.add_elements."
+msgstr ""
+
+#: ../../../CHANGES.txt:90
+msgid ""
+"Added `Drawing.set_anchor` to define anchor points, useful for "
+"ElementDrawing instances."
+msgstr ""
+
+#: ../../../CHANGES.txt:91
+msgid "Added shunt resistor symbol Rshunt"
+msgstr ""
+
+#: ../../../CHANGES.txt:92
+msgid "Fixed lead length of XOR gates to align with OR gates"
+msgstr ""
+
+#: ../../../CHANGES.txt:93
+msgid "Fixed greater and less than symbols in SVG backend"
+msgstr ""
+
+#: ../../../CHANGES.txt:94
+msgid "Fixed some anchor positions on flowchart symbols"
+msgstr ""
+
+#: ../../../CHANGES.txt:95
+msgid "Allow font parameter to be the path of a TTF file"
+msgstr ""
+
+#: ../../../CHANGES.txt:96
+msgid "Removed old deprecations"
+msgstr ""
+
+#: ../../../CHANGES.txt:97
+msgid "Replaced setup.py with setup.cfg"
+msgstr ""
+
+#: ../../../CHANGES.txt:100
+msgid "v0.15 - 20-Jun-2022"
+msgstr ""
+
+#: ../../../CHANGES.txt:102
+msgid "Added DSP elements Circulator, Isolator, VGA"
+msgstr ""
+
+#: ../../../CHANGES.txt:103
+msgid "Added ZLabel element for right-angle impedance arrow labels"
+msgstr ""
+
+#: ../../../CHANGES.txt:104
+msgid ""
+"Changed DSP anchor names from 'in' to 'input' to avoid conflict with 'in'"
+" keyword"
+msgstr ""
+
+#: ../../../CHANGES.txt:105
+msgid "Fixed styles with nested ElementDrawing elements"
+msgstr ""
+
+#: ../../../CHANGES.txt:106
+msgid "Fixed zorder of filled elements in Matplotlib backend"
+msgstr ""
+
+#: ../../../CHANGES.txt:107
+msgid ""
+"Added mathfont parameter to labels for specifying different font on math "
+"labels"
+msgstr ""
+
+#: ../../../CHANGES.txt:108
+msgid "Added padx and pady parameters to Encircle elements"
+msgstr ""
+
+#: ../../../CHANGES.txt:109
+msgid ""
+"Moved SVG backend configuration to svgconfig object and deprecated "
+"'settextmode'."
+msgstr ""
+
+#: ../../../CHANGES.txt:110
+msgid "Added 'visible' parameter to Segment objects"
+msgstr ""
+
+#: ../../../CHANGES.txt:113
+msgid "v0.14 - 09-Jan-2022"
+msgstr ""
+
+#: ../../../CHANGES.txt:115
+msgid "Added context manager to Drawing class."
+msgstr ""
+
+#: ../../../CHANGES.txt:116
+msgid "Added Wire element for quick 90-degree connections"
+msgstr ""
+
+#: ../../../CHANGES.txt:117
+msgid "Added Encircle, EncircleBox, and Annotate elements"
+msgstr ""
+
+#: ../../../CHANGES.txt:118
+msgid "Added Wheatstone, Rectifier, SparkGap elements"
+msgstr ""
+
+#: ../../../CHANGES.txt:119
+msgid ""
+"Added \"2T\" version of transistor elements for placement as as two-"
+"terminal elements"
+msgstr ""
+
+#: ../../../CHANGES.txt:120
+msgid ""
+"`tox` and `toy` methods automatically change drawing direction, removing "
+"need to specify `right()` and `tox()`, for example."
+msgstr ""
+
+#: ../../../CHANGES.txt:121
+msgid ""
+"Added `istart` and `iend` anchors to 2-Terminal elements for defining "
+"inner start and end points before lead extensions"
+msgstr ""
+
+#: ../../../CHANGES.txt:122
+msgid "Added `dot` and `idot` methods to two-terminal elements"
+msgstr ""
+
+#: ../../../CHANGES.txt:123
+msgid ""
+"Added '-o' and '-\\|' arrow types to draw dot or endcap instead of arrow "
+"at the end of lines"
+msgstr ""
+
+#: ../../../CHANGES.txt:124
+msgid "Added `leads` parameter to OpAmp for adding lead extensions"
+msgstr ""
+
+#: ../../../CHANGES.txt:125
+msgid "Added `lead` parameter to Grounds, Vss, and Vdd"
+msgstr ""
+
+#: ../../../CHANGES.txt:126
+msgid ""
+"Added optional `dx` and `dy` parameters to `to` and `at` methods for "
+"quick fine-tuning of placement"
+msgstr ""
+
+#: ../../../CHANGES.txt:127
+msgid ""
+"Added optional `length` parameter to `up`, `down`, `left`, and `right` on"
+" two-terminal elements"
+msgstr ""
+
+#: ../../../CHANGES.txt:128
+msgid "Improved placement of CurrentLabel arrows"
+msgstr ""
+
+#: ../../../CHANGES.txt:129
+msgid "Fix default label position on Vss element"
+msgstr ""
+
+#: ../../../CHANGES.txt:130
+msgid "Fix positioning of switch contact bubbles"
+msgstr ""
+
+#: ../../../CHANGES.txt:131
+msgid "Fix text rotation in svg backend and path mode"
+msgstr ""
+
+#: ../../../CHANGES.txt:132
+msgid "The `scale` method now maintains the length of two-terminal elements"
+msgstr ""
+
+#: ../../../CHANGES.txt:135
+msgid "v0.13 - 19-Dec-2021"
+msgstr ""
+
+#: ../../../CHANGES.txt:137
+msgid "Added Digital Timing Diagram elements"
+msgstr ""
+
+#: ../../../CHANGES.txt:138
+msgid "Added Table and Kmap elements"
+msgstr ""
+
+#: ../../../CHANGES.txt:139
+msgid ""
+"Added Arc2, Arc3, ArcN, ArcZ, ArcLoop elements, useful for state machine "
+"diagrams"
+msgstr ""
+
+#: ../../../CHANGES.txt:140
+msgid ""
+"Added drop method to Element class to specify where to leave the drawing "
+"position"
+msgstr ""
+
+#: ../../../CHANGES.txt:141
+msgid ""
+"Added move_from method to Drawing class to move relative to another "
+"element anchor"
+msgstr ""
+
+#: ../../../CHANGES.txt:142
+msgid "Added more anchors to all flowchart elements"
+msgstr ""
+
+#: ../../../CHANGES.txt:143
+msgid ""
+"Improved layout of flowchart elements. **May affect layout of some "
+"existing flowchart diagrams.**"
+msgstr ""
+
+#: ../../../CHANGES.txt:144
+msgid "Added SegmentBezier for creating elements with curves"
+msgstr ""
+
+#: ../../../CHANGES.txt:145
+msgid "Deprecated SegmentArrow in favor of Segment with arrow parameter"
+msgstr ""
+
+#: ../../../CHANGES.txt:148
+msgid "v0.12 - 05-Nov-2021"
+msgstr ""
+
+#: ../../../CHANGES.txt:150
+msgid "Fixed Arrow and LineDot element placement when placed with anchor"
+msgstr ""
+
+#: ../../../CHANGES.txt:151
+msgid "Fixed copy/pickle of Element class"
+msgstr ""
+
+#: ../../../CHANGES.txt:152
+msgid "Fixed importing * from schemdraw.elements"
+msgstr ""
+
+#: ../../../CHANGES.txt:155
+msgid "v0.11 - 10-Jul-2021"
+msgstr ""
+
+#: ../../../CHANGES.txt:157
+msgid ""
+"Fixed placing elements by anchor when anchors were defined using a tuple "
+"rather than Point"
+msgstr ""
+
+#: ../../../CHANGES.txt:158
+msgid ""
+"SVG backend adds option for SVG1.x format for better compatibility with "
+"SVG renderers"
+msgstr ""
+
+#: ../../../CHANGES.txt:159
+msgid ""
+"Restore compabitliiby with Python 3.7 via conditional import of "
+"typing_extensions."
+msgstr ""
+
+#: ../../../CHANGES.txt:162
+msgid "v0.10 - 30-Apr-2021"
+msgstr ""
+
+#: ../../../CHANGES.txt:164
+msgid "Added options to place labels inside Mixer elements"
+msgstr ""
+
+#: ../../../CHANGES.txt:165
+msgid "Fixed arrowhead overshoot"
+msgstr ""
+
+#: ../../../CHANGES.txt:166
+msgid "Fixed get_imagedata function"
+msgstr ""
+
+#: ../../../CHANGES.txt:167
+msgid "Update pip install to include optional dependencies"
+msgstr ""
+
+#: ../../../CHANGES.txt:168
+msgid "Added ziamath optional dependency for rendering math in SVG backend"
+msgstr ""
+
+#: ../../../CHANGES.txt:169
+msgid "Added LoopArrow as superclass of LoopCurrent, for placing a loop anywhere"
+msgstr ""
+
+#: ../../../CHANGES.txt:172
+msgid "v0.9.1 - 30-Jan-2021"
+msgstr ""
+
+#: ../../../CHANGES.txt:174
+msgid "Fixed missing module in setup.py."
+msgstr ""
+
+#: ../../../CHANGES.txt:177
+msgid "v0.9 - 30-Jan-2021"
+msgstr ""
+
+#: ../../../CHANGES.txt:179
+msgid "Added optional SVG backend for drawing directly to an SVG image"
+msgstr ""
+
+#: ../../../CHANGES.txt:180
+msgid "Implemented method-chaining \"fluent\" interface for building elements"
+msgstr ""
+
+#: ../../../CHANGES.txt:181
+msgid ""
+"Added `elements.style` method for setting U.S. or European/IEC resistor "
+"style"
+msgstr ""
+
+#: ../../../CHANGES.txt:182
+msgid "Added parameter for drawing schematic on existing matplotlib axis"
+msgstr ""
+
+#: ../../../CHANGES.txt:183
+msgid ""
+"Added string parser for creating logic diagrams from expressions like \"A"
+" or B\""
+msgstr ""
+
+#: ../../../CHANGES.txt:184
+msgid "Fixed zooming of arc segments"
+msgstr ""
+
+#: ../../../CHANGES.txt:185
+msgid "Added type annotations"
+msgstr ""
+
+#: ../../../CHANGES.txt:186
+msgid "Added `Drawing.move` method for moving cursor by dx and dy."
+msgstr ""
+
+#: ../../../CHANGES.txt:187
+msgid ""
+"Drawing class implements += operator, so elements can be added by "
+"`Drawing += Element()`"
+msgstr ""
+
+#: ../../../CHANGES.txt:188
+msgid "Removed dependency on Numpy"
+msgstr ""
+
+#: ../../../CHANGES.txt:189
+msgid ""
+"Added Drawing.interactive` to allow element-by-element drawing with "
+"Matplotlib's plt.ion()."
+msgstr ""
+
+#: ../../../CHANGES.txt:190
+msgid "Now requires Python 3.8+"
+msgstr ""
+
+#: ../../../CHANGES.txt:193
+msgid "CPE (Constant Phase Element)"
+msgstr ""
+
+#: ../../../CHANGES.txt:194
+msgid "Varactor"
+msgstr ""
+
+#: ../../../CHANGES.txt:195
+msgid "FuseIEEE"
+msgstr ""
+
+#: ../../../CHANGES.txt:196
+msgid "FuseIEC"
+msgstr ""
+
+#: ../../../CHANGES.txt:197
+msgid "SwitchRotary"
+msgstr ""
+
+#: ../../../CHANGES.txt:198
+msgid "SwitchReed"
+msgstr ""
+
+#: ../../../CHANGES.txt:199
+msgid "Jack"
+msgstr ""
+
+#: ../../../CHANGES.txt:200
+msgid "Plug"
+msgstr ""
+
+#: ../../../CHANGES.txt:201
+msgid "Ic555"
+msgstr ""
+
+#: ../../../CHANGES.txt:202
+msgid "IcDIP"
+msgstr ""
+
+#: ../../../CHANGES.txt:203
+msgid "SevenSegment"
+msgstr ""
+
+#: ../../../CHANGES.txt:204
+msgid "Outlet Elements"
+msgstr ""
+
+#: ../../../CHANGES.txt:206
+msgid "Deprecations:"
+msgstr ""
+
+#: ../../../CHANGES.txt:207
+msgid "`Element.add_label` is deprecated (use `Element.label`)"
+msgstr ""
+
+#: ../../../CHANGES.txt:208
+msgid "`Drawing.loopI` is deprecated (add a `LoopCurrent` element)"
+msgstr ""
+
+#: ../../../CHANGES.txt:209
+msgid "`Drawing.labelI` is deprecated (add a `CurrentLabel` element)"
+msgstr ""
+
+#: ../../../CHANGES.txt:210
+msgid "`Drawing.labelI_inline` is deprecated (add a `CurrentLabelInline` element)"
+msgstr ""
+
+#: ../../../CHANGES.txt:214
+msgid "v0.8 - 15-Aug-2020"
+msgstr ""
+
+#: ../../../CHANGES.txt:216
+msgid "Changed Header anchors to `pinN` for consistency with Ic."
+msgstr ""
+
+#: ../../../CHANGES.txt:217
+msgid "Improved label placement with respect to anchor positions."
+msgstr ""
+
+#: ../../../CHANGES.txt:218
+msgid "Prevent duplicate figures from showing in Jupyter Element representation"
+msgstr ""
+
+#: ../../../CHANGES.txt:219
+msgid "Improvements for headless server operation to prevent popup window"
+msgstr ""
+
+#: ../../../CHANGES.txt:220
+msgid "Added some undocumented features to documentation"
+msgstr ""
+
+#: ../../../CHANGES.txt:221
+msgid "Added `Drawing.get_imagedata` function for returning raw image bytes"
+msgstr ""
+
+#: ../../../CHANGES.txt:222
+msgid ""
+"Fixed pip installation issue with module capitalization. Must import "
+"lowercase `schemdraw`."
+msgstr ""
+
+#: ../../../CHANGES.txt:225
+msgid "v0.7.1 - 26-Jun-2020"
+msgstr ""
+
+#: ../../../CHANGES.txt:227
+msgid ""
+"Bug fix: restore usage outside of Jupyter, so that Matplotlib window is "
+"shown when calling Drawing.draw()."
+msgstr ""
+
+#: ../../../CHANGES.txt:230
+msgid "v0.7 - 21-Jun-2020"
+msgstr ""
+
+#: ../../../CHANGES.txt:232
+msgid "Dropped support for Python 2. Now requires 3.7+."
+msgstr ""
+
+#: ../../../CHANGES.txt:233
+msgid ""
+"Elements are now subclasses of Element. Previous (dict) element names are"
+" translated into new class names. Any user-defined elements will need to "
+"be converted to classes. The `group_elements` function is replaced with "
+"`ElementDrawing` class."
+msgstr ""
+
+#: ../../../CHANGES.txt:236
+msgid ""
+"Allow `fontsize` or `size` keyword arguments interchangeably in Drawing "
+"and add_label"
+msgstr ""
+
+#: ../../../CHANGES.txt:237
+msgid ""
+"Updated flow.Decision to use keyword arguments for labeling decision "
+"branches"
+msgstr ""
+
+#: ../../../CHANGES.txt:238
+msgid ""
+"The Ic element label offset parameter changed from `lblofst` to `lofst` "
+"to avoid conflict with the main element label."
+msgstr ""
+
+#: ../../../CHANGES.txt:240
+msgid ""
+"Direct access to Drawing.fig and Drawing.ax are no longer available. "
+"Instead, Drawing.draw() returns a schemdraw.Figure instance with fig and "
+"ax attributes."
+msgstr ""
+
+#: ../../../CHANGES.txt:242
+msgid ""
+"Implemented Jupyter representation functions for both Drawing and Element"
+" classes."
+msgstr ""
+
+#: ../../../CHANGES.txt:245
+msgid "Coax"
+msgstr ""
+
+#: ../../../CHANGES.txt:246
+msgid "Triax"
+msgstr ""
+
+#: ../../../CHANGES.txt:247
+msgid "SwitchDpst"
+msgstr ""
+
+#: ../../../CHANGES.txt:248
+msgid "SwitchDpdt"
+msgstr ""
+
+#: ../../../CHANGES.txt:249
+msgid "Relay"
+msgstr ""
+
+#: ../../../CHANGES.txt:250
+msgid "Optocoupler"
+msgstr ""
+
+#: ../../../CHANGES.txt:251
+msgid "Arrow"
+msgstr ""
+
+#: ../../../CHANGES.txt:252
+msgid "LineDot"
+msgstr ""
+
+#: ../../../CHANGES.txt:253
+msgid "Breaker"
+msgstr ""
+
+#: ../../../CHANGES.txt:254
+msgid "OrthoLines"
+msgstr ""
+
+#: ../../../CHANGES.txt:255
+msgid "RightLines"
+msgstr ""
+
+#: ../../../CHANGES.txt:256
+msgid "BusConnect"
+msgstr ""
+
+#: ../../../CHANGES.txt:257
+msgid "BusLine"
+msgstr ""
+
+#: ../../../CHANGES.txt:258
+msgid "Tag"
+msgstr ""
+
+#: ../../../CHANGES.txt:259
+msgid "Photoresistor"
+msgstr ""
+
+#: ../../../CHANGES.txt:260
+msgid "PhotoresistorBox"
+msgstr ""
+
+#: ../../../CHANGES.txt:261
+msgid "Thermistor"
+msgstr ""
+
+#: ../../../CHANGES.txt:262
+msgid "DiodeShockley"
+msgstr ""
+
+#: ../../../CHANGES.txt:263
+msgid "PotBox"
+msgstr ""
+
+#: ../../../CHANGES.txt:264
+msgid "RBoxVar"
+msgstr ""
+
+#: ../../../CHANGES.txt:265
+msgid "Solar"
+msgstr ""
+
+#: ../../../CHANGES.txt:266
+msgid "Neon"
+msgstr ""
+
+#: ../../../CHANGES.txt:267
+msgid "SourceSquare"
+msgstr ""
+
+#: ../../../CHANGES.txt:268
+msgid "AntennaLoop"
+msgstr ""
+
+#: ../../../CHANGES.txt:269
+msgid "AntennaLoop2"
+msgstr ""
+
+#: ../../../CHANGES.txt:270
+msgid "AudioJack"
+msgstr ""
+
+#: ../../../CHANGES.txt:271
+msgid "Tgate"
+msgstr ""
+
+#: ../../../CHANGES.txt:272
+msgid "Schmitt"
+msgstr ""
+
+#: ../../../CHANGES.txt:273
+msgid "SchmittNot"
+msgstr ""
+
+#: ../../../CHANGES.txt:274
+msgid "SchmittAnd"
+msgstr ""
+
+#: ../../../CHANGES.txt:275
+msgid "SchmittNand"
+msgstr ""
+
+#: ../../../CHANGES.txt:278
+msgid "v0.6.0, 11-Feb-2020"
+msgstr ""
+
+#: ../../../CHANGES.txt:280
+msgid ""
+"Refactored internals to allow more control over individual components of "
+"drawing. Should have no effect unless the user is accessing internal "
+"attributes of the Element object. This also adds the `segments` list to "
+"the Element object, which allows finer control over individual bits of "
+"the drawing."
+msgstr ""
+
+#: ../../../CHANGES.txt:284
+msgid ""
+"Updated add_label so that \"top\" labels should always appear on top, "
+"regardless of flip/reverse"
+msgstr ""
+
+#: ../../../CHANGES.txt:285
+msgid ""
+"Swapped the direction of current sources, so that a current source with "
+"direction \"up\" has the arrow pointing up."
+msgstr ""
+
+#: ../../../CHANGES.txt:287
+msgid ""
+"Added \"zorder\" parameter in the element definition dictionary and `add`"
+" method"
+msgstr ""
+
+#: ../../../CHANGES.txt:288
+msgid ""
+"Added `elements.ic` and `elements.multiplexer` functions as replacements "
+"to `blackbox` and `mux`. These include more functionality such as "
+"adjusting indiviudal pin rotation, color, and inverter bubbles."
+msgstr ""
+
+#: ../../../CHANGES.txt:290
+msgid ""
+"Labels can be placed relative to an anchor position using the `add_label`"
+" method. This could be useful, for example, in labeling pin numbers on a "
+"logic gate or opamp."
+msgstr ""
+
+#: ../../../CHANGES.txt:292
+msgid "Added new anchors to OPAMPs for power supply and offset nulls."
+msgstr ""
+
+#: ../../../CHANGES.txt:295
+msgid "MIC"
+msgstr ""
+
+#: ../../../CHANGES.txt:296
+msgid "MOTOR"
+msgstr ""
+
+#: ../../../CHANGES.txt:298
+msgid "Documentation:"
+msgstr ""
+
+#: ../../../CHANGES.txt:299
+msgid ""
+"Upgraded documentation to Sphinx and moved to readthedocs.org at "
+"https://schemdraw.readthedocs.io/en/latest/."
+msgstr ""
+
+#: ../../../CHANGES.txt:300
+msgid ""
+"Changed preferred import to `import SchemDraw.elements as elm`. "
+"Apparently some people still use import * with pylab; this suggestion "
+"will help avoid conflicts."
+msgstr ""
+
+#: ../../../CHANGES.txt:304
+msgid "v0.5.0, 21-Jul-2019"
+msgstr ""
+
+#: ../../../CHANGES.txt:305
+msgid "Added flowcharting symbol methods to SchemDraw.flow module"
+msgstr ""
+
+#: ../../../CHANGES.txt:306
+msgid "Added signal processing symbols to SchemDraw.dsp module"
+msgstr ""
+
+#: ../../../CHANGES.txt:307
+msgid ""
+"Implemented fill parameter on Drawing.add to fill shapes and closed paths"
+" with a solid color"
+msgstr ""
+
+#: ../../../CHANGES.txt:308 ../../../CHANGES.txt:329 ../../../CHANGES.txt:339
+#: ../../../CHANGES.txt:355 ../../../CHANGES.txt:373
+msgid "New elements:"
+msgstr ""
+
+#: ../../../CHANGES.txt:309
+msgid "Fuse"
+msgstr ""
+
+#: ../../../CHANGES.txt:310
+msgid "CapacitorVar,"
+msgstr ""
+
+#: ../../../CHANGES.txt:311
+msgid "DiodeTunnel"
+msgstr ""
+
+#: ../../../CHANGES.txt:312
+msgid "Jfet"
+msgstr ""
+
+#: ../../../CHANGES.txt:313
+msgid "Diac"
+msgstr ""
+
+#: ../../../CHANGES.txt:314
+msgid "Triac"
+msgstr ""
+
+#: ../../../CHANGES.txt:315
+msgid "SCR"
+msgstr ""
+
+#: ../../../CHANGES.txt:318
+msgid "v0.4.0, 03-Nov-2018"
+msgstr ""
+
+#: ../../../CHANGES.txt:319
+msgid "Fixed drawing of NOT and related gates to property extend the path"
+msgstr ""
+
+#: ../../../CHANGES.txt:320
+msgid "Fixed arrow translation when grouping elements"
+msgstr ""
+
+#: ../../../CHANGES.txt:321
+msgid "Fixed sidelabels and plabels of blackbox when empty"
+msgstr ""
+
+#: ../../../CHANGES.txt:322
+msgid ""
+"Fixed arc drawing due to change in Matplotlib 2.2 on asymmetric partial "
+"arcs"
+msgstr ""
+
+#: ../../../CHANGES.txt:325
+msgid "v0.3.0, 03-Jul-2017"
+msgstr ""
+
+#: ../../../CHANGES.txt:326
+msgid "Added function for drawing multiplexers/demultiplexers"
+msgstr ""
+
+#: ../../../CHANGES.txt:327
+msgid "Updates to labelI() method to allow reversing arrow and changing length"
+msgstr ""
+
+#: ../../../CHANGES.txt:328
+msgid "Add CSS to documentation"
+msgstr ""
+
+#: ../../../CHANGES.txt:330
+msgid "PHOTODIODE"
+msgstr ""
+
+#: ../../../CHANGES.txt:331
+msgid "NFET4"
+msgstr ""
+
+#: ../../../CHANGES.txt:332
+msgid "PFET4"
+msgstr ""
+
+#: ../../../CHANGES.txt:333
+msgid "VSS"
+msgstr ""
+
+#: ../../../CHANGES.txt:334
+msgid "VDD"
+msgstr ""
+
+#: ../../../CHANGES.txt:337
+msgid "v0.2.2, 06-Mar-2016"
+msgstr ""
+
+#: ../../../CHANGES.txt:338
+msgid "Documentation updates"
+msgstr ""
+
+#: ../../../CHANGES.txt:340
+msgid "Transformer"
+msgstr ""
+
+#: ../../../CHANGES.txt:341
+msgid "Josephson Junction (JJ)"
+msgstr ""
+
+#: ../../../CHANGES.txt:344
+msgid "v0.2.1, 03-May-2015"
+msgstr ""
+
+#: ../../../CHANGES.txt:345
+msgid "Fixed anchor names when element overwrites base anchor, such as BJT_PNP."
+msgstr ""
+
+#: ../../../CHANGES.txt:346
+msgid "Added showplot keyword to draw() for non-interactive mode."
+msgstr ""
+
+#: ../../../CHANGES.txt:347
+msgid "Added 2-collector BJT."
+msgstr ""
+
+#: ../../../CHANGES.txt:348
+msgid "Documentation: added gallery of schematics."
+msgstr ""
+
+#: ../../../CHANGES.txt:351
+msgid "v0.2.0, 29-Apr-2015"
+msgstr ""
+
+#: ../../../CHANGES.txt:352
+msgid ""
+"Added default line width argument to drawing() class. Default width is "
+"now 1.5."
+msgstr ""
+
+#: ../../../CHANGES.txt:353
+msgid "Converted documentation to use all vector-based images"
+msgstr ""
+
+#: ../../../CHANGES.txt:354
+msgid "Added XKCD-mode example"
+msgstr ""
+
+#: ../../../CHANGES.txt:356
+msgid "BATTERY"
+msgstr ""
+
+#: ../../../CHANGES.txt:357
+msgid "BAT_CELL"
+msgstr ""
+
+#: ../../../CHANGES.txt:358
+msgid "SPEAKER"
+msgstr ""
+
+#: ../../../CHANGES.txt:359
+msgid "BUTTON"
+msgstr ""
+
+#: ../../../CHANGES.txt:360
+msgid "BUTTON_NC"
+msgstr ""
+
+#: ../../../CHANGES.txt:361
+msgid "XTAL"
+msgstr ""
+
+#: ../../../CHANGES.txt:362
+msgid "MEMRISTOR,"
+msgstr ""
+
+#: ../../../CHANGES.txt:363
+msgid "SCHOTTKY"
+msgstr ""
+
+#: ../../../CHANGES.txt:364
+msgid "ZENER"
+msgstr ""
+
+#: ../../../CHANGES.txt:365
+msgid "LED2"
+msgstr ""
+
+#: ../../../CHANGES.txt:368
+msgid "v0.1.4, 30-Sep-2014"
+msgstr ""
+
+#: ../../../CHANGES.txt:369
+msgid "Add function to group several elements into one"
+msgstr ""
+
+#: ../../../CHANGES.txt:370
+msgid "Add blackbox() function to generate box elements with arbitrary inputs"
+msgstr ""
+
+#: ../../../CHANGES.txt:371
+msgid "Allow element definition to specify label alignment"
+msgstr ""
+
+#: ../../../CHANGES.txt:372
+msgid "Added linestyle to element kwargs and definition"
+msgstr ""
+
+#: ../../../CHANGES.txt:374
+msgid "LED"
+msgstr ""
+
+#: ../../../CHANGES.txt:375
+msgid "OPAMP_NOSIGN"
+msgstr ""
+
+#: ../../../CHANGES.txt:376
+msgid "GAP_LABEL"
+msgstr ""
+
+#: ../../../CHANGES.txt:377
+msgid "ELLIPSIS"
+msgstr ""
+
+#: ../../../CHANGES.txt:380
+msgid "v0.1.3, 21-Sep-2014"
+msgstr ""
+
+#: ../../../CHANGES.txt:381
+msgid "Added logic gate elements"
+msgstr ""
+
+#: ../../../CHANGES.txt:382
+msgid "Added transparent and dpi options to save() function"
+msgstr ""
+
+#: ../../../CHANGES.txt:383
+msgid "Fixed issues with zooming and rotating elements with arcs"
+msgstr ""
+
+#: ../../../CHANGES.txt:384
+msgid "LaTeX typesetting uses sans-serif, regular fonts for consistency"
+msgstr ""
+
+#: ../../../CHANGES.txt:387
+msgid "v0.1.0, 25-Aug-2014"
+msgstr ""
+
+#: ../../../CHANGES.txt:388
+msgid "Initial Release"
+msgstr ""
+

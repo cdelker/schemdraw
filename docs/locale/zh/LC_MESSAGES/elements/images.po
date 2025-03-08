@@ -1,0 +1,51 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Collin J. Delker
+# This file is distributed under the same license as the Schemdraw package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Schemdraw \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-02 17:27-0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh\n"
+"Language-Team: zh <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../elements/images.rst:4
+msgid "Image-based Elements"
+msgstr ""
+
+#: ../../elements/images.rst:15
+msgid ""
+"Elements can be made from image files, including PNG and SVG images, "
+"using :py:class:`schemdraw.elements.ElementImage`. A common use case is "
+"to subclass `ElementImage` and provide the image file and anchor "
+"positions in the subclass's init method. For example, an Arduino Board "
+"element may be created from an image:"
+msgstr ""
+
+#: ../../elements/images.rst:40
+msgid "The Arduino element is used like any other element:"
+msgstr ""
+
+#: ../../elements/images.rst:54
+msgid ""
+"`Arduino Image Source "
+"<https://commons.wikimedia.org/wiki/File:ArduinoUNO.png>`_ , CC-BY-"
+"SA-3.0."
+msgstr ""
+
+#: ../../elements/images.rst:57
+msgid ""
+"See :ref:`pictorial` for using Image Elements with other graphical "
+"schematic components."
+msgstr ""
+

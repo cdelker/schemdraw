@@ -1,0 +1,210 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Collin J. Delker
+# This file is distributed under the same license as the Schemdraw package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Schemdraw \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-02 17:27-0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh\n"
+"Language-Team: zh <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../classes/dsp.rst:3
+msgid "Digital Signal Processing"
+msgstr ""
+
+#: of schemdraw.dsp.dsp:1
+msgid "Signal processing elements"
+msgstr ""
+
+#: of schemdraw.dsp.dsp.Adc:1
+msgid "Analog to digital converter"
+msgstr ""
+
+#: of schemdraw.dsp.dsp.Adc:3 schemdraw.dsp.dsp.Amp:3
+#: schemdraw.dsp.dsp.Circle:3 schemdraw.dsp.dsp.Circulator:1
+#: schemdraw.dsp.dsp.Dac:3 schemdraw.dsp.dsp.Demod:3 schemdraw.dsp.dsp.Filter:4
+#: schemdraw.dsp.dsp.Isolator:1 schemdraw.dsp.dsp.Mixer:8
+#: schemdraw.dsp.dsp.Oscillator:3 schemdraw.dsp.dsp.OscillatorBox:3
+#: schemdraw.dsp.dsp.Square:3 schemdraw.dsp.dsp.Sum:3
+#: schemdraw.dsp.dsp.SumSigma:3 schemdraw.dsp.dsp.VGA:5
+msgid "Anchors:"
+msgstr ""
+
+#: of schemdraw.dsp.dsp.Adc:4 schemdraw.dsp.dsp.Amp:4 schemdraw.dsp.dsp.Dac:4
+msgid "in"
+msgstr ""
+
+#: of schemdraw.dsp.dsp.Adc:5 schemdraw.dsp.dsp.Amp:5 schemdraw.dsp.dsp.Dac:5
+#: schemdraw.dsp.dsp.VGA:7
+msgid "out"
+msgstr ""
+
+#: of schemdraw.dsp.dsp.Adc:6 schemdraw.dsp.dsp.Dac:6
+msgid "E (same as in)"
+msgstr ""
+
+#: of schemdraw.dsp.dsp.Adc:7 schemdraw.dsp.dsp.Dac:7
+msgid "W (same as out)"
+msgstr ""
+
+#: of schemdraw.dsp.dsp.Amp:1
+msgid "Amplifier"
+msgstr ""
+
+#: of schemdraw.dsp.dsp.Circle:1
+msgid "Empty circle element"
+msgstr ""
+
+#: of schemdraw.dsp.dsp.Circle:4 schemdraw.dsp.dsp.Circulator:2
+#: schemdraw.dsp.dsp.Demod:4 schemdraw.dsp.dsp.Filter:5
+#: schemdraw.dsp.dsp.Isolator:2 schemdraw.dsp.dsp.Mixer:9
+#: schemdraw.dsp.dsp.Oscillator:4 schemdraw.dsp.dsp.OscillatorBox:4
+#: schemdraw.dsp.dsp.Square:4 schemdraw.dsp.dsp.Sum:4
+#: schemdraw.dsp.dsp.SumSigma:4
+msgid "N"
+msgstr ""
+
+#: of schemdraw.dsp.dsp.Circle:5 schemdraw.dsp.dsp.Circulator:3
+#: schemdraw.dsp.dsp.Demod:5 schemdraw.dsp.dsp.Filter:6
+#: schemdraw.dsp.dsp.Isolator:3 schemdraw.dsp.dsp.Mixer:10
+#: schemdraw.dsp.dsp.Oscillator:5 schemdraw.dsp.dsp.OscillatorBox:5
+#: schemdraw.dsp.dsp.Square:5 schemdraw.dsp.dsp.Sum:5
+#: schemdraw.dsp.dsp.SumSigma:5
+msgid "S"
+msgstr ""
+
+#: of schemdraw.dsp.dsp.Circle:6 schemdraw.dsp.dsp.Circulator:4
+#: schemdraw.dsp.dsp.Demod:6 schemdraw.dsp.dsp.Filter:7
+#: schemdraw.dsp.dsp.Isolator:4 schemdraw.dsp.dsp.Mixer:11
+#: schemdraw.dsp.dsp.Oscillator:6 schemdraw.dsp.dsp.OscillatorBox:6
+#: schemdraw.dsp.dsp.Square:6 schemdraw.dsp.dsp.Sum:6
+#: schemdraw.dsp.dsp.SumSigma:6
+msgid "E"
+msgstr ""
+
+#: of schemdraw.dsp.dsp.Circle:7 schemdraw.dsp.dsp.Circulator:5
+#: schemdraw.dsp.dsp.Demod:7 schemdraw.dsp.dsp.Filter:8
+#: schemdraw.dsp.dsp.Isolator:5 schemdraw.dsp.dsp.Mixer:12
+#: schemdraw.dsp.dsp.Oscillator:7 schemdraw.dsp.dsp.OscillatorBox:7
+#: schemdraw.dsp.dsp.Square:7 schemdraw.dsp.dsp.Sum:7
+#: schemdraw.dsp.dsp.SumSigma:7
+msgid "W"
+msgstr ""
+
+#: of schemdraw.dsp.dsp.Circle:8 schemdraw.dsp.dsp.Mixer:13
+#: schemdraw.dsp.dsp.Oscillator:8 schemdraw.dsp.dsp.Sum:8
+#: schemdraw.dsp.dsp.SumSigma:8
+msgid "NW"
+msgstr ""
+
+#: of schemdraw.dsp.dsp.Circle:9 schemdraw.dsp.dsp.Mixer:14
+#: schemdraw.dsp.dsp.Oscillator:9 schemdraw.dsp.dsp.Sum:9
+#: schemdraw.dsp.dsp.SumSigma:9
+msgid "NE"
+msgstr ""
+
+#: of schemdraw.dsp.dsp.Circle:10 schemdraw.dsp.dsp.Mixer:15
+#: schemdraw.dsp.dsp.Oscillator:10 schemdraw.dsp.dsp.Sum:10
+#: schemdraw.dsp.dsp.SumSigma:10
+msgid "SW"
+msgstr ""
+
+#: of schemdraw.dsp.dsp.Circle:11 schemdraw.dsp.dsp.Mixer:16
+#: schemdraw.dsp.dsp.Oscillator:11 schemdraw.dsp.dsp.Sum:11
+#: schemdraw.dsp.dsp.SumSigma:11
+msgid "SE"
+msgstr ""
+
+#: of schemdraw.dsp.dsp.Dac:1
+msgid "Digital to analog converter"
+msgstr ""
+
+#: of schemdraw.dsp.dsp.Demod:1
+msgid "Demodulator (box with a diode in it)"
+msgstr ""
+
+#: ../../classes/dsp.rst
+msgid "Parameters"
+msgstr ""
+
+#: of schemdraw.dsp.dsp.Filter:1
+msgid ""
+"Filter response ('lp', 'bp', 'hp', or 'notch') for low-pass, band-pass, "
+"high-pass, and notch/band-stop filters"
+msgstr ""
+
+#: of schemdraw.dsp.dsp.Mixer:1
+msgid "text in North sector"
+msgstr ""
+
+#: of schemdraw.dsp.dsp.Mixer:2
+msgid "text in South sector"
+msgstr ""
+
+#: of schemdraw.dsp.dsp.Mixer:3
+msgid "text in East sector"
+msgstr ""
+
+#: of schemdraw.dsp.dsp.Mixer:4
+msgid "text in West sector"
+msgstr ""
+
+#: of schemdraw.dsp.dsp.Mixer:5
+msgid "Font family/name"
+msgstr ""
+
+#: of schemdraw.dsp.dsp.Mixer:6
+msgid "Point size of label font"
+msgstr ""
+
+#: of schemdraw.dsp.dsp.Oscillator:1
+msgid "Oscillator in a circle"
+msgstr ""
+
+#: of schemdraw.dsp.dsp.OscillatorBox:1
+msgid "Oscillator in a square"
+msgstr ""
+
+#: of schemdraw.dsp.dsp.Speaker:1
+msgid "Speaker with only one terminal"
+msgstr ""
+
+#: of schemdraw.dsp.dsp.Square:1
+msgid "Empty square element"
+msgstr ""
+
+#: of schemdraw.dsp.dsp.Sum:1
+msgid "Summation element (+ symbol)"
+msgstr ""
+
+#: of schemdraw.dsp.dsp.SumSigma:1
+msgid "Summation element (Greek Sigma symbol)"
+msgstr ""
+
+#: of schemdraw.dsp.dsp.VGA:1
+msgid "Variable Gain Amplifier (amplifier symbol with an arrow over it)"
+msgstr ""
+
+#: of schemdraw.dsp.dsp.VGA:3
+msgid "Set tune above or below the symbol"
+msgstr ""
+
+#: of schemdraw.dsp.dsp.VGA:6
+msgid "input"
+msgstr ""
+
+#: of schemdraw.dsp.dsp.VGA:8
+msgid "tune"
+msgstr ""
+

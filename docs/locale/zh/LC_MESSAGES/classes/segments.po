@@ -1,0 +1,374 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Collin J. Delker
+# This file is distributed under the same license as the Schemdraw package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Schemdraw \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-02 17:27-0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh\n"
+"Language-Team: zh <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../classes/segments.rst:3
+msgid "Segment Drawing Primitives"
+msgstr ""
+
+#: of schemdraw.segments:1
+msgid "Schemdraw drawing segments."
+msgstr ""
+
+#: of schemdraw.segments:3
+msgid ""
+"Each element is made up of one or more segments that define drawing "
+"primitives."
+msgstr ""
+
+#: of schemdraw.segments.Segment:1
+msgid "A segment path"
+msgstr ""
+
+#: ../../classes/segments.rst
+msgid "Parameters"
+msgstr ""
+
+#: of schemdraw.segments.Segment:3
+msgid "List of (x,y) coordinates making the path"
+msgstr ""
+
+#: of schemdraw.segments.Segment:4 schemdraw.segments.SegmentArc:10
+#: schemdraw.segments.SegmentBezier:4 schemdraw.segments.SegmentCircle:5
+#: schemdraw.segments.SegmentPoly:6 schemdraw.segments.SegmentText:11
+msgid "Color for this segment"
+msgstr ""
+
+#: of schemdraw.segments.Segment:5 schemdraw.segments.SegmentArc:11
+#: schemdraw.segments.SegmentBezier:5 schemdraw.segments.SegmentCircle:6
+#: schemdraw.segments.SegmentPoly:8
+msgid "Line width for the segment"
+msgstr ""
+
+#: of schemdraw.segments.Segment:6 schemdraw.segments.SegmentBezier:6
+msgid "Line style for the segment '-', '--', ':', etc."
+msgstr ""
+
+#: of schemdraw.segments.Segment:7 schemdraw.segments.SegmentBezier:7
+#: schemdraw.segments.SegmentPoly:11
+msgid "Capstyle for the segment: 'butt', 'round', 'square', ('projecting')"
+msgstr ""
+
+#: of schemdraw.segments.Segment:8 schemdraw.segments.SegmentBezier:8
+#: schemdraw.segments.SegmentPoly:12
+msgid "Joinstyle for the segment: 'round', 'miter', or 'bevel'"
+msgstr ""
+
+#: of schemdraw.segments.Segment:9 schemdraw.segments.SegmentBezier:9
+#: schemdraw.segments.SegmentPoly:7
+msgid "Color to fill if path is closed"
+msgstr ""
+
+#: of schemdraw.segments.Segment:10
+msgid "Arrowhead specifier, such as '->', '<-', '<->', '-o', etc."
+msgstr ""
+
+#: of schemdraw.segments.Segment:11 schemdraw.segments.SegmentBezier:11
+msgid "Width of arrowhead"
+msgstr ""
+
+#: of schemdraw.segments.Segment:12 schemdraw.segments.SegmentBezier:12
+msgid "Length of arrowhead"
+msgstr ""
+
+#: of schemdraw.segments.Segment:13 schemdraw.segments.SegmentArc:13
+#: schemdraw.segments.SegmentBezier:13 schemdraw.segments.SegmentCircle:9
+#: schemdraw.segments.SegmentPoly:13 schemdraw.segments.SegmentText:15
+msgid "Bounding box to clip to"
+msgstr ""
+
+#: of schemdraw.segments.Segment:14 schemdraw.segments.SegmentArc:14
+#: schemdraw.segments.SegmentBezier:14 schemdraw.segments.SegmentCircle:10
+#: schemdraw.segments.SegmentPoly:14 schemdraw.segments.SegmentText:16
+msgid "Z-order for segment"
+msgstr ""
+
+#: of schemdraw.segments.Segment:15 schemdraw.segments.SegmentArc:15
+#: schemdraw.segments.SegmentBezier:15 schemdraw.segments.SegmentCircle:12
+#: schemdraw.segments.SegmentPoly:15 schemdraw.segments.SegmentText:17
+msgid "Show the segment when drawn"
+msgstr ""
+
+#: of schemdraw.segments.Segment.doflip:1
+#: schemdraw.segments.SegmentArc.doflip:1
+#: schemdraw.segments.SegmentBezier.doflip:1
+#: schemdraw.segments.SegmentImage.doflip:1
+#: schemdraw.segments.SegmentPath.doflip:1
+#: schemdraw.segments.SegmentPoly.doflip:1
+#: schemdraw.segments.SegmentText.doflip:1
+msgid "Vertically flip the element"
+msgstr ""
+
+#: of schemdraw.segments.Segment.doreverse:1
+#: schemdraw.segments.SegmentPath.doreverse:1
+msgid "Reverse the path (flip horizontal about the center of the path)"
+msgstr ""
+
+#: of schemdraw.segments.Segment.draw:1 schemdraw.segments.SegmentArc.draw:1
+#: schemdraw.segments.SegmentBezier.draw:1
+#: schemdraw.segments.SegmentCircle.draw:1
+#: schemdraw.segments.SegmentPath.draw:1 schemdraw.segments.SegmentPoly.draw:1
+#: schemdraw.segments.SegmentText.draw:1
+msgid "Draw the segment"
+msgstr ""
+
+#: of schemdraw.segments.Segment.draw:3 schemdraw.segments.SegmentArc.draw:3
+#: schemdraw.segments.SegmentBezier.draw:3
+#: schemdraw.segments.SegmentCircle.draw:3
+#: schemdraw.segments.SegmentImage.draw:3 schemdraw.segments.SegmentPath.draw:3
+#: schemdraw.segments.SegmentPoly.draw:3 schemdraw.segments.SegmentText.draw:3
+msgid "schemdraw.Figure to draw on"
+msgstr ""
+
+#: of schemdraw.segments.Segment.draw:4 schemdraw.segments.SegmentArc.draw:4
+#: schemdraw.segments.SegmentBezier.draw:4
+#: schemdraw.segments.SegmentCircle.draw:4
+#: schemdraw.segments.SegmentImage.draw:4 schemdraw.segments.SegmentPath.draw:4
+#: schemdraw.segments.SegmentPoly.draw:4 schemdraw.segments.SegmentText.draw:4
+msgid "Transform to apply before drawing"
+msgstr ""
+
+#: of schemdraw.segments.Segment.draw:5 schemdraw.segments.SegmentArc.draw:5
+#: schemdraw.segments.SegmentBezier.draw:5
+#: schemdraw.segments.SegmentCircle.draw:5
+#: schemdraw.segments.SegmentImage.draw:5 schemdraw.segments.SegmentPath.draw:5
+#: schemdraw.segments.SegmentPoly.draw:5 schemdraw.segments.SegmentText.draw:5
+msgid "Default style parameters"
+msgstr ""
+
+#: of schemdraw.segments.Segment.get_bbox:1
+#: schemdraw.segments.SegmentArc.get_bbox:1
+#: schemdraw.segments.SegmentBezier.get_bbox:1
+#: schemdraw.segments.SegmentCircle.get_bbox:1
+#: schemdraw.segments.SegmentImage.get_bbox:1
+#: schemdraw.segments.SegmentPath.get_bbox:1
+#: schemdraw.segments.SegmentPoly.get_bbox:1
+#: schemdraw.segments.SegmentText.get_bbox:1
+msgid "Get bounding box (untransformed)"
+msgstr ""
+
+#: ../../classes/segments.rst
+msgid "Returns"
+msgstr ""
+
+#: of schemdraw.segments.Segment.get_bbox:3
+#: schemdraw.segments.SegmentPath.get_bbox:3
+msgid "(xmin, ymin, xmax, ymax)"
+msgstr ""
+
+#: ../../classes/segments.rst
+msgid "Return type"
+msgstr ""
+
+#: of schemdraw.segments.Segment.xform:1 schemdraw.segments.SegmentArc.xform:1
+#: schemdraw.segments.SegmentBezier.xform:1
+#: schemdraw.segments.SegmentCircle.xform:1
+#: schemdraw.segments.SegmentImage.xform:1
+#: schemdraw.segments.SegmentPoly.xform:1
+#: schemdraw.segments.SegmentText.xform:1
+msgid "Return a new Segment that has been transformed to its global position"
+msgstr ""
+
+#: of schemdraw.segments.Segment.xform:4 schemdraw.segments.SegmentArc.xform:4
+#: schemdraw.segments.SegmentBezier.xform:4
+#: schemdraw.segments.SegmentCircle.xform:4
+#: schemdraw.segments.SegmentImage.xform:4
+#: schemdraw.segments.SegmentPoly.xform:4
+#: schemdraw.segments.SegmentText.xform:4
+msgid "Transformation to apply"
+msgstr ""
+
+#: of schemdraw.segments.Segment.xform:5 schemdraw.segments.SegmentArc.xform:5
+#: schemdraw.segments.SegmentBezier.xform:5
+#: schemdraw.segments.SegmentCircle.xform:5
+#: schemdraw.segments.SegmentImage.xform:5
+#: schemdraw.segments.SegmentPoly.xform:5
+#: schemdraw.segments.SegmentText.xform:5
+msgid "Style parameters from Element to apply as default"
+msgstr ""
+
+#: of schemdraw.segments.SegmentArc:1
+msgid "An elliptical arc drawing segment"
+msgstr ""
+
+#: of schemdraw.segments.SegmentArc:3
+msgid "Center of the arc ellipse"
+msgstr ""
+
+#: of schemdraw.segments.SegmentArc:4
+msgid "Width of the arc ellipse"
+msgstr ""
+
+#: of schemdraw.segments.SegmentArc:5
+msgid "Height of the arc ellipse"
+msgstr ""
+
+#: of schemdraw.segments.SegmentArc:6
+msgid "Starting angle in degrees"
+msgstr ""
+
+#: of schemdraw.segments.SegmentArc:7
+msgid "Ending angle in degrees"
+msgstr ""
+
+#: of schemdraw.segments.SegmentArc:8
+msgid "Direction of arrowhead ('cw' or 'ccw')"
+msgstr ""
+
+#: of schemdraw.segments.SegmentArc:9
+msgid "Rotation of the ellipse defining the arc"
+msgstr ""
+
+#: of schemdraw.segments.SegmentArc:12 schemdraw.segments.SegmentCircle:7
+#: schemdraw.segments.SegmentPoly:9
+msgid "Line style for the segment"
+msgstr ""
+
+#: of schemdraw.segments.SegmentArc.doreverse:1
+#: schemdraw.segments.SegmentBezier.doreverse:1
+#: schemdraw.segments.SegmentCircle.doreverse:1
+#: schemdraw.segments.SegmentPoly.doreverse:1
+#: schemdraw.segments.SegmentText.doreverse:1
+msgid "Reverse the path (flip horizontal about the centerx point)"
+msgstr ""
+
+#: of schemdraw.segments.SegmentArc.get_bbox:3
+#: schemdraw.segments.SegmentBezier.get_bbox:3
+#: schemdraw.segments.SegmentCircle.get_bbox:3
+#: schemdraw.segments.SegmentImage.get_bbox:3
+#: schemdraw.segments.SegmentPoly.get_bbox:3
+#: schemdraw.segments.SegmentText.get_bbox:3
+msgid "Bounding box limits (xmin, ymin, xmax, ymax)"
+msgstr ""
+
+#: of schemdraw.segments.SegmentBezier:1
+msgid "Quadratic or Cubic Bezier curve segment"
+msgstr ""
+
+#: of schemdraw.segments.SegmentBezier:3
+msgid "control points (3 or 4)"
+msgstr ""
+
+#: of schemdraw.segments.SegmentBezier:10
+msgid "Arrowhead specifier, such as '->', '<-', or '<->'"
+msgstr ""
+
+#: of schemdraw.segments.SegmentCircle:1
+msgid "A circle drawing segment"
+msgstr ""
+
+#: of schemdraw.segments.SegmentCircle:3
+msgid "(x, y) center of the circle"
+msgstr ""
+
+#: of schemdraw.segments.SegmentCircle:4
+msgid "Radius of the circle"
+msgstr ""
+
+#: of schemdraw.segments.SegmentCircle:8
+msgid "Color to fill if path is closed. True -> fill with element color."
+msgstr ""
+
+#: of schemdraw.segments.SegmentCircle:11
+msgid "Flip reference ['start', 'end', None]."
+msgstr ""
+
+#: of schemdraw.segments.SegmentCircle.doflip:1
+msgid "Flip the segment up/down"
+msgstr ""
+
+#: of schemdraw.segments.SegmentImage:1
+msgid "PNG or SVG Image"
+msgstr ""
+
+#: of schemdraw.segments.SegmentImage.doreverse:1
+msgid "Reverse the image"
+msgstr ""
+
+#: of schemdraw.segments.SegmentImage.draw:1
+msgid "Draw the image"
+msgstr ""
+
+#: of schemdraw.segments.SegmentPath:1
+msgid "Segment defined like svg <path> element made of M, L, C, Q, Z, etc...."
+msgstr ""
+
+#: of schemdraw.segments.SegmentPoly:1
+msgid "A polygon segment"
+msgstr ""
+
+#: of schemdraw.segments.SegmentPoly:3
+msgid "List of (x,y) coordinates making the polygon"
+msgstr ""
+
+#: of schemdraw.segments.SegmentPoly:4
+msgid "Draw a closed polygon (default True)"
+msgstr ""
+
+#: of schemdraw.segments.SegmentPoly:5
+msgid "Round the corners to this radius (0 for no rounding)"
+msgstr ""
+
+#: of schemdraw.segments.SegmentPoly:10
+msgid "Show hatch lines"
+msgstr ""
+
+#: of schemdraw.segments.SegmentText:1
+msgid "A text drawing segment"
+msgstr ""
+
+#: of schemdraw.segments.SegmentText:3
+msgid "(x, y) coordinates for text"
+msgstr ""
+
+#: of schemdraw.segments.SegmentText:4
+msgid "Text to draw"
+msgstr ""
+
+#: of schemdraw.segments.SegmentText:5
+msgid ""
+"Tuple of (horizontal, vertical) alignment where horizontal is ('center', "
+"'left', 'right') and vertical is ('center', 'top', 'bottom')"
+msgstr ""
+
+#: of schemdraw.segments.SegmentText:8
+msgid "Rotation angle in degrees"
+msgstr ""
+
+#: of schemdraw.segments.SegmentText:9
+msgid "See Matplotlib documentation. 'anchor' or 'default'."
+msgstr ""
+
+#: of schemdraw.segments.SegmentText:10
+msgid "Lock rotation to world rather than component. Defaults to True"
+msgstr ""
+
+#: of schemdraw.segments.SegmentText:12
+msgid "Font size"
+msgstr ""
+
+#: of schemdraw.segments.SegmentText:13
+msgid "Font name/family"
+msgstr ""
+
+#: of schemdraw.segments.SegmentText:14
+msgid "Math font name/family"
+msgstr ""
+

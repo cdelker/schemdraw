@@ -1,0 +1,176 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Collin J. Delker
+# This file is distributed under the same license as the Schemdraw package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Schemdraw \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-02 17:27-0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh\n"
+"Language-Team: zh <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../elements/flow.rst:2
+msgid "Flowcharts and Diagrams"
+msgstr ""
+
+#: ../../elements/flow.rst:12
+msgid ""
+"Schemdraw provides basic symbols for flowcharting and state diagrams. The"
+" :py:mod:`schemdraw.flow.flow` module contains a set of functions for "
+"defining flowchart blocks and connecting lines that can be added to "
+"schemdraw Drawings."
+msgstr ""
+
+#: ../../elements/flow.rst:20
+msgid "Flowchart blocks:"
+msgstr ""
+
+#: ../../elements/flow.rst:43
+msgid ""
+"Some elements have been defined with multiple names, which can be used "
+"depending on the context or user preference:"
+msgstr ""
+
+#: ../../elements/flow.rst:63
+msgid ""
+"All flowchart symbols have 16 anchor positions named for the compass "
+"directions: 'N', 'S', 'E', 'W', 'NE', 'SE, 'NNE', etc., plus a 'center' "
+"anchor."
+msgstr ""
+
+#: ../../elements/flow.rst:65
+msgid ""
+"The :py:class:`schemdraw.elements.intcircuits.Ic` element can be used "
+"with the flowchart elements to create blocks with other inputs/outputs "
+"per side if needed."
+msgstr ""
+
+#: ../../elements/flow.rst:67
+msgid ""
+"The size of each block must be specified manually using `w` and `h` or "
+"`r` parameters to size each block to fit any labels."
+msgstr ""
+
+#: ../../elements/flow.rst:71
+msgid "Connecting Lines"
+msgstr ""
+
+#: ../../elements/flow.rst:73
+msgid ""
+"Typical flowcharts will use `Line` or `Arrow` elements to connect the "
+"boxes. The line and arrow elements have been included in the `flow` "
+"module for convenience."
+msgstr ""
+
+#: ../../elements/flow.rst:86
+msgid ""
+"Some flow diagrams, such as State Machine diagrams, often use curved "
+"connectors between states. Several Arc connectors are available. Each Arc"
+" element takes an `arrow` parameter, which may be '->', '<-', or '<->', "
+"to define the end(s) on which to draw arrowheads."
+msgstr ""
+
+#: ../../elements/flow.rst:90
+msgid "Arc2"
+msgstr ""
+
+#: ../../elements/flow.rst:92
+msgid ""
+"`Arc2` draws a symmetric quadratic Bezier curve between the endpoints, "
+"with curvature controlled by parameter `k`. Endpoints of the arc should "
+"be specified using `at()` and `to()` methods."
+msgstr ""
+
+#: ../../elements/flow.rst:104
+msgid "ArcZ and ArcN"
+msgstr ""
+
+#: ../../elements/flow.rst:106
+msgid ""
+"These draw symmetric cubic Bezier curves between the endpoints. The "
+"`ArcZ` curve approaches the endpoints horizontally, and `ArcN` approaches"
+" them vertically."
+msgstr ""
+
+#: ../../elements/flow.rst:119
+msgid "Arc3"
+msgstr ""
+
+#: ../../elements/flow.rst:121
+msgid ""
+"The `Arc3` curve is an arbitrary cubic Bezier curve, defined by endpoints"
+" and angle of approach to each endpoint. `ArcZ` and `ArcN` are simply "
+"`Arc3` defined with the angles as 0 and 180, or 90 and 270, respectively."
+msgstr ""
+
+#: ../../elements/flow.rst:133
+msgid "ArcLoop"
+msgstr ""
+
+#: ../../elements/flow.rst:135
+msgid ""
+"The `ArcLoop` curve draws a partial circle that intersects the two "
+"endpoints, with the given radius. Often used in state machine diagrams to"
+" indicate cases where the state does not change."
+msgstr ""
+
+#: ../../elements/flow.rst:145
+msgid "Decisions"
+msgstr ""
+
+#: ../../elements/flow.rst:147
+msgid ""
+"To label the decision branches, the "
+":py:class:`schemdraw.flow.flow.Decision` element takes keyword arguments "
+"for each cardinal direction. For example:"
+msgstr ""
+
+#: ../../elements/flow.rst:172
+msgid "Layout and Flow"
+msgstr ""
+
+#: ../../elements/flow.rst:174
+msgid ""
+"Without any directions specified, boxes flow top to bottom (see left "
+"image). If a direction is specified (right image), the flow will continue"
+" in that direction, starting the next arrow at an appropriate anchor. "
+"Otherwise, the `drop` method is useful for specifing where to begin the "
+"next arrow."
+msgstr ""
+
+#: ../../elements/flow.rst:200
+msgid "Containers"
+msgstr ""
+
+#: ../../elements/flow.rst:202
+msgid ""
+"Use :py:meth:`schemdraw.Drawing.container` as a context manager to add "
+"elements to be enclosed in a box. The elements in the container are added"
+" to the outer drawing too; the `container` just draws the box around them"
+" when it exits the `with`."
+msgstr ""
+
+#: ../../elements/flow.rst:222
+msgid ""
+"Containers may be nested, calling `container()` on either a Drawing, or "
+"another Container."
+msgstr ""
+
+#: ../../elements/flow.rst:226
+msgid "Examples"
+msgstr ""
+
+#: ../../elements/flow.rst:228
+msgid "See the :ref:`galleryflow` Gallery for more examples."
+msgstr ""
+

@@ -1,0 +1,155 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Collin J. Delker
+# This file is distributed under the same license as the Schemdraw package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Schemdraw \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-02 17:27-0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh\n"
+"Language-Team: zh <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../elements/logic.rst:2
+msgid "Digital Logic"
+msgstr ""
+
+#: ../../elements/logic.rst:12
+msgid ""
+"Logic gates can be drawn by importing the :py:mod:`schemdraw.logic.logic`"
+" module:"
+msgstr ""
+
+#: ../../elements/logic.rst:19
+msgid ""
+"Logic gates are shown below. Gates define anchors for `out` and `in1`, "
+"`in2`, etc. `Buf`, `Not`, and `NotNot`, and their Schmitt-trigger "
+"counterparts, are two-terminal elements that extend leads."
+msgstr ""
+
+#: ../../elements/logic.rst:42
+msgid ""
+"Gates with more than 2 inputs can be created using the `inputs` "
+"parameter. With more than 3 inputs, the back of the gate will extend up "
+"and down."
+msgstr ""
+
+#: ../../elements/logic.rst:54
+msgid ""
+"Finally, any input can be pre-inverted (active low) using the `inputnots`"
+" keyword with a list of input numbers, starting at 1 to match the anchor "
+"names, on which to add an invert bubble."
+msgstr ""
+
+#: ../../elements/logic.rst:63
+msgid "Logic Parser"
+msgstr ""
+
+#: ../../elements/logic.rst:65
+msgid ""
+"Logic trees can also be created from a string logic expression such as "
+"\"(a and b) or c\" using using "
+":py:func:`schemdraw.parsing.logic_parser.logicparse`. The logic parser "
+"requires the `pyparsing <https://pyparsing-"
+"docs.readthedocs.io/en/latest/>`_ module."
+msgstr ""
+
+#: ../../elements/logic.rst:68
+msgid "Examples:"
+msgstr ""
+
+#: ../../elements/logic.rst:80
+msgid ""
+"Logicparse understands spelled-out logic functions \"and\", \"or\", "
+"\"nand\", \"nor\", \"xor\", \"xnor\", \"not\", but also common symbols "
+"such as \"+\", \"&\", \"⊕\" representing \"or\", \"and\", and \"xor\"."
+msgstr ""
+
+#: ../../elements/logic.rst:87
+msgid "Use the `gateH` and `gateW` parameters to adjust how gates line up:"
+msgstr ""
+
+#: ../../elements/logic.rst:95
+msgid "Truth Tables"
+msgstr ""
+
+#: ../../elements/logic.rst:97
+msgid ""
+"Simple tables can be drawn using the "
+":py:class:`schemdraw.logic.table.Table` class. This class is included in "
+"the logic module as its primary purpose was for drawing logical truth "
+"tables."
+msgstr ""
+
+#: ../../elements/logic.rst:99
+msgid ""
+"The tables are defined using typical Markdown syntax. The `colfmt` "
+"parameter works like the LaTeX tabular environment parameter for defining"
+" lines to draw between table columns: \"cc|c\" draws three centered "
+"columns, with a vertical line before the last column. Each column must be"
+" specified with a 'c', 'r', or 'l' for center, right, or left "
+"justification Two pipes (`||`), or a double pipe character (`ǁ`) draw a "
+"double bar between columns. Row lines are added to the table string "
+"itself, with either `---` or `===` in the row."
+msgstr ""
+
+#: ../../elements/logic.rst:118
+msgid "Karnaugh Maps"
+msgstr ""
+
+#: ../../elements/logic.rst:120
+msgid ""
+"Karnaugh Maps, or K-Maps, are useful for simplifying a logical truth "
+"table into the smallest number of gates. Schemdraw can draw K-Maps, with "
+"2, 3, or 4 input variables, using the "
+":py:class:`schemdraw.logic.kmap.Kmap` class."
+msgstr ""
+
+#: ../../elements/logic.rst:126
+msgid ""
+"The `names` parameter must be a string with 2, 3, or 4 characters, each "
+"defining the name of one input variable. The `truthtable` parameter "
+"contains a list of tuples defining the logic values to display in the "
+"map. The first `len(names)` elements are 0's and 1's defining the "
+"position of the cell, and the last element is the string to display in "
+"that cell. The `default` parameter is a string to show in each cell of "
+"the K-Map when that cell is undefined in the `truthtable`."
+msgstr ""
+
+#: ../../elements/logic.rst:130
+msgid ""
+"For example, this 2x2 K-Map has a '1' in the 01 position, and 0's "
+"elsewhere:"
+msgstr ""
+
+#: ../../elements/logic.rst:136
+msgid ""
+"K-Maps are typically used by grouping sets of 1's together. These "
+"groupings can be drawn using the `groups` parameter. The keys of the "
+"`groups` dictionary define which cells to group together, and the values "
+"of the dictionary define style parameters for the circle around the "
+"group. Each key must be a string of length `len(names)`, with either a "
+"`0`, `1`, or `.` in each position. As an example, with `names='ABCD'`, a "
+"group key of `\"1...\"` will place a circle around all cells where A=1. "
+"Or `\".00.\"` draws a circle around all cells where B and C are both 0. "
+"Groups will automatically \"wrap\" around the edges. Parameters of the "
+"style dictionary include `color`, `fill`, `lw`, and `ls`."
+msgstr ""
+
+#: ../../elements/logic.rst:159
+msgid ""
+"`Kmap` and `Table` are both Elements, meaning they may be added to a "
+"schemdraw `Drawing` with other schematic components. To save a standalone"
+" `Kmap` or `Table` to an image file, first add it to a drawing, and save "
+"the drawing:"
+msgstr ""
+

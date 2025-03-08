@@ -1,0 +1,49 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Collin J. Delker
+# This file is distributed under the same license as the Schemdraw package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Schemdraw \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-02 17:27-0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh\n"
+"Language-Team: zh <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../elements/dsp.rst:2
+msgid "Signal Processing"
+msgstr ""
+
+#: ../../elements/dsp.rst:12
+msgid ""
+"Signal processing elements can be drawn by importing the "
+":py:mod:`schemdraw.dsp.dsp` module:"
+msgstr ""
+
+#: ../../elements/dsp.rst:18
+msgid ""
+"Because each element may have multiple connections in and out, these "
+"elements are not 2-terminal elements that extend \"leads\", so they must "
+"be manually connected with `Line` or `Arrow` elements. The square "
+"elements define anchors 'N', 'S', 'E', and 'W' for the four directions. "
+"Circle-based elements also includ 'NE', 'NW', 'SE', and 'SW' anchors. "
+"Directional elements, such as `Amp`, `Adc`, and `Dac` define anchors "
+"`input` and `out`."
+msgstr ""
+
+#: ../../elements/dsp.rst:51
+msgid ""
+"Labels are placed in the center of the element. The generic `Square` and "
+"`Circle` elements can be used with a label to define other operations. "
+"For example, an integrator may be created using:"
+msgstr ""
+

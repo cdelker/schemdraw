@@ -1,0 +1,203 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Collin J. Delker
+# This file is distributed under the same license as the Schemdraw package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Schemdraw \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-02 17:27-0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh\n"
+"Language-Team: zh <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../classes/pictorial.rst:3
+msgid "Pictorial Elements"
+msgstr ""
+
+#: of schemdraw.pictorial.pictorial:1
+msgid "Pictorial Style Elements"
+msgstr ""
+
+#: of schemdraw.pictorial.pictorial.Breadboard:1
+msgid "Solderless Breadboard, 400-point (30 rows)"
+msgstr ""
+
+#: of schemdraw.pictorial.pictorial.Breadboard:3
+msgid "Use .color() to set border color, and .fill() to set fill color."
+msgstr ""
+
+#: of schemdraw.pictorial.pictorial.CapacitorCeramic:1
+msgid "Ceramic Disc Capacitor"
+msgstr ""
+
+#: of schemdraw.pictorial.pictorial.CapacitorElectrolytic:1
+msgid "Electrolytic capacitor"
+msgstr ""
+
+#: of schemdraw.pictorial.pictorial.CapacitorElectrolytic:3
+msgid "Note: Use .fill() to change color."
+msgstr ""
+
+#: ../../classes/pictorial.rst
+msgid "Parameters"
+msgstr ""
+
+#: of schemdraw.pictorial.pictorial.CapacitorElectrolytic:5
+msgid "Color of the metal cap on top"
+msgstr ""
+
+#: of schemdraw.pictorial.pictorial.CapacitorElectrolytic:6
+msgid "Color of the polarity stripe"
+msgstr ""
+
+#: of schemdraw.pictorial.pictorial.CapacitorMylar:1
+msgid "Mylar Capacitor"
+msgstr ""
+
+#: of schemdraw.pictorial.pictorial.DIP:1
+msgid "Dual-Inline-Package IC"
+msgstr ""
+
+#: of schemdraw.pictorial.pictorial.DIP:3
+msgid "Total number of pins"
+msgstr ""
+
+#: of schemdraw.pictorial.pictorial.DIP:4
+msgid "Use wide (0.6 inch) package instead of narrow (0.3 inch) package"
+msgstr ""
+
+#: of schemdraw.pictorial.pictorial.Diode:1
+msgid "Diode in DO-204 package"
+msgstr ""
+
+#: of schemdraw.pictorial.pictorial.ElementPictorial:1
+msgid "This class gives pictorial 2-term elements silver lead extensions"
+msgstr ""
+
+#: of schemdraw.pictorial.pictorial.LED:1
+msgid "Light Emitting Diode Use .fill() to set the color."
+msgstr ""
+
+#: of schemdraw.pictorial.pictorial.LED:3
+msgid "Suggested fill colors for common LEDs:"
+msgstr ""
+
+#: of schemdraw.pictorial.pictorial.LED:4
+msgid "red: #dd4433,"
+msgstr ""
+
+#: of schemdraw.pictorial.pictorial.LED:5
+msgid "orange: #efa207"
+msgstr ""
+
+#: of schemdraw.pictorial.pictorial.LED:6
+msgid "yellow: #f1de0f"
+msgstr ""
+
+#: of schemdraw.pictorial.pictorial.LED:7
+msgid "green: #4be317"
+msgstr ""
+
+#: of schemdraw.pictorial.pictorial.LED:8
+msgid "blue: #3892bc"
+msgstr ""
+
+#: of schemdraw.pictorial.pictorial.LED:9
+msgid "white/clear: #e5e5e5"
+msgstr ""
+
+#: of schemdraw.pictorial.pictorial.LEDBlue:1
+msgid "Blue Light Emitting Diode"
+msgstr ""
+
+#: of schemdraw.pictorial.pictorial.LEDGreen:1
+msgid "Green Light Emitting Diode"
+msgstr ""
+
+#: of schemdraw.pictorial.pictorial.LEDOrange:1
+msgid "Orange Light Emitting Diode"
+msgstr ""
+
+#: of schemdraw.pictorial.pictorial.LEDWhite:1
+msgid "White Light Emitting Diode"
+msgstr ""
+
+#: of schemdraw.pictorial.pictorial.LEDYellow:1
+msgid "Yellow Light Emitting Diode"
+msgstr ""
+
+#: of schemdraw.pictorial.pictorial.Resistor:1
+msgid "Carbon-film 1/4 Watt Resistor"
+msgstr ""
+
+#: of schemdraw.pictorial.pictorial.Resistor:3
+msgid "Resistance value, used to set color bands"
+msgstr ""
+
+#: of schemdraw.pictorial.pictorial.Resistor:4
+msgid "Tolerance value for 4th color band"
+msgstr ""
+
+#: of schemdraw.pictorial.pictorial.Resistor:6
+msgid "Note: Color bands will be closest possible value that can be represented"
+msgstr ""
+
+#: of schemdraw.pictorial.pictorial.Resistor:7
+msgid "with 3 bands"
+msgstr ""
+
+#: of schemdraw.pictorial.pictorial.TO92:1
+msgid "TO92 Transistor Package, with pins bent out to 0.1 inch breadboard spacing"
+msgstr ""
+
+#: of schemdraw.pictorial.pictorial.parse_size_to_units:1
+msgid "Parse a SVG size string (sunh as '2in') to drawing units"
+msgstr ""
+
+#: of schemdraw.pictorial.pictorial.resistor_colors:1
+msgid ""
+"Determine Resistor color bands given the value (ohms) and tolerance (in "
+"percent)"
+msgstr ""
+
+#: of schemdraw.pictorial.fritz.FritzingPart:1
+msgid "Load a Fritzing Part File as a Schemdraw Element"
+msgstr ""
+
+#: of schemdraw.pictorial.fritz.FritzingPart:3
+msgid ""
+"Anchors will be extracted from the Part definition file. Note some "
+"anchors are not valid Python identifiers and therefore must be accessed "
+"through the Element.absanchors dictionary rather than an attribute of the"
+" element instance."
+msgstr ""
+
+#: of schemdraw.pictorial.fritz.FritzingPart:8
+msgid "Filename of fritzing .fzpz archive"
+msgstr ""
+
+#: of schemdraw.pictorial.fritz.FritzingPart:9
+msgid ""
+"Name of part within the file. Use `listparts` to show all names. If not "
+"provided, first part is drawn."
+msgstr ""
+
+#: of schemdraw.pictorial.fritz.FritzingPart:11
+msgid ""
+"Index of part within the file. If not provided, first part is drawn. "
+"Overrides `partname`."
+msgstr ""
+
+#: of schemdraw.pictorial.fritz.FritzingPart:13
+msgid "Scale factor"
+msgstr ""
+

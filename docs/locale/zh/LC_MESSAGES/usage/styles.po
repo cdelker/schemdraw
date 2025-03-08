@@ -1,0 +1,253 @@
+# Translations template for PROJECT.
+# Copyright (C) 2025 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2025-03-02 17:27-0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../usage/styles.rst:13
+msgid "Styling"
+msgstr ""
+
+#: ../../usage/styles.rst:15
+msgid ""
+"Style options, such as color, line thickness, and fonts, may be set at "
+"the global level (all Schemdraw Drawings), at the Drawing level, or on "
+"individual Elements."
+msgstr ""
+
+#: ../../usage/styles.rst:18
+msgid "Individual Elements"
+msgstr ""
+
+#: ../../usage/styles.rst:20
+msgid ""
+"Element styling methods include `color`, `fill`, `linewidth`, and "
+"`linestyle`. If a style method is not called when creating an Element, "
+"its value is obtained from from the drawing or global defaults."
+msgstr ""
+
+#: ../../usage/styles.rst:23
+msgid ""
+"Color and fill parameters accept any named `SVG color "
+"<https://upload.wikimedia.org/wikipedia/commons/2/2b/SVG_Recognized_color_keyword_names.svg>`_"
+" or a hex color string such as '#6A5ACD'. Linestyle parameters may be "
+"'-', '--', ':', or '-.'."
+msgstr ""
+
+#: ../../usage/styles.rst:35
+msgid ""
+"The `label` method also accepts color, font, and fontsize parameters, "
+"allowing labels with different style as their elements."
+msgstr ""
+
+#: ../../usage/styles.rst:39
+msgid "Drawing style"
+msgstr ""
+
+#: ../../usage/styles.rst:41
+msgid ""
+"Styles may be applied to an entire drawing using the "
+":py:meth:`schemdraw.Drawing.config` method. These parameters include "
+"color, linewidth, font, fontsize, linestyle, fill, and background color. "
+"Additionally, the `config` method allows specification of the default "
+"2-Terminal element length."
+msgstr ""
+
+#: ../../usage/styles.rst:47
+msgid "Global style"
+msgstr ""
+
+#: ../../usage/styles.rst:49
+msgid ""
+"Styles may be applied to every new drawing created by Schemdraw (during "
+"the Python session) using :py:meth:`schemdraw.config`, using the same "
+"arguments as the Drawing config method."
+msgstr ""
+
+#: ../../usage/styles.rst:69
+msgid "Global Element Configuration"
+msgstr ""
+
+#: ../../usage/styles.rst:71
+msgid ""
+"Each Element has a `defaults` dictionary attribute containing default "
+"parameters for drawing the element."
+msgstr ""
+
+#: ../../usage/styles.rst:73
+msgid "For example, to fill all Diode elements:"
+msgstr ""
+
+#: ../../usage/styles.rst:84
+msgid ""
+"Notice that the defaults apply to Diode and all elements subclassed from "
+"Diode, such as DiodeTunnel. In general, the docstring of each Element "
+"lists arguments with their default values, these arguments may be "
+"specified in the `defaults` dictionary."
+msgstr ""
+
+#: ../../usage/styles.rst:89
+msgid "Styling Hierarchy"
+msgstr ""
+
+#: ../../usage/styles.rst:91
+msgid "Element styles are applied in order of preference:"
+msgstr ""
+
+#: ../../usage/styles.rst:93
+msgid ""
+"Setter methods like `.fill()` or `.color()` called after the Element is "
+"instantiated"
+msgstr ""
+
+#: ../../usage/styles.rst:94
+msgid "Keyword arguments provided to Element instantiation"
+msgstr ""
+
+#: ../../usage/styles.rst:95
+msgid "Defaults set by user in Element.defaults (inheriting from parent classes)"
+msgstr ""
+
+#: ../../usage/styles.rst:96
+msgid "Parameters overridden by the Element definition"
+msgstr ""
+
+#: ../../usage/styles.rst:97
+msgid "Parameters set in Drawing.config"
+msgstr ""
+
+#: ../../usage/styles.rst:98
+msgid "Parameters set by Schemdraw.config"
+msgstr ""
+
+#: ../../usage/styles.rst:102
+msgid "U.S. versus European Style"
+msgstr ""
+
+#: ../../usage/styles.rst:104
+msgid ""
+"The :py:meth:`schemdraw.elements.Element.style` method will to "
+"reconfigure elements in IEEE/U.S. style or IEC/European style. The "
+"`schemdraw.elements.STYLE_IEC` and `schemdraw.elements.STYLE_IEEE` are "
+"dictionaries for use in the `style` method to change configuration of "
+"various elements that use different standard symbols (resistor, variable "
+"resistor, photo resistor, etc.)"
+msgstr ""
+
+#: ../../usage/styles.rst:107
+msgid ""
+"To configure IEC/European style, use the `style` method with the "
+"`elm.STYLE_IEC` dictionary."
+msgstr ""
+
+#: ../../usage/styles.rst:121
+msgid ""
+"To see all the elements that change between IEEE and IEC, see "
+":ref:`styledelements`."
+msgstr ""
+
+#: ../../usage/styles.rst:124
+msgid "Fonts"
+msgstr ""
+
+#: ../../usage/styles.rst:126
+msgid ""
+"The font for label text may be set using the `font` parameter, either in "
+"the :py:meth:`schemdraw.elements.Element.label` method for a single "
+"label, or in :py:meth:`schemdraw.Drawing.config` to set the font for the "
+"entire drawing. The font parameter may be a string containing the name of"
+" a font installed in the system fonts path, a path to a TTF font file, or"
+" the name of a font family such as \"serif\" or \"sans\". These font "
+"options apply whether working in the Matplotlib or SVG backends."
+msgstr ""
+
+#: ../../usage/styles.rst:145
+msgid "Font examples"
+msgstr ""
+
+#: ../../usage/styles.rst:149
+msgid ""
+"For typesetting math expressions, the `mathfont` parameter is used. In "
+"the Matplotlib backend, a limited `selection of math fonts "
+"<https://matplotlib.org/stable/tutorials/text/mathtext.html#fonts>`_ are "
+"available. With the SVG backend in the `path` text mode, the mathfont "
+"parameter may be the path to any TTF file that contains a MATH table "
+"(requires `Ziamath <https://ziamath.readthedocs.io>`_)."
+msgstr ""
+
+#: ../../usage/styles.rst:162
+msgid "Math font examples"
+msgstr ""
+
+#: ../../usage/styles.rst:168
+msgid "Themes"
+msgstr ""
+
+#: ../../usage/styles.rst:170
+msgid ""
+"Schemdraw also supports themeing, to enable dark mode, for example. The "
+"defined themes match those in the `Jupyter Themes "
+"<https://github.com/dunovank/jupyter-themes>`_ package:"
+msgstr ""
+
+#: ../../usage/styles.rst:173
+msgid "default (black on white)"
+msgstr ""
+
+#: ../../usage/styles.rst:174
+msgid "dark (white on black)"
+msgstr ""
+
+#: ../../usage/styles.rst:175
+msgid "solarizedd"
+msgstr ""
+
+#: ../../usage/styles.rst:176
+msgid "solarizedl"
+msgstr ""
+
+#: ../../usage/styles.rst:177
+msgid "onedork"
+msgstr ""
+
+#: ../../usage/styles.rst:178
+msgid "oceans16"
+msgstr ""
+
+#: ../../usage/styles.rst:179
+msgid "monokai"
+msgstr ""
+
+#: ../../usage/styles.rst:180
+msgid "gruvboxl"
+msgstr ""
+
+#: ../../usage/styles.rst:181
+msgid "gruvboxd"
+msgstr ""
+
+#: ../../usage/styles.rst:182
+msgid "grade3"
+msgstr ""
+
+#: ../../usage/styles.rst:183
+msgid "chesterish"
+msgstr ""
+
+#: ../../usage/styles.rst:185
+msgid "They are enabled using :py:meth:`schemdraw.theme`:"
+msgstr ""
+

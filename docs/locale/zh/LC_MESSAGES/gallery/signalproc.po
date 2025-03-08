@@ -1,0 +1,51 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Collin J. Delker
+# This file is distributed under the same license as the Schemdraw package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Schemdraw \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-02 17:27-0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh\n"
+"Language-Team: zh <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../gallery/signalproc.rst:2
+msgid "Signal Processing"
+msgstr ""
+
+#: ../../gallery/signalproc.rst:12
+msgid "Signal processing elements are in the :py:mod:`schemdraw.dsp.dsp` module."
+msgstr ""
+
+#: ../../gallery/signalproc.rst:20
+msgid "Various Networks"
+msgstr ""
+
+#: ../../gallery/signalproc.rst:63
+msgid "Superheterodyne Receiver"
+msgstr ""
+
+#: ../../gallery/signalproc.rst:65
+msgid ""
+"`Source <https://www.electronicdesign.com/adc/high-speed-rf-sampling-adc-"
+"boosts-bandwidth-dynamic-range>`_."
+msgstr ""
+
+#: ../../gallery/signalproc.rst:93
+msgid "Direct Conversion Receiver"
+msgstr ""
+
+#: ../../gallery/signalproc.rst:141
+msgid "Digital Filter"
+msgstr ""
+

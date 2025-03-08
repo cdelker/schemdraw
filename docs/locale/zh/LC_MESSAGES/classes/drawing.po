@@ -1,0 +1,695 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Collin J. Delker
+# This file is distributed under the same license as the Schemdraw package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Schemdraw \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-02 17:27-0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh\n"
+"Language-Team: zh <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../classes/drawing.rst:3
+msgid "Drawing"
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing:1
+msgid "A schematic drawing"
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing:3
+msgid "See `schemdraw.config` method for argument defaults"
+msgstr ""
+
+#: ../../classes/drawing.rst
+msgid "Parameters"
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing:5
+msgid ""
+"Canvas to draw on when using Drawing context manager. Can be string "
+"'matplotlib' or 'svg' to create new canvas with these backends, or an "
+"instance of a matplotlib axis, or an instance of xml.etree.ElementTree "
+"containing SVG. Default is value set by schemdraw.use()."
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing:10
+msgid ""
+"optional filename to save on exiting context manager or calling draw "
+"method."
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing:12
+msgid "Show the drawing after exiting context manager"
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing:13
+msgid "Save to file with a transparent background"
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing:14
+msgid "Dots-per-inch when saving to a raster graphics file"
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing:18
+msgid ""
+"(xy tuple) Current drawing position. The next element will be added at "
+"this position unless specified otherwise."
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing:23
+msgid ""
+"(float) Current drawing angle, in degrees. The next element will be added"
+" with this angle unless specified otherwise."
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing.add:1
+msgid "Add an element to the drawing."
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing.add:3
+msgid "The element to add."
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing.add_elements:1
+msgid "Add multiple elements to the drawing"
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing.config:1
+msgid "Set Drawing configuration, overriding schemdraw global config."
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing.config:3 schemdraw.schemdraw.config:3
+msgid ""
+"Full length of a 2-terminal element. Inner zig-zag portion of a resistor "
+"is 1.0 units."
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing.config:5 schemdraw.schemdraw.config:5
+msgid "Inches per drawing unit for setting drawing scale"
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing.config:6 schemdraw.schemdraw.config:7
+msgid "Default font size for text labels"
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing.config:7 schemdraw.schemdraw.config:8
+msgid "Default font family for text labels"
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing.config:8
+msgid "Default font family or filename math text delimited by $..$"
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing.config:9 schemdraw.schemdraw.config:9
+msgid "Default color name or RGB (0-1) tuple"
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing.config:10 schemdraw.schemdraw.config:10
+msgid "Default line width for elements"
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing.config:11 schemdraw.schemdraw.config:11
+msgid "Default line style"
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing.config:12 schemdraw.schemdraw.config:12
+msgid "Deault fill color for closed elements"
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing.config:13 schemdraw.schemdraw.config:13
+msgid "White space around the drawing in drawing units"
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing.container:1
+msgid ""
+"Add a container to the drawing. Use as a context manager, such that "
+"elemnents inside the `with` are surrounded by the container."
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing.container:9
+msgid "radius for box corners"
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing.container:10
+msgid "space between contents and border in x direction"
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing.container:11
+msgid "space between contents and border in y direction"
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing.draw:1
+msgid "Draw the schematic"
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing.draw:3
+msgid ""
+"Show the schematic in a GUI popup window (when outside of a Jupyter "
+"inline environment)"
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing.draw:5
+msgid "'matplotlib', 'svg', or Axis instance to draw on"
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing.draw:6
+msgid "'matplotlib' or 'svg'"
+msgstr ""
+
+#: ../../classes/drawing.rst
+msgid "Returns"
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing.draw:9
+msgid "schemdraw Figure object"
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing.get_bbox:1
+msgid "Get drawing bounding box"
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing.get_imagedata:1
+msgid "Get image data as bytes array"
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing.get_imagedata:3
+msgid ""
+"Format or file extension of the image type. SVG backend only supports "
+"'svg' format."
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing.get_imagedata:6
+msgid "Image data as bytes"
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing.get_segments:1
+msgid "Get flattened list of all segments in the drawing"
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing.interactive:1
+msgid ""
+"Enable interactive mode (matplotlib backend only). Matplotlib must also "
+"be set to interactive with `plt.ion()`."
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing.move:1
+msgid "Move the current drawing position"
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing.move:3
+msgid "change in x position"
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing.move:4
+msgid "change in y position"
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing.move_from:1
+msgid ""
+"Move drawing position relative to the reference point. Change drawing "
+"theta if provided."
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing.pop:1
+msgid ""
+"Pop/load the drawing state. Location and angle are returned to previously"
+" pushed state."
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing.push:1
+msgid "Push/save the drawing state. Drawing.here and Drawing.theta are saved."
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing.save:1
+msgid "Save figure to a file"
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing.save:3
+msgid ""
+"Filename to save. In Matplotlib backend, the file type is automatically "
+"determined from extension (png, svg, jpg). SVG backend only supports "
+"saving SVG format."
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing.save:6
+msgid "Save as transparent background, if available"
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing.save:7
+msgid "Dots-per-inch for raster formats"
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing.set_anchor:1
+msgid "Define a Drawing anchor at the current drawing position"
+msgstr ""
+
+#: of schemdraw.schemdraw.Drawing.undo:1
+msgid "Removes previously added element"
+msgstr ""
+
+#: ../../classes/drawing.rst:10
+msgid "Element"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element:1
+msgid "Standard circuit element."
+msgstr ""
+
+#: of schemdraw.elements.elements.Element:3
+msgid "Keyword Arguments are equivalent to calling setter methods."
+msgstr ""
+
+#: of schemdraw.elements.elements.Element:6
+msgid "Drawing direction ('up', 'down', 'left', 'right')"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element:10
+msgid "Dictionary of anchor positions in element coordinates"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element:15
+msgid "Dictionary of anchor positions in absolute drawing coordinates"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element:20
+msgid "List of drawing primitives making up the element"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element:24
+msgid "Transformation from element to drawing coordinates"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element:28
+msgid ""
+"Drop position in drawing coordinates, set after the element is added to a"
+" drawing"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element:33
+msgid "Default parameters for the element"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element
+msgid "type"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element:35
+msgid "collections.ChainMap[str, Any]"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element:37
+msgid ""
+"Anchor names are dynmically added as attributes after placing the element"
+" in a Drawing."
+msgstr ""
+
+#: of schemdraw.elements.elements.Element.anchor:1
+msgid ""
+"Specify anchor for placement. The anchor will be aligned with the "
+"position specified by `at()` method."
+msgstr ""
+
+#: of schemdraw.elements.elements.Element.at:1
+msgid "Set the element xy position"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element.at:3
+msgid "(x,y) position or tuple of (Element, anchorname)"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element.color:1
+msgid "Sets the element color"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element.color:3
+msgid "color name or hex value (ie '#FFFFFF')"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element.down:1
+#: schemdraw.elements.elements.Element2Term.down:1
+msgid "Set the direction to down"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element.drop:1
+msgid ""
+"Set the drop position - where to leave the current drawing position after"
+" placing this element"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element.fill:1
+msgid "Sets the element fill color."
+msgstr ""
+
+#: of schemdraw.elements.elements.Element.fill:3
+msgid "Color string name or hex value, or"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element.flip:1
+msgid "Apply flip up/down"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element.get_bbox:1
+msgid "Get element bounding box"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element.get_bbox:3
+msgid ""
+"Apply the element transform to the bbox to get bounds in Drawing "
+"coordinates"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element.get_bbox:5
+msgid ""
+"Consider text when calculating bounding box. Text width and height can "
+"vary by font, so this produces an estimate of bounds."
+msgstr ""
+
+#: of schemdraw.elements.elements.Element.get_bbox:9
+msgid "Corners of the bounding box, (xmin, ymin, xmax, ymax)"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element.hold:1
+msgid "Do not move the Drawing `here` position after placing this element"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element.label:1
+msgid "Add a label to the Element."
+msgstr ""
+
+#: of schemdraw.elements.elements.Element.label:3
+msgid ""
+"The text string or list of strings. If list, each string will be evenly "
+"spaced along the element (e.g. ['-', 'V', '+'])"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element.label:5
+msgid ""
+"Label position within the Element. Either ('top', 'bottom', 'left', "
+"'right'), or the name of an anchor within the Element."
+msgstr ""
+
+#: of schemdraw.elements.elements.Element.label:7
+msgid "Offset from default label position"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element.label:8
+msgid "Horizontal text alignment ('center', 'left', 'right')"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element.label:9
+msgid "Vertical text alignment ('center', 'top', 'bottom')"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element.label:10
+msgid "True to rotate label with element, or specify rotation angle in degrees"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element.label:12
+msgid "Size of label font"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element.label:13
+msgid "Name/font-family of label text"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element.label:14
+msgid "Name/font-family of math text"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element.label:15
+msgid "Color of label"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element.left:1
+#: schemdraw.elements.elements.Element2Term.left:1
+msgid "Set the direction to left"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element.linestyle:1
+msgid "Sets the element line style"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element.linestyle:3
+msgid "Line style ('-', ':', '--', '-.')."
+msgstr ""
+
+#: of schemdraw.elements.elements.Element.linewidth:1
+msgid "Sets the element line width"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element.linewidth:3
+#: schemdraw.elements.elements.Element.style:6
+msgid "Line width"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element.reverse:1
+msgid "Apply reverse left/right"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element.right:1
+#: schemdraw.elements.elements.Element2Term.right:1
+msgid "Set the direction to right"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element.scale:1
+msgid "Apply scale/zoom factor to element"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element.scalex:1
+msgid "Apply horizontal scale/zoom to element"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element.scaley:1
+msgid "Apply vertical scale/zoom to element"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element.style:1
+msgid "Apply all style parameters"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element.style:3
+msgid "Color string or hex value"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element.style:4
+msgid "Color string or hex"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element.style:5
+msgid "Line style ('-', ':', '--', '-.')"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element.theta:1
+msgid "Set the drawing direction angle in degrees"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element.up:1
+#: schemdraw.elements.elements.Element2Term.up:1
+msgid "Set the direction to up"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element.zorder:1
+msgid ""
+"Sets the element zorder. Higher zorders will be drawn above lower zorder "
+"elements."
+msgstr ""
+
+#: ../../classes/drawing.rst:19
+msgid "Element2Term"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element2Term:1
+msgid ""
+"Two terminal element. The element leads can be automatically extended to "
+"the start and ending positions."
+msgstr ""
+
+#: of schemdraw.elements.elements.Element2Term:4
+msgid "Anchors:"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element2Term:5
+msgid "start"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element2Term:6
+msgid "center"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element2Term:7
+msgid "end"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element2Term.dot:1
+msgid "Add a dot to the end of the element"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element2Term.endpoints:1
+msgid "Sets absolute endpoints of element"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element2Term.idot:1
+msgid "Add a dot to the input/start of the element"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element2Term.length:1
+msgid "Sets total length of element"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element2Term.to:1
+msgid "Sets ending position of element"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element2Term.to:3
+msgid "Ending position of element"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element2Term.to:4
+msgid "X-offset from xy position"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element2Term.to:5
+msgid "Y-offset from xy position"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element2Term.tox:1
+msgid "Sets ending x-position of element (for horizontal elements)"
+msgstr ""
+
+#: of schemdraw.elements.elements.Element2Term.toy:1
+msgid "Sets ending y-position of element (for vertical elements)"
+msgstr ""
+
+#: ../../classes/drawing.rst:26
+msgid "ElementDrawing"
+msgstr ""
+
+#: of schemdraw.elements.elements.ElementDrawing:1
+msgid "Create an element from a Drawing"
+msgstr ""
+
+#: of schemdraw.elements.elements.ElementDrawing:3
+msgid "The Drawing instance to convert to an element"
+msgstr ""
+
+#: ../../classes/drawing.rst:32
+msgid "ElementImage"
+msgstr ""
+
+#: of schemdraw.elements.image.ElementImage:1
+msgid "Element from an Image file"
+msgstr ""
+
+#: of schemdraw.elements.image.ElementImage:3
+msgid "Image filename or open file pointer"
+msgstr ""
+
+#: of schemdraw.elements.image.ElementImage:4
+msgid "Width to draw image in Drawing"
+msgstr ""
+
+#: of schemdraw.elements.image.ElementImage:5
+msgid "Height to draw image in Drawing"
+msgstr ""
+
+#: of schemdraw.elements.image.ElementImage:6
+msgid "Origin (lower left corner)"
+msgstr ""
+
+#: ../../classes/drawing.rst:39
+msgid "Element Style"
+msgstr ""
+
+#: ../../classes/drawing.rst:43
+msgid "Set global element style"
+msgstr ""
+
+#: ../../classes/drawing.rst:45
+#, python-brace-format
+msgid ""
+"dictionary of {elementname: Element} to change the element module "
+"namespace. Use `elements.STYLE_US` or `elements.STYLE_IEC` to define U.S."
+" or European/IEC element styles."
+msgstr ""
+
+#: of schemdraw.schemdraw.config:1
+msgid "Set global schemdraw style configuration"
+msgstr ""
+
+#: of schemdraw.schemdraw.config:6
+msgid "Default offset between element and its label"
+msgstr ""
+
+#: of schemdraw.schemdraw.config:14
+msgid "Font for math delimited by $..$"
+msgstr ""
+
+#: of schemdraw.schemdraw.theme:1
+msgid ""
+"Set schemdraw theme (line color and background color). Themes match those"
+" in jupyter-themes package (https://github.com/dunovank/jupyter-themes)."
+msgstr ""
+
+#: of schemdraw.schemdraw.theme:5
+msgid "Available themes:"
+msgstr ""
+
+#: of schemdraw.schemdraw.theme:6
+msgid "default (black on white)"
+msgstr ""
+
+#: of schemdraw.schemdraw.theme:7
+msgid "dark (white on black)"
+msgstr ""
+
+#: of schemdraw.schemdraw.theme:8
+msgid "solarizedd"
+msgstr ""
+
+#: of schemdraw.schemdraw.theme:9
+msgid "solarizedl"
+msgstr ""
+
+#: of schemdraw.schemdraw.theme:10
+msgid "onedork"
+msgstr ""
+
+#: of schemdraw.schemdraw.theme:11
+msgid "oceans16"
+msgstr ""
+
+#: of schemdraw.schemdraw.theme:12
+msgid "monokai"
+msgstr ""
+
+#: of schemdraw.schemdraw.theme:13
+msgid "gruvboxl"
+msgstr ""
+
+#: of schemdraw.schemdraw.theme:14
+msgid "gruvboxd"
+msgstr ""
+
+#: of schemdraw.schemdraw.theme:15
+msgid "grade3"
+msgstr ""
+
+#: of schemdraw.schemdraw.theme:16
+msgid "chesterish"
+msgstr ""
+
+#: of schemdraw.schemdraw.use:1
+msgid "Change default backend, either 'matplotlib' or 'svg'"
+msgstr ""
+

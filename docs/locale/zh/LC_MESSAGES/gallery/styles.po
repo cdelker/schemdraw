@@ -1,0 +1,49 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Collin J. Delker
+# This file is distributed under the same license as the Schemdraw package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Schemdraw \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-02 17:27-0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh\n"
+"Language-Team: zh <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../gallery/styles.rst:2
+msgid "Styles"
+msgstr ""
+
+#: ../../gallery/styles.rst:11
+msgid ""
+"Circuit elements can be styled using Matplotlib colors, line-styles, and "
+"line widths."
+msgstr ""
+
+#: ../../gallery/styles.rst:14
+msgid "Resistor circle"
+msgstr ""
+
+#: ../../gallery/styles.rst:16
+msgid "Uses named colors in a loop."
+msgstr ""
+
+#: ../../gallery/styles.rst:27
+msgid "Hand-drawn"
+msgstr ""
+
+#: ../../gallery/styles.rst:29
+msgid ""
+"And for a change of pace, activate Matplotlib's XKCD mode for \"hand-"
+"drawn\" look!"
+msgstr ""
+

@@ -1,0 +1,509 @@
+# Translations template for PROJECT.
+# Copyright (C) 2025 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2025-03-02 17:27-0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../usage/placement.rst:12
+msgid "Placing Elements"
+msgstr ""
+
+#: ../../usage/placement.rst:14
+msgid ""
+"Elements instantiated insde a `with` block are automatically added to the"
+" Drawing. The Drawing maintains a current position and direction, such "
+"that the default placement of the next element will start at the end of "
+"the previous element, going in the same direction."
+msgstr ""
+
+#: ../../usage/placement.rst:25
+msgid ""
+"If a direction method (`up`, `down`, `left`, `right`) is added to an "
+"element, the element is rotated in that direction, and future elements "
+"take the same direction:"
+msgstr ""
+
+#: ../../usage/placement.rst:34
+msgid "The `theta` method can be used to specify any rotation angle in degrees."
+msgstr ""
+
+#: ../../usage/placement.rst:44
+msgid "Anchors"
+msgstr ""
+
+#: ../../usage/placement.rst:46
+msgid ""
+"All elements have a set of predefined anchor positions within the "
+"element. For example, a bipolar transistor has `base`, `emitter`, and "
+"`collector` anchors. All two-terminal elements have anchors named "
+"`start`, `center`, and `end`. The docstring for each element lists the "
+"available anchors. Once an element is added to the drawing, all its "
+"anchor positions will be added as attributes to the element object, so "
+"the base position of transistor assigned to variable `Q` may be accessed "
+"via `Q.base`."
+msgstr ""
+
+#: ../../usage/placement.rst:53
+msgid "Drop Method"
+msgstr ""
+
+#: ../../usage/placement.rst:55
+msgid ""
+"Three-terminal elements do not necessarily leave the drawing position "
+"where desired, so after drawing an element, the current drawing position "
+"can be set using the :py:meth:`schemdraw.elements.Element.drop` method to"
+" specify the anchor at which to place the cursor."
+msgstr ""
+
+#: ../../usage/placement.rst:70
+msgid "At Method"
+msgstr ""
+
+#: ../../usage/placement.rst:72
+msgid ""
+"Alternatively, one element can be placed starting on the anchor of "
+"another element using the `at` method. For example, to draw an opamp and "
+"place a resistor on the output, store the Opamp instance to a variable. "
+"Then call the `at` method of the new element passing the `Opamp.out` "
+"anchor. After the resistor is drawn, the current drawing position is "
+"moved to the endpoint of the resistor."
+msgstr ""
+
+#: ../../usage/placement.rst:82
+msgid "Alignment"
+msgstr ""
+
+#: ../../usage/placement.rst:84
+msgid ""
+"The second purpose for anchors is aligning new elements with respect to "
+"existing elements."
+msgstr ""
+
+#: ../../usage/placement.rst:86
+msgid ""
+"Suppose a resistor has just been placed, and now an Opamp should be "
+"connected to the resistor. The `anchor` method tells the Drawing which "
+"input on the Opamp should align with resistor. Here, an Opamp is placed "
+"at the end of a resistor, connected to the opamp's `in1` anchor (the "
+"inverting input)."
+msgstr ""
+
+#: ../../usage/placement.rst:96
+msgid "Compared to anchoring the opamp at `in2` (the noninverting input):"
+msgstr ""
+
+#: ../../usage/placement.rst:105
+msgid "Hold method"
+msgstr ""
+
+#: ../../usage/placement.rst:107
+msgid ""
+"To place an element without moving the drawing position, use the "
+":py:meth:`schemdraw.elements.Element.hold` method. The element will be "
+"placed without changing the drawing state."
+msgstr ""
+
+#: ../../usage/placement.rst:122
+msgid "Dimensions"
+msgstr ""
+
+#: ../../usage/placement.rst:124
+msgid ""
+"The inner zig-zag portion of a resistor has length of 1 unit, while the "
+"default lead extensions are 1 unit on each side, making the default total"
+" resistor length 3 units. Placement methods such as `at` and `to` accept "
+"a tuple of (x, y) position in these units."
+msgstr ""
+
+#: ../../usage/placement.rst:137
+msgid ""
+"This default 2-terminal length can be changed using the `unit` parameter "
+"to the :py:meth:`schemdraw.Drawing.config` method:"
+msgstr ""
+
+#: ../../usage/placement.rst:156
+msgid "Two-Terminal Elements"
+msgstr ""
+
+#: ../../usage/placement.rst:158
+msgid ""
+"In Schemdraw, a \"Two-Terminal Element\" is any element that can grow to "
+"fill a given length (this includes elements such as the Potentiometer, "
+"even though it electrically has three terminals). All two-terminal "
+"elements subclass :py:class:`schemdraw.elements.Element2Term`. They have "
+"some additional methods for setting placement and length."
+msgstr ""
+
+#: ../../usage/placement.rst:162
+msgid ""
+"The `length` method sets an exact length for a two-terminal element. "
+"Alternatively, the `up`, `down`, `left`, and `right` methods on two-"
+"terminal elements take a length parameter."
+msgstr ""
+
+#: ../../usage/placement.rst:174
+msgid ""
+"The `to` method will set an exact endpoint for a 2-terminal element. The "
+"starting point is still the ending location of the previous element. "
+"Notice the Diode is stretched longer than the standard element length in "
+"order to fill the diagonal distance."
+msgstr ""
+
+#: ../../usage/placement.rst:186
+msgid ""
+"The `tox` and `toy` methods are useful for placing 2-terminal elements to"
+" \"close the loop\", without requiring an exact length. They extend the "
+"element horizontally or vertically to the x- or y- coordinate of the "
+"anchor given as the argument. These methods automatically change the "
+"drawing direction. Here, the Line element does not need to specify an "
+"exact length to fill the space and connect back with the Source."
+msgstr ""
+
+#: ../../usage/placement.rst:210
+msgid ""
+"Finally, exact endpoints can also be specified using the `endpoints` "
+"method."
+msgstr ""
+
+#: ../../usage/placement.rst:224
+msgid "Orientation"
+msgstr ""
+
+#: ../../usage/placement.rst:226
+msgid ""
+"The `flip` and `reverse` methods are useful for changing orientation of "
+"directional elements such as Diodes, but they do not affect the drawing "
+"direction."
+msgstr ""
+
+#: ../../usage/placement.rst:239
+msgid "Drawing State"
+msgstr ""
+
+#: ../../usage/placement.rst:241
+msgid ""
+"The :py:class:`schemdraw.Drawing` maintains a drawing state that includes"
+" the current x, y position, stored in the `Drawing.here` attribute as a "
+"(x, y) tuple, and drawing direction stored in the `Drawing.theta` "
+"attribute. A LIFO stack of drawing states can be used, via the "
+":py:meth:`schemdraw.Drawing.push` and :py:meth:`schemdraw.Drawing.pop` "
+"method, for situations when it's useful to save the drawing state and "
+"come back to it later."
+msgstr ""
+
+#: ../../usage/placement.rst:262
+msgid ""
+"Changing the drawing position can be accomplished by calling "
+":py:meth:`schemdraw.Drawing.move` or "
+":py:meth:`schemdraw.Drawing.move_from`."
+msgstr ""
+
+#: ../../usage/placement.rst:266
+msgid "Connecting Elements"
+msgstr ""
+
+#: ../../usage/placement.rst:268
+msgid ""
+"Typically, the :py:class:`schemdraw.elements.lines.Line` element is used "
+"to connect elements together. More complex line routing requires multiple"
+" Line elements. The :py:class:`schemdraw.elements.lines.Wire` element is "
+"used as a shortcut for placing multiple connecting lines at once. The "
+"Wire element connects the start and end points based on its `shape` "
+"parameter. The `k` parameter is used to set the distance before the wire "
+"first changes direction."
+msgstr ""
+
+#: ../../usage/placement.rst:274
+msgid "Wire Shape Parameters"
+msgstr ""
+
+#: ../../usage/placement.rst:278
+msgid "Shape Parameter"
+msgstr ""
+
+#: ../../usage/placement.rst:279
+msgid "Description"
+msgstr ""
+
+#: ../../usage/placement.rst:280
+msgid "`-`"
+msgstr ""
+
+#: ../../usage/placement.rst:281
+msgid "Direct Line"
+msgstr ""
+
+#: ../../usage/placement.rst:282
+msgid "`-\\|`"
+msgstr ""
+
+#: ../../usage/placement.rst:283
+msgid "Horizontal then vertical"
+msgstr ""
+
+#: ../../usage/placement.rst:284
+msgid "`\\|-`"
+msgstr ""
+
+#: ../../usage/placement.rst:285
+msgid "Vertical then horizontal"
+msgstr ""
+
+#: ../../usage/placement.rst:286
+msgid "`n`"
+msgstr ""
+
+#: ../../usage/placement.rst:287
+msgid "Vertical-horizontal-vertical (like an n or u)"
+msgstr ""
+
+#: ../../usage/placement.rst:288
+msgid "`c`"
+msgstr ""
+
+#: ../../usage/placement.rst:289
+msgid "Horizontal-vertical-horizontal (like a c or ↄ)"
+msgstr ""
+
+#: ../../usage/placement.rst:290
+msgid "`z`"
+msgstr ""
+
+#: ../../usage/placement.rst:291
+msgid "Horizontal-diagonal-horizontal"
+msgstr ""
+
+#: ../../usage/placement.rst:292
+msgid "`N`"
+msgstr ""
+
+#: ../../usage/placement.rst:293
+msgid "Vertical-diagonal-vertical"
+msgstr ""
+
+#: ../../usage/placement.rst:324
+msgid ""
+"Both `Line` and `Wire` elements take an `arrow` parameter, a string "
+"specification of arrowhead types at the start and end of the wire. The "
+"arrow string may contain \"<\", \">\", for arrowheads, \"\\|\" for an "
+"endcap, and \"o\" for a dot. Some examples are shown below:"
+msgstr ""
+
+#: ../../usage/placement.rst:335
+msgid ""
+"Because dots are used to show connected wires, all two-terminal elements "
+"have `dot` and `idot` methods for quickly adding a dot at the end or "
+"beginning of the element, respectively."
+msgstr ""
+
+#: ../../usage/placement.rst:343
+msgid "Keyword Arguments"
+msgstr ""
+
+#: ../../usage/placement.rst:345
+msgid ""
+"All :py:class:`schemdraw.elements.Element` types take keyword arguments "
+"that can also be used to set element properties, partly for historical "
+"reasons but also for easy element setup via dictionary unpacking. The "
+"keyword arguments are equivalent to calling the Element setup methods. "
+"The keyword arguments are not validated or type checked, so the chained "
+"method interface described above is recommended for configuring elements."
+msgstr ""
+
+#: ../../usage/placement.rst:353
+msgid "Keyword Argument"
+msgstr ""
+
+#: ../../usage/placement.rst:353
+msgid "Method Equivalent"
+msgstr ""
+
+#: ../../usage/placement.rst:355
+msgid "`d='up'`"
+msgstr ""
+
+#: ../../usage/placement.rst:355
+msgid "`.up()`"
+msgstr ""
+
+#: ../../usage/placement.rst:357
+msgid "`d='down'`"
+msgstr ""
+
+#: ../../usage/placement.rst:357
+msgid "`.down()`"
+msgstr ""
+
+#: ../../usage/placement.rst:359
+msgid "`d='left'`"
+msgstr ""
+
+#: ../../usage/placement.rst:359
+msgid "`.left()`"
+msgstr ""
+
+#: ../../usage/placement.rst:361
+msgid "`d='right'`"
+msgstr ""
+
+#: ../../usage/placement.rst:361
+msgid "`.right()`"
+msgstr ""
+
+#: ../../usage/placement.rst:363
+msgid "`theta=X`"
+msgstr ""
+
+#: ../../usage/placement.rst:363
+msgid "`.theta(X)`"
+msgstr ""
+
+#: ../../usage/placement.rst:365
+msgid "`at=X` or `xy=X`"
+msgstr ""
+
+#: ../../usage/placement.rst:365
+msgid "`.at(X)`"
+msgstr ""
+
+#: ../../usage/placement.rst:367
+msgid "`flip=True`"
+msgstr ""
+
+#: ../../usage/placement.rst:367
+msgid "`.flip()`"
+msgstr ""
+
+#: ../../usage/placement.rst:369
+msgid "`reverse=True`"
+msgstr ""
+
+#: ../../usage/placement.rst:369
+msgid "`.reverse()`"
+msgstr ""
+
+#: ../../usage/placement.rst:371
+msgid "`anchor=X`"
+msgstr ""
+
+#: ../../usage/placement.rst:371
+msgid "`.anchor(X)`"
+msgstr ""
+
+#: ../../usage/placement.rst:373
+msgid "`zoom=X`"
+msgstr ""
+
+#: ../../usage/placement.rst:373
+msgid "`.scale(X)`"
+msgstr ""
+
+#: ../../usage/placement.rst:375
+msgid "`color=X`"
+msgstr ""
+
+#: ../../usage/placement.rst:375
+msgid "`.color(X)`"
+msgstr ""
+
+#: ../../usage/placement.rst:377
+msgid "`fill=X`"
+msgstr ""
+
+#: ../../usage/placement.rst:377
+msgid "`.fill(X)`"
+msgstr ""
+
+#: ../../usage/placement.rst:379
+msgid "`ls=X`"
+msgstr ""
+
+#: ../../usage/placement.rst:379
+msgid "`.linestyle(X)`"
+msgstr ""
+
+#: ../../usage/placement.rst:381
+msgid "`lw=X`"
+msgstr ""
+
+#: ../../usage/placement.rst:381
+msgid "`.linewidth(X)`"
+msgstr ""
+
+#: ../../usage/placement.rst:383
+msgid "`zorder=X`"
+msgstr ""
+
+#: ../../usage/placement.rst:383
+msgid "`.zorder(X)`"
+msgstr ""
+
+#: ../../usage/placement.rst:385
+msgid "`move_cur=False`"
+msgstr ""
+
+#: ../../usage/placement.rst:385
+msgid "`.hold()`"
+msgstr ""
+
+#: ../../usage/placement.rst:387
+msgid "`label=X`"
+msgstr ""
+
+#: ../../usage/placement.rst:387
+msgid "`.label(X)`"
+msgstr ""
+
+#: ../../usage/placement.rst:389
+msgid "`botlabel=X`"
+msgstr ""
+
+#: ../../usage/placement.rst:389
+msgid "`.label(X, loc='bottom')`"
+msgstr ""
+
+#: ../../usage/placement.rst:391
+msgid "`lftlabel=X`"
+msgstr ""
+
+#: ../../usage/placement.rst:391
+msgid "`.label(X, loc='left')`"
+msgstr ""
+
+#: ../../usage/placement.rst:393
+msgid "`rgtlabel=X`"
+msgstr ""
+
+#: ../../usage/placement.rst:393
+msgid "`.label(X, loc='right')`"
+msgstr ""
+
+#: ../../usage/placement.rst:395
+msgid "`toplabel=X`"
+msgstr ""
+
+#: ../../usage/placement.rst:395
+msgid "`.label(X, loc='top')`"
+msgstr ""
+
+#: ../../usage/placement.rst:397
+msgid "`lblloc=X`"
+msgstr ""
+
+#: ../../usage/placement.rst:397
+msgid "`.label(..., loc=X)`"
+msgstr ""
+

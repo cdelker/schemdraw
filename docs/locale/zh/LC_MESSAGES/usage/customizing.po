@@ -1,0 +1,279 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Collin J. Delker
+# This file is distributed under the same license as the Schemdraw package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Schemdraw \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-02 17:27-0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh\n"
+"Language-Team: zh <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../usage/customizing.rst:2
+msgid "Customizing Elements"
+msgstr ""
+
+#: ../../usage/customizing.rst:15
+msgid "Grouping Elements"
+msgstr ""
+
+#: ../../usage/customizing.rst:17
+msgid ""
+"If a set of circuit elements are to be reused multiple times, they can be"
+" grouped into a single element. Create and populate a drawing, but set "
+"`show=False`. Instead, use the Drawing to create a new "
+":py:class:`schemdraw.elements.ElementDrawing`, which converts the drawing"
+" into an element instance to add to other drawings."
+msgstr ""
+
+#: ../../usage/customizing.rst:40
+msgid "Defining custom elements"
+msgstr ""
+
+#: ../../usage/customizing.rst:42
+msgid ""
+"All elements are subclasses of :py:class:`schemdraw.elements.Element` or "
+":py:class:`schemdraw.elements.Element2Term`. For elements consisting of "
+"several other already-defined elements (like a relay), "
+":py:class:`schemdraw.elements.compound.ElementCompound` can be used for "
+"easy combining of multiple elements. Subclasses only need to define the "
+"`__init__` method in order to add lines, shapes, and text to the new "
+"element, all of which are defined using "
+":py:class:`schemdraw.segments.Segment` classes. New Segments should be "
+"appended to the `Element.segments` attribute list."
+msgstr ""
+
+#: ../../usage/customizing.rst:46
+msgid ""
+"Coordinates are all defined in element cooridnates, where the element "
+"begins at (0, 0) and is drawn from left to right. The drawing engine will"
+" rotate and translate the element to its final position, and for two-"
+"terminal elements deriving from Element2Term, will add lead extensions to"
+" the correct length depending on the element's placement parameters. "
+"Therefore elements deriving from Element2Term should not define the lead "
+"extensions (e.g. a Resistor only defines the zig-zag portion). A standard"
+" resistor is 1 drawing unit long, and with default lead extension will "
+"become 3 units long."
+msgstr ""
+
+#: ../../usage/customizing.rst:55
+msgid ""
+"Segments include :py:class:`schemdraw.segments.Segment`, "
+":py:class:`schemdraw.segments.SegmentPoly`, "
+":py:class:`schemdraw.segments.SegmentCircle`, "
+":py:class:`schemdraw.segments.SegmentArc`, "
+":py:class:`schemdraw.segments.SegmentText`, and "
+":py:class:`schemdraw.segments.SegmentBezier`."
+msgstr ""
+
+#: ../../usage/customizing.rst:58
+msgid ""
+"As an example, here's the definition of our favorite element, the "
+"resistor:"
+msgstr ""
+
+#: ../../usage/customizing.rst:74
+msgid ""
+"The resistor is made of one path. `reswidth` and `resheight` are "
+"constants that define the height and width of the resistor zigzag (and "
+"are referenced by several other elements too). Browse the source code in "
+"the `Schemdraw.elements` submodule to see the definitions of the other "
+"built-in elements."
+msgstr ""
+
+#: ../../usage/customizing.rst:78
+#, python-brace-format
+msgid ""
+"In addition to the list of Segments, any named anchors and other "
+"parameters should be specified. Anchors should be added to the "
+"`Element.anchors` dictionary as {name: (x, y)} key/value pairs."
+msgstr ""
+
+#: ../../usage/customizing.rst:82
+msgid "Parameters and Defaults"
+msgstr ""
+
+#: ../../usage/customizing.rst:84
+msgid ""
+"`Element` subclasses may have an `_element_defaults` class attribute "
+"dictionary to specify default parameters used for drawing the element. "
+"This dictionary will be ChainMapped with the `_element_defaults` from all"
+" its parent classes into the `Element.defaults` dictionary the user may "
+"change to modify default behaviors."
+msgstr ""
+
+#: ../../usage/customizing.rst:89
+msgid ""
+"To access any of these parameters when defining the element, use the "
+"`self.params` dictionary, which ensures the correct parameter, whether a "
+"default value, a default from a parent class, or a parameter overriden by"
+" the user, is obtained. Any non-`None` named arguments provided to the "
+"Element will be inserted into `self.params` automatically (by the "
+"`Element.__new__` method)."
+msgstr ""
+
+#: ../../usage/customizing.rst:94
+msgid ""
+"Parameters that need to be set dynamically during instantiation should be"
+" set in the `self.elmparams` dictionary, so they may still be overriden "
+"by the user."
+msgstr ""
+
+#: ../../usage/customizing.rst:97
+msgid "For example, consider the `Dot` element:"
+msgstr ""
+
+#: ../../usage/customizing.rst:121
+msgid ""
+"It contains two default parameters, `radius`, and `open`. The user may "
+"override these for every new Dot by setting `Dot.defaults['radius'] = "
+"value`. Or to override the defaults for a single instance of Dot, provide"
+" the parameter at instantiation: `Dot(radius=value)`."
+msgstr ""
+
+#: ../../usage/customizing.rst:126
+msgid ""
+"Inside the `Dot.__init__` method, the `fill` parameter is determined "
+"based on the value of the `open` parameter, read from "
+"`self.params['open']`. The Dot is filled when the dot is not open, but "
+"filled with background color ('bg') when the dot is open. Because the "
+"fill value was added to `self.elmparams`, the user may sitll specify "
+"their own fill color using `Dot(fill=color)`."
+msgstr ""
+
+#: ../../usage/customizing.rst:131
+msgid ""
+"Next, a `SegmentCircle` is added with radius taken from "
+"`self.params['radius']`, so that the default radius will be used unless "
+"overridden. Finally, an anchor named `center` is defined at the center of"
+" the dot."
+msgstr ""
+
+#: ../../usage/customizing.rst:134
+msgid ""
+"When drawn, the parameters for the element are obtained from a ChainMap "
+"of the parameters in this order of preference:"
+msgstr ""
+
+#: ../../usage/customizing.rst:136
+msgid ""
+"Setter methods like `.fill()` or `.color()` called after the element is "
+"instantiated"
+msgstr ""
+
+#: ../../usage/customizing.rst:137
+msgid "Named arguments provided to Element instantiation"
+msgstr ""
+
+#: ../../usage/customizing.rst:138
+msgid ""
+"Defaults set by the user in Element.defaults (inheriting from parent "
+"classes)"
+msgstr ""
+
+#: ../../usage/customizing.rst:139
+msgid "Parameters defined in the Element attribute `self.elmparams`"
+msgstr ""
+
+#: ../../usage/customizing.rst:140
+msgid "Parameters defined by Drawing.config"
+msgstr ""
+
+#: ../../usage/customizing.rst:141
+msgid "Parameters defined by Schemdraw.config"
+msgstr ""
+
+#: ../../usage/customizing.rst:145
+msgid "Flux Capacitor Example"
+msgstr ""
+
+#: ../../usage/customizing.rst:147
+msgid "For an example, let's make a flux capacitor circuit element."
+msgstr ""
+
+#: ../../usage/customizing.rst:149
+msgid ""
+"Since everyone knows a flux-capacitor has three branches, we should "
+"subclass the standard :py:class:`schemdraw.elements.Element` class "
+"instead of :py:class:`schemdraw.elements.Element2Term`. Start by "
+"importing the Segments and define the class name and `__init__` function:"
+msgstr ""
+
+#: ../../usage/customizing.rst:160
+msgid "The `d` and `kwargs` are passed to `super` to initialize the Element."
+msgstr ""
+
+#: ../../usage/customizing.rst:162
+msgid ""
+"We want a dot in the center of our flux capacitor, so start by adding a "
+"`SegmentCircle`. The `fclen` and `radius` variables could be set as "
+"arguments to the __init__ and/or added to `_element_defaults` for the "
+"user to adjust, if desired, but here they are defined as constants in the"
+" __init__."
+msgstr ""
+
+#: ../../usage/customizing.rst:170
+msgid ""
+"Next, add the paths as Segment instances, which are drawn as lines. The "
+"flux capacitor will have three paths, all extending from the center dot:"
+msgstr ""
+
+#: ../../usage/customizing.rst:179
+msgid ""
+"And at the end of each path is an open circle. Append three more "
+"`SegmentCircle` instances. By specifying `fill=None` the SegmentCircle "
+"will always remain unfilled regardless of any `fill` arguments provided "
+"to `Drawing` or `FluxCapacitor`."
+msgstr ""
+
+#: ../../usage/customizing.rst:189
+msgid ""
+"Finally, we need to define anchor points so that other elements can be "
+"connected to the right places. Here, they're called `p1`, `p2`, and `p3` "
+"for lack of better names (what do you call the inputs to a flux "
+"capacitor?) Add these to the `self.anchors` dictionary."
+msgstr ""
+
+#: ../../usage/customizing.rst:199
+msgid "Here's the Flux Capacitor class all in one:"
+msgstr ""
+
+#: ../../usage/customizing.rst:220
+msgid "Try it out:"
+msgstr ""
+
+#: ../../usage/customizing.rst:228
+msgid "Segment objects"
+msgstr ""
+
+#: ../../usage/customizing.rst:230
+msgid ""
+"After an element is added to a drawing, the "
+":py:class:`schemdraw.segments.Segment` objects defining it are accessible"
+" in the `segments` attribute list of the Element. For even more control "
+"over customizing individual pieces of an element, the parameters of a "
+"Segment can be changed."
+msgstr ""
+
+#: ../../usage/customizing.rst:251
+msgid "Matplotlib axis"
+msgstr ""
+
+#: ../../usage/customizing.rst:253
+msgid ""
+"When using the Matplotlib backend (the default), a final customization "
+"option is to use the Matplotlib figure and add to it. A "
+":py:class:`schemdraw.Figure` is returned from the `draw` method, which "
+"contains `fig` and `ax` attributes holding the Matplotlib figure."
+msgstr ""
+

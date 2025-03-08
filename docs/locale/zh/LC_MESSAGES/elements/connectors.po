@@ -1,0 +1,124 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Collin J. Delker
+# This file is distributed under the same license as the Schemdraw package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Schemdraw \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-02 17:27-0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh\n"
+"Language-Team: zh <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../elements/connectors.rst:2
+msgid "Connectors"
+msgstr ""
+
+#: ../../elements/connectors.rst:11
+msgid ""
+"All connectors are defined with a default pin spacing of 0.6, matching "
+"the default pin spacing of the "
+":py:class:`schemdraw.elements.intcircuits.Ic` class, for easy connection "
+"of multiple signals."
+msgstr ""
+
+#: ../../elements/connectors.rst:15
+msgid "Headers"
+msgstr ""
+
+#: ../../elements/connectors.rst:17
+msgid ""
+"A :py:class:`schemdraw.elements.connectors.Header` is a generic Header "
+"block with any number of rows and columns. It can have round, square, or "
+"screw-head connection points."
+msgstr ""
+
+#: ../../elements/connectors.rst:45
+msgid ""
+"Header pins are given anchor names `pin1`, `pin2`, etc. Pin number labels"
+" and anchor names can be ordered left-to-right (`lr`), up-to-down (`ud`),"
+" or counterclockwise (`ccw`) like a traditional IC, depending on the "
+"`numbering` argument. The `flip` argument can be set True to put pin 1 at"
+" the bottom."
+msgstr ""
+
+#: ../../elements/connectors.rst:57
+msgid ""
+"A :py:class:`schemdraw.elements.connectors.Jumper` element is also "
+"defined, as a simple rectangle, for easy placing onto a header."
+msgstr ""
+
+#: ../../elements/connectors.rst:67
+msgid "D-Sub Connectors"
+msgstr ""
+
+#: ../../elements/connectors.rst:69
+msgid ""
+"Both :py:class:`schemdraw.elements.connectors.DB9` and "
+":py:class:`schemdraw.elements.connectors.DB25` subminiature connectors "
+"are defined, with anchors `pin1` through `pin9` or `pin25`."
+msgstr ""
+
+#: ../../elements/connectors.rst:81
+msgid "Multiple Lines"
+msgstr ""
+
+#: ../../elements/connectors.rst:83
+msgid ""
+"The :py:class:`schemdraw.elements.connectors.RightLines` and "
+":py:class:`schemdraw.elements.connectors.OrthoLines` elements are useful "
+"for connecting multiple pins of an integrated circuit or header all at "
+"once. Both need an `at` and `to` location specified, along with the `n` "
+"parameter for setting the number of lines to draw. Use RightLines when "
+"the Headers are perpindicular to each other."
+msgstr ""
+
+#: ../../elements/connectors.rst:98
+msgid ""
+"OrthoLines draw a z-shaped orthogonal connection. Use OrthoLines when the"
+" Headers are parallel but vertically offset. Use the `xstart` parameter, "
+"between 0 and 1, to specify the position where the first OrthoLine turns "
+"vertical."
+msgstr ""
+
+#: ../../elements/connectors.rst:114
+msgid "Data Busses"
+msgstr ""
+
+#: ../../elements/connectors.rst:116
+msgid ""
+"Sometimes, multiple I/O pins to an integrated circuit are lumped together"
+" into a data bus. The connections to a bus can be drawn using the "
+":py:class:`schemdraw.elements.connectors.BusConnect` element, which takes"
+" `n` the number of data lines and an argument. "
+":py:class:`schemdraw.elements.connectors.BusLine` is simply a wider line "
+"used to extend the full bus to its destination."
+msgstr ""
+
+#: ../../elements/connectors.rst:120
+msgid ""
+"BusConnect elements define anchors `start`, `end` on the endpoints of the"
+" wide bus line, and `pin1`, `pin2`, etc. for the individual signals."
+msgstr ""
+
+#: ../../elements/connectors.rst:136
+msgid "Outlets"
+msgstr ""
+
+#: ../../elements/connectors.rst:138
+msgid ""
+"Power outlets and plugs are drawn using `OutletX` classes, with "
+"international styles A through L. Each has anchors `hot`, `neutral`, and "
+"`ground` (if applicable). The `plug` parameter fills the prongs to "
+"indicate a plug versus an outlet."
+msgstr ""
+

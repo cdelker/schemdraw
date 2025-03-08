@@ -1,0 +1,65 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Collin J. Delker
+# This file is distributed under the same license as the Schemdraw package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Schemdraw \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-02 17:27-0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh\n"
+"Language-Team: zh <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../gallery/timing.rst:4
+msgid "Timing Diagrams"
+msgstr ""
+
+#: ../../gallery/timing.rst:14
+msgid ""
+"Timing diagrams, based on `WaveDrom <https://wavedrom.com/>`_, are drawn "
+"using the :py:class:`schemdraw.logic.timing.TimingDiagram` class."
+msgstr ""
+
+#: ../../gallery/timing.rst:23
+msgid "SRAM read/write cycle"
+msgstr ""
+
+#: ../../gallery/timing.rst:25
+msgid ""
+"The SRAM examples make use of Schemdraw's extended 'edge' notation for "
+"labeling timings just above and below the wave."
+msgstr ""
+
+#: ../../gallery/timing.rst:67
+msgid "J-K Flip Flop"
+msgstr ""
+
+#: ../../gallery/timing.rst:69
+msgid ""
+"Timing diagram for a J-K flip flop taken from `here "
+"<https://commons.wikimedia.org/wiki/File:JK_timing_diagram.svg>`_. Notice"
+" the use of the `async` dictionary parameter on the J and K signals, and "
+"the color parameters for the output signals."
+msgstr ""
+
+#: ../../gallery/timing.rst:86
+msgid "Tutorial Examples"
+msgstr ""
+
+#: ../../gallery/timing.rst:88
+msgid ""
+"These examples were copied from `WaveDrom Tutorial "
+"<https://wavedrom.com/tutorial.html>`_. They use the `from_json` class "
+"method so the examples can be pasted directly as a string. Otherwise, the"
+" setup must be converted to a proper Python dictionary."
+msgstr ""
+

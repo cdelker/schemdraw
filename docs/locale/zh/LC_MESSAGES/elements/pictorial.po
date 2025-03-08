@@ -1,0 +1,149 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Collin J. Delker
+# This file is distributed under the same license as the Schemdraw package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Schemdraw \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-02 17:27-0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh\n"
+"Language-Team: zh <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../elements/pictorial.rst:4
+msgid "Pictorial Elements"
+msgstr ""
+
+#: ../../elements/pictorial.rst:14
+msgid ""
+"Pictorial Schematics use pictures, rather than symbols, to represent "
+"circuit elements. Schemdraw provides a few common pictorial elements, and"
+" more may be added by loading in :ref:`images`."
+msgstr ""
+
+#: ../../elements/pictorial.rst:18
+msgid "All the built-in pictorial elements are drawn below."
+msgstr ""
+
+#: ../../elements/pictorial.rst:42
+msgid "Breadboard"
+msgstr ""
+
+#: ../../elements/pictorial.rst:44
+msgid ""
+"The :py:class:`schemdraw.pictorial.pictorial.Breadboard` element has "
+"anchors at each pin location. Anchor names for the center block of pins "
+"use the column letter and row number, such as `A1` for the top left pin. "
+"The power strip columns along each side are `L1_x` for the first column "
+"on the left side or `L2_x`, for the second column on the left side, with "
+"`x` designating the row number. Similarly, `R1_x` and `R2_x` designate "
+"anchors on the right power strip columns. Note the \"missing\" rows in "
+"the power strip columns, such as row 6, are not defined. Some examples "
+"are shown below."
+msgstr ""
+
+#: ../../elements/pictorial.rst:63
+msgid "Resistors"
+msgstr ""
+
+#: ../../elements/pictorial.rst:65
+msgid ""
+"Resistors and Diodes inherit from "
+":py:class:`schemdraw.elements.Element2Term`, meaning they may be extended"
+" to any length. Resistors take `value` and `tolerance` arguments used to "
+"set the color bands. The colors will be the closest possible color code "
+"using 3 bands to represent the value."
+msgstr ""
+
+#: ../../elements/pictorial.rst:79
+msgid "Dual-inline Packages (DIP)"
+msgstr ""
+
+#: ../../elements/pictorial.rst:81
+msgid ""
+"Integrated circuits in DIP packages may be drawn with the "
+":py:class:`schemdraw.pictorial.pictorial.DIP` element. The `npins` "
+"argument sets the total number of pins and `wide` argument specifies a "
+"wide-body (0.6 inch) versus the narrow-body (0.3 inch) package."
+msgstr ""
+
+#: ../../elements/pictorial.rst:85
+msgid "DIPs have anchors `pinX`, where `X` is the pin number."
+msgstr ""
+
+#: ../../elements/pictorial.rst:96
+msgid "Colors"
+msgstr ""
+
+#: ../../elements/pictorial.rst:98
+msgid ""
+"The pictorial elements are drawn using solid shapes. As such, the "
+"`.fill()` method must be used to change their color, while the `.color()`"
+" method will set only the color of the outline, if the Element has one. "
+"For example, to create a custom-color LED:"
+msgstr ""
+
+#: ../../elements/pictorial.rst:108
+msgid "Dimensions"
+msgstr ""
+
+#: ../../elements/pictorial.rst:110
+msgid ""
+"The pictorial elements are designed with spacing so they fit together in "
+"a breadboard with 0.1 inch spacing between pins. Some constants are "
+"defined to assist in creating other pictorial elements: `pictorial.INCH` "
+"and `pictorial.MILLIMETER` convert inches and millimeters to schemdraw's "
+"drawing units. `pictorial.PINSPACING` is equal to 0.1 inch, the standard "
+"spacing between breadboard and DIP pins."
+msgstr ""
+
+#: ../../elements/pictorial.rst:117
+msgid "Example"
+msgstr ""
+
+#: ../../elements/pictorial.rst:119
+msgid ""
+"This example combines an :py:class:`schemdraw.elements.ElementImage` of "
+"an Arduino Uno board with pictorial elements."
+msgstr ""
+
+#: ../../elements/pictorial.rst:158
+msgid ""
+"`Arduino Image Source "
+"<https://commons.wikimedia.org/wiki/File:ArduinoUNO.png>`_ , CC-BY-"
+"SA-3.0."
+msgstr ""
+
+#: ../../elements/pictorial.rst:162
+msgid "Fritzing Part Files"
+msgstr ""
+
+#: ../../elements/pictorial.rst:164
+msgid ""
+"Schemdraw can import part files in the `Fritzing "
+"<https://fritzing.org/>`_ format and use them in pictorial schematics. "
+"Use :py:class:`schemdraw.pictorial.fritz.FritzingPart` and provide the "
+"file name of an `.fzpz` or `.fzbz` part file. Schemdraw's anchors will be"
+" set based on the part \"connectors\" defined in the part file. In this "
+"example, a part is downloaded from the `Adafruit Fritzing Library "
+"<https://github.com/adafruit/Fritzing-Library>`_ and used in a drawing."
+msgstr ""
+
+#: ../../elements/pictorial.rst:183
+msgid ""
+"Note that occasionally anchor names defined in Fritzing parts are not "
+"valid as Python identifiers, such as the `3.3V` anchor above, and "
+"therefore cannot be used as attributes of the element instance (`f.3.3V` "
+"doesn't work, obviously). In these cases, the anchor must be accessed "
+"through the `absanchors` dictionary."
+msgstr ""
+

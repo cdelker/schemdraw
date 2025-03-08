@@ -1,0 +1,310 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Collin J. Delker
+# This file is distributed under the same license as the Schemdraw package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Schemdraw \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-02 17:27-0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh\n"
+"Language-Team: zh <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../elements/electrical.rst:4
+msgid "Basic Elements"
+msgstr ""
+
+#: ../../elements/electrical.rst:6
+msgid "See :ref:`elecelements` for complete class definitions for these elements."
+msgstr ""
+
+#: ../../elements/electrical.rst:42
+msgid "Two-terminal"
+msgstr ""
+
+#: ../../elements/electrical.rst:44
+msgid ""
+"Two-terminal devices subclass "
+":py:class:`schemdraw.elements.Element2Term`, and have leads that will be "
+"extended to make the element the desired length depending on the "
+"arguments. All two-terminal elements define `start`, `end`, and `center` "
+"anchors for placing, and a few define other anchors as shown in blue in "
+"the tables below. Some elements have optional parameters, shown in "
+"parenthesis in the table below."
+msgstr ""
+
+#: ../../elements/electrical.rst:52
+msgid "Styled Elements"
+msgstr ""
+
+#: ../../elements/electrical.rst:54
+msgid ""
+"These elements change based on IEEE/U.S. vs IEC/European style configured"
+" by :py:meth:`schemdraw.elements.style`. Selectable elements, such as "
+"`Resistor`, point to either `ResistorIEEE` or `ResistorIEC`, for example."
+msgstr ""
+
+#: ../../elements/electrical.rst:58
+msgid "IEEE Style"
+msgstr ""
+
+#: ../../elements/electrical.rst:60
+msgid ""
+"IEEE style, common in the U.S., is the default, or it can be configured "
+"using"
+msgstr ""
+
+#: ../../elements/electrical.rst:76
+msgid "IEC/European Style"
+msgstr ""
+
+#: ../../elements/electrical.rst:78
+msgid "IEC style can be enabled using"
+msgstr ""
+
+#: ../../elements/electrical.rst:93
+msgid "Resistors"
+msgstr ""
+
+#: ../../elements/electrical.rst:95
+msgid "Both styles of resistors are always available using these classes."
+msgstr ""
+
+#: ../../elements/electrical.rst:107
+msgid "Capacitors and Inductors"
+msgstr ""
+
+#: ../../elements/electrical.rst:120
+msgid "Diodes"
+msgstr ""
+
+#: ../../elements/electrical.rst:131 ../../elements/electrical.rst:482
+msgid "Pathological"
+msgstr ""
+
+#: ../../elements/electrical.rst:140
+msgid "Miscellaneous"
+msgstr ""
+
+#: ../../elements/electrical.rst:150
+msgid "Sources and Meters"
+msgstr ""
+
+#: ../../elements/electrical.rst:165 ../../elements/electrical.rst:228
+msgid "Switches"
+msgstr ""
+
+#: ../../elements/electrical.rst:178
+msgid "Lines and Arrows"
+msgstr ""
+
+#: ../../elements/electrical.rst:188
+msgid "Single-Terminal"
+msgstr ""
+
+#: ../../elements/electrical.rst:190
+msgid ""
+"Single terminal elements are drawn about a single point, and do not move "
+"the current drawing position."
+msgstr ""
+
+#: ../../elements/electrical.rst:193
+msgid "Power and Ground"
+msgstr ""
+
+#: ../../elements/electrical.rst:205
+msgid "Antennas"
+msgstr ""
+
+#: ../../elements/electrical.rst:215
+msgid "Connection Dots"
+msgstr ""
+
+#: ../../elements/electrical.rst:230
+msgid ""
+"The standard toggle switch is listed with other two-terminal elements "
+"above. Other switch configurations are shown here."
+msgstr ""
+
+#: ../../elements/electrical.rst:234
+msgid "Single-pole double-throw"
+msgstr ""
+
+#: ../../elements/electrical.rst:236
+msgid ""
+"Two options for SPDT switches can be also be drawn with arrows by adding "
+"`action='open'` or `action='close'` parameters."
+msgstr ""
+
+#: ../../elements/electrical.rst:249
+msgid "Double-pole"
+msgstr ""
+
+#: ../../elements/electrical.rst:251
+msgid ""
+"DPST and DPDT switches have a `link` parameter for disabling the dotted "
+"line lnking the poles."
+msgstr ""
+
+#: ../../elements/electrical.rst:264
+msgid "Rotary Switch"
+msgstr ""
+
+#: ../../elements/electrical.rst:266
+msgid ""
+"The rotary switch :py:class:`schemdraw.elements.switches.SwitchRotary` "
+"takes several parameters, with `n` being the number of contacts and other"
+" parameters defining the contact placement."
+msgstr ""
+
+#: ../../elements/electrical.rst:283
+msgid "DIP Switch"
+msgstr ""
+
+#: ../../elements/electrical.rst:285
+msgid ""
+"A set of switches in a dual-inline package, where can show each switch "
+"flipped up or down. See :py:class:`schemdraw.elements.switches.SwitchDIP`"
+" for options."
+msgstr ""
+
+#: ../../elements/electrical.rst:312
+msgid "Audio Elements"
+msgstr ""
+
+#: ../../elements/electrical.rst:314
+msgid "Speakers, Microphones, Jacks"
+msgstr ""
+
+#: ../../elements/electrical.rst:333
+msgid "Labels"
+msgstr ""
+
+#: ../../elements/electrical.rst:335
+msgid ""
+"The `Label` element can be used to add a label anywhere. The `Gap` is "
+"like an \"invisible\" element, useful for marking the voltage between "
+"output terminals."
+msgstr ""
+
+#: ../../elements/electrical.rst:353
+msgid "Operational Amplifiers"
+msgstr ""
+
+#: ../../elements/electrical.rst:355
+msgid ""
+"The :py:class:`schemdraw.elements.opamp.Opamp` element defines several "
+"anchors for various inputs, including voltage supplies and offset nulls. "
+"Optional leads can be added using the `leads` parameter, with anchors "
+"exteded to the ends of the leads."
+msgstr ""
+
+#: ../../elements/electrical.rst:394
+msgid "Transistors"
+msgstr ""
+
+#: ../../elements/electrical.rst:397
+msgid "Bipolar Junction Transistors"
+msgstr ""
+
+#: ../../elements/electrical.rst:410
+msgid "Field-Effect Transistors"
+msgstr ""
+
+#: ../../elements/electrical.rst:426
+msgid "\"Two-Terminal\" Transistors"
+msgstr ""
+
+#: ../../elements/electrical.rst:428
+msgid ""
+"Another set of transistor elements subclass "
+":py:class:`schemdraw.elements.Element2Term` so they have emitter and "
+"collector (or source and drain) leads extended to the desired length. "
+"These can be easier to place centered between endpoints, for example."
+msgstr ""
+
+#: ../../elements/electrical.rst:440
+msgid "Two-ports"
+msgstr ""
+
+#: ../../elements/electrical.rst:442
+msgid ""
+"Twoport elements share the interface defined by "
+":py:class:`schemdraw.elements.twoports.ElementTwoport`, providing a set "
+"of anchors and various styling options. The terminals and box can be "
+"enabled or disabled using the `terminals` and `box` arguments. In "
+"addition, the `boxfill`, `boxlw`, and `boxls` provide the option to style"
+" the outline separately from other elements."
+msgstr ""
+
+#: ../../elements/electrical.rst:460
+msgid "Generic"
+msgstr ""
+
+#: ../../elements/electrical.rst:471
+msgid "Transactors (ideal amplifiers)"
+msgstr ""
+
+#: ../../elements/electrical.rst:473
+msgid ""
+"Like the generic twoport, the transactors provide the option to reverse "
+"the direction of the output or current using the `reverse_output` "
+"argument."
+msgstr ""
+
+#: ../../elements/electrical.rst:491
+msgid "Custom"
+msgstr ""
+
+#: ../../elements/electrical.rst:493
+msgid ""
+"The :py:class:`schemdraw.elements.twoports.ElementTwoport` class can be "
+"used to define custom twoports by specifying an `input_element` and "
+"`output_element`. The `bpadx`, `bpady`, `minw`, `unit`, `width` can be "
+"used to tune the horizontal and vertical padding, minimum width of the "
+"elements, length of components, and width of the twoport respectively."
+msgstr ""
+
+#: ../../elements/electrical.rst:516
+msgid "Cables"
+msgstr ""
+
+#: ../../elements/electrical.rst:518
+msgid ""
+":py:class:`schemdraw.elements.cables.Coax` and "
+":py:class:`schemdraw.elements.cables.Triax` cables are 2-Terminal "
+"elements that can be made with several options and anchors. Coax "
+"parameters include length, radius, and leadlen for setting the distance "
+"between leads and the shell. Triax parameters include length, "
+"radiusinner, radiusouter, leadlen, and shieldofststart for offseting the "
+"outer shield from the inner guard."
+msgstr ""
+
+#: ../../elements/electrical.rst:562
+msgid "Transformers"
+msgstr ""
+
+#: ../../elements/electrical.rst:564
+msgid ""
+"The :py:class:`schemdraw.elements.xform.Transformer` element is used to "
+"create various transformers. Anchors `p1`, `p2`, `s1`, and `s2` are "
+"defined for all transformers. Other anchors can be created using the "
+"`taps` method to add tap locations to either side."
+msgstr ""
+
+#: ../../elements/electrical.rst:580
+msgid ""
+"Here is a transformers with anchor \"B\" added using the `tap` method. "
+"Note the tap by itself does not draw anything, but defines a named anchor"
+" to connect to."
+msgstr ""
+

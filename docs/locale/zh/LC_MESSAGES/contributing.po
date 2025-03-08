@@ -1,0 +1,51 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Collin J. Delker
+# This file is distributed under the same license as the Schemdraw package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Schemdraw \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-02 17:27-0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh\n"
+"Language-Team: zh <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../contributing.rst:2
+msgid "Development"
+msgstr ""
+
+#: ../../contributing.rst:4
+msgid ""
+"Report bugs and feature requests on the `Issue Tracker "
+"<https://github.com/cdelker/schemdraw/issues>`_."
+msgstr ""
+
+#: ../../contributing.rst:6
+msgid ""
+"Code contributions are welcome, especially with new circuit elements (and"
+" we'd be happy to expand beyond electrical elements too). To contribute "
+"code, please fork the `source code repository "
+"<https://github.com/cdelker/schemdraw/>`_ and issue a pull request. Make "
+"sure to include any new elements somewhere in the test Jupyter notebooks "
+"and in the documentation."
+msgstr ""
+
+#: ../../contributing.rst:8
+msgid "`Source Code <https://github.com/cdelker/schemdraw>`_"
+msgstr ""
+
+#: ../../contributing.rst:15
+msgid ""
+"Want to support Schemdraw development? Need more circuit examples? Pick "
+"up the Schemdraw Examples Pack on buymeacoffee.com:"
+msgstr ""
+

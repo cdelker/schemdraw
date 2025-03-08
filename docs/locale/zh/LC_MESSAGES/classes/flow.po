@@ -1,0 +1,162 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Collin J. Delker
+# This file is distributed under the same license as the Schemdraw package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Schemdraw \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-02 17:27-0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh\n"
+"Language-Team: zh <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../classes/flow.rst:3
+msgid "Flowcharting"
+msgstr ""
+
+#: of schemdraw.flow.flow:1
+msgid "Flowcharting element definitions"
+msgstr ""
+
+#: of schemdraw.flow.flow.Box:1
+msgid ""
+"Flowchart Process Box. Default box has minimum size (3, 2) but will "
+"expand to fit the label text. Size may be manually fixed using w and h "
+"arguments."
+msgstr ""
+
+#: ../../classes/flow.rst
+msgid "Parameters"
+msgstr ""
+
+#: of schemdraw.flow.flow.Box:5 schemdraw.flow.flow.Data:3
+#: schemdraw.flow.flow.Decision:3 schemdraw.flow.flow.RoundBox:3
+#: schemdraw.flow.flow.Subroutine:4 schemdraw.flow.flow.Terminal:3
+msgid "Width of box"
+msgstr ""
+
+#: of schemdraw.flow.flow.Box:6 schemdraw.flow.flow.Data:4
+#: schemdraw.flow.flow.Decision:4 schemdraw.flow.flow.RoundBox:4
+#: schemdraw.flow.flow.Subroutine:5 schemdraw.flow.flow.Terminal:4
+msgid "Height of box"
+msgstr ""
+
+#: of schemdraw.flow.flow.Box:8 schemdraw.flow.flow.Connect:5
+#: schemdraw.flow.flow.Data:7 schemdraw.flow.flow.Decision:12
+#: schemdraw.flow.flow.Ellipse:6 schemdraw.flow.flow.RoundBox:7
+#: schemdraw.flow.flow.StateEnd:6 schemdraw.flow.flow.Subroutine:8
+#: schemdraw.flow.flow.Terminal:6
+msgid "Anchors:"
+msgstr ""
+
+#: of schemdraw.flow.flow.Box:9 schemdraw.flow.flow.Connect:6
+#: schemdraw.flow.flow.Data:8 schemdraw.flow.flow.Decision:13
+#: schemdraw.flow.flow.Ellipse:7 schemdraw.flow.flow.RoundBox:8
+#: schemdraw.flow.flow.StateEnd:7 schemdraw.flow.flow.Subroutine:9
+#: schemdraw.flow.flow.Terminal:7
+msgid "16 compass points (N, S, E, W, NE, NNE, etc.)"
+msgstr ""
+
+#: of schemdraw.flow.flow.Connect:1
+msgid "Flowchart connector/circle"
+msgstr ""
+
+#: of schemdraw.flow.flow.Connect:3
+msgid "Radius of circle"
+msgstr ""
+
+#: of schemdraw.flow.flow.Data:1
+msgid "Flowchart data or input/output box (parallelogram)"
+msgstr ""
+
+#: of schemdraw.flow.flow.Data:5
+msgid "slant of sides"
+msgstr ""
+
+#: of schemdraw.flow.flow.Decision:1
+msgid "Flowchart decision (diamond)"
+msgstr ""
+
+#: of schemdraw.flow.flow.Decision:5
+msgid "text for North decision branch"
+msgstr ""
+
+#: of schemdraw.flow.flow.Decision:6
+msgid "text for South decision branch"
+msgstr ""
+
+#: of schemdraw.flow.flow.Decision:7
+msgid "text for East decision branch"
+msgstr ""
+
+#: of schemdraw.flow.flow.Decision:8
+msgid "text for West decision branch"
+msgstr ""
+
+#: of schemdraw.flow.flow.Decision:9
+msgid "Font family/name"
+msgstr ""
+
+#: of schemdraw.flow.flow.Decision:10
+msgid "Point size of label font"
+msgstr ""
+
+#: of schemdraw.flow.flow.Ellipse:1
+msgid "Flowchart ellipse"
+msgstr ""
+
+#: of schemdraw.flow.flow.Ellipse:3
+msgid "Width of ellipse"
+msgstr ""
+
+#: of schemdraw.flow.flow.Ellipse:4
+msgid "Height of ellipse"
+msgstr ""
+
+#: of schemdraw.flow.flow.RoundBox:1
+msgid "Alternate Process box with rounded corners"
+msgstr ""
+
+#: of schemdraw.flow.flow.RoundBox:5
+msgid "Radius of round corners [default: 0.3]"
+msgstr ""
+
+#: of schemdraw.flow.flow.StateEnd:1
+msgid "End/Accept State (double circle)"
+msgstr ""
+
+#: of schemdraw.flow.flow.StateEnd:3
+msgid "radius"
+msgstr ""
+
+#: of schemdraw.flow.flow.StateEnd:4
+msgid "distance between circles"
+msgstr ""
+
+#: of schemdraw.flow.flow.Subroutine:1
+msgid ""
+"Flowchart subroutine/predefined process. Box with extra vertical lines "
+"near sides."
+msgstr ""
+
+#: of schemdraw.flow.flow.Subroutine:6
+msgid "spacing of side lines [default: 0.3]"
+msgstr ""
+
+#: of schemdraw.flow.flow.Terminal:1
+msgid "Flowchart start/end terminal"
+msgstr ""
+
+#: of schemdraw.flow.flow.labelsize:1
+msgid "Get unit size of label and padding"
+msgstr ""
+

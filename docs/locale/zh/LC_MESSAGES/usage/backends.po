@@ -1,0 +1,149 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Collin J. Delker
+# This file is distributed under the same license as the Schemdraw package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Schemdraw \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-02 17:27-0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh\n"
+"Language-Team: zh <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../usage/backends.rst:4
+msgid "Backends"
+msgstr ""
+
+#: ../../usage/backends.rst:6
+msgid ""
+"The backend is the \"canvas\" on which a schematic is drawn. Schemdraw "
+"supports two backends: Matplotlib, and SVG."
+msgstr ""
+
+#: ../../usage/backends.rst:10
+msgid "Matplotlib Backend"
+msgstr ""
+
+#: ../../usage/backends.rst:12
+msgid ""
+"By default, all schematics are drawn on a Matplotlib axis. A new "
+"Matplotlib Figure and Axis will be created, with no frame or borders. A "
+"schematic may be added to an existing Axis by using the "
+":py:meth:`schemdraw.Drawing.draw` method and setting the `canvas` "
+"parameter to an existing Axis instance."
+msgstr ""
+
+#: ../../usage/backends.rst:17
+msgid ""
+"The Matplotlib backend renders text labels as primative lines and arcs "
+"rather than text elements by default. This has the downside that SVG "
+"editors, such as Inkscape, cannot perform textual searches on the SVGs. "
+"The upside is that there is no dependence on installed fonts on the hosts"
+" that open the SVGs."
+msgstr ""
+
+#: ../../usage/backends.rst:21
+msgid "To configure Matplotlib to render labels as SVG text elements:"
+msgstr ""
+
+#: ../../usage/backends.rst:30
+msgid "SVG Backend"
+msgstr ""
+
+#: ../../usage/backends.rst:32
+msgid ""
+"Schematics can also be drawn on directly to an SVG image backend. The SVG"
+" backend can be enabled for all drawings by calling:"
+msgstr ""
+
+#: ../../usage/backends.rst:39
+msgid ""
+"The backend can be changed at any time. Alternatively, the backend can be"
+" set individually on each Drawing using the `canvas` parameter:"
+msgstr ""
+
+#: ../../usage/backends.rst:46
+msgid ""
+"Use additional Python libraries, such as `pycairo "
+"<https://cairosvg.org/>`_, to convert the SVG output into other image "
+"formats."
+msgstr ""
+
+#: ../../usage/backends.rst:49
+msgid "Math Text"
+msgstr ""
+
+#: ../../usage/backends.rst:51
+msgid ""
+"The SVG backend has basic math text support, including greek symbols, "
+"subscripts, and superscripts. However, if `ziamath "
+"<https://ziamath.readthedocs.io>`_ and `latex2mathml "
+"<https://pypi.org/project/latex2mathml/>`_ packages are installed, they "
+"will be used for full Latex math support."
+msgstr ""
+
+#: ../../usage/backends.rst:54
+msgid "The SVG backend can produce searchable-text SVGs by setting:"
+msgstr ""
+
+#: ../../usage/backends.rst:60
+msgid ""
+"However, text mode does not support full Latex compatibility. To switch "
+"back to rendering text as SVG paths:"
+msgstr ""
+
+#: ../../usage/backends.rst:67
+msgid ""
+"Some SVG renderers are not fully compatible with SVG2.0. For better "
+"compatibility with SVG1.x, use"
+msgstr ""
+
+#: ../../usage/backends.rst:73
+msgid "The decimal precision of SVG elements can be set using"
+msgstr ""
+
+#: ../../usage/backends.rst:82
+msgid "Backend Comparison"
+msgstr ""
+
+#: ../../usage/backends.rst:84
+msgid "Reasons to choose the SVG backend include:"
+msgstr ""
+
+#: ../../usage/backends.rst:86
+msgid ""
+"No Matplotlib/Numpy dependency required (huge file size savings if "
+"bundling an executable)."
+msgstr ""
+
+#: ../../usage/backends.rst:87
+msgid ""
+"Speed. The SVG backend draws 4-10x faster than Matplotlib, depending on "
+"the circuit complexity."
+msgstr ""
+
+#: ../../usage/backends.rst:89
+msgid "Reasons to use Matplotlib backend:"
+msgstr ""
+
+#: ../../usage/backends.rst:91
+msgid ""
+"To customize the schematic after drawing it by using other Matplotlib "
+"functionality."
+msgstr ""
+
+#: ../../usage/backends.rst:92
+msgid ""
+"To render directly in other, non-SVG, image formats, with no additional "
+"code."
+msgstr ""
+

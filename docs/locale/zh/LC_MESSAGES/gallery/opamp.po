@@ -1,0 +1,53 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Collin J. Delker
+# This file is distributed under the same license as the Schemdraw package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Schemdraw \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-02 17:27-0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh\n"
+"Language-Team: zh <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../gallery/opamp.rst:2
+msgid "Opamp Circuits"
+msgstr ""
+
+#: ../../gallery/opamp.rst:12
+msgid "Inverting Opamp"
+msgstr ""
+
+#: ../../gallery/opamp.rst:29
+msgid "Non-inverting Opamp"
+msgstr ""
+
+#: ../../gallery/opamp.rst:53
+msgid "Multi-stage amplifier"
+msgstr ""
+
+#: ../../gallery/opamp.rst:78
+msgid "Opamp pin labeling"
+msgstr ""
+
+#: ../../gallery/opamp.rst:80
+msgid ""
+"This example shows how to label pin numbers on a 741 opamp, and connect "
+"to the offset anchors. Pin labels are somewhat manually placed; without "
+"the `ofst` and `align` keywords they will be drawn directly over the "
+"anchor position."
+msgstr ""
+
+#: ../../gallery/opamp.rst:115
+msgid "Triaxial Cable Driver"
+msgstr ""
+

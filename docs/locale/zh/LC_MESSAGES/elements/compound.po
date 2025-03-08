@@ -1,0 +1,71 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Collin J. Delker
+# This file is distributed under the same license as the Schemdraw package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Schemdraw \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-02 17:27-0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh\n"
+"Language-Team: zh <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../elements/compound.rst:2
+msgid "Compound Elements"
+msgstr ""
+
+#: ../../elements/compound.rst:4
+msgid "Several compound elements defined based on other basic elements."
+msgstr ""
+
+#: ../../elements/compound.rst:35
+msgid "Optocoupler"
+msgstr ""
+
+#: ../../elements/compound.rst:37
+msgid ""
+":py:class:`schemdraw.elements.compound.Optocoupler` can be drawn with or "
+"without a base contact."
+msgstr ""
+
+#: ../../elements/compound.rst:47
+msgid "Relay"
+msgstr ""
+
+#: ../../elements/compound.rst:49
+msgid ""
+":py:class:`schemdraw.elements.compound.Relay` can be drawn with different"
+" options for switches and inductor solenoids."
+msgstr ""
+
+#: ../../elements/compound.rst:62
+msgid "Wheatstone"
+msgstr ""
+
+#: ../../elements/compound.rst:64
+msgid ""
+":py:class:`schemdraw.elements.compound.Wheatstone` can be drawn with or "
+"without the output voltage taps. The `labels` argument specifies a list "
+"of labels for each resistor."
+msgstr ""
+
+#: ../../elements/compound.rst:90
+msgid "Rectifier"
+msgstr ""
+
+#: ../../elements/compound.rst:92
+msgid ""
+":py:class:`schemdraw.elements.compound.Rectifier` draws four diodes at 45"
+" degree angles. The `labels` argument specifies a list of labels for each"
+" diode."
+msgstr ""
+

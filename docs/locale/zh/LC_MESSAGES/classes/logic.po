@@ -1,0 +1,318 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Collin J. Delker
+# This file is distributed under the same license as the Schemdraw package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Schemdraw \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-02 17:27-0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh\n"
+"Language-Team: zh <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../classes/logic.rst:3
+msgid "Logic Gates"
+msgstr ""
+
+#: of schemdraw.logic.logic:1
+msgid "Logic gate definitions"
+msgstr ""
+
+#: of schemdraw.logic.logic.And:1
+msgid "AND gate"
+msgstr ""
+
+#: ../../classes/logic.rst
+msgid "Parameters"
+msgstr ""
+
+#: of schemdraw.logic.logic.And:3 schemdraw.logic.logic.Or:3
+msgid "Number of inputs to gate."
+msgstr ""
+
+#: of schemdraw.logic.logic.And:4 schemdraw.logic.logic.Or:4
+msgid "Draw invert bubble on output"
+msgstr ""
+
+#: of schemdraw.logic.logic.And:5 schemdraw.logic.logic.Or:6
+msgid "Input numbers (starting at 1) of inputs that have invert bubble"
+msgstr ""
+
+#: of schemdraw.logic.logic.And:6 schemdraw.logic.logic.Or:7
+msgid "Length of input leads [default: 0.35]"
+msgstr ""
+
+#: of schemdraw.logic.logic.And:7 schemdraw.logic.logic.Or:8
+msgid "Length of output lead [default: 0.35]"
+msgstr ""
+
+#: of schemdraw.logic.kmap.Kmap:23 schemdraw.logic.logic.And:9
+#: schemdraw.logic.logic.Buf:3 schemdraw.logic.logic.Not:3
+#: schemdraw.logic.logic.NotNot:3 schemdraw.logic.logic.Or:10
+#: schemdraw.logic.logic.Schmitt:3 schemdraw.logic.logic.SchmittAnd:3
+#: schemdraw.logic.logic.SchmittNot:3 schemdraw.logic.logic.Tgate:3
+#: schemdraw.logic.logic.Tristate:5
+msgid "Anchors:"
+msgstr ""
+
+#: of schemdraw.logic.logic.And:10 schemdraw.logic.logic.Or:11
+msgid "out in[X] - for each input"
+msgstr ""
+
+#: of schemdraw.logic.logic.Buf:1
+msgid "Buffer"
+msgstr ""
+
+#: of schemdraw.logic.logic.Buf:4 schemdraw.logic.logic.Not:4
+#: schemdraw.logic.logic.NotNot:4 schemdraw.logic.logic.Schmitt:4
+#: schemdraw.logic.logic.SchmittNot:4
+msgid "in out"
+msgstr ""
+
+#: of schemdraw.logic.logic.Not:1
+msgid "Not gate/inverter"
+msgstr ""
+
+#: of schemdraw.logic.logic.NotNot:1
+msgid "Double inverter"
+msgstr ""
+
+#: of schemdraw.logic.logic.Or:1
+msgid "OR or XOR gate element."
+msgstr ""
+
+#: of schemdraw.logic.logic.Or:5
+msgid "Draw as exclusive-or gate"
+msgstr ""
+
+#: of schemdraw.logic.logic.Schmitt:1
+msgid "Schmitt Trigger"
+msgstr ""
+
+#: of schemdraw.logic.logic.SchmittAnd:1
+msgid "Schmitt Trigger AND"
+msgstr ""
+
+#: of schemdraw.logic.logic.SchmittAnd:4
+msgid "in1 in2 out"
+msgstr ""
+
+#: of schemdraw.logic.logic.SchmittNot:1
+msgid "Inverted Schmitt Trigger"
+msgstr ""
+
+#: of schemdraw.logic.logic.Tgate:1
+msgid "Transmission gate."
+msgstr ""
+
+#: of schemdraw.logic.logic.Tgate:4
+msgid "in out c cbar"
+msgstr ""
+
+#: of schemdraw.logic.logic.Tristate:1
+msgid ""
+"Tristate inverter :param outputnot: Draw invert bubble on output :param "
+"controlnot: Active-low control"
+msgstr ""
+
+#: of schemdraw.logic.logic.Tristate:6
+msgid "in out c"
+msgstr ""
+
+#: of schemdraw.parsing.logic_parser.logicparse:1
+msgid "Parse a logic string expression and draw the gates in a schemdraw Drawing"
+msgstr ""
+
+#: of schemdraw.parsing.logic_parser.logicparse:3
+msgid ""
+"Logic expression is defined by string using 'and', 'or', 'not', etc. for "
+"example, \"a or (b and c)\". Parser recognizes several symbols and names "
+"for logic functions: [and, '&', '∧'] [or, '|', '∨', '+'] [xor, '⊕', '⊻'] "
+"[not, '~', '¬']"
+msgstr ""
+
+#: of schemdraw.parsing.logic_parser.logicparse:11
+msgid "Logic expression"
+msgstr ""
+
+#: of schemdraw.parsing.logic_parser.logicparse:12
+msgid "Height of one gate"
+msgstr ""
+
+#: of schemdraw.parsing.logic_parser.logicparse:13
+msgid "Width of one gate"
+msgstr ""
+
+#: of schemdraw.parsing.logic_parser.logicparse:14
+msgid "Label for logic output"
+msgstr ""
+
+#: ../../classes/logic.rst
+msgid "Returns"
+msgstr ""
+
+#: of schemdraw.parsing.logic_parser.logicparse:16
+msgid "schemdraw.Drawing with logic tree"
+msgstr ""
+
+#: of schemdraw.logic.table.Table:1
+msgid ""
+"Table Element for drawing rudimentary Markdown formatted tables, such as "
+"logic truth tables."
+msgstr ""
+
+#: of schemdraw.logic.table.Table:4
+msgid ""
+"Table definition, as markdown string. Columns separated by \\|. Separator"
+" rows contain --- or === between column separators."
+msgstr ""
+
+#: of schemdraw.logic.table.Table:6
+msgid ""
+"Justification and vertical separators to draw for each column, similar to"
+" LaTeX tabular environment parameter. Justification characters include "
+"'c', 'r', and 'l' for center, left, and right justification. Separator "
+"characters may be '\\|' for a single vertical bar, or '\\|\\|' or 'ǁ' for"
+" a double vertical bar, or omitted for no bar. Example: 'cc|c'."
+msgstr ""
+
+#: of schemdraw.logic.table.Table:12
+msgid "Point size of table font"
+msgstr ""
+
+#: of schemdraw.logic.table.Table:13
+msgid "Name of table font"
+msgstr ""
+
+#: of schemdraw.logic.table.Table:15
+msgid "Example Table:"
+msgstr ""
+
+#: of schemdraw.logic.table.Table:16
+msgid ""
+"\\| A \\| B \\| Y \\| \\|---\\|---\\|---\\| \\| 0 \\| 0 \\| 1 \\| \\| 0 "
+"\\| 1 \\| 0 \\| \\| 1 \\| 0 \\| 0 \\| \\| 1 \\| 1 \\| 0 \\|"
+msgstr ""
+
+#: of schemdraw.logic.kmap.Kmap:1
+msgid "Karnaugh Map"
+msgstr ""
+
+#: of schemdraw.logic.kmap.Kmap:3
+msgid "Draws a K-Map with 2, 3, or 4 variables."
+msgstr ""
+
+#: of schemdraw.logic.kmap.Kmap:5
+msgid "2, 3, or 4-character string defining names of the inputs"
+msgstr ""
+
+#: of schemdraw.logic.kmap.Kmap:7
+msgid ""
+"list defining values to display in each box of the K-Map. First element "
+"is string of 2, 3, or 4 logic 0's and 1's, and last element is the string"
+" to display for that input. Example: ('0000', '1') displays a '1' when "
+"all inputs are 0."
+msgstr ""
+
+#: of schemdraw.logic.kmap.Kmap:12
+msgid ""
+"dictionary of style parameters for circling groups of inputs. Dictionary "
+"key must be same length as names, and defines which elements are circled "
+"using '0', '1', or '.' in each position. For example, '1...' circles "
+"every box where A=1, and '.11.' circles every box where both B and C are "
+"1. Value of dictionary pair is another dictionary containing style of box"
+" (e.g. color, fill, lw, and ls)."
+msgstr ""
+
+#: of schemdraw.logic.kmap.Kmap:20
+msgid "string to display in boxes that don't have a truthtable entry defined"
+msgstr ""
+
+#: of schemdraw.logic.kmap.Kmap:24
+msgid "cellXXXX - Center of each cell in the grid, where X is 0 or 1"
+msgstr ""
+
+#: of schemdraw.logic.timing.TimingDiagram:1
+msgid "Logic Timing Diagram"
+msgstr ""
+
+#: of schemdraw.logic.timing.TimingDiagram:3
+msgid ""
+"Draw timing diagrams compatible with WaveJSON format See "
+"https://wavedrom.com/ for details. Use `from_json` to use WaveJSON "
+"strings copied from the site (since they can't be copied as proper Python"
+" dicts due to lack of quoting)."
+msgstr ""
+
+#: of schemdraw.logic.timing.TimingDiagram:9
+msgid ""
+"Schemdraw provides a few additional extensions to the WaveJSON "
+"dictionary, including asynchronous waveforms and configuration options "
+"(color, lw) on each wave. See documentation for full specification."
+msgstr ""
+
+#: of schemdraw.logic.timing.TimingDiagram:14
+msgid "WaveJSON as a Python dict"
+msgstr ""
+
+#: ../../classes/logic.rst
+msgid "Keyword Arguments"
+msgstr ""
+
+#: of schemdraw.logic.timing.TimingDiagram:16
+msgid "Height of one waveform"
+msgstr ""
+
+#: of schemdraw.logic.timing.TimingDiagram:17
+msgid "Separation between two waveforms"
+msgstr ""
+
+#: of schemdraw.logic.timing.TimingDiagram:18
+msgid "Rise/fall time for wave transitions"
+msgstr ""
+
+#: of schemdraw.logic.timing.TimingDiagram:19
+msgid "Size of label fonts"
+msgstr ""
+
+#: of schemdraw.logic.timing.TimingDiagram:20
+msgid "Size of node labels"
+msgstr ""
+
+#: of schemdraw.logic.timing.TimingDiagram:21
+msgid "Color for wave names"
+msgstr ""
+
+#: of schemdraw.logic.timing.TimingDiagram:22
+msgid "Color for wave data text"
+msgstr ""
+
+#: of schemdraw.logic.timing.TimingDiagram:23
+msgid "Color for node text"
+msgstr ""
+
+#: of schemdraw.logic.timing.TimingDiagram:24
+msgid "Color of background grid"
+msgstr ""
+
+#: of schemdraw.logic.timing.TimingDiagram:25
+msgid "Color of edge notations (default blue)"
+msgstr ""
+
+#: of schemdraw.logic.timing.TimingDiagram:26
+msgid "Color of tick/tock labels in head/foot"
+msgstr ""
+
+#: of schemdraw.logic.timing.TimingDiagram:27
+msgid "Enable grid lines (default True)"
+msgstr ""
+

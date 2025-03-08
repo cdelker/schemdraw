@@ -1,0 +1,110 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, Collin J. Delker
+# This file is distributed under the same license as the Schemdraw package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Schemdraw \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-02 17:27-0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh\n"
+"Language-Team: zh <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../elements/intcircuits.rst:13
+msgid "Integrated Circuits"
+msgstr ""
+
+#: ../../elements/intcircuits.rst:15
+msgid ""
+"The :py:class:`schemdraw.elements.intcircuits.Ic` class is used to make "
+"integrated circuits, multiplexers, and other black box elements. The "
+":py:class:`schemdraw.elements.intcircuits.IcPin` class is used to define "
+"each input/output pin before adding it to the Ic."
+msgstr ""
+
+#: ../../elements/intcircuits.rst:17
+msgid ""
+"All pins will be given an anchor name of `inXY` where X is the side (L, "
+"R, T, B), and Y is the pin number along that side. Pins also define "
+"anchors based on the `name` parameter. If the `anchorname` parameter is "
+"provided for the pin, this name will be used, so that the pin `name` can "
+"be any string even if it cannot be used as a Python variable name."
+msgstr ""
+
+#: ../../elements/intcircuits.rst:21
+msgid ""
+"Here, a J-K flip flop, as part of an HC7476 integrated circuit, is drawn "
+"with input names and pin numbers."
+msgstr ""
+
+#: ../../elements/intcircuits.rst:35
+#, python-brace-format
+msgid ""
+"Notice the use of `$\\overline{Q}$` to acheive the label on the inverting"
+" output. The anchor positions can be accessed using attributes, such as "
+"`JK.Q` for the non-inverting output. However, inverting output is named "
+"`$\\overline{Q}`, which is not accessible using the typical dot notation."
+" It could be accessed using `getattr(JK, r'$\\overline{Q}$')`, but to "
+"avoid this an alternative anchorname of `QBAR` was defined."
+msgstr ""
+
+#: ../../elements/intcircuits.rst:44
+msgid "Multiplexers"
+msgstr ""
+
+#: ../../elements/intcircuits.rst:46
+msgid ""
+"Multiplexers and demultiplexers are drawn with the "
+":py:class:`schemdraw.elements.intcircuits.Multiplexer` class which wraps "
+"the Ic class."
+msgstr ""
+
+#: ../../elements/intcircuits.rst:59
+msgid "See the :ref:`gallery` for more examples."
+msgstr ""
+
+#: ../../elements/intcircuits.rst:63
+msgid "Seven-Segment Display"
+msgstr ""
+
+#: ../../elements/intcircuits.rst:65
+msgid ""
+"A seven-segment display, in "
+":py:class:`schemdraw.elements.intcircuits.SevenSegment`, provides a "
+"single digit with several options including decimal point and common "
+"anode or common cathode mode. The "
+":py:meth:`schemdraw.elements.intcircuits.sevensegdigit` method generates "
+"a list of Segment objects that can be used to add a digit to another "
+"element, for example to make a multi-digit display."
+msgstr ""
+
+#: ../../elements/intcircuits.rst:76
+msgid "DIP Integrated Circuits"
+msgstr ""
+
+#: ../../elements/intcircuits.rst:78
+msgid ""
+"Integrated circuits can be drawn in dual-inline package style with "
+":py:class:`schemdraw.elements.intcircuits.IcDIP`. Anchors allow "
+"connecting elements externally to show the IC in a circuit, or "
+"interanally to show the internal configuration of the IC (see "
+":ref:`dip741`.)"
+msgstr ""
+
+#: ../../elements/intcircuits.rst:89
+msgid "Predefined ICs"
+msgstr ""
+
+#: ../../elements/intcircuits.rst:91
+msgid "A few common integrated circuits are predefined as shown below."
+msgstr ""
+

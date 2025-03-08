@@ -1,8 +1,10 @@
-v0.20 - IN PROGRESS
+v0.20 - 2025-03-08
 
     Enhancements:
         - Added `transparent` and `dpi` parameters to `Drawing` constructor, to be used when saving to a file from the context manager
         - Validate colors and linestyles when set instead of waiting for matplotlib to draw, or SVG to silently fail
+        - Implemented `head` and `foot` parameters of wavedrom TimingDiagrams
+        - Added `box` parameter to Josephson element
 
     Fixes:
         - Gate anchor position on Pmos2
@@ -12,6 +14,7 @@ v0.20 - IN PROGRESS
         - Fix user-supplied label rotation angles when going upside-down
         - Clear the figure when calling `draw` to prevent double-drawing
         - Fix arrow direction in timing diagrams
+        - Adjust label position along Arcs
 
 
 v0.19 - 2024-04-27

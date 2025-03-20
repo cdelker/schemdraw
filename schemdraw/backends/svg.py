@@ -27,6 +27,8 @@ from .svgunits import parse_size_to_px, PT_PER_IN, PX_PER_PT
 
 LINE_WIDTH = 2     # Default line width is 2 points
 
+ET.register_namespace("","http://www.w3.org/2000/svg")
+
 
 class Config:
     ''' Configuration options for SVG backend '''
@@ -611,8 +613,7 @@ class Figure:
         x0 = self.bbox.xmin * self.scale
         y0 = -self.bbox.ymax * self.scale
         if not self.svgcanvas:
-            svg = ET.Element('svg')
-            svg.set('xmlns', 'http://www.w3.org/2000/svg')
+            svg = ET.Element('{http://www.w3.org/2000/svg}svg')
             if self._need_xlink:
                 svg.set('xmlns:xlink', 'http://www.w3.org/1999/xlink')
             svg.set('xml:lang', 'en')

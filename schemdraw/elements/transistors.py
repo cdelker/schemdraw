@@ -51,9 +51,6 @@ class _Mosfet(Element):
         self.elmparams['ilabel'] = 'right'  # Draw current labels on this side
         u = reswidth*0.5
 
-
-
-        # ---
         self.segments.extend([
             Segment([(-3*u, -6.5*u), (-3*u, -7.5*u)]),
             Segment([(-3*u, -9.5*u), (-3*u, -10.5*u)]),
@@ -212,9 +209,6 @@ class _Mosfet2(Element2Term):
                 (13*u, -3*u), (13*u, 0), (20*u, 0),
                 ]))
 
-
-
-        # ---
         self.segments.extend([
             Segment([(6.5*u, -3*u), (7.5*u, -3*u)]),
             Segment([(9.5*u, -3*u), (10.5*u, -3*u)]),
@@ -813,6 +807,56 @@ class JFetP(JFet):
         super().__init__(circle=circle, **kwargs)
         self.segments.append(Segment([(jfetw+.25, -fetl-jfetw), (jfetw, -fetl-jfetw)],
                                      arrow='->', arrowwidth=.2, arrowlength=.2))
+
+
+hemt_gap = (fetw + 2*fetr) / 5
+
+
+class Hemt(Element):
+    _element_defaults = {
+        'split': False,
+        'arrow': None,
+    }
+    def __init__(self, *, split: Optional[bool] = None, arrow: Optional[str] = None, **kwargs):
+        super().__init__(**kwargs)
+        self.elmparams['ilabel'] = 'left'  # Draw current labels on this side
+        if self.params['split']:
+            self.segments.append(Segment(
+                [(0, 0), (0, -fetl), (fetw, -fetl),
+                  gap,
+                  (fetw, -fetl+fetr), (fetw, -fetl+fetr-hemt_gap), gap,
+                  (fetw, -fetl+fetr-2*hemt_gap), (fetw, -fetl+fetr-3*hemt_gap), gap,
+                  (fetw, -fetl+fetr-4*hemt_gap), (fetw, -fetl+fetr-5*hemt_gap), gap,
+                  (fetw, -fetl-fetw),
+                  (0, -fetl-fetw),
+                  (0, -2*fetl-fetw)]))
+        else:
+            self.segments.append(Segment(
+                [(0, 0), (0, -fetl), (fetw, -fetl),
+                  gap, (fetw, -fetl+fetr),
+                  (fetw, -fetl-fetw-fetr),
+                  gap, (fetw, -fetl-fetw),
+                  (0, -fetl-fetw),
+                  (0, -2*fetl-fetw)]))
+        self.segments.append(Segment(
+            [(fetw, -fetl-fetw/2),
+             (fetw+fetl+fetr, -fetl-fetw/2)]))
+
+        if self.params['arrow'] == '<' or self.params['arrow'] is True:
+            self.segments.append(Segment(
+                [(0, -fetl-fetw), (fetw, -fetl-fetw)],
+                arrow = '<-'))
+        elif self.params['arrow'] == '>':
+            self.segments.append(Segment(
+                [(0, -fetl-fetw), (fetw, -fetl-fetw)],
+                arrow = '->'))
+
+        self.anchors['drain'] = (0, -2*fetl-fetw)
+        self.anchors['source'] = (0, 0)
+        self.anchors['gate'] = (fetw+fetl+fetr, -fetl-fetw/2)
+        self.anchors['center'] = (0, -fetl - fetw/2)
+        self.elmparams['drop'] = (0, -2*fetl-fetw)
+        self.elmparams['lblloc'] = 'lft'
 
 
 # BJT transistors

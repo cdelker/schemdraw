@@ -16,7 +16,8 @@ from .switches import (Switch, SwitchSpdt, SwitchSpdt2, SwitchDpst, SwitchDpdt, 
                        SwitchRotary, SwitchDIP)
 from .transistors import (NFet, PFet, AnalogNFet, AnalogPFet, AnalogBiasedFet,
                           JFet, JFetN, JFetP, Bjt, BjtNpn, BjtPnp, BjtPnp2c, Bjt2, BjtNpn2, BjtPnp2,
-                          BjtPnp2c2, NFet2, PFet2, JFet2, JFetN2, JFetP2, NMos, PMos, NMos2, PMos2)
+                          BjtPnp2c2, NFet2, PFet2, JFet2, JFetN2, JFetP2, NMos, PMos, NMos2, PMos2,
+                          Hemt)
 from .misc import Speaker, Mic, Motor, AudioJack
 from .xform import Transformer
 from .cables import Coax, Triax
@@ -50,7 +51,7 @@ __all__ = [
     "SwitchDpdt", "Button", "SwitchReed", "SwitchRotary", "SwitchDIP", "NFet", "PFet", "AnalogNFet", "AnalogPFet",
     "AnalogBiasedFet", "JFet", "JFetN", "JFetP",
     "Bjt", "BjtNpn", "BjtPnp", "BjtPnp2c", "Bjt2", "BjtNpn2", "BjtPnp2", "BjtPnp2c2", "NFet2", "PFet2", "JFet2",
-    "JFetN2", "JFetP2", "NMos", "PMos", "NMos2", "PMos2",
+    "JFetN2", "JFetP2", "NMos", "PMos", "NMos2", "PMos2", "Hemt",
     "Speaker", "Mic", "Motor", "AudioJack", "Transformer", "Coax", "Triax",
     "IcPin", "Ic", "Multiplexer", "IcDIP", "VoltageRegulator", "DFlipFlop", "JKFlipFlop", "Ic555", "SevenSegment",
     "sevensegdigit", "Line", "DataBusLine", "Dot", "Annotate", "ZLabel", "Arrowhead", "Arrow", "DotDotDot", "Wire",

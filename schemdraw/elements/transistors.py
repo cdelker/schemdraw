@@ -814,8 +814,8 @@ hemt_gap = (fetw + 2*fetr) / 5
 
 class Hemt(Element):
     _element_defaults = {
-        'split': False,
-        'arrow': None,
+        'split': True,
+        'arrow': True,
     }
     def __init__(self, *, split: Optional[bool] = None, arrow: Optional[str] = None, **kwargs):
         super().__init__(**kwargs)
@@ -842,14 +842,14 @@ class Hemt(Element):
             [(fetw, -fetl-fetw/2),
              (fetw+fetl+fetr, -fetl-fetw/2)]))
 
-        if self.params['arrow'] == '<' or self.params['arrow'] is True:
-            self.segments.append(Segment(
-                [(0, -fetl-fetw), (fetw, -fetl-fetw)],
-                arrow = '<-'))
-        elif self.params['arrow'] == '>':
+        if self.params['arrow'] == '>':
             self.segments.append(Segment(
                 [(0, -fetl-fetw), (fetw, -fetl-fetw)],
                 arrow = '->'))
+        elif self.params['arrow']:
+            self.segments.append(Segment(
+                [(0, -fetl-fetw), (fetw, -fetl-fetw)],
+                arrow = '<-'))
 
         self.anchors['drain'] = (0, -2*fetl-fetw)
         self.anchors['source'] = (0, 0)
@@ -964,6 +964,97 @@ class BjtPnp2c(BjtPnp):
                                       (bjt_emx, -bjt_emy-bjt_2c_dy)]))
         self.anchors['C2'] = (bjt_emx, -bjt_emy-bjt_2c_dy)
         self.C2: Point
+
+
+class NpnSchottky(BjtNpn):
+    ''' NPN with Schottky Base
+
+        Args:
+            circle: Draw circle around the transistor
+
+        Anchors:
+            * collector
+            * emitter
+            * base
+            * center
+    '''
+    def __init__(self, *, circle: Optional[bool] = None, **kwargs):
+        super().__init__(circle=circle, **kwargs)
+        z = .1
+        self.segments.append(Segment([(bjt_v, bjt_v_len/2), (bjt_v, bjt_v_len/2+z),
+                                      (bjt_v+z, bjt_v_len/2+z), (bjt_v+z, bjt_v_len/2)]))
+        self.segments.append(Segment([(bjt_v, -bjt_v_len/2), (bjt_v, -bjt_v_len/2-z),
+                                      (bjt_v-z, -bjt_v_len/2-z), (bjt_v-z, -bjt_v_len/2)]))
+
+
+class PnpSchottky(BjtPnp):
+    ''' PNP with Schottky Base
+
+        Args:
+            circle: Draw circle around the transistor
+
+        Anchors:
+            * collector
+            * emitter
+            * base
+            * center
+    '''
+    def __init__(self, *, circle: Optional[bool] = None, **kwargs):
+        super().__init__(circle=circle, **kwargs)
+        z = .1
+        self.segments.append(Segment([(bjt_v, bjt_v_len/2), (bjt_v, bjt_v_len/2+z),
+                                      (bjt_v-z, bjt_v_len/2+z), (bjt_v-z, bjt_v_len/2)]))
+        self.segments.append(Segment([(bjt_v, -bjt_v_len/2), (bjt_v, -bjt_v_len/2-z),
+                                      (bjt_v+z, -bjt_v_len/2-z), (bjt_v+z, -bjt_v_len/2)]))
+
+
+class NpnPhoto(BjtNpn):
+    ''' NPN Phototransistor '''
+    def __init__(self, *, circle: Optional[bool] = None, **kwargs):
+        super().__init__(circle=circle, **kwargs)
+        self.segments.pop(0)  # Remove the base
+        arrow_sep = .25
+        self.segments.append(Segment([(-.1, bjt_v), (bjt_v*.75, .1)],
+                                     arrow='->', arrowwidth=.16, arrowlength=.2))
+        self.segments.append(Segment([(-.1, bjt_v-arrow_sep), (bjt_v*.75, .1-arrow_sep)],
+                                     arrow='->', arrowwidth=.16, arrowlength=.2))
+
+
+class PnpPhoto(BjtPnp):
+    ''' PNP Phototransistor '''
+    def __init__(self, *, circle: Optional[bool] = None, **kwargs):
+        super().__init__(circle=circle, **kwargs)
+        self.segments.pop(0)  # Remove the base
+        arrow_sep = .25
+        self.segments.append(Segment([(-.1, bjt_v), (bjt_v*.75, .1)],
+                                     arrow='->', arrowwidth=.16, arrowlength=.2))
+        self.segments.append(Segment([(-.1, bjt_v-arrow_sep), (bjt_v*.75, .1-arrow_sep)],
+                                     arrow='->', arrowwidth=.16, arrowlength=.2))
+
+
+class IgbtN(BjtNpn):
+    ''' Insulated Gate BJT N-type '''
+    def __init__(self, *, circle: Optional[bool] = None, **kwargs):
+        super().__init__(circle=circle, **kwargs)
+        self.segments.pop(0)  # Remove the base
+        gap = .15
+        self.segments.append(Segment([(bjt_v-gap, bjt_v-gap/2), (bjt_v-gap, -bjt_v+gap/2),
+                                       (bjt_v-gap*2, -bjt_v+gap/2)],
+                                     ))
+        self.anchors['base'] = (bjt_v-gap*2, -bjt_v+gap/2)
+
+
+class IgbtP(BjtPnp):
+    ''' Insulated Gate BJT P-type '''
+    def __init__(self, *, circle: Optional[bool] = None, **kwargs):
+        super().__init__(circle=circle, **kwargs)
+        self.segments.pop(0)  # Remove the base
+        gap = .15
+        self.segments.append(Segment([(bjt_v-gap*2, bjt_v-gap/2),
+                                      (bjt_v-gap, bjt_v-gap/2),
+                                      (bjt_v-gap, -bjt_v+gap/2)]))
+        self.anchors['base'] = (bjt_v-gap*2, bjt_v-gap/2)
+
 
 
 bjt_r = .55  # BJT circle radius

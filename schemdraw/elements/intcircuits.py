@@ -124,7 +124,7 @@ class Ic(Element):
         ''' List of all pin names '''
         names: list[str] = []
         for _, pins in self.pins.items():
-            names.extend(p.name for p in pins if p.name)
+            names.extend(p.anchorname if p.anchorname else p.name for p in pins if p.name)
         return names
 
     def pin(self,

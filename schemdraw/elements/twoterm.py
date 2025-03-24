@@ -208,6 +208,19 @@ class DiodeTunnel(Diode):
                                       (resheight*1.4-tunnel_width, -resheight)]))
 
 
+class DiodeTVS(Element2Term):
+    ''' Transient-Voltage Suppression (TVS) Diode '''
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        mid = resheight*1.4
+        tvs = 0.1
+        self.segments.append(Segment([(0, 0), gap, (2*mid, 0)]))
+        self.segments.append(SegmentPoly([(0, resheight), (mid, 0), (0, -resheight)]))
+        self.segments.append(SegmentPoly([(mid, 0), (mid*2, resheight), (mid*2, -resheight)]))
+        self.segments.append(Segment([(mid+tvs, resheight), (mid, resheight),
+                                      (mid, -resheight), (mid-tvs, -resheight)]))
+
+
 class DiodeShockley(Element2Term):
     ''' Shockley Diode '''
     def __init__(self, **kwargs):

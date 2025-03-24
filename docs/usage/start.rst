@@ -30,7 +30,7 @@ Alternatively, schemdraw can be installed directly by downloading the source and
 
     pip install ./
 
-Schemdraw requires Python 3.8 or higher.
+Schemdraw requires Python 3.9 or higher.
 
 
 Overview
@@ -44,6 +44,12 @@ use in a drawing. A common import structure is:
 
     import schemdraw
     import schemdraw.elements as elm
+
+
+.. jupyter-execute::
+    :hide-code:
+
+    schemdraw.use('svg')
 
 
 To make a circuit diagram, use a context manager (`with` statement) on a :py:class:`schemdraw.Drawing`. Then any :py:class:`schemdraw.elements.Element` instances created within the `with` block added to the drawing:

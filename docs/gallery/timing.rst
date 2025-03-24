@@ -9,6 +9,7 @@ Timing Diagrams
     import schemdraw
     from schemdraw import elements as elm
     from schemdraw import logic
+    schemdraw.use('svg')
 
 
 Timing diagrams, based on `WaveDrom <https://wavedrom.com/>`_, are drawn using the :py:class:`schemdraw.logic.timing.TimingDiagram` class.

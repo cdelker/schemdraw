@@ -6,6 +6,7 @@ Opamp Circuits
 
     import schemdraw
     from schemdraw import elements as elm
+    schemdraw.use('svg')
 
 
 Inverting Opamp

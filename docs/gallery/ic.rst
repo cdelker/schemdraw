@@ -6,6 +6,7 @@ Integrated Circuits
 
     import schemdraw
     from schemdraw import elements as elm
+    schemdraw.use('svg')
 
 
 555 LED Blinker Circuit

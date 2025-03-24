@@ -4,9 +4,9 @@ Digital Logic
 .. jupyter-execute::
     :hide-code:
 
-    %config InlineBackend.figure_format = 'svg'
     import schemdraw
     from schemdraw import logic
+    schemdraw.use('svg')
 
 
 Logic gates can be drawn by importing the :py:mod:`schemdraw.logic.logic` module:
@@ -20,43 +20,46 @@ Logic gates are shown below. Gates define anchors for `out` and `in1`, `in2`, et
 `Buf`, `Not`, and `NotNot`, and their Schmitt-trigger counterparts, are two-terminal elements that extend leads.
 
 
-.. jupyter-execute::
-    :hide-code:
+.. element_list::
+    :module: logic
+    :hide_anchors: in1 in2 out
 
-    def drawElements(elmlist, cols=3, dx=8, dy=2):
-        d = schemdraw.Drawing(fontsize=12)
-        for i, e in enumerate(elmlist):
-            y = i//cols*-dy
-            x = (i%cols) * dx
-            
-            d += getattr(logic, e)().right().at((x,y)).label(e, loc='right', ofst=.2, halign='left', valign='center')
-        return d
-
-    elms = ['And', 'Nand', 'Or', 'Nor', 'Xor', 'Xnor',
-            'Buf', 'Not', 'NotNot', 'Tgate', 'Tristate',
-            'Schmitt', 'SchmittNot', 'SchmittAnd', 'SchmittNand']
-    drawElements(elms, dx=6)
+    And()
+    Nand()
+    Or()
+    Nor()
+    Xor()
+    Xnor()
+    Buf()
+    Not()
+    NotNot()
+    Tgate()
+    Tristate()
+    Schmitt()
+    SchmittNot()
+    SchmittAnd()
+    SchmittNand()
 
 
 
 Gates with more than 2 inputs can be created using the `inputs` parameter. With more than 3 inputs, the back of the gate will extend up and down.
 
-.. jupyter-execute::
+.. element_list::
+    :module: logic
+    :hide_anchors: in1 in2 in3 in4 out
 
-    logic.Nand(inputs=3)
-
-
-.. jupyter-execute::
-
-    logic.Nor(inputs=4)
-    
+    Nand(inputs=3)
+    Nor(inputs=4)
 
 Finally, any input can be pre-inverted (active low) using the `inputnots` keyword with a list of input numbers, starting at 1 to match the anchor names, on which to add an invert bubble.
 
 
-.. jupyter-execute::
+.. element_list::
+    :ncols: 2
+    :module: logic
+    :hide_anchors: in1 in2 in3 out
 
-    logic.Nand(inputs=3, inputnots=[1])
+    Nand(inputs=3, inputnots=[1])
 
 
 Logic Parser

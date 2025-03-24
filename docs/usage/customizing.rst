@@ -4,7 +4,6 @@ Customizing Elements
 .. jupyter-execute::
     :hide-code:
 
-    %config InlineBackend.figure_format = 'svg'
     import schemdraw
     from schemdraw import elements as elm
     from schemdraw import logic

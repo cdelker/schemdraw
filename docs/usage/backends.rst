@@ -9,7 +9,7 @@ The backend is the "canvas" on which a schematic is drawn. Schemdraw supports tw
 Matplotlib Backend
 ******************
 
-By default, all schematics are drawn on a Matplotlib axis.
+By default, all schematics are drawn on a Matplotlib axis if Matplotlib is installed and importable.
 A new Matplotlib Figure and Axis will be created, with no frame or borders.
 A schematic may be added to an existing Axis by using the :py:meth:`schemdraw.Drawing.draw` method and setting
 the `canvas` parameter to an existing Axis instance.

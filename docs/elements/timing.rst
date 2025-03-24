@@ -4,9 +4,9 @@ Timing Diagrams
 .. jupyter-execute::
     :hide-code:
 
-    %config InlineBackend.figure_format = 'svg'
     import schemdraw
     from schemdraw import logic
+    schemdraw.use('svg')
 
 
 Digital timing diagrams may be drawn using the :py:class:`schemdraw.logic.timing.TimingDiagram` Element in the :py:mod:`schemdraw.logic` module.

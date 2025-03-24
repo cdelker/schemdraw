@@ -7,6 +7,7 @@ Signal Processing
     import schemdraw
     from schemdraw import elements as elm
     from schemdraw import dsp
+    schemdraw.use('svg')
 
 
 Signal processing elements are in the :py:mod:`schemdraw.dsp.dsp` module.

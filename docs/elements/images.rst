@@ -6,14 +6,15 @@ Image-based Elements
 .. jupyter-execute::
     :hide-code:
 
-    %config InlineBackend.figure_format = 'svg'
     import schemdraw
     from schemdraw import elements as elm
     schemdraw.use('svg')
 
 
 Elements can be made from image files, including PNG and SVG images, using :py:class:`schemdraw.elements.ElementImage`.
-A common use case is to subclass `ElementImage` and provide the image file and anchor positions in the subclass's init method.
+SVG images are only supported in the SVG backend at this time (See :ref:`backends`).
+
+Common usage is to subclass `ElementImage` and provide the image file and anchor positions in the subclass's init method.
 For example, an Arduino Board element may be created from an image:
 
 .. jupyter-execute::

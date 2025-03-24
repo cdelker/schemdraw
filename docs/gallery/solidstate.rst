@@ -6,6 +6,7 @@ Solid State
 
     import schemdraw
     from schemdraw import elements as elm
+    schemdraw.use('svg')
 
 
 S-R Latch (Transistors)

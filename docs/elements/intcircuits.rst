@@ -1,10 +1,10 @@
 
 .. jupyter-execute::
     :hide-code:
-    
-    %config InlineBackend.figure_format = 'svg'
+
     import schemdraw
     from schemdraw import elements as elm
+    schemdraw.use('svg')
 
 
 .. _integratedcircuit:
@@ -90,25 +90,73 @@ Predefined ICs
 
 A few common integrated circuits are predefined as shown below.
 
-.. jupyter-execute::
-    :hide-code:
-    
-    elm.Ic555().label('Ic555()', 'bottom')
+.. grid:: 2
+
+    .. grid-item-card::
+        :class-body: sd-text-nowrap sd-fs-6
+
+        VoltageRegulator
+
+        .. jupyter-execute::
+            :hide-code:
+
+            with schemdraw.Drawing():
+                j = elm.JKFlipFlop()
+                j.label('J', loc='J', fontsize=10, color='blue')
+                j.label('K', loc='K', fontsize=10, color='blue')
+                j.label('Q', loc='Q', fontsize=10, color='blue')
+                j.label('Qbar', loc='Qbar', fontsize=10, color='blue')
+                j.label('CLK', loc='CLK', fontsize=10, color='blue')
 
 
-.. jupyter-execute::
-    :hide-code:
-    
-    elm.VoltageRegulator().label('VoltageRegulator()', 'bottom')
+    .. grid-item-card::
+        :class-body: sd-text-nowrap sd-fs-6
+
+        DFlipFlop
+
+        .. jupyter-execute::
+            :hide-code:
+
+            with schemdraw.Drawing():
+                d = elm.DFlipFlop()
+                d.label('D', loc='D', fontsize=10, color='blue')
+                d.label('Q', loc='Q', fontsize=10, color='blue')
+                d.label('Qbar', loc='Qbar', fontsize=10, color='blue')
+                d.label('CLK', loc='CLK', fontsize=10, color='blue')
 
 
-.. jupyter-execute::
-    :hide-code:
-    
-    elm.DFlipFlop().label('DFlipFlop()', 'bottom')
+    .. grid-item-card::
+        :class-body: sd-text-nowrap sd-fs-6
+
+        JKFlipFlop
+
+        .. jupyter-execute::
+            :hide-code:
+
+            with schemdraw.Drawing():
+                j = elm.JKFlipFlop()
+                j.label('J', loc='J', fontsize=10, color='blue')
+                j.label('K', loc='K', fontsize=10, color='blue')
+                j.label('Q', loc='Q', fontsize=10, color='blue')
+                j.label('Qbar', loc='Qbar', fontsize=10, color='blue')
+                j.label('CLK', loc='CLK', fontsize=10, color='blue')
 
 
-.. jupyter-execute::
-    :hide-code:
-    
-    elm.JKFlipFlop().label('JKFlipFlop()', 'bottom')
+    .. grid-item-card::
+        :class-body: sd-text-nowrap sd-fs-6
+
+        Ic555
+
+        .. jupyter-execute::
+            :hide-code:
+
+            with schemdraw.Drawing():
+                d = elm.Ic555()
+                d.label('RST', loc='RST', fontsize=10, color='blue')
+                d.label('DIS', loc='DIS', fontsize=10, color='blue')
+                d.label('Vcc', loc='Vcc', fontsize=10, color='blue')
+                d.label('THR', loc='THR', fontsize=10, color='blue')
+                d.label('TRG', loc='TRG', fontsize=10, color='blue')
+                d.label('CTL', loc='CTL', fontsize=10, color='blue')
+                d.label('OUT', loc='OUT', fontsize=10, color='blue')
+                d.label('GND', loc='GND', fontsize=10, color='blue')

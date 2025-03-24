@@ -1,7 +1,6 @@
 .. jupyter-execute::
     :hide-code:
-    
-    %config InlineBackend.figure_format = 'svg'
+
     import schemdraw
     from schemdraw import elements as elm
 
@@ -261,6 +260,8 @@ for situations when it's useful to save the drawing state and come back to it la
 
 Changing the drawing position can be accomplished by calling :py:meth:`schemdraw.Drawing.move` or :py:meth:`schemdraw.Drawing.move_from`.
 
+
+.. _connecting:
 
 Connecting Elements
 -------------------

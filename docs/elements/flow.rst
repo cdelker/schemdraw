@@ -4,9 +4,9 @@ Flowcharts and Diagrams
 .. jupyter-execute::
     :hide-code:
 
-    %config InlineBackend.figure_format = 'svg'
     import schemdraw
     from schemdraw import flow
+    schemdraw.use('svg')
 
 
 Schemdraw provides basic symbols for flowcharting and state diagrams. 

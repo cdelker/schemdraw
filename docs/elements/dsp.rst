@@ -4,10 +4,9 @@ Signal Processing
 .. jupyter-execute::
     :hide-code:
 
-    %config InlineBackend.figure_format = 'svg'
-    from functools import partial
     import schemdraw
     from schemdraw import dsp
+    schemdraw.use('svg')
 
 Signal processing elements can be drawn by importing the :py:mod:`schemdraw.dsp.dsp` module:
 
@@ -23,29 +22,30 @@ anchors.
 Directional elements, such as `Amp`, `Adc`, and `Dac` define anchors `input` and `out`.
 
 
-.. jupyter-execute::
-    :hide-code:
+.. element_list::
+    :module: dsp
+    :nolabel:
 
-    def drawElements(elmlist, cols=3, dx=8, dy=2):
-        d = schemdraw.Drawing(fontsize=12)
-        for i, e in enumerate(elmlist):
-            y = i//cols*-dy
-            x = (i%cols) * dx
+    Square()
+    Circle()
+    Sum()
+    SumSigma()
+    Mixer()
+    Speaker()
+    Amp()
+    OscillatorBox()
+    Oscillator()
+    Filter()
+    Filter(response='lp')
+    Filter(response='bp')
+    Filter(response='hp')
+    Adc()
+    Dac()
+    Demod()
+    Circulator()
+    Isolator()
+    VGA()
 
-            name = type(e()).__name__
-            if hasattr(e, 'keywords'):  # partials have keywords attribute
-                args = ', '.join(['{}={}'.format(k, v) for k, v in e.keywords.items()])
-                name = '{}({})'.format(name, args)
-            d += e().right().at((x,y)).label(name, loc='rgt', ofst=.2, halign='left', valign='center')
-        return d
-
-    elms = [dsp.Square, dsp.Circle, dsp.Sum, dsp.SumSigma, dsp.Mixer, dsp.Speaker,
-            dsp.Amp, dsp.OscillatorBox, dsp.Oscillator, dsp.Filter, 
-            partial(dsp.Filter, response='lp'), partial(dsp.Filter, response='bp'),
-            partial(dsp.Filter, response='hp'), dsp.Adc, dsp.Dac, dsp.Demod,
-            dsp.Circulator, dsp.Isolator, dsp.VGA
-            ]
-    drawElements(elms, dx=6)
 
 
 Labels are placed in the center of the element. The generic `Square` and `Circle` elements can be used with a label to define other operations. For example, an integrator

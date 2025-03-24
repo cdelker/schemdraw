@@ -7,6 +7,7 @@ Digital Logic
     import schemdraw
     from schemdraw import elements as elm
     from schemdraw import logic
+    schemdraw.use('svg')
 
 
 Logic gate definitions are in the :py:mod:`schemdraw.logic.logic` module. Here it was imported with

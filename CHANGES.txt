@@ -1,3 +1,20 @@
+v0.21 - In progress
+
+    Enhancements:
+        - Improved documentation to make elements searchable
+        - Fixed SVG namespaces when importing Fritzing files
+
+    New Elements:
+        - Hemt
+        - DiodeTVS
+        - NpnSchottky
+        - PnpSchottky
+        - NpnPhoto
+        - PnpPhoto
+        - IgbtN
+        - IgbtP
+
+
 v0.20 - 2025-03-08
 
     Enhancements:

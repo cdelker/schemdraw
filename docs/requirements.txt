@@ -3,4 +3,5 @@ matplotlib
 ipykernel
 jupyter_sphinx
 cairosvg
+sphinx-design
 sphinxcontrib-svg2pdfconverter[cairosvg]

@@ -7,6 +7,7 @@ Pictorial Schematics
     import schemdraw
     from schemdraw import elements as elm
     from schemdraw import pictorial
+    schemdraw.use('svg')
 
 
 LED Blinker

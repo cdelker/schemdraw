@@ -3,10 +3,10 @@ Connectors
 
 .. jupyter-execute::
     :hide-code:
-    
-    from functools import partial
+
     import schemdraw
     from schemdraw import elements as elm
+    schemdraw.use('svg')
 
 All connectors are defined with a default pin spacing of 0.6, matching the default pin spacing of the :py:class:`schemdraw.elements.intcircuits.Ic` class, for easy connection of multiple signals.
 
@@ -16,32 +16,17 @@ Headers
 
 A :py:class:`schemdraw.elements.connectors.Header` is a generic Header block with any number of rows and columns. It can have round, square, or screw-head connection points.
 
+.. element_list::
+    :ncols: 2
+    :nolabel:
 
-.. jupyter-execute::
-    :hide-code:
-    
-    def drawElements(elmlist, cols=3, dx=8, dy=2):
-        d = schemdraw.Drawing(fontsize=12)
-        for i, e in enumerate(elmlist):
-            y = i//cols*-dy
-            x = (i%cols) * dx
+    Header()
+    Header(shownumber=True)
+    Header(rows=3, cols=2)
+    Header(style='square')
+    Header(style='screw')
+    Header(pinsleft=['A', 'B', 'C', 'D'])
 
-            name = type(e()).__name__
-            if hasattr(e, 'keywords'):  # partials have keywords attribute
-                args = ', '.join(['{}={}'.format(k, v) for k, v in e.keywords.items()])
-                name = '{}({})'.format(name, args)
-            d += e().at((x, y)).label(name, loc='rgt', halign='left', valign='center')
-        return d
-
-    elmlist = [elm.Header,
-           partial(elm.Header, shownumber=True),
-           partial(elm.Header, rows=3, cols=2),
-           partial(elm.Header, style='square'),
-           partial(elm.Header, style='screw'),
-           partial(elm.Header, pinsleft=['A', 'B', 'C', 'D'], pinalignleft='center')]
-    drawElements(elmlist, cols=2, dy=4)
-    
-    
 Header pins are given anchor names `pin1`, `pin2`, etc.    
 Pin number labels and anchor names can be ordered left-to-right (`lr`), up-to-down (`ud`), or counterclockwise (`ccw`) like a traditional IC, depending on the `numbering` argument.
 The `flip` argument can be set True to put pin 1 at the bottom.
@@ -68,13 +53,12 @@ D-Sub Connectors
 
 Both :py:class:`schemdraw.elements.connectors.DB9` and :py:class:`schemdraw.elements.connectors.DB25` subminiature connectors are defined, with anchors `pin1` through `pin9` or `pin25`.
 
-.. jupyter-execute::
-    :hide-code:
+.. element_list::
+    :nolabel:
 
-    with schemdraw.Drawing(fontsize=12):
-        elm.DB9(label='DB9')
-        elm.DB9(at=[3, 0], number=True, label='DB9(number=True)')
-        elm.DB25(at=[6, 0], label='DB25')
+    DB9()
+    DB9(number=True)
+    DB25()
 
 
 Multiple Lines
@@ -139,12 +123,18 @@ Power outlets and plugs are drawn using `OutletX` classes, with international st
 `hot`, `neutral`, and `ground` (if applicable).
 The `plug` parameter fills the prongs to indicate a plug versus an outlet.
 
-.. jupyter-execute::
-    :hide-code:
+.. element_list::
+    :nolabel:
 
-    outlets = [elm.OutletA, elm.OutletB, elm.OutletC, elm.OutletD, elm.OutletE, elm.OutletF,
-               elm.OutletG, elm.OutletH, elm.OutletI, elm.OutletJ, elm.OutletK, elm.OutletL]
-    with schemdraw.Drawing() as d:
-        for i, outlet in enumerate(outlets):
-            d.here = (i % 4) * 4, (i//4) * -4
-            outlet().label(outlet.__name__, loc='top')
+    OutletA()
+    OutletB()
+    OutletC()
+    OutletD()
+    OutletE()
+    OutletF()
+    OutletG()
+    OutletH()
+    OutletI()
+    OutletJ()
+    OutletK()
+    OutletL()

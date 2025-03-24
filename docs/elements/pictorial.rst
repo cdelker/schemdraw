@@ -6,7 +6,6 @@ Pictorial Elements
 .. jupyter-execute::
     :hide-code:
 
-    %config InlineBackend.figure_format = 'svg'
     import schemdraw
     from schemdraw import elements as elm
     schemdraw.use('svg')
@@ -21,21 +20,24 @@ All the built-in pictorial elements are drawn below.
 
     from schemdraw import pictorial
 
-    with schemdraw.Drawing():
-        bb = pictorial.Breadboard().up()
-        pictorial.CapacitorCeramic().at(bb.J1)
-        pictorial.CapacitorMylar().at(bb.J4)
-        pictorial.CapacitorElectrolytic().at(bb.J7)
-        pictorial.TO92().at(bb.J10)
-        pictorial.LED().at(bb.J13)
-        pictorial.LEDOrange().at(bb.J16)
-        pictorial.LEDYellow().at(bb.J19)
-        pictorial.LEDGreen().at(bb.J22)
-        pictorial.LEDBlue().at(bb.J25)
-        pictorial.LEDWhite().at(bb.J28)
-        pictorial.Diode().at(bb.F9).to(bb.F14)
-        pictorial.Resistor().at(bb.F2).to(bb.F7)
-        pictorial.DIP().at(bb.E18).up()
+
+.. element_list::
+    :module: pictorial
+
+    CapacitorCeramic()
+    CapacitorMylar()
+    CapacitorElectrolytic()
+    TO92()
+    LED()
+    LEDOrange()
+    LEDYellow()
+    LEDGreen()
+    LEDBlue()
+    LEDWhite()
+    Diode()
+    Resistor()
+    DIP()
+
 
 
 Breadboard
@@ -57,6 +59,28 @@ are not defined. Some examples are shown below.
         elm.Dot(radius=.15).at(bb.L1_1).color('cyan')
         elm.Dot(radius=.15).at(bb.R2_7).color('magenta')
         elm.Dot(radius=.15).at(bb.L2_13).color('green')
+
+
+The following example shows the all elements drawn on a breadboard.
+
+.. jupyter-execute::
+
+    with schemdraw.Drawing():
+        bb = pictorial.Breadboard().up()
+        pictorial.CapacitorCeramic().at(bb.J1)
+        pictorial.CapacitorMylar().at(bb.J4)
+        pictorial.CapacitorElectrolytic().at(bb.J7)
+        pictorial.TO92().at(bb.J10)
+        pictorial.LED().at(bb.J13)
+        pictorial.LEDOrange().at(bb.J16)
+        pictorial.LEDYellow().at(bb.J19)
+        pictorial.LEDGreen().at(bb.J22)
+        pictorial.LEDBlue().at(bb.J25)
+        pictorial.LEDWhite().at(bb.J28)
+        pictorial.Diode().at(bb.F9).to(bb.F14)
+        pictorial.Resistor().at(bb.F2).to(bb.F7)
+        pictorial.DIP().at(bb.E18).up()
+
 
 
 Resistors
@@ -166,8 +190,11 @@ Use :py:class:`schemdraw.pictorial.fritz.FritzingPart` and provide the file name
 Schemdraw's anchors will be set based on the part "connectors" defined in the part file.
 In this example, a part is downloaded from the `Adafruit Fritzing Library <https://github.com/adafruit/Fritzing-Library>`_ and used in a drawing.
 
+Because Fritzing images are SVG format, `FritzingPart` only works in schemdraw's SVG backend (:ref:`backends`).
+
 .. jupyter-execute::
 
+    schemdraw.use('svg')
     from urllib.request import urlretrieve
     part = 'https://github.com/adafruit/Fritzing-Library/raw/master/parts/Adafruit%20OLED%20Monochrome%20128x32%20SPI.fzpz'
     fname, msg = urlretrieve(part)

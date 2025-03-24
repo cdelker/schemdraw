@@ -14,12 +14,16 @@
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
+import sys
+from pathlib import Path
+sys.path.append(str(Path('_ext').resolve()))
+
 import pkg_resources
 
 # -- Project information -----------------------------------------------------
 
 project = 'Schemdraw'
-copyright = '2024, Collin J. Delker'
+copyright = '2025, Collin J. Delker'
 author = 'Collin J. Delker'
 
 # The full version, including alpha/beta/rc tags
@@ -37,6 +41,8 @@ extensions = [
     'sphinx.ext.autodoc.typehints',
     'sphinx.ext.napoleon',
     'sphinxcontrib.cairosvgconverter',
+    'sphinx_design',
+    'doc_element'
 ]
 
 # Add any paths that contain templates here, relative to this directory.

@@ -6,6 +6,7 @@ Styles
 
     import schemdraw
     from schemdraw import elements as elm
+    schemdraw.use('svg')
 
 
 Circuit elements can be styled using Matplotlib colors, line-styles, and line widths.
@@ -33,6 +34,7 @@ And for a change of pace, activate Matplotlib's XKCD mode for "hand-drawn" look!
 
     import matplotlib.pyplot as plt
     plt.xkcd()
+    schemdraw.use('matplotlib')
 
     with schemdraw.Drawing() as d:
         op = elm.Opamp(leads=True)

@@ -278,7 +278,9 @@ class Figure:
              halign: Halign = 'center',
              valign: Valign = 'center',
              rotation_mode: RotationMode = 'anchor',
-             clip: Optional[BBox] = None, zorder: int = 3) -> None:
+             clip: Optional[BBox] = None, zorder: int = 3,
+             href: str = None,
+             decoration: str = None) -> None:
         ''' Add text to the figure '''
         if s == '':
             return
@@ -305,7 +307,7 @@ class Figure:
             texttag = svgtext.text_tosvg(s, x0, y0, font=fontfamily, size=fontsize,
                                          halign=halign, valign=valign, color=color,
                                          rotation=rotation, rotation_mode=rotation_mode,
-                                         testmode=False)
+                                         testmode=False, href=href, decoration=decoration)
         
         self.addclip(texttag, clip)
         self.svgelements.append((zorder, texttag))
@@ -614,8 +616,7 @@ class Figure:
         y0 = -self.bbox.ymax * self.scale
         if not self.svgcanvas:
             svg = ET.Element('{http://www.w3.org/2000/svg}svg')
-            if self._need_xlink:
-                svg.set('xmlns:xlink', 'http://www.w3.org/1999/xlink')
+            svg.set('xmlns:xlink', 'http://www.w3.org/1999/xlink')
             svg.set('xml:lang', 'en')
             svg.set('height', f'{self.pxheight}pt')
             svg.set('width', f'{self.pxwidth}pt')

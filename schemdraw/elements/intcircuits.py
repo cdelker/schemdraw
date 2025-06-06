@@ -42,9 +42,9 @@ class IcPin:
     rotation: float = 0
     anchorname: str | None = None
     lblsize: float | None = None
-    pinlblsize: float | None = None
     href: str | None = None
     decoration: str | None = None
+    pinlblsize: float | None = None
 
 
 @dataclass

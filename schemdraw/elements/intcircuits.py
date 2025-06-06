@@ -43,6 +43,8 @@ class IcPin:
     anchorname: str | None = None
     lblsize: float | None = None
     pinlblsize: float | None = None
+    href: str | None = None
+    decoration: str | None = None
 
 
 @dataclass
@@ -138,7 +140,9 @@ class Ic(Element):
             color: str | None = None,
             rotation: float = 0,
             anchorname: str | None = None,
-            lblsize: float | None = None):
+            lblsize: float | None = None,
+            href: Optional[str] = None,
+            decoration: Optional[str] = None):
         ''' Add a pin to the IC
 
             Args:
@@ -154,10 +158,12 @@ class Ic(Element):
                 rotation: Rotation for label text
                 anchorname: Named anchor for the pin
                 lblsize: Font size for label
+                href: Hyperline target (jump to)
+                decoration: "underline" or "overline"
         '''
         side = cast(Side, side[0].upper())
         self.pins[side].append(IcPin(name, pin, side, pos, slot, invert,
-                                    invertradius, color, rotation, anchorname, lblsize))
+                                    invertradius, color, rotation, anchorname, lblsize, href, decoration))
         self._setsize()
         return self
 
@@ -389,7 +395,7 @@ class Ic(Element):
                 fontsize=pin.lblsize if pin.lblsize is not None else sidesetup.label_size,
                 color=pin.color,
                 rotation=pin.rotation,
-                rotation_mode='default'))
+                rotation_mode='default', href=pin.href, decoration=pin.decoration))
 
     def _drawclkpin(self, xy: Point, leadext: Point,
                     side: Side, pin: IcPin, num: int) -> None:

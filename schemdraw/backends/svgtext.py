@@ -210,12 +210,12 @@ def mathtextsvg(text: str) -> ET.Element:
                     chrs = ''.join([numsubscripts[c] for c in chrs])
                     t = t.replace(sup, chrs)
                 else:
-                    t = t.replace(sup, f'<tspan baseline-shift="sub" font-size="smaller">{chrs}</tspan>')
+                    t = t.replace(sup, f'<tspan baseline-shift="-2" font-size="smaller">{chrs}</tspan>')
         # Find subscripts single char
         sups = re.split(r'(\_.)', t)
         for sup in sups:
             if sup.startswith('_'):
-                t = t.replace(sup, fr'<tspan baseline-shift="sub" font-size="smaller">{sup[1]}</tspan>')
+                t = t.replace(sup, fr'<tspan baseline-shift="-2" font-size="smaller">{sup[1]}</tspan>')
 
         # \sqrt
         sups = re.split(r'(\\sqrt{.*})', t)
@@ -336,7 +336,7 @@ def text_approx_size(text: str, font: str = 'Arial', size: float = 16) -> tuple[
 def text_tosvg(text: str, x: float, y: float, font: str = 'Arial', size: float = 16, color: str = 'black',
                halign: Halign = 'center', valign: Valign = 'center',
                rotation: float = 0, rotation_mode: RotationMode = 'anchor',
-               testmode: bool = False) -> ET.Element:
+               testmode: bool = False, href: str = None, decoration: str = None) -> ET.Element:
     ''' Convert text to svg <text> tag.
 
         Args:
@@ -426,8 +426,15 @@ def text_tosvg(text: str, x: float, y: float, font: str = 'Arial', size: float =
     textelm.set('font-size', str(size))
     textelm.set('font-family', font)
     textelm.set('text-anchor', anchor)
+    if decoration is not None:
+        textelm.set('text-decoration', decoration)
     if xform is not None:
         textelm.set('transform', xform)
+    if href is not None:
+        atextelm = ET.Element('a')
+        atextelm.set('xlink:href', href)
+        atextelm.append(textelm)
+        return atextelm
 
     if testmode:
         pxmin += dx   # Final bounding box

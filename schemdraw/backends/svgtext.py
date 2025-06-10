@@ -336,7 +336,7 @@ def text_approx_size(text: str, font: str = 'Arial', size: float = 16) -> tuple[
 def text_tosvg(text: str, x: float, y: float, font: str = 'Arial', size: float = 16, color: str = 'black',
                halign: Halign = 'center', valign: Valign = 'center',
                rotation: float = 0, rotation_mode: RotationMode = 'anchor',
-               testmode: bool = False, href: str = None, decoration: str = None) -> ET.Element:
+               testmode: bool = False, href: str = None, decoration: str = None, batik: bool = False) -> ET.Element:
     ''' Convert text to svg <text> tag.
 
         Args:
@@ -375,15 +375,19 @@ def text_tosvg(text: str, x: float, y: float, font: str = 'Arial', size: float =
         boxx -= w
 
     ytext = y
+    if batik:
+        bscale = 0.35
+    else:
+        bscale = 1
     baseline = 'alphabetic'
     if valign == 'center':
-        ytext += h/2 - size/2
+        ytext += h/2 - (size*bscale)/2
         baseline = 'central'
     elif valign == 'top':
-        ytext += h - size
+        ytext += h - (size*bscale)
         baseline = 'hanging'
     elif valign == 'base':
-        ytext += size*(nlines-1)
+        ytext += (size*bscale)*(nlines-1)
     elif valign == 'bottom':
         baseline = 'ideographic'
     anchor = {'center': 'middle', 'left': 'start', 'right': 'end'}.get(halign, 'start')
@@ -421,7 +425,8 @@ def text_tosvg(text: str, x: float, y: float, font: str = 'Arial', size: float =
 
     textelm.set('x', str(x))
     textelm.set('y', str(ytext-h))
-    textelm.set('dominant-baseline', baseline)
+    if not batik:
+        textelm.set('dominant-baseline', baseline)
     textelm.set('fill', color)
     textelm.set('font-size', str(size))
     textelm.set('font-family', font)

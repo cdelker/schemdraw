@@ -39,6 +39,8 @@ class Label:
     font: str | None = None
     mathfont: str | None = None
     color: str | None = None
+    href: str | None = None
+    decoration: str | None = None
 
 
 class Element:
@@ -304,7 +306,9 @@ class Element:
               fontsize: Optional[float] = None,
               font: Optional[str] = None,
               mathfont: Optional[str] = None,
-              color: Optional[str] = None):
+              color: Optional[str] = None,
+              href: Optional[str] = None,
+              decoration: Optional[str] = None):
         ''' Add a label to the Element.
 
             Args:
@@ -321,12 +325,14 @@ class Element:
                 font: Name/font-family of label text
                 mathfont: Name/font-family of math text
                 color: Color of label
+                href: Hyperline target (jump to)
+                decoration: "underline" or "overline"
         '''
         if not rotate:
             rotate = 0
         elif isinstance(rotate, bool):
             rotate = True
-        self._userlabels.append(Label(label, loc, ofst, halign, valign, rotate, fontsize, font, mathfont, color))
+        self._userlabels.append(Label(label, loc, ofst, halign, valign, rotate, fontsize, font, mathfont, color, href, decoration))
         return self
 
     def _position(self) -> None:
@@ -626,7 +632,8 @@ class Element:
         # Make a copy of the label to modify with auto-placement values
         label = Label(label.label, label.loc, label.ofst, label.halign,
                       label.valign, label.rotate, label.fontsize,
-                      label.font, label.mathfont, label.color)
+                      label.font, label.mathfont, label.color,
+                      label.href, label.decoration)
 
         if label.halign is None:
             label.halign = self.params.get('lblalign', (None, None))[0]
@@ -649,7 +656,7 @@ class Element:
             'mathfont': label.mathfont if label.mathfont else self.params.get('mathfont'),
             'fontsize': label.fontsize if label.fontsize else self.params.get('fontsize', 14),
             'align': (label.halign, label.valign),
-            'rotation': label.rotate}
+            'rotation': label.rotate, 'href': label.href, 'decoration': label.decoration}
 
         xmax = self.bbox.xmax
         xmin = self.bbox.xmin

@@ -27,7 +27,15 @@ class ElementCompound(elm.Element):
         pause_state = drawing_stack.pause
         drawing_stack.pause = True
         self.setup()
+        self._init_anchors()
         drawing_stack.pause = pause_state
+
+    def _init_anchors(self):
+        ''' Initialize anchors for elements assigned to an attribute of this class during setup '''
+        namedelms = {name: subelm for name, subelm in vars(self).items() if isinstance(subelm, elm.Element)}
+        for elmname, subelm in namedelms.items():
+            for anchorname in subelm.anchors.keys():
+                self.anchors[f'{elmname}.{anchorname}'] = subelm[anchorname]  # Gets placed anchor position, within compound
 
     def __contains__(self, element):
         return element in self.elements

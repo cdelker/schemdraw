@@ -119,6 +119,10 @@ class Element:
             return vars(self).get('absanchors')[name]  # type: ignore
         raise AttributeError(f'{name} not defined in Element')
 
+    def __getitem__(self, name: str) -> XY:
+        ''' Get absolute anchor position '''
+        return self.absanchors[name]
+
     def up(self) -> 'Element':
         ''' Set the direction to up '''
         if 'd' in self._userparams:

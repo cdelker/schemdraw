@@ -13,6 +13,13 @@ Customizing Elements
 Grouping Elements
 -----------------
 
+There are two ways to combine multiple elements into a single reusable element.
+:py:class:`schemdraw.elements.ElementDrawing` transforms another Drawing into a single element.
+:py:class:`schemdraw.elements.ElementCompound` creates a new element from multiple elements.
+
+ElementDrawing
+^^^^^^^^^^^^^^
+
 If a set of circuit elements are to be reused multiple times, they can be grouped into a single element.
 Create and populate a drawing, but set `show=False`.
 Instead, use the Drawing to create a new :py:class:`schemdraw.elements.ElementDrawing`, which converts the drawing into an element instance
@@ -31,15 +38,40 @@ to add to other drawings.
     with schemdraw.Drawing() as d2:  # Add a second drawing
         for i in range(3):
             d2 += elm.ElementDrawing(d1)   # Add the first drawing to it 3 times
-    
-    
+
+ElementCompound
+^^^^^^^^^^^^^^^
+
+An :py:class:`schemdraw.elements.ElementCompound` acts like a Drawing on which other elements may be added.
+Elements are added in the `setup` method.
+
+.. jupyter-execute::
+
+    class RC(elm.ElementCompound):
+        def setup(self):
+            self.r = self.add(elm.Resistor().length(1).scale(.5))
+            self.c = self.add(elm.Capacitor().length(1).scale(.5))
+            self.elmparams['drop'] = self.c.end
+
+    with schemdraw.Drawing():
+        r1 = RC()
+        r2 = RC()
+
+Elements assigned to an attribute of the class will have absolute anchor positions accessible via the index.
+For example, to get the ending position of the resistor in the second RC:
+
+.. jupyter-execute::
+
+    r2['r.end']
+
+
+
 .. _customelements:
 
 Defining custom elements
 ------------------------
 
 All elements are subclasses of :py:class:`schemdraw.elements.Element` or :py:class:`schemdraw.elements.Element2Term`.
-For elements consisting of several other already-defined elements (like a relay), :py:class:`schemdraw.elements.compound.ElementCompound` can be used for easy combining of multiple elements.
 Subclasses only need to define the `__init__` method in order to add lines, shapes, and text to the new element, all of which are defined using :py:class:`schemdraw.segments.Segment` classes. New Segments should be appended to the `Element.segments` attribute list.
 
 Coordinates are all defined in element cooridnates, where the element begins

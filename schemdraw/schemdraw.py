@@ -176,6 +176,7 @@ class Drawing:
         self.saveopts = {'transparent': transparent, 'dpi': dpi}
         self.elements: list[Element] = []
         self.anchors: MutableMapping[str, Union[Point, tuple[float, float]]] = {}  # Untransformed anchors
+        self.svgdefs: list[str] = []
 
         if 'backend' in kwargs:
             self.canvas = kwargs.pop('backend')
@@ -376,6 +377,10 @@ class Drawing:
         if len(self._state) > 0:
             self._here, self._theta = self._state.pop()
 
+    def add_svgdef(self, svgdef: str) -> None:
+        ''' Add an item to the SVG <defs> element '''
+        self.svgdefs.append(svgdef)
+
     def config(self, unit: Optional[float] = None, inches_per_unit: Optional[float] = None,
                fontsize: Optional[float] = None, font: Optional[str] = None,
                color: Optional[str] = None, lw: Optional[float] = None, ls: Optional[Linestyle] = None,
@@ -447,6 +452,7 @@ class Drawing:
                                  showbbox=self.dwgparams.get('dwgbbox', False))
         if 'bgcolor' in self.dwgparams:
             self.fig.bgcolor(self.dwgparams['bgcolor'])
+        self.fig.svgdefs.extend(self.svgdefs)
         self._drawelements()
 
     def draw(self, show: bool = True,

@@ -19,7 +19,7 @@ try:
 except ImportError:
     ziamath = None  # type: ignore
 
-from ..types import Capstyle, Joinstyle, Linestyle, BBox, Halign, Valign, RotationMode, TextMode, XY
+from ..types import Capstyle, Joinstyle, Linestyle, BBox, Halign, Valign, RotationMode, TextMode, XY, Gradient
 from ..util import Point
 from . import svgtext
 from .svgunits import parse_size_to_px, PT_PER_IN, PX_PER_PT
@@ -210,7 +210,6 @@ class Figure:
 
     def __init__(self, bbox: BBox, **kwargs):
         self.svgelements: list[tuple[int, ET.Element]] = []  # (zorder, element)
-        self.hatch: bool = False
         self.clips: dict[BBox, int] = {}
         self.showbbox = kwargs.get('showbbox', False)
         self.scale = PT_PER_IN * kwargs.get('inches_per_unit', 0.5)   # Converts drawing units to points
@@ -219,6 +218,8 @@ class Figure:
         self._bgcolor: Optional[str] = None
         self._need_xlink = False
         self.svgcanvas = kwargs.get('svg')
+        self.svgdefs: list[str] = []
+        self.gradients: dict[str, Gradient] = {}
 
     def set_bbox(self, bbox: BBox) -> None:
         ''' Set the bounding box '''
@@ -240,6 +241,15 @@ class Figure:
     def bgcolor(self, color: str) -> None:
         ''' Set background color of drawing '''
         self._bgcolor = color
+
+    def add_gradient(self, gradient: Gradient) -> str:
+        ''' Add to gradients and return id '''
+        if gradient in self.gradients.values():
+            gradid = {v: k for k, v in self.gradients.items()}[gradient]
+        else:
+            gradid = f'grad{len(self.gradients)}'
+            self.gradients[gradid] = gradient
+        return f'url(#{gradid})'
 
     def addclip(self, et: ET.Element, bbox: Optional[BBox]):
         ''' Add clip path to the element '''
@@ -339,7 +349,7 @@ class Figure:
         self.addclip(et, clip)
         self.svgelements.append((zorder, et))
         if hatch:
-            self.hatch = True
+            self.svgdefs.append(hatchpattern)
 
     def circle(self, center: XY, radius: float, color: str = 'black',
                fill: str = 'none', lw: float = 2, ls: Linestyle = '-',
@@ -621,6 +631,22 @@ class Figure:
         with open(fname, 'w', encoding='utf-8') as f:
             f.write(svg)
 
+    def _svg_defs(self, svg) -> None:
+        if self.gradients or self.svgdefs:
+            defstr = '<defs>'
+            for svgdef in self.svgdefs:
+                defstr += svgdef
+
+            for gradid, (c1, c2, vert) in self.gradients.items():
+                gradstr = f'''
+                    <linearGradient id="{gradid}" x1="0" x2="{0 if vert else 1}" y1="0" y2="{1 if vert else 0}">
+                    <stop offset="0%" stop-color="{c1}" />
+                    <stop offset="100%" stop-color="{c2}"/>
+                    </linearGradient>'''
+                defstr += gradstr
+            defstr += '</defs>'
+            svg.append(ET.fromstring(defstr))
+
     def getsvg(self) -> ET.Element:
         ''' Get the image as SVG XML Tree '''
         x0 = self.bbox.xmin * self.scale
@@ -637,8 +663,7 @@ class Figure:
         else:
             svg = self.svgcanvas
 
-        if self.hatch:
-            svg.append(ET.fromstring(hatchpattern))
+        self._svg_defs(svg)
 
         if self.showbbox:
             rect = ET.SubElement(svg, 'rect')

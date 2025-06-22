@@ -264,6 +264,13 @@ class Element:
         self._userparams['fill'] = color
         return self
 
+    def gradient_fill(self, color1: str, color2: str, vertical: bool = True) -> 'Element':
+        ''' Fill the element with a linear gradient between two colors.
+            Only supported in SVG backend.
+        '''
+        self._userparams['gradient'] = (color1, color2, vertical)
+        return self
+
     def style(self, color: Optional[str] = None, fill: Optional[str] = None,
               ls: Optional[Linestyle] = None, lw: Optional[float] = None) -> 'Element':
         ''' Apply all style parameters
@@ -737,6 +744,10 @@ class Element:
         ''' Draw the element on a Figure '''
         if len(self.segments) == 0:
             self._place((0, 0), 0)
+
+        if 'gradient' in self.params:
+            self._userparams['fill'] = fig.add_gradient(self.params['gradient'])
+
         for segment in self.segments:
             segment.draw(fig, self.transform, **self.params)
 

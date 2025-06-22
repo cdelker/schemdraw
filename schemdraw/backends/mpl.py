@@ -3,6 +3,7 @@
 from __future__ import annotations
 from typing import Optional, Sequence, BinaryIO
 from io import BytesIO
+import warnings
 import math
 
 import matplotlib  # type: ignore
@@ -11,7 +12,7 @@ from matplotlib import font_manager, transforms
 from matplotlib.patches import Arc, Rectangle, PathPatch, Path # type: ignore
 
 from .. import util
-from ..types import Capstyle, Joinstyle, Linestyle, BBox, XY
+from ..types import Capstyle, Joinstyle, Linestyle, BBox, XY, Gradient
 
 inline = 'inline' in matplotlib.get_backend()
 
@@ -82,6 +83,11 @@ class Figure:
     def bgcolor(self, color: str) -> None:
         ''' Set background color of drawing '''
         self.fig.set_facecolor(color)
+
+    def add_gradient(self, gradient: Gradient) -> str:
+        ''' Add a gradient to the image (not supported in MPL) '''
+        warnings.warn('Gradients not supported in Matplotlib backend')
+        return gradient[0]  # Fill will be set to first color of gradient
 
     def addclip(self, patch, clip):
         ''' Set clipping region for the patch '''

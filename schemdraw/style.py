@@ -248,7 +248,8 @@ def validate_color(color: Union[str, bool, tuple[int,int,int], None]) -> None:
             and not color_rgb(color)
             and not color_rgba(color)
             and not color_hsl(color)
-            and not color_hsla(color)):
+            and not color_hsla(color)
+            and not color.startswith('url(')):
         raise ValueError(f'Invalid color name {color}')
 
 

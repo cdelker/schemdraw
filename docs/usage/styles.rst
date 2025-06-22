@@ -162,6 +162,38 @@ With the SVG backend in the `path` text mode, the mathfont parameter may be the 
   :alt: Math font examples
 
 
+Gradient Fill
+*************
+Elements may be filled with a gradient using `gradient_fill`, providing the two colors and a boolean specifying whether to fade vertically or horizontally. Gradients are only supported in the SVG backend.
+
+.. jupyter-execute::
+    :hide-code:
+
+    schemdraw.use('svg')
+
+.. jupyter-execute::
+
+    from schemdraw import flow
+    with schemdraw.Drawing():
+        flow.Box().gradient_fill('#00D4FF', '#090979', True).label('Vertical\nGradient', color='white')
+        flow.Line().length(1)
+        flow.Box().gradient_fill('#00D4FF', '#090979', False).label('Horizontal\nGradient', color='white')    
+
+
+More advanced gradients may be added manually with `add_svgdef` to define the gradient.
+
+.. jupyter-execute::
+
+    with schemdraw.Drawing() as d:
+        d.add_svgdef('''
+            <radialGradient id="mygrad" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+            <stop offset="0%" stop-color="lightblue" />
+            <stop offset="100%" stop-color="white" />
+            </radialGradient>''')
+        flow.Box().fill('url(#mygrad)').label('Radial\nGradient')
+
+
+
 
 Themes
 ******

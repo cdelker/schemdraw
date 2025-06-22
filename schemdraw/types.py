@@ -31,6 +31,8 @@ HeaderStyle = Literal['round', 'square', 'screw']
 HeaderNumbering = Literal['lr', 'ud', 'ccw']
 XformTap = Literal['primary', 'secondary', 'left', 'right']
 
+Gradient = Tuple[str, str, bool]  # Color1, Color2, Vertical/Horizontal
+
 Backends = Literal['svg', 'matplotlib']
 
 

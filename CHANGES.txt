@@ -3,6 +3,10 @@ v0.21 - In progress
     Enhancements:
         - Improved documentation to make elements searchable
         - Fixed SVG namespaces when importing Fritzing files
+        - Renamed DB9 connector to DE9, with DB9 as alias (see https://news.sparkfun.com/14298)
+        - Absolute anchor positions (relative to drawing coordinates) may be accessed using index notation on the element (e.g. `mybjt['base']`)
+        - Added gradient fill method
+        - Support hyperlink labels in SVG output (thanks to masa300V)
 
     New Elements:
         - Hemt
@@ -13,6 +17,9 @@ v0.21 - In progress
         - PnpPhoto
         - IgbtN
         - IgbtP
+        - DA15
+        - DC37
+        - DD50
 
 
 v0.20 - 2025-03-08

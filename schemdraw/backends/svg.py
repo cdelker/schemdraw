@@ -97,27 +97,6 @@ hatchpattern = '''<defs><pattern id="hatch" patternUnits="userSpaceOnUse" width=
 <path d="M-1,1 l2,-2 M0,4 l4,-4 M3,5 l2,-2" style="stroke:black; stroke-width:.5" /></pattern></defs>'''
 
 
-def settextmode(mode: TextMode, svg2: bool = True) -> None:
-    ''' Set the mode for rendering text in the SVG backend.
-
-        In 'text' mode, text is drawn as SVG <text> elements
-        and will be searchable in the SVG, however it may
-        render differently on systems without the same fonts
-        installed. In 'path' mode, text converted to SVG
-        <path> elements and will render independently of
-        any fonts on the system. Path mode enables full
-        rendering of math expressions, but also requires the
-        ziafont/ziamath packages.
-
-        Args:
-            mode: Text Mode.
-            svg2: Use SVG2.0. Disable for better compatibility.
-    '''
-    warnings.warn('settextmode is deprecated. Use schemdraw.svgconfig',  DeprecationWarning)
-    config.svg2 = svg2
-    config.text = mode
-
-
 def isnotebook():
     ''' Determine whether code is running in Jupyter/interactive mode '''
     try:

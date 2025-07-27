@@ -177,12 +177,6 @@ class Drawing:
         self.elements: list[Element] = []
         self.anchors: MutableMapping[str, Union[Point, tuple[float, float]]] = {}  # Untransformed anchors
         self.svgdefs: list[str] = []
-
-        if 'backend' in kwargs:
-            self.canvas = kwargs.pop('backend')
-            warnings.warn('Use of `backend` is deprecated. Use `canvas`.',
-                          DeprecationWarning, stacklevel=2)
-
         self.dwgparams: dict[str, Any] = schemdrawstyle.copy()
         self.dwgparams.update(kwargs)  # To maintain support for arguments that moved to config method
         self.unit = kwargs.get('unit', schemdrawstyle.get('unit'))
@@ -455,24 +449,17 @@ class Drawing:
         self.fig.svgdefs.extend(self.svgdefs)
         self._drawelements()
 
-    def draw(self, show: bool = True,
-             canvas=None, backend: Optional[Backends] = None):
+    def draw(self, show: bool = True, canvas=None):
         ''' Draw the schematic
 
             Args:
                 show: Show the schematic in a GUI popup window (when
                     outside of a Jupyter inline environment)
                 canvas: 'matplotlib', 'svg', or Axis instance to draw on
-                backend (deprecated): 'matplotlib' or 'svg'
 
             Returns:
                 schemdraw Figure object
         '''
-        if backend:
-            warnings.warn('Use of `backend` is deprecated. Use `canvas`.',
-                          DeprecationWarning, stacklevel=2)
-            canvas = backend
-
         drawing_stack.push_element(None)
 
         if canvas is None:

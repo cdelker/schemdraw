@@ -212,7 +212,7 @@ using the `href` attribute. This example adds a hyperlink to the top of this pag
 .. code-block:: python
 
     schemdraw.use('svg')
-    schemdraw.settextmode('text')
+    schemdraw.svgconfig.text = 'text'
 
     with schemdraw.Drawing() as d:
         elm.Resistor().label(r'Link to Top', href="#top", color="blue")
@@ -231,7 +231,7 @@ Text decoration (underline, overline, and strike-through) may also be added in t
 .. jupyter-execute::
 
     schemdraw.use('svg')
-    schemdraw.settextmode('text', svg2=False)
+    schemdraw.svgconfig.text = 'text'
 
     with schemdraw.Drawing():
         elm.Resistor().label('Underline', decoration='underline')

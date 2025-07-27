@@ -231,7 +231,7 @@ Text decoration (underline, overline, and strike-through) may also be added in t
 .. jupyter-execute::
 
     schemdraw.use('svg')
-    schemdraw.settextmode('text')
+    schemdraw.settextmode('text', svg2=False)
 
     with schemdraw.Drawing():
         elm.Resistor().label('Underline', decoration='underline')

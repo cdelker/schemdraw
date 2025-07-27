@@ -368,8 +368,8 @@ class BusLine(Line):
         super().__init__(**kwargs)
 
 
-class DB9(Element):
-    ''' DB9 Connector
+class DE9(Element):
+    ''' DE9 Connector (also known as DB9)
 
         Args:
             pinspacing: Distance between pins [default: 0.6]
@@ -421,6 +421,9 @@ class DB9(Element):
                 self.segments.append(SegmentText((xy[0], xy[1]+pinrad),
                                                  str(5-i), fontsize=9,
                                                  align=('center', 'bottom')))
+
+
+DB9 = DE9  # Alias (see https://news.sparkfun.com/14298)
 
 
 class DB25(Element):
@@ -475,6 +478,180 @@ class DB25(Element):
             if number:
                 self.segments.append(SegmentText((xy[0], xy[1]+pinrad),
                                                  str(13-i), fontsize=9,
+                                                 align=('center', 'bottom')))
+
+
+class DA15(Element):
+    ''' DA-15 Connector
+
+        Args:
+            pinspacing: Distance between pins [default: 0.6]
+            edge: Distance between edge and pins [default: 0.3]
+            number: Draw pin numbers [default: False]
+            pinfill: Color to fill pin circles [default: bg]
+
+        Anchors:
+            * pin1 thru pin15
+    '''
+    _element_defaults = {
+        'pinspacing': 0.6,
+        'edge': 0.3,
+        'pinfill': 'bg',
+        'pinrad': 0.1,
+        'number': False,
+        'theta': 0,
+    }
+    def __init__(self, *,
+                 pinspacing: Optional[float] = None,
+                 edge: Optional[float] = None,
+                 number: Optional[bool] = None,
+                 pinfill: Optional[str] = None,
+                 **kwargs):
+        super().__init__(**kwargs)
+        spacing = self.params['pinspacing']
+        edgepad = self.params['edge']
+        fill = self.params['pinfill']
+        w = spacing + edgepad*2
+        h1 = 7 * spacing + edgepad*2
+        h2 = h1 + .5
+        pinrad = self.params['pinrad']
+
+        self.segments.append(SegmentPoly([(0, 0), (0, h1), (w, h2), (w, -.5)], cornerradius=.25))
+
+        for i in range(7):
+            xy = (edgepad, h1-(i+.5)*spacing-edgepad)
+            self.segments.append(SegmentCircle(xy, pinrad, fill=fill, zorder=4))
+            self.anchors[f'pin{15-i}'] = xy
+            if self.params['number']:
+                self.segments.append(SegmentText((xy[0], xy[1]+pinrad),
+                                                 str(15-i), fontsize=9,
+                                                 align=('center', 'bottom')))
+        for i in range(8):
+            xy = (edgepad+spacing, h2-(i+.75)*spacing-edgepad)
+            self.segments.append(SegmentCircle(xy, pinrad, fill=fill, zorder=4))
+            self.anchors[f'pin{8-i}'] = xy
+            if self.params['number']:
+                self.segments.append(SegmentText((xy[0], xy[1]+pinrad),
+                                                 str(8-i), fontsize=9,
+                                                 align=('center', 'bottom')))
+
+
+class DC37(Element):
+    ''' DC-37 Connector
+
+        Args:
+            pinspacing: Distance between pins [default: 0.6]
+            edge: Distance between edge and pins [default: 0.3]
+            number: Draw pin numbers [default: False]
+            pinfill: Color to fill pin circles [default: bg]
+
+        Anchors:
+            * pin1 thru pin37
+    '''
+    _element_defaults = {
+        'pinspacing': 0.6,
+        'edge': 0.3,
+        'pinfill': 'bg',
+        'pinrad': 0.1,
+        'number': False,
+        'theta': 0,
+    }
+    def __init__(self, *,
+                 pinspacing: Optional[float] = None,
+                 edge: Optional[float] = None,
+                 number: Optional[bool] = None,
+                 pinfill: Optional[str] = None,
+                 **kwargs):
+        super().__init__(**kwargs)
+        spacing = self.params['pinspacing']
+        edgepad = self.params['edge']
+        fill = self.params['pinfill']
+        w = spacing + edgepad*2
+        h1 = 18 * spacing + edgepad*2
+        h2 = h1 + .5
+        pinrad = self.params['pinrad']
+
+        self.segments.append(SegmentPoly([(0, 0), (0, h1), (w, h2), (w, -.5)], cornerradius=.25))
+
+        for i in range(18):
+            xy = (edgepad, h1-(i+.5)*spacing-edgepad)
+            self.segments.append(SegmentCircle(xy, pinrad, fill=fill, zorder=4))
+            self.anchors[f'pin{37-i}'] = xy
+            if self.params['number']:
+                self.segments.append(SegmentText((xy[0], xy[1]+pinrad),
+                                                 str(37-i), fontsize=9,
+                                                 align=('center', 'bottom')))
+        for i in range(19):
+            xy = (edgepad+spacing, h2-(i+.75)*spacing-edgepad)
+            self.segments.append(SegmentCircle(xy, pinrad, fill=fill, zorder=4))
+            self.anchors[f'pin{19-i}'] = xy
+            if self.params['number']:
+                self.segments.append(SegmentText((xy[0], xy[1]+pinrad),
+                                                 str(19-i), fontsize=9,
+                                                 align=('center', 'bottom')))
+
+
+class DD50(Element):
+    ''' DD-50 Connector
+
+        Args:
+            pinspacing: Distance between pins [default: 0.6]
+            edge: Distance between edge and pins [default: 0.3]
+            number: Draw pin numbers [default: False]
+            pinfill: Color to fill pin circles [default: bg]
+
+        Anchors:
+            * pin1 thru pin50
+    '''
+    _element_defaults = {
+        'pinspacing': 0.6,
+        'edge': 0.3,
+        'pinfill': 'bg',
+        'pinrad': 0.1,
+        'number': False,
+        'theta': 0,
+    }
+    def __init__(self, *,
+                 pinspacing: Optional[float] = None,
+                 edge: Optional[float] = None,
+                 number: Optional[bool] = None,
+                 pinfill: Optional[str] = None,
+                 **kwargs):
+        super().__init__(**kwargs)
+        spacing = self.params['pinspacing']
+        edgepad = self.params['edge']
+        fill = self.params['pinfill']
+        w = spacing * 2 + edgepad*2
+        h1 = 16 * spacing + edgepad*2
+        h2 = h1 + .5
+        pinrad = self.params['pinrad']
+
+        self.segments.append(SegmentPoly([(0, 0), (0, h1), (w, h2), (w, -.5)], cornerradius=.25))
+
+        for i in range(17):
+            xy = (edgepad, h2-(i+.75)*spacing-edgepad)
+            self.segments.append(SegmentCircle(xy, pinrad, fill=fill, zorder=4))
+            self.anchors[f'pin{50-i}'] = xy
+            if self.params['number']:
+                self.segments.append(SegmentText((xy[0], xy[1]+pinrad),
+                                                 str(50-i), fontsize=9,
+                                                 align=('center', 'bottom')))
+        for i in range(16):
+            xy = (edgepad+spacing, h1-(i+.5)*spacing-edgepad)
+            self.segments.append(SegmentCircle(xy, pinrad, fill=fill, zorder=4))
+            self.anchors[f'pin{33-i}'] = xy
+            if self.params['number']:
+                self.segments.append(SegmentText((xy[0], xy[1]+pinrad),
+                                                 str(33-i), fontsize=9,
+                                                 align=('center', 'bottom')))
+
+        for i in range(17):
+            xy = (edgepad+spacing*2, h2-(i+.75)*spacing-edgepad)
+            self.segments.append(SegmentCircle(xy, pinrad, fill=fill, zorder=4))
+            self.anchors[f'pin{17-i}'] = xy
+            if self.params['number']:
+                self.segments.append(SegmentText((xy[0], xy[1]+pinrad),
+                                                 str(17-i), fontsize=9,
                                                  align=('center', 'bottom')))
 
 

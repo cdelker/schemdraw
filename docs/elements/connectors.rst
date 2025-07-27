@@ -51,14 +51,18 @@ A :py:class:`schemdraw.elements.connectors.Jumper` element is also defined, as a
 D-Sub Connectors
 ^^^^^^^^^^^^^^^^
 
-Both :py:class:`schemdraw.elements.connectors.DB9` and :py:class:`schemdraw.elements.connectors.DB25` subminiature connectors are defined, with anchors `pin1` through `pin9` or `pin25`.
+D-subminiature connectors DE9 (aliased to the commonly used name `DB9`), DB25, DA15, DC37, and DD50 are defined with anchors `pin1` through `pinX` where `X` is the number of pins in the connector.
+Classes are :py:class:`schemdraw.elements.connectors.DE9`, :py:class:`schemdraw.elements.connectors.DB25`, :py:class:`schemdraw.elements.connectors.DA15`, :py:class:`schemdraw.elements.connectors.DC37`, :py:class:`schemdraw.elements.connectors.DD50`. 
 
 .. element_list::
     :nolabel:
 
-    DB9()
-    DB9(number=True)
+    DE9()
+    DE9(number=True)
     DB25()
+    DA15()
+    DC37()
+    DD50()
 
 
 Multiple Lines

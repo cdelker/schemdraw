@@ -114,7 +114,7 @@ class Figure:
              mathfont: Optional[str] = None, rotation: float = 0,
              halign: str = 'center', valign: str = 'center',
              rotation_mode: str = 'anchor', clip: Optional[BBox] = None, zorder=3,
-             href: str = None, decoration: str = None) -> None:
+             href: Optional[str] = None, decoration: Optional[str] = None) -> None:
         ''' Add text to the figure '''
         valign = 'baseline' if valign == 'base' else valign
         if fontfamily.endswith('.ttf') or fontfamily.endswith('otf'):

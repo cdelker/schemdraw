@@ -14,6 +14,7 @@
 
 from __future__ import annotations
 
+from typing import Optional
 from xml.etree import ElementTree as ET
 import string
 import re
@@ -336,7 +337,7 @@ def text_approx_size(text: str, font: str = 'Arial', size: float = 16) -> tuple[
 def text_tosvg(text: str, x: float, y: float, font: str = 'Arial', size: float = 16, color: str = 'black',
                halign: Halign = 'center', valign: Valign = 'center',
                rotation: float = 0, rotation_mode: RotationMode = 'anchor',
-               testmode: bool = False, href: str = None, decoration: str = None, batik: bool = False) -> ET.Element:
+               testmode: bool = False, href: Optional[str] = None, decoration: Optional[str] = None, batik: bool = False) -> ET.Element:
     ''' Convert text to svg <text> tag.
 
         Args:

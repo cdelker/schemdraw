@@ -299,8 +299,8 @@ class Figure:
              valign: Valign = 'center',
              rotation_mode: RotationMode = 'anchor',
              clip: Optional[BBox] = None, zorder: int = 3,
-             href: str = None,
-             decoration: str = None) -> None:
+             href: Optional[str] = None,
+             decoration: Optional[str] = None) -> None:
         ''' Add text to the figure '''
         if s == '':
             return

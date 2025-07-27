@@ -439,6 +439,7 @@ def text_tosvg(text: str, x: float, y: float, font: str = 'Arial', size: float =
     if href is not None:
         atextelm = ET.Element('a')
         atextelm.set('xlink:href', href)
+        atextelm.set('href', href)
         atextelm.append(textelm)
         return atextelm
 

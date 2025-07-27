@@ -203,3 +203,37 @@ The :py:class:`schemdraw.elements.lines.Encircle` and :py:class:`schemdraw.eleme
         elm.Annotate().at(parallel.NNE).delta(dx=1, dy=1).label('Parallel').color('red')
         elm.Annotate(th1=0).at(series.ENE).delta(dx=1.5, dy=1).label('Series').color('blue')
 
+Links
+*****
+
+In the SVG backend and `text` mode, hyperlinks may be added to labels
+using the `href` attribute. This example adds a hyperlink to the top of this page.
+
+.. code-block:: python
+
+    schemdraw.use('svg')
+    schemdraw.settextmode('text')
+
+    with schemdraw.Drawing() as d:
+        elm.Resistor().label(r'Link to Top', href="#top", color="blue")
+
+.. raw:: html
+
+    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:lang="en" height="43.077999999999996pt" width="117.2pt" viewBox="-4.6 -29.477999999999998 117.2 43.077999999999996"><path d="M 0.0,-0.0 L 36.0,-0.0 L 39.0,-9.0 L 45.0,9.0 L 50.99999999999999,-9.0 L 57.0,9.0 L 63.0,-9.0 L 69.0,9.0 L 72.0,-0.0 L 108.0,-0.0" style="stroke:black;fill:none;stroke-width:2.0;stroke-dasharray:-;stroke-linecap:round;stroke-linejoin:round;" /><a xlink:href="#top" href="#top"><text x="54.0" y="-26.6" dominant-baseline="ideographic" fill="blue" font-size="14.0" font-family="sans" text-anchor="middle"><tspan x="54.0" dy="14.0">Link to Top</tspan></text></a></svg>
+
+Due to browser restrictions, SVG images having links used in HTML files must be included inline as `<svg>` tags in the html, not embedded as images with `<img src="figure.svg">`.
+
+Decoration
+**********
+
+Text decoration (underline, overline, and strike-through) may also be added in the SVG backend:
+
+.. jupyter-execute::
+
+    schemdraw.use('svg')
+    schemdraw.settextmode('text')
+
+    with schemdraw.Drawing():
+        elm.Resistor().label('Underline', decoration='underline')
+        elm.Resistor().label('Overline', decoration='overline')
+        elm.Resistor().label('Strike Through', decoration='line-through')

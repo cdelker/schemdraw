@@ -199,9 +199,13 @@ Switches
 
     Button()
     Button(nc=True)
+    Button(contacts=False)
     Switch()
+    Switch(nc=True)
     Switch(action='open')
     Switch(action='close')
+    Switch(contacts=False)
+    Switch(contacts=False, nc=True)
     SwitchReed()
 
 

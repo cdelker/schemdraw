@@ -230,7 +230,13 @@ from .outlets import (
     OutletL
 )
 from .image import ElementImage
-
+from .tubes import (
+    Triode,
+    DualTriode,
+    Pentode,
+    RectifierTube,
+    Tube
+)
 
 __all__ = [
 "Element",
@@ -444,7 +450,13 @@ __all__ = [
 "OutletI",
 "OutletJ",
 "OutletK",
-"OutletL"]
+"OutletL",
+"Triode",
+"DualTriode",
+"Pentode",
+"RectifierTube",
+"Tube"
+]
 
 
 STYLE_IEEE = {'Resistor': ResistorIEEE,

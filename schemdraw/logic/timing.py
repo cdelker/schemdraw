@@ -176,7 +176,7 @@ class TimingDiagram(Element):
         foot: dict = self.wave.get('foot', {})
 
         height = (self.yheight+self.ygap)*len(signals_flat)
-        periods = max(len(w.get('wave', [])) for w in signals_flat)
+        periods = max(len(w.get('wave', [])) for w in signals_flat if 'async' not in w)
         periods = max(periods, (max(w.get('async', [0])[-1] for w in signals_flat)))
         if self.grid:
             self._drawgrid(periods, height)

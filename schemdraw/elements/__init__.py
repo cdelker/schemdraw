@@ -229,7 +229,17 @@ from .outlets import (
     OutletK,
     OutletL
 )
+from .tubes import (
+    VacuumTube,
+    DualVacuumTube,
+    NixieTube,
+    TubeDiode,
+    Triode,
+    Tetrode,
+    Pentode
+    )
 from .image import ElementImage
+
 
 
 __all__ = [
@@ -444,7 +454,15 @@ __all__ = [
 "OutletI",
 "OutletJ",
 "OutletK",
-"OutletL"]
+"OutletL",
+"VacuumTube",
+"DualVacuumTube",
+"NixieTube",
+"TubeDiode",
+"Triode",
+"Tetrode",
+"Pentode"
+]
 
 
 STYLE_IEEE = {'Resistor': ResistorIEEE,

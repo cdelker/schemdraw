@@ -1,12 +1,15 @@
 ''' Twoport elements made from groups of other elements '''
 from __future__ import annotations
+from typing import Optional
 from functools import partial
 
-from .compound import ElementCompound
-from ..import elements as elm
 from ..types import Point, Linestyle
 from ..segments import Segment, SegmentText, Segment
-from typing import Optional
+from .compound import ElementCompound
+from .elements import Element2Term, LabelHint
+from .lines import Line, Rect, Gap, CurrentLabelInline
+from .sources import SourceControlledV, SourceControlledI
+from .twoterm import Nullator, Norator, VoltageMirror, CurrentMirror
 
 
 tp_arrowlen = 1
@@ -37,8 +40,8 @@ class ElementTwoport(ElementCompound):
             * out_n
             * center
     '''
-    def __init__(self, input_element: type[elm.Element2Term],
-                 output_element: type[elm.Element2Term],
+    def __init__(self, input_element: type[Element2Term],
+                 output_element: type[Element2Term],
                  boxpadx: float = .2, boxpady: float = .2, minw: float = .5,
                  terminals: bool = True, unit: float = 1.5, width: float = 2.15,
                  box: bool = True, boxfill: Optional[str] = None, boxlw: Optional[float] = None, boxls: Optional[Linestyle] = None, **kwargs):
@@ -74,22 +77,26 @@ class ElementTwoport(ElementCompound):
         # draw outline
         bbox = self.get_bbox()
         if self.box:
-            self.add(elm.Rect(theta=0, at=[0, 0],
+            self.add(Rect(theta=0, at=[0, 0],
                               corner1=(0, bbox.ymin - self.boxpady), corner2=(self.width, bbox.ymax + self.boxpady),
                               fill=self.boxfill, lw=self.boxlw, ls=self.boxls, zorder=0))
 
         bbox = self.get_bbox()
 
-        out_p = self.add(elm.Line().at(self.output_component.start).tox(bbox.xmax).right())
-        out_n = self.add(elm.Line().at(self.output_component.end).tox(bbox.xmax).right())
-        in_p = self.add(elm.Line().at(self.input_component.start).tox(bbox.xmin).left())
-        in_n = self.add(elm.Line().at(self.input_component.end).tox(bbox.xmin).left())
+        out_p = self.add(Line().at(self.output_component.start).tox(bbox.xmax).right())
+        out_n = self.add(Line().at(self.output_component.end).tox(bbox.xmax).right())
+        in_p = self.add(Line().at(self.input_component.start).tox(bbox.xmin).left())
+        in_n = self.add(Line().at(self.input_component.end).tox(bbox.xmin).left())
 
         self.anchors['in_p'] = in_p.end
         self.anchors['in_n'] = in_n.end
         self.anchors['out_p'] = out_p.end
         self.anchors['out_n'] = out_n.end
         self.anchors['center'] = ((bbox.xmin + bbox.xmax) / 2, (bbox.ymin + bbox.ymax) / 2)
+        self._labelhints['in_p'] = LabelHint((0, .15), halign='right')
+        self._labelhints['in_n'] = LabelHint((0, .15), halign='right')
+        self._labelhints['out_p'] = LabelHint((0, .15), halign='left')
+        self._labelhints['out_n'] = LabelHint((0, .15), halign='left')
 
         if self.terminals:
             for anchor in ['in_p', 'in_n', 'out_p', 'out_n']:
@@ -132,7 +139,7 @@ class TwoPort(ElementTwoport):
         self.sign = sign
         self.arrow = arrow
         self.reverse_output = reverse_output
-        super().__init__(input_element=elm.Gap, output_element=elm.Gap,
+        super().__init__(input_element=Gap, output_element=Gap,
                          boxpadx=0, minw=0, component_offset=2, **kwargs)
 
     def setup(self):
@@ -195,11 +202,11 @@ class VoltageTransactor(ElementTwoport):
             * center
     '''
     def __init__(self, reverse_output: bool = False, **kwargs):
-        output_element: type[elm.Element2Term] = elm.SourceControlledV
+        output_element: type[Element2Term] = SourceControlledV
         if not reverse_output:
             # mypy doesn't like partials
             output_element = partial(output_element, reverse=True)  # type:ignore
-        super().__init__(input_element=elm.Gap, output_element=output_element, **kwargs)
+        super().__init__(input_element=Gap, output_element=output_element, **kwargs)
 
     def setup(self):
         super().setup()
@@ -234,15 +241,15 @@ class TransimpedanceTransactor(ElementTwoport):
             * center
     '''
     def __init__(self, reverse_output: bool = False, **kwargs):
-        output_element: type[elm.Element2Term] = elm.SourceControlledV
+        output_element: type[Element2Term] = SourceControlledV
         if not reverse_output:
             # element is reversed in itself, so do a double reversal to cancel
             output_element = partial(output_element, reverse=True)   # type:ignore
-        super().__init__(input_element=elm.Line, output_element=output_element, **kwargs)
+        super().__init__(input_element=Line, output_element=output_element, **kwargs)
 
     def setup(self):
         super().setup()
-        current_label_inline = elm.CurrentLabelInline(ofst=-0.15, headlength=0.3)
+        current_label_inline = CurrentLabelInline(ofst=-0.15, headlength=0.3)
         current_label_inline.at(self.input_component)
         self.add(current_label_inline)
 
@@ -271,15 +278,15 @@ class CurrentTransactor(ElementTwoport):
     '''
 
     def __init__(self, reverse_output: bool = False, **kwargs):
-        output_element: type[elm.Element2Term] = elm.SourceControlledI
+        output_element: type[Element2Term] = SourceControlledI
         if not reverse_output:
             # element is reversed in itself, so do a double reversal to cancel
             output_element = partial(output_element, reverse=True)  # type:ignore
-        super().__init__(input_element=elm.Line, output_element=output_element, **kwargs)
+        super().__init__(input_element=Line, output_element=output_element, **kwargs)
 
     def setup(self):
         super().setup()
-        current_label_inline = elm.CurrentLabelInline(ofst=-0.15, headlength=0.3)
+        current_label_inline = CurrentLabelInline(ofst=-0.15, headlength=0.3)
         current_label_inline.at(self.input_component)
         self.add(current_label_inline)
 
@@ -308,12 +315,12 @@ class TransadmittanceTransactor(ElementTwoport):
     '''
 
     def __init__(self, reverse_output: bool = False, **kwargs):
-        output_element: type[elm.Element2Term] = elm.SourceControlledI
+        output_element: type[Element2Term] = SourceControlledI
         self.reverse_output = reverse_output
         if not reverse_output:
             # element is reversed in itself, so do a double reversal to cancel
             output_element = partial(output_element, reverse=True)  # type:ignore
-        super().__init__(input_element=elm.Gap, output_element=output_element, **kwargs)
+        super().__init__(input_element=Gap, output_element=output_element, **kwargs)
 
     def setup(self):
         super().setup()
@@ -347,7 +354,7 @@ class Nullor(ElementTwoport):
             * center
     '''
     def __init__(self, **kwargs):
-        super().__init__(input_element=elm.Nullator, output_element=elm.Norator, boxpadx=0.3, **kwargs)
+        super().__init__(input_element=Nullator, output_element=Norator, boxpadx=0.3, **kwargs)
 
 
 class VMCMPair(ElementTwoport):
@@ -372,5 +379,5 @@ class VMCMPair(ElementTwoport):
             * center
     '''
     def __init__(self, **kwargs):
-        super().__init__(input_element=elm.VoltageMirror, output_element=elm.CurrentMirror,
+        super().__init__(input_element=VoltageMirror, output_element=CurrentMirror,
                          boxpadx=0.3, **kwargs)

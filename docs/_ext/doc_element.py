@@ -29,7 +29,13 @@ class SchemElement(SphinxDirective):
 
         hide_anchors = [
             'center', 'start', 'end', 'istart', 'iend',
-            'isource', 'idrain', 'iemitter', 'icollector', 'xy']
+            'isource', 'idrain', 'iemitter', 'icollector', 'xy',
+            'input_component.istart', 'input_component.iend',
+            'input_component.start', 'input_component.end', 'input_component.center',
+            'output_component.istart', 'output_component.iend',
+            'output_component.start', 'output_component.end', 'output_component.center',
+            'input_component.common', 'output_component.common'
+            ]
 
         hide_anchors.extend(self.options.get('hide_anchors', '').split())
 

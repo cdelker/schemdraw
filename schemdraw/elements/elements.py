@@ -43,14 +43,19 @@ class Label:
     decoration: str | None = None
 
 
+@dataclass
+class LabelHint:
+    ofst: XY | float | None
+    halign: Halign | None = None
+    valign: Valign | None = None
+    fontsize: float | None = None
+
+
 class Element:
     ''' Standard circuit element.
 
         Keyword Arguments are equivalent to calling
         setter methods.
-
-        Args:
-            d: Drawing direction ('up', 'down', 'left', 'right')
 
         Attributes:
             anchors: Dictionary of anchor positions in element
@@ -72,6 +77,7 @@ class Element:
         self._userparams.update(kwargs)         # Specified by user
         self._localshift: XY = Point((0, 0))
         self._userlabels: list[Label] = []
+        self._labelhints: dict[str, LabelHint] = {}
 
         self.anchors: MutableMapping[str, Union[Point, tuple[float, float]]] = {}  # Untransformed anchors
         self.absanchors: MutableMapping[str, Any] = {}  # Transformed, absolute anchors
@@ -343,6 +349,13 @@ class Element:
             rotate = 0
         elif isinstance(rotate, bool):
             rotate = True
+
+        if not self._userparams.get('ignore_hints', False) and (hint := self._labelhints.get(loc, None)):
+            ofst = ofst if ofst is not None else hint.ofst
+            halign = halign if halign else hint.halign
+            valign = valign if valign else hint.valign
+            fontsize = fontsize if fontsize is not None else hint.fontsize
+
         self._userlabels.append(Label(label, loc, ofst, halign, valign, rotate, fontsize, font, mathfont, color, href, decoration))
         return self
 

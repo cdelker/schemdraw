@@ -4,7 +4,7 @@ from __future__ import annotations
 from typing import Optional, Sequence
 import math
 
-from .elements import Element, Element2Term, gap
+from .elements import Element, Element2Term, LabelHint, gap
 from ..segments import Segment, SegmentCircle, SegmentArc, SegmentPoly
 from ..types import Point, ActionType
 from ..util import linspace
@@ -79,6 +79,9 @@ class SwitchSpdt(Switch):
             self.anchors['a'] = Point((0, 0))
             self.anchors['b'] = Point((1, 0))
             self.anchors['c'] = Point((1, .7))
+        self._labelhints['a'] = LabelHint((0, -.18), valign='top')
+        self._labelhints['b'] = LabelHint((0, -.18), valign='top')
+        self._labelhints['c'] = LabelHint((0, .18), valign='bottom')
 
 
 class SwitchSpdt2(Element):
@@ -120,6 +123,9 @@ class SwitchSpdt2(Element):
                                             theta1=-10, theta2=70,
                                             arrow='cw'))
         self.params['drop'] = (1, .4)
+        self._labelhints['a'] = LabelHint((0, -.18), valign='top', halign='center')
+        self._labelhints['b'] = LabelHint((0, .18), valign='bottom', halign='center')
+        self._labelhints['c'] = LabelHint((0, -.18), valign='top', halign='center')
 
 
 class Button(Element2Term):
@@ -188,6 +194,10 @@ class SwitchDpst(Element):
             self.anchors['t1'] = (1, 0)
             self.anchors['p2'] = (0, yofst)
             self.anchors['t2'] = (1, yofst)
+        self._labelhints['p1'] = LabelHint((-.1, .15), valign='bottom', halign='right')
+        self._labelhints['p2'] = LabelHint((-.1, -.15), valign='top', halign='right')
+        self._labelhints['t1'] = LabelHint((.1, .15), valign='bottom', halign='left')
+        self._labelhints['t2'] = LabelHint((.1, -.15), valign='top', halign='left')
 
         self.segments.append(Segment(p1_path))
         self.segments.append(Segment(p2_path))
@@ -200,7 +210,6 @@ class SwitchDpst(Element):
         if link:
             self.segments.append(Segment([(0.5, yofst+.25),
                                           (0.5, 0.2)], ls=':'))
-
 
 
 class SwitchDpdt(Element):
@@ -239,6 +248,12 @@ class SwitchDpdt(Element):
             self.anchors['p2'] = (0, yofst)
             self.anchors['t3'] = (1, yofst+.4)
             self.anchors['t4'] = (1, yofst-.4)
+        self._labelhints['p1'] = LabelHint((-.1, .15), valign='bottom', halign='right')
+        self._labelhints['p2'] = LabelHint((-.1, -.15), valign='top', halign='right')
+        self._labelhints['t1'] = LabelHint((.1, .15), valign='bottom', halign='left')
+        self._labelhints['t4'] = LabelHint((.1, -.15), valign='top', halign='left')
+        self._labelhints['t2'] = LabelHint((.1, .15), valign='bottom', halign='left')
+        self._labelhints['t3'] = LabelHint((.1, -.15), valign='top', halign='left')
 
         self.segments.append(Segment(p1_path))
         self.segments.append(Segment(p2_path))
@@ -315,11 +330,13 @@ class SwitchRotary(Element):
             y = radius * math.sin(t)
             self.segments.append(SegmentCircle((x, y), sw_dot_r))
             self.anchors[f'T{i+1}'] = (x, y)
+            self._labelhints[f'T{i+1}'] = LabelHint((0, .1), valign='bottom', halign='center', fontsize=9)
 
             if i == arrowcontact:
                 arrowx = arrowlen * math.cos(t)
                 arrowy = arrowlen * math.sin(t)
                 self.segments.append(Segment([(0, 0), (arrowx, arrowy)], arrow='->', zorder=2))
+        self._labelhints['P'] = LabelHint((-.1, .1), valign='bottom', halign='right')
 
 
 class SwitchDIP(Element):

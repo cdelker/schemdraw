@@ -155,7 +155,7 @@ from .intcircuits import (
     sevensegdigit
 )
 from .lines import (
-      Line,
+    Line,
     DataBusLine,
     Dot,
     Arrowhead,

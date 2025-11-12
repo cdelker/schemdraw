@@ -79,22 +79,22 @@ Opamp pin labeling
 ^^^^^^^^^^^^^^^^^^
 
 This example shows how to label pin numbers on a 741 opamp, and connect to the offset anchors.
-Pin labels are somewhat manually placed; without the `ofst` and `align` keywords they
-will be drawn directly over the anchor position.
 
 .. jupyter-execute::
     :code-below:
 
     with schemdraw.Drawing() as d:
         d.config(fontsize=12)
-        op = (elm.Opamp().label('741', loc='center', ofst=0)
-                     .label('1', 'n1', fontsize=9, ofst=(-.1, -.25), halign='right', valign='top')
-                     .label('5', 'n1a', fontsize=9, ofst=(-.1, -.25), halign='right', valign='top')
-                     .label('4', 'vs', fontsize=9, ofst=(-.1, -.2), halign='right', valign='top')
-                     .label('7', 'vd', fontsize=9, ofst=(-.1, .2), halign='right', valign='bottom')
-                     .label('2', 'in1', fontsize=9, ofst=(-.1, .1), halign='right', valign='bottom')
-                     .label('3', 'in2', fontsize=9, ofst=(-.1, .1), halign='right', valign='bottom')
-                     .label('6', 'out', fontsize=9, ofst=(-.1, .1), halign='left', valign='bottom'))
+        op = (elm.Opamp()
+            .label('741', loc='center', ofst=0)
+            .label('1', 'n1')
+            .label('5', 'n1a')
+            .label('4', 'vs')
+            .label('7', 'vd')
+            .label('2', 'in1')
+            .label('3', 'in2')
+            .label('6', 'out')
+        )
         elm.Line().left(.5).at(op.in1)
         elm.Line().down(d.unit/2)
         elm.Ground(lead=False)

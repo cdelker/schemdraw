@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Optional
 import math
 
-from .elements import Element, gap
+from .elements import Element, LabelHint, gap
 from ..segments import Segment
 
 
@@ -74,3 +74,14 @@ class Opamp(Element):
         self.anchors['n1a'] = (x+oa_xlen*.9, -.13)
         self.anchors['n2a'] = (x+oa_xlen*.9, .13)
         self.elmparams['drop'] = (2*x+oa_xlen, 0)
+
+        self._labelhints['in1'] = LabelHint(ofst=(-.1, .1), halign='right', valign='bottom', fontsize=9)
+        self._labelhints['in2'] = LabelHint(ofst=(-.1, .1), halign='right', valign='bottom', fontsize=9)
+        self._labelhints['out'] = LabelHint(ofst=(0, .1), halign='left', valign='bottom', fontsize=9)
+        self._labelhints['vd'] = LabelHint(ofst=(-.1, .25), halign='right', valign='bottom', fontsize=9)
+        self._labelhints['vs'] = LabelHint(ofst=(-.1, -.25), halign='right', valign='top', fontsize=9)
+        self._labelhints['n1'] = LabelHint(ofst=(-.1, -.25), halign='right', valign='top', fontsize=9)
+        self._labelhints['n1a'] = LabelHint(ofst=(-.1, -.3), halign='right', valign='top', fontsize=9)
+        self._labelhints['n2'] = LabelHint(ofst=(-.1, .25), halign='right', valign='bottom', fontsize=9)
+        self._labelhints['n2a'] = LabelHint(ofst=(-.1, .3), halign='right', valign='bottom', fontsize=9)
+

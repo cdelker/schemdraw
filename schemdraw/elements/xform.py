@@ -1,6 +1,7 @@
 ''' Transformer element definitions '''
 from __future__ import annotations
 from typing import Optional
+import math
 
 from ..segments import Segment, SegmentArc
 from .elements import Element
@@ -29,81 +30,148 @@ class Transformer(Element):
     '''
     _element_defaults = {
         'core': True,
-        'loop': False
+        'loop': False,
+        'corewidth': 0.75,
+        'phasegap': 0.4,
+        'arcwidth': 0.4,  # For non-loop inductors
     }
     def __init__(self,
-                 t1: int = 4, t2: int = 4,
+                 t1: int|Sequence[int] = 4,
+                 t2: int|Sequence[int] = 4,
                  *,
                  core: Optional[bool] = None,
                  loop: Optional[bool] = None,
+                 align: str = 'center',
                  **kwargs):
         super().__init__(**kwargs)
-        ind_w = .4
-        lbot = 0.
-        ltop = t1*ind_w
-        rtop = (ltop+lbot)/2 + t2*ind_w/2
-        rbot = (ltop+lbot)/2 - t2*ind_w/2
 
-        # Adjust for loops or core
-        ind_gap = .75
+        if isinstance(t1, int):
+            t1 = [t1]
+        if isinstance(t2, int):
+            t2 = [t2]
+
+        self._t1, self._t2 = t1, t2
+
+        phase_gap = self.params['phasegap']
+        corewidth = self.params['corewidth']
         if self.params['loop']:
-            ind_gap = ind_gap + .4
+            corewidth = corewidth + .4
         if self.params['core']:
-            ind_gap = ind_gap + .25
+            corewidth = corewidth + .25
+        self._corewidth = corewidth
 
-        ltapx = 0.
-        rtapx = ind_gap
+        def right_position():
+            if align == 'center':
+                right_bot = left_height/2 - right_height/2
+                right_top = right_bot + right_height
+            elif align == 'bottom':
+                right_bot = 0
+                right_top = right_height
+            else:
+                right_top = left_height
+                right_bot = right_top - right_height
+            return right_bot, right_top
 
-        # Draw coils
         if self.params['loop']:
-            c1 = cycloid(loops=t1, ofst=(0, 0), norm=False, vertical=True)
-            c2 = cycloid(loops=t2, ofst=(ind_gap, -rtop+ltop), norm=False,
-                         flip=True, vertical=True)
-            ltapx = min([i[0] for i in c1])
-            rtapx = max([i[0] for i in c2])
-            ltop = c1[-1][1]
-            rtop = c2[-1][1]
-            self.segments.append(Segment(c1))
-            self.segments.append(Segment(c2))
-        else:
-            for i in range(t1):
-                self.segments.append(SegmentArc(
-                    (0, ltop-(i*ind_w+ind_w/2)),
-                    theta1=270, theta2=90, width=ind_w, height=ind_w))
-            for i in range(t2):
-                self.segments.append(SegmentArc(
-                    (ind_gap, rtop-(i*ind_w+ind_w/2)),
-                    theta1=90, theta2=270, width=ind_w, height=ind_w))
-        # Add the core
+            left_cycloids = [cycloid(n, norm=False, vertical=True) for n in t1]
+            right_cycloids = [cycloid(n, ofst=(corewidth, 0), norm=False, vertical=True, flip=True) for n in t2]
+            left_height = sum(c[-1][1] for c in left_cycloids) + phase_gap * (len(left_cycloids)-1)
+            right_height = sum(c[-1][1] for c in right_cycloids) + phase_gap * (len(right_cycloids)-1)
+
+            left_bot = 0
+            left_top = left_height
+            right_bot, right_top = right_position()
+
+            a, b = .06, .19
+            yint = math.acos(a/b)
+            period = math.pi*2*a
+            ofst = period - (a*yint - b*math.sin(yint))
+            resheight = 0.25
+            tapxofst = (a-b)/2/resheight
+
+            y = left_bot
+            tapnum = 0
+            for i, cyc in enumerate(left_cycloids):
+                height = cyc[-1][1]
+                cyc_y = [(c[0], c[1]+y) for c in cyc]  # Shift to vertical position
+                self.segments.append(Segment(cyc_y))
+                self.anchors[f'p{i*2+1}'] = cyc_y[0]
+                self.anchors[f'p{i*2+2}'] = cyc_y[-1]
+                left_top = cyc_y[-1][1]
+
+                for k in range(0, t1[i]):
+                    self.anchors[f'tapP{tapnum+k+1}'] = (tapxofst, cyc_y[0][1] + k*period + ofst)
+
+                tapnum += k+1
+                y += height + phase_gap
+
+
+            y = right_bot
+            tapnum = 0
+            for i, cyc in enumerate(right_cycloids):
+                height = cyc[-1][1]
+                cyc_y = [(c[0], c[1]+y) for c in cyc]  # Shift to vertical position
+                self.segments.append(Segment(cyc_y))
+                self.anchors[f's{i*2+1}'] = cyc_y[0]
+                self.anchors[f's{i*2+2}'] = cyc_y[-1]
+                right_top = cyc_y[-1][1]
+                for k in range(0, t2[i]):
+                    self.anchors[f'tapS{tapnum+k+1}'] = (corewidth-tapxofst, cyc_y[0][1] + k*period + ofst)
+                tapnum += k+1
+
+                y += height + phase_gap
+
+        else:  # Not loop
+            arcw = self.params['arcwidth']
+
+            left_height = sum(t1)*arcw + phase_gap*(len(t1)-1)
+            right_height = sum(t2)*arcw + phase_gap*(len(t2)-1)
+            left_bot = 0
+            left_top = left_height
+            right_bot, right_top = right_position()
+
+            y = left_bot
+            tapnum = 0
+            for i, turns in enumerate(t1):
+                self.anchors[f'p{i*2+1}'] = (0, y)
+                self.anchors[f'p{i*2+2}'] = (0, y+turns*arcw)
+                for k in range(turns):
+                    self.segments.append(SegmentArc(
+                        (0, y+arcw/2), theta1=270, theta2=90, width=arcw, height=arcw))
+                    if k < turns-1:
+                        self.anchors[f'tapP{tapnum+k+1}'] = (0, y+arcw)
+                    y += arcw
+                tapnum += turns-1
+                y += phase_gap
+
+            y = right_bot
+            tapnum = 0
+            for i, turns in enumerate(t2):
+                self.anchors[f's{i*2+1}'] = (corewidth, y)
+                self.anchors[f's{i*2+2}'] = (corewidth, y+turns*arcw)
+                for k in range(turns):
+                    self.segments.append(SegmentArc(
+                        (corewidth, y+arcw/2), theta1=90, theta2=270, width=arcw, height=arcw))
+                    if k < turns-1:
+                        self.anchors[f'tapS{tapnum+k+1}'] = (corewidth, y+arcw)
+                    y += arcw
+                tapnum += turns-1
+                y += phase_gap
+
         if self.params['core']:
-            top = max(ltop, rtop)
-            bot = min(lbot, rbot)
-            center = ind_gap/2
-            core_w = ind_gap/10
+            top = max(left_top, right_top)
+            bot = min(left_bot, right_bot)
+            center = corewidth/2
+            core_w = corewidth/10
             self.segments.append(Segment(
                 [(center-core_w, top), (center-core_w, bot)]))
             self.segments.append(Segment(
                 [(center+core_w, top), (center+core_w, bot)]))
 
-        self.anchors['p1'] = (0, ltop)
-        self.anchors['p2'] = (0, lbot)
-        self.anchors['s1'] = (ind_gap, rtop)
-        self.anchors['s2'] = (ind_gap, rbot)
+        self._left_top = left_top
+        self._right_top = right_top
 
-        self._ltapx = ltapx  # Save these for adding taps
-        self._rtapx = rtapx
-        self._ltop = ltop
-        self._rtop = rtop
-        self._ind_w = ind_w
-
-        if 'ltaps' in kwargs:
-            for name, pos in kwargs['ltaps'].items():
-                self.tap(name, pos, 'primary')
-        if 'rtaps' in kwargs:
-            for name, pos in kwargs['rtaps'].items():
-                self.tap(name, pos, 'secondary')
-
-    def tap(self, name: str, pos: int, side: XformTap = 'primary'):
+    def tap(self, name: str, pos: int, side: XformTap = 'primary') -> 'Transformer':
         ''' Add a tap
 
             A tap is simply a named anchor definition along one side
@@ -114,10 +182,15 @@ class Transformer(Element):
                 pos: Turn number from the top of the tap
                 side: Primary (left) or Secondary (right) side
         '''
-        if side in ['left', 'primary']:
-            self.anchors[name] = (self._ltapx, self._ltop - pos * self._ind_w)
-        elif side in ['right', 'secondary']:
-            self.anchors[name] = (self._rtapx, self._rtop - pos * self._ind_w)
+        side = 'P' if side == 'primary' else 'S'
+        if pos == 0:
+            tap = self.anchors.get(f'{side.lower()}1', None)
         else:
-            raise ValueError(f'Undefined tap side {side}')
+            tap = self.anchors.get(f'tap{side}{pos}', None)
+
+
+        if tap:
+            self.anchors[name] = tap
+        else:
+            raise ValueError(f'No tap at position {pos}')
         return self

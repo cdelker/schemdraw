@@ -241,6 +241,15 @@ Finally, exact endpoints can also be specified using the `endpoints` method.
         elm.Capacitor().toy(R.start)
         elm.SourceV().endpoints(Q.end, R.start)
 
+Two-terminal elements are centered between their endpoints. Occasionally, it is useful to place them off-center.
+Use the `shift` method with a value between -1 and 1 to shift the element to one side.
+
+.. jupyter-execute::
+
+    with schemdraw.Drawing():
+        elm.Resistor().shift(-0.4).dot()
+        elm.Resistor().shift(0.75)
+
 
 Orientation
 -----------

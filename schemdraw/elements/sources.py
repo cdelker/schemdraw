@@ -134,6 +134,23 @@ class Battery(Element2Term):
         self.segments.append(Segment([(batw*3, bat2), (batw*3, -bat2)]))
 
 
+class BatteryDouble(Element2Term):
+    ''' Double-stack Battery '''
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.segments.append(Segment([(0, 0), gap, (batw*9, 0)]))
+        self.segments.append(Segment([(0, bat1), (0, -bat1)]))
+        self.segments.append(Segment([(batw, bat2), (batw, -bat2)]))
+        self.segments.append(Segment([(batw*2, bat1), (batw*2, -bat1)]))
+        self.segments.append(Segment([(batw*3, bat2), (batw*3, -bat2)]))
+        self.segments.append(Segment([(batw*4, bat1), (batw*4, -bat1)]))
+        self.segments.append(Segment([(batw*5, bat2), (batw*5, -bat2)]))
+        self.segments.append(Segment([(batw*6, bat1), (batw*6, -bat1)]))
+        self.segments.append(Segment([(batw*7, bat2), (batw*7, -bat2)]))
+        self.segments.append(Segment([(batw*8, bat1), (batw*8, -bat1)]))
+        self.segments.append(Segment([(batw*9, bat2), (batw*9, -bat2)]))
+        self.anchors['tap'] = (batw*4, bat1)
+
 class Solar(Source):
     ''' Solar source '''
     def __init__(self, **kwargs):
@@ -179,6 +196,14 @@ class MeterOhm(Source):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.segments.append(SegmentText((.5, 0), r'$\Omega$'))
+
+
+class MeterArrow(Source):
+    ''' Meter with diagonal arrow'''
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.segments.append(Segment([ (.25, .16), (.75, -.16)], arrow='->'))
+
 
 
 class Lamp(Source):

@@ -6,7 +6,7 @@ from .elements import Element, LabelHint, gap
 from ..segments import Segment, SegmentPoly, SegmentArc, SegmentCircle
 
 tube_top = 0
-tube_w = 2.5  # Default tube radius/width
+tube_w = 1.75  # Default tube radius/width
 tube_r = tube_w / 2
 half_overhang = 20  # Degrees from vertical
 
@@ -18,7 +18,7 @@ anode_xgap = tube_w / 6  # Horizontal distance between multiple anodes
 class TubeBase(Element):
     ''' Base class for vacuum tubes '''
     _element_defaults = {
-        'tube_lw': 3,
+        'tube_lw': 2.5,
         'anode_lw': 2,
         'cathode_lw': 2,
         'heat_lw': 2,
@@ -61,6 +61,15 @@ class TubeBase(Element):
         self.anchors['S'] = (0, -height)
         self.anchors['E'] = (right, -height/2)
         self.anchors['W'] = (left, -height/2)
+        sq2 = tube_r / math.sqrt(2)
+        self.anchors['NE'] = (sq2, -tube_r+sq2)
+        self.anchors['NW'] = (-sq2, -tube_r+sq2)
+        self.anchors['SE'] = (sq2, -tube_r-sq2)
+        self.anchors['SW'] = (-sq2, -tube_r-sq2)
+        self._labelhints['NE'] = LabelHint((.12, .12), halign='left')
+        self._labelhints['NW'] = LabelHint((-.12, .12), halign='right')
+        self._labelhints['SE'] = LabelHint((.12, -.12), halign='left', valign='top')
+        self._labelhints['SW'] = LabelHint((-.12,- .12), halign='right', valign='top')
 
     def _draw_elements(self, x: float, height: float, width: float,
                        grids: int, cathode: str, anodetype: str, anchorid=''):

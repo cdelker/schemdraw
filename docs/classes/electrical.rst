@@ -81,3 +81,6 @@ Other
     
 .. automodule:: schemdraw.elements.twoports
     :members:
+
+.. automodule:: schemdraw.elements.tubes
+    :members:

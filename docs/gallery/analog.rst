@@ -329,3 +329,76 @@ Quadruple loop negative feedback amplifier
 
         elm.Line().left().at(T2.out_n).tox(pre_in)
         elm.Dot()
+
+
+Vacuum Tube Volt Meters
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Schematics from `Vacuum Tube Voltmeters, John F. Rider, 1951 <https://archive.org/details/Vacuum_Tube_Voltmeters_John_Rider_1951>`__
+
+
+.. jupyter-execute::
+
+    with schemdraw.Drawing() as d:
+        d.config(fontsize=11)
+        q = elm.Triode()
+        top = elm.Line().up().at(q.anode).length(.5)
+        elm.Line().left().at(q.grid).length(2).dot(open=True).label('$V_{in}$', 'left')
+        elm.Line().down().at(q.cathode).length(1.3).dot()
+        R1 = elm.Resistor().label('R1').length(2).dot()
+        elm.Ground()
+        elm.Line().right().dot()
+        pv = elm.Battery().reverse().label('Plate V', 'bottom').dot()
+        elm.Battery().reverse().label('Bal. V', 'bottom')
+        elm.ResistorVar().up().flip().label('Zero\nAdj.', 'bottom')
+        elm.Resistor().up().label('R2', 'bottom').toy(top.end)
+        elm.Line().tox(pv.end).dot()
+        elm.MeterArrow().toy(pv.end).reverse().label('DC μA\nMeter', 'bottom').label('+', 'iend', ofst=(.2, -.3)).label('−', 'istart', ofst=(-.15, -.3)).hold()
+        elm.Line().tox(pv.start).dot()
+        elm.Line().tox(q.anode).hold()
+        elm.Capacitor().down().label('C1').toy(R1.start).dot()
+        elm.Line().tox(q.cathode).hold()
+        elm.Capacitor().toy(pv.start).label('C2')
+
+.. jupyter-execute::
+
+    with schemdraw.Drawing() as d:
+        v3 = elm.DualVacuumTube(grids_left=0, grids_right=0, heater=False).label('V3')
+        elm.Line().at(v3.cathodeB).down().length(1.25).dot().label('D2', 'left')
+        elm.Line().right().length(2.5)
+        R3 = elm.Resistor().up().label('R3').dot()
+        elm.Wire('-|').to(v3.anodeB)
+        elm.Line().at(v3.cathodeA).down().length(1.25).dot().label('D1', 'left')
+        elm.Line().tox(v3.cathodeB).hold()
+        elm.Line().left().length(1.5).dot()
+        elm.Line().left().length(1.5).dot(open=True).hold()
+        R1 = elm.Resistor().up().label('R1', 'bottom').dot()
+        elm.Capacitor().left().length(1.5).label('C1').dot(open=True)
+        elm.Gap().toy(R1.start).label('Input')
+        elm.Wire(shape='-|').at(R1.end).to(v3.anodeA).hold()
+        v1 = elm.Triode().theta(-45).at((6.5, 3)).label('V1', 'NE')
+        elm.Line().theta(135).at(v1.grid).length(.75)
+        elm.Line().left().length(1).dot()
+        d.push()
+        elm.Capacitor().down().length(1).label('C2')
+        elm.Ground(lead=False)
+        d.pop()
+        R2 = elm.Resistor().tox(R1.end).shift(.3).label('R2')
+        elm.Line().toy(R1.end)
+        d1 = elm.Line().at(v1.cathode_R).theta(-135).length(1.5).dot()
+        elm.Line().at(v1.anode).theta(45).length(.75)
+        R4 = elm.Potentiometer().right().length(2).label('R4')
+        elm.Line().theta(-45).length(.75)
+        v2 = elm.Triode().theta(45).anchor('anode').label('V2', 'NW')
+        elm.Line().at(v2.grid_R).theta(45).length(.75)
+        elm.Wire('n', k=2).to(R3.end)
+        elm.Line().at(v2.cathode).theta(-45).length(1.5).dot()
+        R7 = elm.Resistor().shift(.5).left().label('R7', 'bottom')
+        elm.MeterArrow().shift(-.3).reverse().tox(d1.end)
+        elm.Resistor().theta(-45).label('R5', 'bottom').tox(R4.tap).dot()
+        elm.Resistor().to(R7.start).label('R6', 'bottom').hold()
+        elm.Line().right().length(5)
+        bat = elm.BatteryDouble().reverse().up().toy(R4.tap)
+        elm.Line().tox(R4.tap)
+        elm.Line(arrow='o-').at(bat.tap).left().length(.6)
+        elm.Ground()

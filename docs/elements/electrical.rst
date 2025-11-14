@@ -184,10 +184,12 @@ Sources and Meters
     SourceControlledV()
     BatteryCell()
     Battery()
+    BatteryDouble()
     MeterV()
     MeterA()
     MeterI()
     MeterOhm()
+    MeterArrow()
     Solar()
 
 
@@ -506,6 +508,107 @@ These can be easier to place centered between endpoints, for example.
     PMos2(circle=True)
 
 
+Vacuum Tubes
+------------
+
+A generic configurable vacuum tube is provided in :py:class:`schemdraw.elements.tubes.VacuumTube`.
+It may be created with any number of grids, an indirectly-heated or cold cathode,
+multiple anode options, and an optional heater filament. Some options are below.
+
+
+.. jupyter-execute::
+
+    with schemdraw.Drawing():
+        elm.VacuumTube(cathode='cold', anodetype='narrow', grids=0, heater=False)
+        elm.VacuumTube(cathode='none', heater=True).at((3, 0))
+        elm.VacuumTube(anodetype='dot', grids=2).at((6, 0))
+        elm.VacuumTube(grids=8).at((9, 0))
+
+For the basic tube, anchors are `anode`, `cathode`, `cathode_R` (the right-hand connection to the cathode), `grid`, `grid_R`, and heater anchors `heat1` and `heat2`.
+When multiple grids are present, the grid anchors are `grid_N` and `grid_NR` where `N` is the
+grid number from the top down.
+
+Common vacuum tubes are defined from the base `VacuumTube` element.
+
+- :py:class:`schemdraw.elements.tubes.TubeDiode`
+- :py:class:`schemdraw.elements.tubes.Triode`
+- :py:class:`schemdraw.elements.tubes.Tetrode`
+- :py:class:`schemdraw.elements.tubes.Pentode`
+
+The triode, tetrode, and pentode include anchors named for function: `control`, `screen`, and `suppressor`. The pentode includes a `strap` parameter to connect the suppressor to the cathode.
+
+.. jupyter-execute::
+
+    with schemdraw.Drawing():
+        elm.TubeDiode().label('TubeDiode')
+        elm.Triode().at((3, 0)).label('Triode')
+        elm.Tetrode().at((6, 0)).label('Tetrode')
+        elm.Pentode().at((9, 0)).label('Pentode')
+        elm.Pentode(strap=True).at((12.5, 0)).label('Pentode(strap=True)')
+
+
+The anchors are positioned internal to the tube envelope to allow connection from either side.
+Connecting lines extend into the envelope, and pin numbers appear just outside.
+
+.. jupyter-execute::
+
+    with schemdraw.Drawing():
+        tube = (elm.Pentode()
+                   .label('1', 'cathode')
+                   .label('2', 'anode')
+                   .label('3', 'suppressor')
+                   .label('4', 'screen_R')
+                   .label('5', 'control')
+            )
+        elm.Line().down().at(tube.cathode).length(1)
+        elm.Line().up().at(tube.anode).length(.5)
+        elm.Line().left().at(tube.suppressor).length(1)
+        elm.Line().right().at(tube.screen_R).length(1)
+        elm.Line().left().at(tube.control).length(1)
+
+A dual vacuum tube may be drawn, with independent number of grids on each side. Anchors are designated `A` on the left element and `B` on the right element. :py:class:`schemdraw.elements.tubes.DualVacuumTube`
+
+
+.. jupyter-execute::
+
+    with schemdraw.Drawing():
+        t = (elm.DualVacuumTube(grids_left=1, grids_right=3, heater=False)
+                 .label('anodeA', 'anodeA', halign='right')
+                 .label('anodeB', 'anodeB')
+                 .label('cathodeA', 'cathodeA')
+                 .label('cathodeB_R', 'cathodeB_R', halign='left')
+                 .label('gridA', 'gridA', valign='center')
+                 .label('gridB_1R', 'gridB_1R', valign='center')
+                 .label('gridB_3R', 'gridB_3R', valign='center')
+            )
+
+
+Sometimes, multiple tubes in one envelope are drawn in a split style.
+This may be enabled using `split='left'` or `split='right``.
+
+.. jupyter-execute::
+
+    with schemdraw.Drawing():
+        tube1 = elm.Triode(split='left')
+        elm.Line().down().at(tube1.cathode).length(1)
+        tube2 = elm.Triode(split='right').at((2, 0))
+        elm.Line().down().at(tube2.cathode_R).length(1)
+
+
+Nixie Tubes are multi-anode tubes drawn with :py:class:`schemdraw.elements.tubes.NixieTube`.
+The cathode may be `cold`, `T` or `none` and anodetype may be `narrow` or `dot` or `none`.
+
+
+.. jupyter-execute::
+
+    with schemdraw.Drawing():
+        t = elm.NixieTube(anodes=12)
+        for i in range(12):
+            t.label(chr(ord('a')+i), f'anode{i}', halign='center', ofst=(0, .1))
+
+        elm.NixieTube(anodes=6, anodetype='dot', cathode='cold', grid=True).at((0, -3.5))
+
+
 Cables
 ------
 
@@ -603,9 +706,9 @@ Transformers
 ------------
 
 The :py:class:`schemdraw.elements.xform.Transformer` element is used to create various transformers.
-Anchors `p1`, `p2`, `s1`, and `s2` are defined for all transformers.
-Other anchors can be created using the `taps` method to add tap locations to
-either side.
+The number of turns on each side is set with the `t1` and `t2` parameters.
+As integers, they define the total number of turns on that side.
+Multi-phase transformers may be created by setting `t1` or `t2` to a tuple of turns for each phase.
 
 .. element_list::
 
@@ -614,15 +717,8 @@ either side.
     Transformer(core=False)
 
 
-Here is a transformers with anchor "B" added using the `tap` method. Note the tap by itself
-does not draw anything, but defines a named anchor to connect to.
-
 .. jupyter-execute::
 
-    with schemdraw.Drawing(fontsize=10) as d:
-        x = elm.Transformer(t1=4, t2=8).tap(name='B', pos=3, side='secondary')
-        elm.Line().at(x.s1).length(d.unit/4).label('s1', 'rgt').color('blue')
-        elm.Line().at(x.s2).length(d.unit/4).label('s2', 'rgt').color('blue')
-        elm.Line().at(x.p1).length(d.unit/4).left().label('p1', 'lft').color('blue')
-        elm.Line().at(x.p2).length(d.unit/4).left().label('p2', 'lft').color('blue')
-        elm.Line().at(x.B).length(d.unit/4).right().label('B', 'rgt').color('blue')
+    with schemdraw.Drawing():
+        elm.Transformer(t1=10, t2=(2, 2), loop=True)
+

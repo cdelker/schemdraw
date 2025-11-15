@@ -103,6 +103,7 @@ Capacitors and Inductors
     CapacitorVar()
     CapacitorTrim()
     Inductor()
+    Inductor(core=True)
     Inductor2()
     Inductor2(loops=2)
 

@@ -317,21 +317,20 @@ class NixieTube(TubeBase):
         anodew = (n-1)*anode_xgap
         left = -anodew/2
         dot_r = self.params['dot_radius']
+        grid_left = -grid_w/2
+        grid_right = grid_w/2
 
         for i in range(n):
             x = left + i*anode_xgap
-            if anodetype == 'narrow':
-                self.segments.append(
-                    Segment(((x-dot_r, anodey), (x+dot_r, anodey)), lw=self.params['anode_lw'])
-                )
-            elif anodetype == 'dot':
+            if anodetype == 'dot':
                 self.segments.append(
                     SegmentCircle((x, anodey-dot_r), dot_r, lw=self.params['anode_lw'])
                 )
-            else:
+            else: # if anodetype == 'narrow':
                 self.segments.append(
-                    Segment(((grid_left, anodey), (grid_right, anodey)), lw=self.params['anode_lw'])
+                    Segment(((x-dot_r, anodey), (x+dot_r, anodey)), lw=self.params['anode_lw'])
                 )
+
             self.segments.append(Segment(((x, tube_top), (x, anodey)), lw=self.params['anode_lw']))
             self.anchors[f'anode{i}'] = (x, tube_top)
             self._labelhints[f'anode{i}'] = LabelHint((-.1, .1), halign='right', valign='bottom', fontsize=11)

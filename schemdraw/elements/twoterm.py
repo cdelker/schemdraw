@@ -546,8 +546,15 @@ def cycloid(loops: int = 4, ofst: Sequence[float] = (0, 0),
 
 
 class Inductor(Element2Term):
-    ''' Inductor '''
-    def __init__(self, **kwargs):
+    ''' Inductor
+
+        Args:
+            core: Number of core lines to draw parallel to inductor
+    '''
+    _element_defaults = {
+        'core_ls': '-',
+    }
+    def __init__(self, core: int = 0, **kwargs):
         super().__init__(**kwargs)
         ind_w = .25
         self.segments.append(Segment([(0, 0), gap, (1, 0)]))
@@ -556,19 +563,44 @@ class Inductor(Element2Term):
                 [(i*2+1)*ind_w/2, 0], theta1=0, theta2=180,
                 width=ind_w, height=ind_w))
 
+        coregap = .12
+        if core > 0:
+            for i in range(core):
+                y = ind_w + coregap * i
+                self.segments.append(Segment([(0, y), (1, y)], ls=self.params['core_ls']))
+
+        self.anchors['NE'] = (1, ind_w + coregap)
+        self.anchors['NW'] = (0, ind_w + coregap)
+        self.anchors['SE'] = (1, -ind_w)
+        self.anchors['SW'] = (0, -ind_w)
+
 
 class Inductor2(Element2Term):
     ''' Inductor, drawn as cycloid (loopy)
 
         Args:
             loops: Number of inductor loops [default: 4]
+            core: Number of core lines to draw parallel to inductor
     '''
     _element_defaults = {
         'loops': 4,
+        'core_ls': '-',
     }
-    def __init__(self, *, loops: Optional[int] = None, **kwargs):
+    def __init__(self, *, loops: Optional[int] = None, core: int = 0, **kwargs):
         super().__init__(**kwargs)
         self.segments.append(Segment(cycloid(loops=self.params['loops'])))
+
+        coregap = .12
+        coreofst = .5
+        if core > 0:
+            for i in range(core):
+                y = coreofst + coregap * i
+                self.segments.append(Segment([(0, y), (1, y)], ls=self.params['core_ls']))
+
+        self.anchors['NE'] = (1, coreofst + coregap)
+        self.anchors['NW'] = (0, coreofst + coregap)
+        self.anchors['SE'] = (1, -coreofst)
+        self.anchors['SW'] = (0, -coreofst)
 
 
 class CPE(Element2Term):

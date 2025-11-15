@@ -350,7 +350,7 @@ class Element:
         elif isinstance(rotate, bool):
             rotate = True
 
-        if not self._userparams.get('ignore_hints', False) and (hint := self._labelhints.get(loc, None)):
+        if not self._userparams.get('ignore_hints', False) and (hint := self._labelhints.get(str(loc), None)):
             ofst = ofst if ofst is not None else hint.ofst
             halign = halign if halign else hint.halign
             valign = valign if valign else hint.valign

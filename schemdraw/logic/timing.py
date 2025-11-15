@@ -8,6 +8,7 @@ import ast
 import tokenize
 import math
 import copy
+from contextlib import suppress
 from collections import namedtuple, ChainMap
 
 from ..elements import Element
@@ -176,7 +177,10 @@ class TimingDiagram(Element):
         foot: dict = self.wave.get('foot', {})
 
         height = (self.yheight+self.ygap)*len(signals_flat)
-        periods = max(len(w.get('wave', [])) for w in signals_flat if 'async' not in w)
+        try:
+            periods = max(len(w.get('wave', [])) for w in signals_flat if 'async' not in w)
+        except ValueError:
+            periods = 0
         periods = max(periods, (max(w.get('async', [0])[-1] for w in signals_flat)))
         if self.grid:
             self._drawgrid(periods, height)

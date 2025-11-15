@@ -1,6 +1,6 @@
 ''' Transformer element definitions '''
 from __future__ import annotations
-from typing import Optional
+from typing import Optional, Sequence
 import math
 
 from ..segments import Segment, SegmentArc
@@ -182,11 +182,11 @@ class Transformer(Element):
                 pos: Turn number from the top of the tap
                 side: Primary (left) or Secondary (right) side
         '''
-        side = 'P' if side == 'primary' else 'S'
+        s = 'P' if side == 'primary' else 'S'
         if pos == 0:
-            tap = self.anchors.get(f'{side.lower()}1', None)
+            tap = self.anchors.get(f'{s.lower()}1', None)
         else:
-            tap = self.anchors.get(f'tap{side}{pos}', None)
+            tap = self.anchors.get(f'tap{s}{pos}', None)
 
 
         if tap:

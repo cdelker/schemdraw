@@ -1,4 +1,25 @@
-v0.21 - In progress
+v0.22 - In progress
+
+    Enhancements:
+        - Added vacuum tube elements
+        - Added `shift` method to move a 2-terminal element toward one end or the other
+        - Updated `tox` and `toy` methods to work with diagonal placement
+        - Updated `Transformer` to allow multi-phase connections
+        - Option to draw core lines on Inductor and Inductor2, and defined NE, NW, SE, SW anchors for placing mutual inductance dots.
+        - Elements can define label position hints for placing labels on anchor positions
+
+    New Elements:
+        - VacuumTube
+        - Triode
+        - Tetrode
+        - Pentode
+        - DualVacuumTube
+        - TubeDiode
+        - BatteryDouble
+        - MeterArrow
+
+
+v0.21 - 2025-07-27
 
     Enhancements:
         - Improved documentation to make elements searchable

@@ -93,6 +93,15 @@ Use the `Gap` element to label voltage across a terminal:
         elm.Gap().label(('–','$V_o$','+'))
         elm.Line().idot(open=True)
 
+A voltage label drawn as an arc over the element may be added using :py:class:`schemdraw.elements.lines.VoltageLabelArc`.
+
+.. jupyter-execute::
+
+    with schemdraw.Drawing():
+        R1 = elm.Resistor()
+        elm.VoltageLabelArc().at(R1).label('V1')
+
+
 
 Current Arrow Labels
 ********************

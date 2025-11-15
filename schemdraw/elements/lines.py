@@ -850,11 +850,6 @@ class CurrentLabel(Element):
         return self
 
     def _place(self, dwgxy, dwgtheta, **dwgparams):
-        ofst = self.params['ofst']
-        length = self.params['length']
-        if self._side in ['bottom']:
-            ofst = -ofst
-
         theta = self.params.get('theta', 0) % 360
         loc = self.params.get('lblloc', 'top')
 
@@ -867,12 +862,56 @@ class CurrentLabel(Element):
             loc = self.elmparams.get('lblloc', 'top')
             self.elmparams['lblloc'] = {'bot': 'top',
                                         'top': 'bot'}.get(loc)
+        self._place_segment(loc, dwgxy, dwgtheta, **dwgparams)
+        return super()._place(dwgxy, dwgtheta, **dwgparams)
+
+    def _place_segment(self, loc, dwgxy, dwgtheta, **dwgparams):
+        ofst = self.params['ofst']
+        length = self.params['length']
+        if self._side in ['bottom']:
+            ofst = -ofst
 
         a, b = (-length/2, ofst), (length/2, ofst)
         headwidth = self.params['headwidth']
         headlength = self.params['headlength']
         self.segments.append(Segment((a, b), arrow='->', arrowwidth=headwidth, arrowlength=headlength))
-        return super()._place(dwgxy, dwgtheta, **dwgparams)
+
+
+class VoltageLabelArc(CurrentLabel):
+    ''' Voltage Label as Arc along element path
+
+        Use `.at()` method to place the label over an
+        existing element.
+
+        Args:
+            top: Draw arrow on top or bottom of element [default: True]
+            reverse: Reverse the arrow direction
+            bend: Distance to bend the arc at its maximum height
+            ofst: Offset distance from centerline of element
+            length: Length of the arrow [default: 1.75]
+            headlength: Length of arrowhead [default: 0.3]
+            headwidth: Width of arrowhead [default: 0.2]
+    '''
+    _element_defaults = {
+        'length': 1.75,
+        'ofst': .075,
+        'bend': .6,
+    }
+    def _place_segment(self, loc, dwgxy, dwgtheta, **dwgparams):
+        ofst = self.params['ofst']
+        length = self.params['length']
+        bend = self.params['bend']
+        if self._side in ['bottom']:
+            ofst = -ofst
+            bend = -bend
+
+        headwidth = self.params['headwidth']
+        headlength = self.params['headlength']
+        arrow = '<-' if self.params.get('reverse') else '->'
+        p1 = Point((-length/2, ofst))
+        p2 = Point((length/2, ofst))
+        pa = Point((0, bend))
+        self.segments.append(SegmentBezier((p1, pa, p2), arrow=arrow, arrowlength=headlength, arrowwidth=headwidth))
 
 
 class CurrentLabelInline(Element):

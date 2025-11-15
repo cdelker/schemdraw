@@ -17,6 +17,7 @@ v0.22 - In progress
         - TubeDiode
         - BatteryDouble
         - MeterArrow
+        - VoltageLabelArc
 
 
 v0.21 - 2025-07-27

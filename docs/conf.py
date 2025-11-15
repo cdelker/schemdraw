@@ -18,7 +18,7 @@ import sys
 from pathlib import Path
 sys.path.append(str(Path('_ext').resolve()))
 
-import pkg_resources
+import importlib
 
 # -- Project information -----------------------------------------------------
 
@@ -28,7 +28,7 @@ author = 'Collin J. Delker'
 
 # The full version, including alpha/beta/rc tags
 
-release = pkg_resources.get_distribution(project).version
+release = importlib.metadata.version('schemdraw')
 
 # -- General configuration ---------------------------------------------------
 

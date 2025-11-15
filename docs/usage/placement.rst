@@ -120,7 +120,7 @@ Accessing Anchor positions
 **************************
 
 An element's anchors are defined in its `anchors` dictionary, but these are points relative to the Element's origin, not to the Drawing origin.
-The `absanchors` dictionary is populated once the element is placed in a drawing, and contains the absolute position relative to the Drawing origin.
+The absolute position of an anchor may be accessed using an attribute `element.anchorname`, or alteratively using the get-item notation in brackets: `element['anchorname']`, useful for anchornames that are not allowable python identifiers.
 
 .. jupyter-execute::
 
@@ -129,15 +129,7 @@ The `absanchors` dictionary is populated once the element is placed in a drawing
         bjt = elm.BjtNpn()
 
     print('anchor: ', bjt.anchors['base'])        # anchors are relative to the Element's origin
-    print('absanchor: ', bjt.absanchors['base'])  # absanchors are relative to the Drawing's origin
-
-Two shortcuts are available for accessing the absolute anchor position. Using the anchor name as an attribute, as done previously,
-and using an index notation as shown below.
-
-.. jupyter-execute::
-
-    print('anchor attribute: ', bjt.base)
-    print('anchor index: ', bjt['base'])
+    print('absolute position: ', bjt['base'])     # relative to the Drawing's origin
 
 
 Dimensions

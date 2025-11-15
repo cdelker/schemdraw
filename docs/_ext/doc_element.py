@@ -39,8 +39,8 @@ class SchemElement(SphinxDirective):
 
         hide_anchors.extend(self.options.get('hide_anchors', '').split())
 
-        names = [re.findall('(.*)\(', line)[0] for line in self.content]
-        args = [re.findall('\((.*)\)', line)[0] for line in self.content]
+        names = [re.findall(r'(.*)\(', line)[0] for line in self.content]
+        args = [re.findall(r'\((.*)\)', line)[0] for line in self.content]
 
         text = f'''
 .. grid:: {ncols}

@@ -61,16 +61,6 @@ To make a circuit diagram, use a context manager (`with` statement) on a :py:cla
         elm.Capacitor()
         elm.Diode()
 
-**New in version 0.18**: The context manager keeps track of the active drawing, so that using `drawing.add(element)` or `drawing += element` is no longer necessary.
-These operators are still functional and are needed if drawing outside a `with` context manager:
-
-.. code-block:: python
-
-    with schemdraw.Drawing() as drawing:
-        drawing += elm.Resistor()
-        drawing += elm.Capacitor()
-        drawing.add(elm.Diode())   # Same as `drawing +=`
-
 Element placement and other properties are set using a chained method interface, for example:
 
 .. jupyter-execute::
@@ -86,7 +76,7 @@ Methods `up`, `down`, `left`, `right` specify the drawing direction, and `label`
 If not specified, elements reuse the same direction from the previous element, and begin where
 the previous element ended.
 
-Using the `with` context manager is a convenience, letting the drawing be displayed and saved upon exiting the `with` block. Schematics may also be created simply by assinging a new Drawing instance, but this requires explicitly adding elements to the drawing with `d.add` or d +=`, and calling `draw()` and/or `save()` to show the drawing:
+Using the `with` context manager is a convenience, letting the drawing be displayed and saved upon exiting the `with` block. Schematics may also be created by assinging the new Drawing instance to a variable and adding elements to the drawing with `d.add` or `d +=`, then calling `draw()` and/or `save()` to show the drawing:
 
 .. code-block:: python
 

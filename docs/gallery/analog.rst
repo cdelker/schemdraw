@@ -150,7 +150,7 @@ This also demonstrates the :py:class:`schemdraw.elements.ElementDrawing` class t
         elm.ElementDrawing(d1)
         d2.pop()
         d2.here = (d2.here[0], d2.here[1]-d2.unit)
-        elm.Line().right().length(d2.unit/6)
+        elm.Line().right(d2.unit/6)
         elm.DotDotDot()
 
 
@@ -218,16 +218,16 @@ Note the use of current labels to show the bias currents.
     with schemdraw.Drawing() as d:
         # tail transistor
         Q1 = elm.AnalogNFet().anchor('source').theta(0).reverse()
-        elm.Line().down().length(0.5)
+        elm.Line().down(0.5)
         ground = d.here
         elm.Ground()
 
         # input pair
-        elm.Line().left().length(1).at(Q1.drain)
+        elm.Line().left(1).at(Q1.drain)
         Q2 = elm.AnalogNFet().anchor('source').theta(0).reverse()
 
         elm.Dot().at(Q1.drain)
-        elm.Line().right().length(1)
+        elm.Line().right(1)
         Q3 = elm.AnalogNFet().anchor('source').theta(0)
 
         # current mirror
@@ -247,7 +247,7 @@ Note the use of current labels to show the bias currents.
         elm.Vdd()
 
         # bias source
-        elm.Line().left().length(0.25).at(Q1.gate)
+        elm.Line().left(0.25).at(Q1.gate)
         elm.SourceV().down().toy(ground).reverse().scale(0.5).label("Bias")
         elm.Ground()
 
@@ -284,9 +284,9 @@ Quadruple loop negative feedback amplifier
         elm.Line().at(T1.in_p).to(T2.in_n)
         elm.Line().at(T3.in_n).to(T4.in_n)
 
-        elm.Line().right().length(1).at(N1.out_p)
+        elm.Line().right(1).at(N1.out_p)
         pre_out = d.here
-        outline = elm.Line().right().length(1).dot(open=True)
+        outline = elm.Line().right(1).dot(open=True)
         out = d.here
         elm.Gap().down().label(('+','$V_o$','–')).toy(N1.out_n)
         elm.Line().idot(open=True).down().toy(T4.in_n)
@@ -364,30 +364,30 @@ Schematics from `Vacuum Tube Voltmeters, John F. Rider, 1951 <https://archive.or
 
     with schemdraw.Drawing() as d:
         v3 = elm.DualVacuumTube(grids_left=0, grids_right=0, heater=False).label('V3')
-        elm.Line().at(v3.cathodeB).down().length(1.25).dot().label('D2', 'left')
-        elm.Line().right().length(2.5)
+        elm.Line().at(v3.cathodeB).down(1.25).dot().label('D2', 'left')
+        elm.Line().right(2.5)
         R3 = elm.Resistor().up().label('R3').dot()
         elm.Wire('-|').to(v3.anodeB)
-        elm.Line().at(v3.cathodeA).down().length(1.25).dot().label('D1', 'left')
+        elm.Line().at(v3.cathodeA).down(1.25).dot().label('D1', 'left')
         elm.Line().tox(v3.cathodeB).hold()
-        elm.Line().left().length(1.5).dot()
-        elm.Line().left().length(1.5).dot(open=True).hold()
+        elm.Line().left(1.5).dot()
+        elm.Line().left(1.5).dot(open=True).hold()
         R1 = elm.Resistor().up().label('R1', 'bottom').dot()
-        elm.Capacitor().left().length(1.5).label('C1').dot(open=True)
+        elm.Capacitor().left(1.5).label('C1').dot(open=True)
         elm.Gap().toy(R1.start).label('Input')
         elm.Wire(shape='-|').at(R1.end).to(v3.anodeA).hold()
         v1 = elm.Triode().theta(-45).at((6.5, 3)).label('V1', 'NE')
         elm.Line().theta(135).at(v1.grid).length(.75)
-        elm.Line().left().length(1).dot()
+        elm.Line().left(1).dot()
         d.push()
-        elm.Capacitor().down().length(1).label('C2')
+        elm.Capacitor().down(1).label('C2')
         elm.Ground(lead=False)
         d.pop()
         R2 = elm.Resistor().tox(R1.end).shift(.3).label('R2')
         elm.Line().toy(R1.end)
         d1 = elm.Line().at(v1.cathode_R).theta(-135).length(1.5).dot()
         elm.Line().at(v1.anode).theta(45).length(.75)
-        R4 = elm.Potentiometer().right().length(2).label('R4')
+        R4 = elm.Potentiometer().right(2).label('R4')
         elm.Line().theta(-45).length(.75)
         v2 = elm.Triode().theta(45).anchor('anode').label('V2', 'NW')
         elm.Line().at(v2.grid_R).theta(45).length(.75)
@@ -397,8 +397,8 @@ Schematics from `Vacuum Tube Voltmeters, John F. Rider, 1951 <https://archive.or
         elm.MeterArrow().shift(-.3).reverse().tox(d1.end)
         elm.Resistor().theta(-45).label('R5', 'bottom').tox(R4.tap).dot()
         elm.Resistor().to(R7.start).label('R6', 'bottom').hold()
-        elm.Line().right().length(5)
+        elm.Line().right(5)
         bat = elm.BatteryDouble().reverse().up().toy(R4.tap)
         elm.Line().tox(R4.tap)
-        elm.Line(arrow='o-').at(bat.tap).left().length(.6)
+        elm.Line(arrow='o-').at(bat.tap).left(.6)
         elm.Ground()

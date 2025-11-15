@@ -200,9 +200,9 @@ The :py:class:`schemdraw.elements.lines.Encircle` and :py:class:`schemdraw.eleme
 
     with schemdraw.Drawing(unit=2):
         R1 = elm.Resistor().down().label('R1')
-        c = elm.Line().right().length(1)
+        c = elm.Line().right(1)
         R2 = elm.Resistor().up().label('R2', loc='bottom')
-        elm.Line().left().length(1)
+        elm.Line().left(1)
         elm.Line().down().at(c.center).length(.75).idot()
         R3 = elm.Resistor().down().label('R3')
         R4 = elm.Resistor().down().label('R4')

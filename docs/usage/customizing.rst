@@ -15,7 +15,7 @@ Grouping Elements
 
 There are two ways to combine multiple elements into a single reusable element.
 :py:class:`schemdraw.elements.ElementDrawing` transforms another Drawing into a single element.
-:py:class:`schemdraw.elements.ElementCompound` creates a new element from multiple elements.
+:py:class:`schemdraw.elements.compound.ElementCompound` creates a new element from multiple elements.
 
 ElementDrawing
 ^^^^^^^^^^^^^^
@@ -42,7 +42,7 @@ to add to other drawings.
 ElementCompound
 ^^^^^^^^^^^^^^^
 
-An :py:class:`schemdraw.elements.ElementCompound` acts like a Drawing on which other elements may be added.
+An :py:class:`schemdraw.elements.compound.ElementCompound` acts like a Drawing on which other elements may be added.
 Elements are added in the `setup` method.
 
 .. jupyter-execute::
@@ -188,7 +188,7 @@ Start by importing the Segments and define the class name and `__init__` functio
         def __init__(self, **kwargs):
             super().__init__(**kwargs)
 
-The `d` and `kwargs` are passed to `super` to initialize the Element.
+The `kwargs` are passed to `super` to initialize the Element.
 
 We want a dot in the center of our flux capacitor, so start by adding a `SegmentCircle`. The `fclen` and `radius` variables could be set as arguments to the __init__ and/or added to `_element_defaults` for the user to adjust, if desired, but here they are defined as constants in the __init__.
 

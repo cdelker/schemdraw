@@ -3,12 +3,17 @@
 from __future__ import annotations
 from typing import Optional, Sequence, Union
 
-from ..import elements as elm
+from .elements import Element, LabelHint
+from .twoterm import Resistor, Diode, Inductor, Inductor2
+from .transistors import BjtNpn
+from .lines import Arrow, Line, Rect, Dot
+from .switches import Switch, SwitchSpdt2, SwitchDpst, SwitchDpdt
+
 from ..types import Point
 from .. import drawing_stack
 
 
-class ElementCompound(elm.Element):
+class ElementCompound(Element):
     ''' Element onto which other elements can be added like a drawing '''
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
@@ -22,7 +27,7 @@ class ElementCompound(elm.Element):
                           'fill': kwargs.get('fill', 'none')}
         self._here: Point = Point((0, 0))
         self._theta: float = 0
-        self.elements: list[elm.Element] = []
+        self.elements: list[Element] = []
 
         pause_state = drawing_stack.pause
         drawing_stack.pause = True
@@ -32,7 +37,7 @@ class ElementCompound(elm.Element):
 
     def _init_anchors(self):
         ''' Initialize anchors for elements assigned to an attribute of this class during setup '''
-        namedelms = {name: subelm for name, subelm in vars(self).items() if isinstance(subelm, elm.Element)}
+        namedelms = {name: subelm for name, subelm in vars(self).items() if isinstance(subelm, Element)}
         for elmname, subelm in namedelms.items():
             for anchorname in subelm.anchors.keys():
                 self.anchors[f'{elmname}.{anchorname}'] = subelm[anchorname]  # Gets placed anchor position, within compound
@@ -51,7 +56,7 @@ class ElementCompound(elm.Element):
         ''' Move relative to current position '''
         self._here = Point((self._here.x + dx, self._here.y + dy))
 
-    def add(self, element: elm.Element) -> elm.Element:
+    def add(self, element: Element) -> Element:
         ''' Add an element to the segments list '''
         self.elements.append(element)
         self._here, self._theta = element._place(self._here, self._theta, **self.dwgparams)
@@ -86,32 +91,32 @@ class Optocoupler(ElementCompound):
         super().__init__(unit=self.unit, **kwargs)
     
     def setup(self):
-        D = self.add(elm.Diode(d='d'))
-        bjt = elm.BjtNpn(d='r', at=(1, -self.unit/2))
+        D = self.add(Diode(d='d'))
+        bjt = BjtNpn(d='r', at=(1, -self.unit/2))
         bjt.segments.pop(0)  # Remove base contact
         B = self.add(bjt)
-        self.add(elm.Arrow(d='r', at=(.5, -self.unit/2 + .2), l=.6,
-                           arrowwidth=.15, arrowlength=.2))
-        self.add(elm.Arrow(d='r', at=(.5, -self.unit/2 - .2), l=.6,
-                           arrowwidth=.15, arrowlength=.2))
+        self.add(Arrow(d='r', at=(.5, -self.unit/2 + .2), l=.6,
+                       arrowwidth=.15, arrowlength=.2))
+        self.add(Arrow(d='r', at=(.5, -self.unit/2 - .2), l=.6,
+                       arrowwidth=.15, arrowlength=.2))
 
         bbox = self.get_bbox()
         if self.box:
-            self.add(elm.Rect(
+            self.add(Rect(
                 d='r', at=(0, 0),
                 corner1=(bbox.xmin-self.boxpad, bbox.ymin-self.boxpad),
                 corner2=(bbox.xmax+self.boxpad, bbox.ymax+self.boxpad),
                 fill=self.boxfill, zorder=0))
 
         if self.base:
-            self.add(elm.Line(d='l', at=Point((B.get_bbox(transform=True).xmin, D.center[1])), l=.15))  # type: ignore
-            E = self.add(elm.Line(d='d', toy=bbox.ymax+self.boxpad))
+            self.add(Line(d='l', at=Point((B.get_bbox(transform=True).xmin, D.center[1])), l=.15))  # type: ignore
+            E = self.add(Line(d='d', toy=bbox.ymax+self.boxpad))
             self.anchors['base'] = E.end
 
-        A = self.add(elm.Line(d='r', at=bjt.collector, l=self.boxpad))
-        B = self.add(elm.Line(d='r', at=bjt.emitter, l=self.boxpad))
-        C = self.add(elm.Line(d='l', at=D.start, tox=bbox.xmin-self.boxpad))
-        D = self.add(elm.Line(d='l', at=D.end, tox=bbox.xmin-self.boxpad))
+        A = self.add(Line(d='r', at=bjt.collector, l=self.boxpad))
+        B = self.add(Line(d='r', at=bjt.emitter, l=self.boxpad))
+        C = self.add(Line(d='l', at=D.start, tox=bbox.xmin-self.boxpad))
+        D = self.add(Line(d='l', at=D.end, tox=bbox.xmin-self.boxpad))
         self.anchors['anode'] = C.end
         self.anchors['cathode'] = D.end
         self.anchors['emitter'] = B.end
@@ -151,9 +156,9 @@ class Relay(ElementCompound):
 
     def setup(self) -> None:
         if self.cycl:
-            L = self.add(elm.Inductor2(d='d'))
+            L = self.add(Inductor2(d='d'))
         else:
-            L = self.add(elm.Inductor(d='d'))
+            L = self.add(Inductor(d='d'))
 
         self.anchors['in1'] = L.start
         self.anchors['in2'] = L.end
@@ -161,13 +166,13 @@ class Relay(ElementCompound):
         Lleft = L.get_bbox(transform=True).xmax
         swleft = Lleft + .6
         if self.core:
-            self.add(elm.Line(d='d', at=(Lleft+.15, -self.unit/2),
-                              anchor='center', l=1))
+            self.add(Line(d='d', at=(Lleft+.15, -self.unit/2),
+                          anchor='center', l=1))
             swleft += .1
 
-        SW: Union[elm.Switch, elm.SwitchSpdt2, elm.SwitchDpst, elm.SwitchDpdt]
+        SW: Union[Switch, SwitchSpdt2, SwitchDpst, SwitchDpdt]
         if self.switch == 'spst':
-            SW = elm.Switch(d='d', reverse=self.swreverse, flip=self.swflip)
+            SW = Switch(d='d', reverse=self.swreverse, flip=self.swflip)
             bbox = SW.get_bbox()
             SW._userparams['at'] = (swleft-(-bbox.ymax if self.swflip else bbox.ymin), 0)
             self.add(SW)
@@ -175,48 +180,48 @@ class Relay(ElementCompound):
             self.anchors['b'] = SW.end
 
         elif self.switch == 'spdt':
-            SW = elm.SwitchSpdt2(d='d', reverse=self.swreverse, flip=self.swflip)
+            SW = SwitchSpdt2(d='d', reverse=self.swreverse, flip=self.swflip)
             bbox = SW.get_bbox()
             SW._userparams['at'] = (swleft-(-bbox.ymax if self.swflip else bbox.ymin), -.5)
             self.add(SW)
             toy = -self.unit if self.swreverse else 0
-            a = self.add(elm.Line(d='d' if self.swreverse else 'u', at=SW.a, toy=toy))
+            a = self.add(Line(d='d' if self.swreverse else 'u', at=SW.a, toy=toy))
             toy = 0 if self.swreverse else -self.unit
-            b = self.add(elm.Line(d='u' if self.swreverse else 'd', at=SW.b, toy=toy))
-            c = self.add(elm.Line(d='u' if self.swreverse else 'd', at=SW.c, toy=toy))
+            b = self.add(Line(d='u' if self.swreverse else 'd', at=SW.b, toy=toy))
+            c = self.add(Line(d='u' if self.swreverse else 'd', at=SW.c, toy=toy))
             self.anchors['a'] = a.end
             self.anchors['b'] = b.end
             self.anchors['c'] = c.end
 
         elif self.switch == 'dpst':
-            SW = elm.SwitchDpst(d='d', link=False, reverse=self.swreverse, flip=self.swflip)
+            SW = SwitchDpst(d='d', link=False, reverse=self.swreverse, flip=self.swflip)
             bbox = SW.get_bbox()
             SW._userparams['at'] = (swleft-(-bbox.ymax if self.swflip else bbox.ymin), -.5)
             self.add(SW)
             toy = 0 if self.swreverse else -self.unit
-            t1 = self.add(elm.Line(d='u' if self.swreverse else 'd', at=SW.t1, toy=toy))
-            t2 = self.add(elm.Line(d='u' if self.swreverse else 'd', at=SW.t2, toy=toy))
+            t1 = self.add(Line(d='u' if self.swreverse else 'd', at=SW.t1, toy=toy))
+            t2 = self.add(Line(d='u' if self.swreverse else 'd', at=SW.t2, toy=toy))
             toy = -self.unit if self.swreverse else 0
-            p1 = self.add(elm.Line(d='d' if self.swreverse else 'u', at=SW.p1, toy=toy))
-            p2 = self.add(elm.Line(d='d' if self.swreverse else 'u', at=SW.p2, toy=toy))
+            p1 = self.add(Line(d='d' if self.swreverse else 'u', at=SW.p1, toy=toy))
+            p2 = self.add(Line(d='d' if self.swreverse else 'u', at=SW.p2, toy=toy))
             self.anchors['t1'] = t1.end
             self.anchors['t2'] = t2.end
             self.anchors['p1'] = p1.end
             self.anchors['p2'] = p2.end
 
         elif self.switch == 'dpdt':
-            SW = elm.SwitchDpdt(d='d', link=False, reverse=self.swreverse, flip=self.swflip)
+            SW = SwitchDpdt(d='d', link=False, reverse=self.swreverse, flip=self.swflip)
             bbox = SW.get_bbox()
             SW._userparams['at'] = (swleft-(-bbox.ymax if self.swflip else bbox.ymin), -.5)
             self.add(SW)
             toy = 0 if self.swreverse else -self.unit
-            t1 = self.add(elm.Line(d='u' if self.swreverse else 'd', at=SW.t1, toy=toy))
-            t2 = self.add(elm.Line(d='u' if self.swreverse else 'd', at=SW.t2, toy=toy))
-            t3 = self.add(elm.Line(d='u' if self.swreverse else 'd', at=SW.t3, toy=toy))
-            t4 = self.add(elm.Line(d='u' if self.swreverse else 'd', at=SW.t4, toy=toy))
+            t1 = self.add(Line(d='u' if self.swreverse else 'd', at=SW.t1, toy=toy))
+            t2 = self.add(Line(d='u' if self.swreverse else 'd', at=SW.t2, toy=toy))
+            t3 = self.add(Line(d='u' if self.swreverse else 'd', at=SW.t3, toy=toy))
+            t4 = self.add(Line(d='u' if self.swreverse else 'd', at=SW.t4, toy=toy))
             toy = -self.unit if self.swreverse else 0
-            p1 = self.add(elm.Line(d='d' if self.swreverse else 'u', at=SW.p1, toy=toy))
-            p2 = self.add(elm.Line(d='d' if self.swreverse else 'u', at=SW.p2, toy=toy))
+            p1 = self.add(Line(d='d' if self.swreverse else 'u', at=SW.p1, toy=toy))
+            p2 = self.add(Line(d='d' if self.swreverse else 'u', at=SW.p2, toy=toy))
             self.anchors['t1'] = t1.end
             self.anchors['t2'] = t2.end
             self.anchors['t3'] = t3.end
@@ -226,14 +231,14 @@ class Relay(ElementCompound):
 
         if self.link:
             tox = SW.get_bbox().ymax if self.swflip else SW.get_bbox().ymin
-            self.add(elm.Line(d='r', at=(Lleft+.2, -self.unit/2), ls=':', tox=tox))
+            self.add(Line(d='r', at=(Lleft+.2, -self.unit/2), ls=':', tox=tox))
 
         if self.box:
             bbox = self.get_bbox()
-            self.add(elm.Rect(d='r', at=(0, 0),
-                              corner1=(bbox.xmin-self.boxpad, bbox.ymin+.2),
-                              corner2=(bbox.xmax+self.boxpad, bbox.ymax-.2),
-                              fill=self.boxfill, zorder=0))
+            self.add(Rect(d='r', at=(0, 0),
+                          corner1=(bbox.xmin-self.boxpad, bbox.ymin+.2),
+                          corner2=(bbox.xmax+self.boxpad, bbox.ymax-.2),
+                          fill=self.boxfill, zorder=0))
 
 
 class Wheatstone(ElementCompound):
@@ -257,10 +262,10 @@ class Wheatstone(ElementCompound):
         super().__init__(**kwargs)
 
     def setup(self):
-        A = elm.Resistor().theta(45)
-        B = elm.Resistor().theta(-45)
-        C = elm.Resistor().theta(-135)
-        D = elm.Resistor().theta(135)
+        A = Resistor().theta(45)
+        B = Resistor().theta(-45)
+        C = Resistor().theta(-135)
+        D = Resistor().theta(135)
 
         locs = ['top', 'top', 'bottom', 'bottom']
         if self.labels:
@@ -272,12 +277,14 @@ class Wheatstone(ElementCompound):
         self.add(C)
         self.add(D)
         if self.vout:
-            self.add(elm.Line().right().at(A.start).length(1))
-            vo1 = self.add(elm.Dot(open=True))
-            self.add(elm.Line().left().at(C.start).length(1))
-            vo2 = self.add(elm.Dot(open=True))
+            self.add(Line().right().at(A.start).length(1))
+            vo1 = self.add(Dot(open=True))
+            self.add(Line().left().at(C.start).length(1))
+            vo2 = self.add(Dot(open=True))
             self.anchors['vo1'] = vo1.center
             self.anchors['vo2'] = vo2.center
+            self._labelhints['vo1'] = LabelHint((0, .1), halign='center', valign='bottom')
+            self._labelhints['vo2'] = LabelHint((0, .1), halign='center', valign='bottom')
 
         self.anchors['W'] = A.start
         self.anchors['N'] = B.start
@@ -305,10 +312,10 @@ class Rectifier(ElementCompound):
         super().__init__(**kwargs)
 
     def setup(self):
-        A = elm.Diode(fill=self.fill).theta(45)
-        B = elm.Diode(fill=self.fill).theta(-45)
-        C = elm.Diode(fill=self.fill).theta(-135).reverse()
-        D = elm.Diode(fill=self.fill).theta(135).reverse()
+        A = Diode(fill=self.fill).theta(45)
+        B = Diode(fill=self.fill).theta(-45)
+        C = Diode(fill=self.fill).theta(-135).reverse()
+        D = Diode(fill=self.fill).theta(135).reverse()
 
         locs = ['top', 'top', 'bottom', 'bottom']
         if self.labels:

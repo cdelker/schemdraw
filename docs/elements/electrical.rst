@@ -132,18 +132,6 @@ All diodes may be filled by passing `fill=True`.
     SCR()
 
 
-Pathological
-^^^^^^^^^^^^^
-
-.. element_list::
-    :ncols: 2
-
-    Nullator()
-    Norator()
-    CurrentMirror()
-    VoltageMirror()
-
-
 Miscellaneous
 ^^^^^^^^^^^^^
 
@@ -165,6 +153,10 @@ Miscellaneous
     Plug()
     Terminal()
     SparkGap()
+    Nullator()
+    Norator()
+    CurrentMirror()
+    VoltageMirror()
 
 
 Sources and Meters

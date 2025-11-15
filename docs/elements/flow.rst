@@ -209,7 +209,7 @@ just draws the box around them when it exits the `with`.
 
     with schemdraw.Drawing(unit=1) as d:
         flow.Start().label('Start')
-        flow.Arrow().down().length(1.5)
+        flow.Arrow().down(1.5)
         with d.container() as c:
             flow.Box().label('Step 1').drop('E')
             flow.Arrow().right()

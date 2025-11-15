@@ -560,7 +560,7 @@ class Inductor(Element2Term):
         self.segments.append(Segment([(0, 0), gap, (1, 0)]))
         for i in range(4):
             self.segments.append(SegmentArc(
-                [(i*2+1)*ind_w/2, 0], theta1=0, theta2=180,
+                ((i*2+1)*ind_w/2, 0), theta1=0, theta2=180,
                 width=ind_w, height=ind_w))
 
         coregap = .12

@@ -101,12 +101,7 @@ A few common integrated circuits are predefined as shown below.
             :hide-code:
 
             with schemdraw.Drawing():
-                j = elm.JKFlipFlop()
-                j.label('J', loc='J', fontsize=10, color='blue')
-                j.label('K', loc='K', fontsize=10, color='blue')
-                j.label('Q', loc='Q', fontsize=10, color='blue')
-                j.label('Qbar', loc='Qbar', fontsize=10, color='blue')
-                j.label('CLK', loc='CLK', fontsize=10, color='blue')
+                j = elm.VoltageRegulator()
 
 
     .. grid-item-card::

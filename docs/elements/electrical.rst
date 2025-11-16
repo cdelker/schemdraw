@@ -94,6 +94,8 @@ Either IEEE or IEC styles are always available with these Elements.
 Capacitors and Inductors
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
+Inductors have anchors intended for easy positioning of a mutual inductance dot near the element.
+
 .. element_list::
 
     Capacitor()

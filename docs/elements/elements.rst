@@ -1,3 +1,5 @@
+.. _elements:
+
 Circuit Elements
 ================
 

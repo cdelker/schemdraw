@@ -132,8 +132,8 @@ The Arduino board uses :py:class:`schemdraw.elements.connectors.OrthoLines` to e
                   elm.IcPin(name='PD2', pin='4', side='r', slot='3/22'),
                   elm.IcPin(name='PD3', pin='5', side='r', slot='4/22'),
                   elm.IcPin(name='PD4', pin='6', side='r', slot='5/22'),
-                  elm.IcPin(name='PD5', pin='11', side='r', slot='6/22'),             
-                  elm.IcPin(name='PD6', pin='12', side='r', slot='7/22'),             
+                  elm.IcPin(name='PD5', pin='11', side='r', slot='6/22'),
+                  elm.IcPin(name='PD6', pin='12', side='r', slot='7/22'),
                   elm.IcPin(name='PD7', pin='13', side='r', slot='8/22'),
                   elm.IcPin(name='PC0', pin='23', side='r', slot='10/22'),
                   elm.IcPin(name='PC1', pin='24', side='r', slot='11/22'),
@@ -156,7 +156,7 @@ The Arduino board uses :py:class:`schemdraw.elements.connectors.OrthoLines` to e
                   elm.IcPin(name='AGND', side='l', slot='13/22', pin='22'),
                   elm.IcPin(name='VCC', side='l', slot='11/22', pin='7'),
                   elm.IcPin(name='GND', side='l', slot='10/22', pin='8')]
-            super().__init__(pins=pins, w=5, plblofst=.05, botlabel='ATMEGA328', **kwargs)
+            super().__init__(pins=pins, size=(5, 15), pinspacing=0.6, plblofst=.05, botlabel='ATMEGA328', **kwargs)
 
 
     with schemdraw.Drawing() as d:
@@ -194,12 +194,11 @@ The Arduino board uses :py:class:`schemdraw.elements.connectors.OrthoLines` to e
         elm.Ground()
 
         elm.Line().left(d.unit*2).at(Q1.XTAL2).dot()
-        d.push()
-        elm.Capacitor().left(d.unit/2).scale(.75)
-        elm.Line().toy(Q1.XTAL1).dot()
-        elm.Ground()
-        elm.Capacitor().right(d.unit/2).scale(.75).dot()
-        d.pop()
+        with d.hold():
+            elm.Capacitor().left(d.unit/2).scale(.75)
+            elm.Line().toy(Q1.XTAL1).dot()
+            elm.Ground()
+            elm.Capacitor().right(d.unit/2).scale(.75).dot()
         elm.Crystal().toy(Q1.XTAL1).label('16MHz', 'bottom')
         elm.Line().tox(Q1.XTAL1)
 
@@ -217,16 +216,14 @@ The Arduino board uses :py:class:`schemdraw.elements.connectors.OrthoLines` to e
         elm.Wire('|-').to(GND.center).dot()
 
         elm.Line().left().at(Q1.RESET).dot()
-        d.push()
-        elm.RBox().up().label('10K')
-        elm.Vdd().label('+5V')
-        d.pop()
+        with d.hold():
+            elm.RBox().up().label('10K')
+            elm.Vdd().label('+5V')
         elm.Line().left().dot()
-        d.push()
-        RST = elm.Button().up().label('Reset')
-        elm.Line().left(d.unit/2)
-        elm.Ground()
-        d.pop()
+        with d.hold():
+            RST = elm.Button().up().label('Reset')
+            elm.Line().left(d.unit/2)
+            elm.Ground()
 
         elm.Capacitor().left().at(JP1.pin4).label('100n', 'bottom')
         elm.Wire('c', k=-16).to(RST.start)

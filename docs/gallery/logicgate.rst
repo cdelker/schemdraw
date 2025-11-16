@@ -48,15 +48,12 @@ Full Adder
         A = logic.Line().left(d.unit*2).at(X1.in1).idot().label('A', 'left')
         B = logic.Line().left().at(X1.in2).dot()
         logic.Line().left().label('B', 'left')
-
         logic.Line().right().at(X1.out).idot()
         X2 = logic.Xor().anchor('in1')
         C = logic.Line().down(d.unit*2).at(X2.in2)
-        d.push()
-        logic.Dot().at(C.center)
-        logic.Line().tox(A.end).label('C$_{in}$', 'left')
-        d.pop()
-
+        with d.hold():
+            logic.Dot().at(C.center)
+            logic.Line().tox(A.end).label('C$_{in}$', 'left')
         A1 = logic.And().right().anchor('in1')
         logic.Wire('-|').at(A1.in2).to(X1.out)
         d.move_from(A1.in2, dy=-d.unit*2)

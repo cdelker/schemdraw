@@ -50,18 +50,17 @@ Shows how to use endpoints to specify exact start and end placement.
 ECE201-Style Circuit
 ^^^^^^^^^^^^^^^^^^^^
 
-This example demonstrate use of `push()` and `pop()` and using the 'tox' and 'toy' methods.
+This example demonstrate use of `hold()` and using the `tox()` and `toy()` methods.
 
 .. jupyter-execute::
     :code-below:
 
     with schemdraw.Drawing() as d:
         d.config(unit=2)  # unit=2 makes elements have shorter than normal leads
-        d.push()
-        R1 = elm.Resistor().down().label('20Ω')
-        V1 = elm.SourceV().down().reverse().label('120V')
-        elm.Line().right(3).dot()
-        d.pop()
+        with d.hold():
+            R1 = elm.Resistor().down().label('20Ω')
+            V1 = elm.SourceV().down().reverse().label('120V')
+            elm.Line().right(3).dot()
         elm.Line().right(3).dot()
         elm.SourceV().down().reverse().label('60V')
         elm.Resistor().label('5Ω').dot()
@@ -75,7 +74,6 @@ This example demonstrate use of `push()` and `pop()` and using the 'tox' and 'to
         elm.Resistor().right().at(R6.start).label('1.6Ω').dot(open=True).label('a', 'right')
         elm.Line().right().at(R6.end).dot(open=True).label('b', 'right')
 
-
 Loop Currents
 ^^^^^^^^^^^^^
 
@@ -87,18 +85,13 @@ Using the :py:class:`schemdraw.elements.lines.LoopCurrent` element to add loop c
     with schemdraw.Drawing() as d:
         d.config(unit=5)
         V1 = elm.SourceV().label('20V')
-        R1 = elm.Resistor().right().label('400Ω')
-        elm.Dot()
-        d.push()
-        R2 = elm.Resistor().down().label('100Ω', loc='bot', rotate=True)
-        elm.Dot()
-        d.pop()
-        L1 = elm.Line()
+        R1 = elm.Resistor().right().label('400Ω').dot()
+        R2 = elm.Resistor().down().label('100Ω', loc='bot', rotate=True).dot().hold()
+        L1 = elm.Line().right()
         I1 = elm.SourceI().down().label('1A', loc='bot')
         L2 = elm.Line().tox(V1.start)
         elm.LoopCurrent([R1,R2,L2,V1], pad=1.25).label('$I_1$')
         elm.LoopCurrent([R1,I1,L2,R2], pad=1.25).label('$I_2$')    # Use R1 as top element for both so they get the same height
-
 
 AC Loop Analysis
 ^^^^^^^^^^^^^^^^
@@ -107,16 +100,15 @@ Another good problem for ECE students...
 
 .. jupyter-execute::
     :code-below:
-    
+
     with schemdraw.Drawing() as d:
         I1 = elm.SourceI().label('5∠0° A').dot()
-        d.push()
-        elm.Capacitor().right().label('-j3Ω').dot()
-        elm.Inductor().down().label('j2Ω').dot().hold()
-        elm.Resistor().right().label('5Ω').dot()
-        V1 = elm.SourceV().down().reverse().label('5∠-90° V', loc='bot')
-        elm.Line().tox(I1.start)
-        d.pop()
+        with d.hold():
+            elm.Capacitor().right().label('-j3Ω').dot()
+            elm.Inductor().down().label('j2Ω').dot().hold()
+            elm.Resistor().right().label('5Ω').dot()
+            V1 = elm.SourceV().down().reverse().label('5∠-90° V', loc='bot')
+            elm.Line().tox(I1.start)
         elm.Line().up(d.unit*.8)
         L1 = elm.Inductor().tox(V1.start).label('j3Ω')
         elm.Line().down(d.unit*.8)
@@ -135,24 +127,21 @@ This also demonstrates the :py:class:`schemdraw.elements.ElementDrawing` class t
 
     with schemdraw.Drawing(show=False) as d1:
         elm.Resistor()
-        d1.push()
-        elm.Capacitor().down()
-        elm.Line().left()
-        d1.pop()
+        with d1.hold():
+            elm.Capacitor().down()
+            elm.Line().left()
 
     with schemdraw.Drawing() as d2:
         for i in range(3):
             elm.ElementDrawing(d1)
 
-        d2.push()
-        elm.Line().length(d2.unit/6)
-        elm.DotDotDot()
-        elm.ElementDrawing(d1)
-        d2.pop()
-        d2.here = (d2.here[0], d2.here[1]-d2.unit)
+        with d2.hold():
+            elm.Line().length(d2.unit/6)
+            elm.DotDotDot()
+            elm.ElementDrawing(d1)
+        d2.move(dy=-d2.unit)
         elm.Line().right(d2.unit/6)
         elm.DotDotDot()
-
 
 Power supply
 ^^^^^^^^^^^^
@@ -192,10 +181,9 @@ Also note the use of newline characters inside resistor and capacitor labels.
         elm.Line().toy(D.W).dot()
 
         elm.Resistor().right().at(Q2b.center).label('R2').label('56$\\Omega$ 1W', loc='bot').dot()
-        d.push()
-        elm.Line().toy(top.start).dot()
-        elm.Line().tox(Q2.emitter)
-        d.pop()
+        with d.hold():
+            elm.Line().toy(top.start).dot()
+            elm.Line().tox(Q2.emitter)
         elm.Capacitor(polar=True).toy(G.start).label('C3\n470$\\mu$F\n50V', loc='bot').dot()
         elm.Line().tox(G.start).hold()
         elm.Line().right().dot()
@@ -379,10 +367,9 @@ Schematics from `Vacuum Tube Voltmeters, John F. Rider, 1951 <https://archive.or
         v1 = elm.Triode().theta(-45).at((6.5, 3)).label('V1', 'NE')
         elm.Line().theta(135).at(v1.grid).length(.75)
         elm.Line().left(1).dot()
-        d.push()
-        elm.Capacitor().down(1).label('C2')
-        elm.Ground(lead=False)
-        d.pop()
+        with d.hold():
+            elm.Capacitor().down(1).label('C2')
+            elm.Ground(lead=False)
         R2 = elm.Resistor().tox(R1.end).shift(.3).label('R2')
         elm.Line().toy(R1.end)
         d1 = elm.Line().at(v1.cathode_R).theta(-135).length(1.5).dot()

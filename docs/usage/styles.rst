@@ -123,7 +123,7 @@ Fonts
 *****
 
 The font for label text may be set using the `font` parameter, either in the :py:meth:`schemdraw.elements.Element.label` method for a single label, or in :py:meth:`schemdraw.Drawing.config` to set the font for the entire drawing.
-The font parameter may be a string containing the name of a font installed in the system fonts path, a path to a TTF font file, or the name of a font family such as "serif" or "sans".
+The font parameter may be a string containing the name of a font installed in the system fonts path, a path to a TTF or OTF font file, or the name of a font family such as "serif" or "sans".
 These font options apply whether working in the Matplotlib or SVG backends.
 
 .. code-block:: python
@@ -147,7 +147,7 @@ These font options apply whether working in the Matplotlib or SVG backends.
 
 For typesetting math expressions, the `mathfont` parameter is used.
 In the Matplotlib backend, a limited `selection of math fonts <https://matplotlib.org/stable/tutorials/text/mathtext.html#fonts>`_ are available.
-With the SVG backend in the `path` text mode, the mathfont parameter may be the path to any TTF file that contains a MATH table (requires `Ziamath <https://ziamath.readthedocs.io>`_).
+With the SVG backend in the `path` text mode, the mathfont parameter may be the path to any TTF or OTF file that contains a MATH table (requires `Ziamath <https://ziamath.readthedocs.io>`_).
 
 .. code-block:: python
 

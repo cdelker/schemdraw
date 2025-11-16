@@ -39,37 +39,37 @@ The `theta` method can be used to specify any rotation angle in degrees.
         elm.Resistor().label('R2')  # Takes position and direction from R1
 
 
-Anchors
--------
+Anchors and Positioning
+-----------------------
 
 All elements have a set of predefined anchor positions within the element.
 For example, a bipolar transistor has `base`, `emitter`, and `collector` anchors.
 All two-terminal elements have anchors named `start`, `center`, and `end`.
-The docstring for each element lists the available anchors.
-Once an element is added to the drawing, all its anchor positions will be added as attributes to the element object, so the base position of transistor assigned to variable `Q` may be accessed via `Q.base`.
-
-Drop Method
-***********
-
-Three-terminal elements do not necessarily leave the drawing position where desired, so after drawing an element, the current drawing position can be set using the :py:meth:`schemdraw.elements.Element.drop` method to specify the anchor at which to place the cursor.
+Anchor names are shown for each element in :ref:`elements`. They are also listed in the docstring for each element.
 
 .. jupyter-execute::
-    :emphasize-lines: 6
+    :hide-code:
 
     with schemdraw.Drawing() as d:
-        bjt1 = elm.BjtNpn()
-        elm.Resistor().label('R1')  # Default cursor placement after placing BJT
+        d.config(fontsize=10)
+        bjt = (elm.BjtNpn()
+            .label('base', 'base', color='blue')
+            .label('collector', 'collector', color='blue')
+            .label('emitter', 'emitter', color='blue')
+            )
 
-        d.move_from(bjt1.base, dx=5)
-        bjt2 = elm.BjtNpn().drop('emitter')  # Leave the cursor on the emitter after placing BJT
-        elm.Resistor().label('R2')
+Once an element is added to the drawing, all its anchor positions will be added as attributes to the element object, so the base position of transistor assigned to variable `Q` may be accessed via `Q.base`.
+Alternatively, anchor positions may be accessed using brackets: `Q['base']`. This option is useful when anchors
+are generated that are not valid Python identifiers, for example when the anchor name may contain a dot or other symbol.
+The returned position is relative to the drawing origin, and will only be accessible once an element is placed in a drawing.
 
+The element's `anchors` attribute contains a dictionary of all anchors relative to the element's origin and can be accessed before placement.
 
 At Method
 *********
 
-Alternatively, one element can be placed starting on the anchor of another element using the `at` method.
-For example, to draw an opamp and place a resistor on the output, store the Opamp instance to a variable. Then call the `at` method of the new element passing the `Opamp.out` anchor. After the resistor is drawn, the current drawing position is moved to the endpoint of the resistor.
+To place an element at a specific location connected to another element, use the `at` method.
+For example, to draw an opamp and place a resistor on its output, store the Opamp instance to a variable. Then call the `at` method of the new element passing the `Opamp.out` anchor. After the resistor is drawn, the current drawing position is moved to the endpoint of the resistor.
 
 .. jupyter-execute::
 
@@ -80,10 +80,10 @@ For example, to draw an opamp and place a resistor on the output, store the Opam
 Alignment
 *********
 
-The second purpose for anchors is aligning new elements with respect to existing elements.
+Anchors are also used to align new elements with respect to existing elements.
 
 Suppose a resistor has just been placed, and now an Opamp should be connected to the resistor.
-The `anchor` method tells the Drawing which input on the Opamp should align with resistor.
+The :py:meth:`schemdraw.elements.Element.anchor` method tells the Drawing which anchor on the Opamp should align with resistor.
 Here, an Opamp is placed at the end of a resistor, connected to the opamp's `in1` anchor (the inverting input).
 
 .. jupyter-execute::
@@ -103,7 +103,7 @@ Compared to anchoring the opamp at `in2` (the noninverting input):
 Hold method
 ***********
 
-To place an element without moving the drawing position, use the :py:meth:`schemdraw.elements.Element.hold` method. The element will be placed without changing the drawing state.
+To place an element without moving the drawing position, use the element's :py:meth:`schemdraw.elements.Element.hold` method. The element will be placed without changing the drawing state.
 
 .. jupyter-execute::
     :emphasize-lines: 6
@@ -116,20 +116,51 @@ To place an element without moving the drawing position, use the :py:meth:`schem
         elm.Diode().hold()  # Hold method prevents position from changing
         elm.Dot().color('blue')
 
-Accessing Anchor positions
-**************************
 
-An element's anchors are defined in its `anchors` dictionary, but these are points relative to the Element's origin, not to the Drawing origin.
-The absolute position of an anchor may be accessed using an attribute `element.anchorname`, or alteratively using the get-item notation in brackets: `element['anchorname']`, useful for anchornames that are not allowable python identifiers.
+Drop Method
+***********
+
+Some elements, especially those with more than 2 terminals, do not necessarily leave the drawing position where desired,
+so after drawing an element, the current drawing position can be set using the :py:meth:`schemdraw.elements.Element.drop`
+method to specify the anchor at which to leave the drawing cursor.
 
 .. jupyter-execute::
+    :emphasize-lines: 6
 
     with schemdraw.Drawing() as d:
-        elm.Line().length(2)  # Move the BJT to x=2 in Drawing coordinates
-        bjt = elm.BjtNpn()
+        bjt1 = elm.BjtNpn()
+        elm.Resistor().label('R1')  # Default cursor placement after placing BJT
 
-    print('anchor: ', bjt.anchors['base'])        # anchors are relative to the Element's origin
-    print('absolute position: ', bjt['base'])     # relative to the Drawing's origin
+        d.move_from(bjt1.base, dx=5)
+        bjt2 = elm.BjtNpn().drop('emitter')  # Leave the cursor on the emitter after placing BJT
+        elm.Resistor().label('R2')
+
+
+Drawing State
+*************
+
+The :py:class:`schemdraw.Drawing` maintains a drawing state that includes the current x, y position, stored in the `Drawing.here` attribute as a (x, y) tuple, and drawing direction stored in the `Drawing.theta` attribute.
+The :py:meth:`schemdraw.Drawing.hold` method returns a context manager that saves the drawing state to a LIFO stack,
+with the state restored when the context manager exits.
+
+.. jupyter-execute::
+    :emphasize-lines: 5
+
+    with schemdraw.Drawing() as d:
+        elm.Inductor()
+        elm.Dot()
+        print('d.here:', d.here)
+        with d.hold():  # Save this drawing position/direction for later
+            elm.Capacitor().down(1.5)  # Go off in another direction temporarily
+            elm.Ground(lead=False)
+            print('d.here:', d.here)
+
+        print('d.here:', d.here)   # Drawing state restored when the with-block exits
+        elm.Diode()
+
+Alternatively, the :py:meth:`schemdraw.Drawing.push` and :py:meth:`schemdraw.Drawing.pop` methods work in the same way without the context manager.
+
+Changing the drawing position can be accomplished by calling :py:meth:`schemdraw.Drawing.move` or :py:meth:`schemdraw.Drawing.move_from`.
 
 
 Dimensions
@@ -246,7 +277,7 @@ Use the `shift` method with a value between -1 and 1 to shift the element to one
 Orientation
 -----------
 
-The `flip` and `reverse` methods are useful for changing orientation of directional elements such as Diodes,
+The `flip` and `reverse` methods change orientation of directional elements such as Diodes,
 but they do not affect the drawing direction.
 
 
@@ -256,33 +287,6 @@ but they do not affect the drawing direction.
         elm.Zener().label('Normal')
         elm.Zener().flip().label('Flip')
         elm.Zener().reverse().label('Reverse')
-
-
-Drawing State
--------------
-
-The :py:class:`schemdraw.Drawing` maintains a drawing state that includes the current x, y position, stored in the `Drawing.here` attribute as a (x, y) tuple, and drawing direction stored in the `Drawing.theta` attribute.
-A LIFO stack of drawing states can be used, via the :py:meth:`schemdraw.Drawing.push` and :py:meth:`schemdraw.Drawing.pop` method,
-for situations when it's useful to save the drawing state and come back to it later.
-
-.. jupyter-execute::
-    :emphasize-lines: 5,11
-
-    with schemdraw.Drawing() as d:
-        elm.Inductor()
-        elm.Dot()
-        print('d.here:', d.here)
-        d.push()  # Save this drawing position/direction for later
-
-        elm.Capacitor().down()  # Go off in another direction temporarily
-        elm.Ground(lead=False)
-        print('d.here:', d.here)
-
-        d.pop()   # Return to the pushed position/direction
-        print('d.here:', d.here)
-        elm.Diode()
-
-Changing the drawing position can be accomplished by calling :py:meth:`schemdraw.Drawing.move` or :py:meth:`schemdraw.Drawing.move_from`.
 
 
 .. _connecting:

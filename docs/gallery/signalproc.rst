@@ -44,11 +44,10 @@ Various Networks
     with schemdraw.Drawing() as d:
         d.config(fontsize=14)
         dsp.Line().length(d.unit/2).label('F(s)').dot()
-        d.push()
-        dsp.Line().up(d.unit/2)
-        dsp.Arrow().right(d.unit/2)
-        h1 = dsp.Box(w=2, h=2).anchor('W').label('$H_1(s)$')
-        d.pop()
+        with d.hold():
+            dsp.Line().up(d.unit/2)
+            dsp.Arrow().right(d.unit/2)
+            h1 = dsp.Box(w=2, h=2).anchor('W').label('$H_1(s)$')
         dsp.Line().down(d.unit/2)
         dsp.Arrow().right(d.unit/2)
         h2 = dsp.Box(w=2, h=2).anchor('W').label('$H_2(s)$')
@@ -101,18 +100,17 @@ Direct Conversion Receiver
         dsp.Arrow().right(d.unit/2).label('$f_{RF}$', 'bot')
         dsp.Amp().label('LNA')
         dsp.Line().right(d.unit/5).dot()
-        d.push()
-        dsp.Line().length(d.unit/4)
-        mix1 = dsp.Mixer().label('Mixer', ofst=0)
-        dsp.Arrow().length(d.unit/2)
-        lpf1 = dsp.Filter(response='lp').label('LPF', 'bot', ofst=.2)
-        dsp.Line().length(d.unit/6)
-        adc1 = dsp.Adc().label('ADC')
-        dsp.Arrow().length(d.unit/3)
-        dsp1 = dsp.Ic(pins=[dsp.IcPin(side='L'), dsp.IcPin(side='L'), dsp.IcPin(side='R')],
-                      size=(2.75, 5), leadlen=0).anchor('inL2').label('DSP')
-        dsp.Arrow().at(dsp1.inR1).length(d.unit/3)
-        d.pop()
+        with d.hold():
+            dsp.Line().length(d.unit/4)
+            mix1 = dsp.Mixer().label('Mixer', ofst=0)
+            dsp.Arrow().length(d.unit/2)
+            lpf1 = dsp.Filter(response='lp').label('LPF', 'bot', ofst=.2)
+            dsp.Line().length(d.unit/6)
+            adc1 = dsp.Adc().label('ADC')
+            dsp.Arrow().length(d.unit/3)
+            dsp1 = dsp.Ic(pins=[dsp.IcPin(side='L'), dsp.IcPin(side='L'), dsp.IcPin(side='R')],
+                        size=(2.75, 5), leadlen=0).anchor('inL2').label('DSP')
+            dsp.Arrow().at(dsp1.inR1).length(d.unit/3)
 
         dsp.Line().toy(dsp1.inL1)
         dsp.Arrow().tox(mix1.W)
@@ -127,16 +125,13 @@ Direct Conversion Receiver
         dsp.Line().left(d.unit*1.25)
         dsp.Line().down(d.unit*.75)
         flo = dsp.Dot().label('$f_{LO}$', 'left')
-        d.push()
-        dsp.Line().down(d.unit/5)
-        dsp.Oscillator().right().anchor('N').label('LO', 'left', ofst=.15)
-        d.pop()
+        with d.hold():
+            dsp.Line().down(d.unit/5)
+            dsp.Oscillator().right().anchor('N').label('LO', 'left', ofst=.15)
         dsp.Arrow().down(d.unit/4).reverse().at(mix2.S)
         b1 = dsp.Square().right().label('90°').anchor('N')
         dsp.Arrow().left(d.unit/4).reverse().at(b1.W)
-        dsp.Line().toy(flo.center)
-        dsp.Line().tox(flo.center)
-
+        dsp.Wire('c', k=-1).to(flo.center)
 
 Digital Filter
 ^^^^^^^^^^^^^^
@@ -148,23 +143,21 @@ Digital Filter
         d.config(unit=1, fontsize=14)
         dsp.Line().length(d.unit*2).label('x[n]', 'left').dot()
 
-        d.push()
-        dsp.Line().right()
-        dsp.Amp().label('$b_0$', 'bottom')
-        dsp.Arrow()
-        s0 = dsp.Sum().anchor('W')
-        d.pop()
+        with d.hold():
+            dsp.Line().right()
+            dsp.Amp().label('$b_0$', 'bottom')
+            dsp.Arrow()
+            s0 = dsp.Sum().anchor('W')
 
         dsp.Arrow().down()
         z1 = dsp.Square(label='$z^{-1}$')
         dsp.Line().length(d.unit/2).dot()
 
-        d.push()
-        dsp.Line().right()
-        dsp.Amp().label('$b_1$', 'bottom')
-        dsp.Arrow()
-        s1 = dsp.Sum().anchor('W')
-        d.pop()
+        with d.hold():
+            dsp.Line().right()
+            dsp.Amp().label('$b_1$', 'bottom')
+            dsp.Arrow()
+            s1 = dsp.Sum().anchor('W')
 
         dsp.Arrow().down(d.unit*.75)
         dsp.Square().label('$z^{-1}$')
@@ -182,11 +175,10 @@ Digital Filter
         dsp.Arrow().down()
         dsp.Square().label('$z^{-1}$')
         dsp.Line().length(d.unit/2).dot()
-        d.push()
-        dsp.Line().left()
-        a1 = dsp.Amp().label('$-a_1$', 'bottom')
-        dsp.Arrow().at(a1.out).tox(s1.E)
-        d.pop()
+        with d.hold():
+            dsp.Line().left()
+            a1 = dsp.Amp().label('$-a_1$', 'bottom')
+            dsp.Arrow().at(a1.out).tox(s1.E)
 
         dsp.Arrow().down(d.unit*.75)
         dsp.Square().label('$z^{-1}$')

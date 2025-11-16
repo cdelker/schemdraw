@@ -9,7 +9,7 @@ __all__ = [
     'NFet', 'NFet2', 'NMos', 'NMos2', 'PFet', 'PFet2', 'PMos', 'PMos2',
     "AnalogNFet", "AnalogPFet", "AnalogBiasedFet"]
 
-from .elements import Element, Element2Term, gap
+from .elements import Element, Element2Term, LabelHint, gap
 from .twoterm import reswidth
 from ..segments import Segment, SegmentPoly, SegmentCircle
 from ..types import Point
@@ -1181,3 +1181,4 @@ class BjtPnp2c2(BjtPnp2):
                                       (bjt_2c_dy+bjt_width/2-bjt_diag_ofst, bjt_base_h)]))
         self.anchors['C2'] = (bjt_2c_dy, 0)
         self.C2: Point
+        self._labelhints['C2'] = LabelHint((0, -.1), valign='top', halign='center')

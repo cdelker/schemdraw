@@ -36,10 +36,9 @@ Non-inverting Opamp
         op = elm.Opamp(leads=True)
         out = elm.Line().at(op.out).length(.75)
         elm.Line().up().at(op.in1).length(1.5).dot()
-        d.push()
-        elm.Resistor().left().label('$R_1$')
-        elm.Ground()
-        d.pop()
+        with d.hold():
+            elm.Resistor().left().label('$R_1$')
+            elm.Ground()
         elm.Resistor().tox(op.out).label('$R_f$')
         elm.Line().toy(op.out).dot()
         elm.Resistor().left().at(op.in2).idot().label('$R_2$')
@@ -105,11 +104,11 @@ This example shows how to label pin numbers on a 741 opamp, and connect to the o
         elm.Line().tox(op.n1a)
         elm.Line().up().to(op.n1a)
         elm.Line().at(trim.tap).tox(op.vs).dot()
-        d.push()
-        elm.Line().down(d.unit/3)
-        elm.Ground()
-        d.pop()
+        with d.hold():
+            elm.Line().down(d.unit/3)
+            elm.Ground()
         elm.Line().toy(op.vs)
+
 
 
 Triaxial Cable Driver
@@ -122,19 +121,17 @@ Triaxial Cable Driver
         d.config(fontsize=10)
         elm.Line().length(d.unit/5).label('V', 'left')
         smu = (elm.Opamp(sign=False).anchor('in2')
-                          .label('SMU', 'center', ofst=[-.4, 0], halign='center', valign='center'))
+                  .label('SMU', 'center', ofst=[-.4, 0], halign='center', valign='center'))
         elm.Line().at(smu.out).length(.3)
-        d.push()
-        elm.Line().length(d.unit/4)
-        triax = elm.Triax(length=5, shieldofststart=.75)
-        d.pop()
+        with d.hold():
+            elm.Line().length(d.unit/4)
+            triax = elm.Triax(length=5, shieldofststart=.75)
         elm.Resistor().up().scale(0.6).idot()
         elm.Line().left().dot()
         elm.Wire('|-').to(smu.in1).hold()
         elm.Wire('|-').delta(d.unit/5, d.unit/5)
         buf = (elm.Opamp(sign=False).anchor('in2').scale(0.6)
-                             .label('BUF', 'center', ofst=(-.4, 0), halign='center', valign='center'))
-
+                  .label('BUF', 'center', ofst=(-.4, 0), halign='center', valign='center'))
         elm.Line().left(d.unit/5).at(buf.in1)
         elm.Wire('n').to(buf.out, dx=.5).dot()
         elm.Wire('-|').at(buf.out).to(triax.guardstart_top)

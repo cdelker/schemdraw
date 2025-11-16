@@ -161,7 +161,24 @@ class Drawing:
             theta: (float) Current drawing angle, in degrees. The next
                 element will be added with this angle unless specified
                 otherwise.
-    '''     
+    '''
+
+    class HoldState:
+        ''' Context manager to save the drawing state '''
+        def __init__(self, dwg: Drawing):
+            self.dwg = dwg
+
+        def __enter__(self):
+            drawing_stack.push_element(None)
+            self.dwg._state.append((Point(self.dwg._here), self.dwg._theta))
+            return self
+
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            drawing_stack.push_element(None)
+            if len(self.dwg._state) > 0:
+                self.dwg._here, self.dwg._theta = self.dwg._state.pop()
+
+
     def __init__(self, canvas: Optional[Union[Backends,
                                         xml.etree.ElementTree.Element,
                                         matplotlib.pyplot.Axes]] = None,
@@ -222,6 +239,12 @@ class Drawing:
                 pady: space between contents and border in y direction
         '''
         return Container(self, cornerradius=cornerradius, padx=padx, pady=pady)
+
+    def hold(self):
+        ''' Return context manager to hold the current drawing state
+            and restore it when the with-block ends
+        '''
+        return self.HoldState(self)
 
     def __enter__(self):
         drawing_stack.push_drawing(self)

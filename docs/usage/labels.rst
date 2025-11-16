@@ -123,11 +123,11 @@ For transistors, the label will follow sensible bias currents by default.
 
 .. jupyter-execute::
 
-    with schemdraw.Drawing():
+    with schemdraw.Drawing() as d:
         Q1 = elm.AnalogNFet()
         elm.CurrentLabel().at(Q1).label('10 µA')
-
-        Q2 = elm.AnalogNFet().at([4,0]).flip().reverse()
+        d.move(3)
+        Q2 = elm.AnalogNFet().flip().reverse()
         elm.CurrentLabel().at(Q2).label('10 µA')
 
 

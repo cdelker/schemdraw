@@ -2,11 +2,12 @@ v0.22 - In progress
 
     Enhancements:
         - Added vacuum tube elements
+        - Added box-style meters
         - Added `shift` method to move a 2-terminal element toward one end or the other
         - Updated `tox` and `toy` methods to work with diagonal placement
         - Updated `Transformer` to allow multi-phase connections
         - Option to draw core lines on Inductor and Inductor2, and defined NE, NW, SE, SW anchors for placing mutual inductance dots.
-        - Elements can define label position hints for placing labels on anchor positions
+        - Elements can define label position hints for fine-tuned placement of labels on anchor positions
 
     New Elements:
         - VacuumTube
@@ -18,6 +19,9 @@ v0.22 - In progress
         - BatteryDouble
         - MeterArrow
         - VoltageLabelArc
+        - MeterAnalog
+        - MeterDigital
+        - Oscilloscope
 
 
 v0.21 - 2025-07-27

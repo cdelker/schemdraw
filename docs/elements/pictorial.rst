@@ -203,9 +203,9 @@ Because Fritzing images are SVG format, `FritzingPart` only works in schemdraw's
         oled = pictorial.FritzingPart(fname)
         elm.Line().down().at(oled.GND).length(.5)
         elm.Ground()
-        elm.Line().down().at(oled.absanchors['3.3V']).color('red').length(1.5).label('3.3V', loc='left')
+        elm.Line().down().at(oled['3.3V']).color('red').length(1.5).label('3.3V', loc='left')
         elm.Button().at(oled.RESET)
         elm.Ground(lead=False)
 
-Note that occasionally anchor names defined in Fritzing parts are not valid as Python identifiers, such as the `3.3V` anchor above, and therefore cannot be used as attributes of the element instance (`f.3.3V` doesn't work, obviously). In these cases, the anchor must be accessed through the `absanchors` dictionary.
+Note that occasionally anchor names defined in Fritzing parts are not valid as Python identifiers, such as the `3.3V` anchor above, and therefore cannot be used as attributes of the element instance (`oled.3.3V` doesn't work, obviously). In these cases, the anchor must be accessed through getitem attribute `oled['3.3V'`].
 

@@ -89,7 +89,10 @@ from .sources import (
     Lamp,
     Lamp2,
     Solar,
-    Neon
+    Neon,
+    MeterAnalog,
+    MeterDigital,
+    Oscilloscope
 )
 from .switches import (
     Switch,
@@ -337,6 +340,9 @@ __all__ = [
 "Lamp2",
 "Solar",
 "Neon",
+"MeterAnalog",
+"MeterDigital",
+"Oscilloscope",
 "Switch",
 "SwitchSpdt",
 "SwitchSpdt2",

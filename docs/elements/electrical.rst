@@ -178,12 +178,46 @@ Sources and Meters
     BatteryCell()
     Battery()
     BatteryDouble()
+    Solar()
     MeterV()
     MeterA()
     MeterI()
     MeterOhm()
     MeterArrow()
-    Solar()
+
+
+Box-Style Meters
+^^^^^^^^^^^^^^^^
+
+.. element_list::
+
+    MeterAnalog()
+    MeterDigital()
+    Oscilloscope()
+
+The "Box" style meters have many configuration options. See class definitions for more details. Some examples are shown below.
+
+- :py:class:`schemdraw.elements.sources.MeterAnalog`
+- :py:class:`schemdraw.elements.sources.MeterDigital`
+- :py:class:`schemdraw.elements.sources.Oscilloscope`
+
+.. jupyter-execute::
+
+    with schemdraw.Drawing() as d:
+        elm.MeterAnalog(needle_percent=30)
+        d.move(2)
+        elm.MeterAnalog(window_fill='skyblue', input_fill='black').anchor('in1')
+        d.move(2)
+        elm.MeterAnalog().label('V', loc='name').label('–', loc='in1', fontsize=10).label('+', loc='in2', fontsize=10).anchor('in1')
+        d.move(2)
+        elm.MeterDigital().label('10 V', loc='display', color='red', fontsize=14).anchor('in1')
+        elm.Oscilloscope(signal='sine').at((0, -2))
+        d.move(2)
+        elm.Oscilloscope(signal='square').anchor('in1')
+        d.move(2)
+        elm.Oscilloscope(signal='triangle', signal_color='blue').anchor('in1')
+        d.move(2)
+        elm.Oscilloscope(signal='sine', signal_lw=1, grid=False).anchor('in1')
 
 
 Switches

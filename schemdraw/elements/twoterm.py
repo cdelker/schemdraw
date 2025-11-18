@@ -35,19 +35,54 @@ class ResistorIEC(Element2Term):
 
 
 class ResistorVarIEEE(ResistorIEEE):
-    ''' Variable resistor (U.S. style) '''
+    ''' Variable resistor (U.S. style)
+
+        Keyword Arguments:
+            arrowwidth: Width of arrowhead
+            arrowlength: Length of arrowhead
+            arrow_lw: Line width of arrow
+            arrow_color: Color of arrow
+    '''
+    _element_defaults = {
+        'arrowwidth': .16,
+        'arrowlength': .2,
+        'arrow_lw': None,
+        'arrow_color': None,
+        }
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.segments.append(Segment([(1.5*reswidth, -resheight*2), (4.5*reswidth, reswidth*3.5)],
-                                     arrow='->', arrowwidth=.16, arrowlength=.2))
+        self.segments.append(
+            Segment([(1.5*reswidth, -resheight*2), (4.5*reswidth, reswidth*3.5)],
+            arrow='->', arrowwidth=self.params['arrowwidth'],
+            arrowlength=self.params['arrowlength'],
+            lw=self.params['arrow_lw'],
+            color=self.params['arrow_color']
+            ))
 
 
 class ResistorVarIEC(ResistorIEC):
-    ''' Variable resistor (European style) '''
+    ''' Variable resistor (European style)
+
+        Keyword Arguments:
+            arrowwidth: Width of arrowhead
+            arrowlength: Length of arrowhead
+            arrow_lw: Line width of arrow
+            arrow_color: Color of arrow
+    '''
+    _element_defaults = {
+        'arrowwidth': .16,
+        'arrowlength': .2,
+        'arrow_lw': None,
+        'arrow_color': None,
+        }
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.segments.append(Segment([(1*reswidth, -resheight*2), (5*reswidth, reswidth*3.5)],
-                                     arrow='->', arrowwidth=.16, arrowlength=.2))
+                                     arrow='->', arrowwidth=self.params['arrowwidth'],
+                                     arrowlength=self.params['arrowlength'],
+                                     lw=self.params['arrow_lw'],
+                                     color=self.params['arrow_color']
+                                     ))
 
 
 class Thermistor(ResistorIEC):
@@ -58,23 +93,57 @@ class Thermistor(ResistorIEC):
 
 
 class PhotoresistorIEEE(ResistorIEEE):
-    ''' Photo-resistor (U.S. style) '''
+    ''' Photo-resistor (U.S. style)
+
+        Keyword Arguments:
+            arrowwidth: Width of arrowhead
+            arrowlength: Length of arrowhead
+            arrow_lw: Line width of arrow
+            arrow_color: Color of arrow
+    '''
+    _element_defaults = {
+        'arrowwidth': .16,
+        'arrowlength': .2,
+        'arrow_lw': None,
+        'arrow_color': None,
+        }
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.segments.append(Segment([(.7, .75), (.4, .4)], arrow='->',
-                                     arrowwidth=.16, arrowlength=.2))
-        self.segments.append(Segment([(1, .75), (.7, .4)], arrow='->',
-                                     arrowwidth=.16, arrowlength=.2))
+        self.segments.append(
+            Segment([(.7, .75), (.4, .4)], arrow='->',
+            arrowwidth=self.params['arrowwidth'], arrowlength=self.params['arrowlength'],
+            lw=self.params['arrow_lw'], color=self.params['arrow_color']))
+        self.segments.append(
+            Segment([(1, .75), (.7, .4)], arrow='->',
+            arrowwidth=self.params['arrowwidth'], arrowlength=self.params['arrowlength'],
+            lw=self.params['arrow_lw'], color=self.params['arrow_color']))
 
 
 class PhotoresistorIEC(ResistorIEC):
-    ''' Photo-resistor (European style) '''
+    ''' Photo-resistor (European style)
+
+        Keyword Arguments:
+            arrowwidth: Width of arrowhead
+            arrowlength: Length of arrowhead
+            arrow_lw: Line width of arrow
+            arrow_color: Color of arrow
+    '''
+    _element_defaults = {
+        'arrowwidth': .16,
+        'arrowlength': .2,
+        'arrow_lw': None,
+        'arrow_color': None,
+        }
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.segments.append(Segment([(.7, .75), (.4, .4)], arrow='->',
-                                     arrowwidth=.16, arrowlength=.2))
-        self.segments.append(Segment([(1, .75), (.7, .4)], arrow='->',
-                                     arrowwidth=.16, arrowlength=.2))
+        self.segments.append(
+            Segment([(.7, .75), (.4, .4)], arrow='->',
+            arrowwidth=self.params['arrowwidth'], arrowlength=self.params['arrowlength'],
+            lw=self.params['arrow_lw'], color=self.params['arrow_color']))
+        self.segments.append(
+            Segment([(1, .75), (.7, .4)], arrow='->',
+            arrowwidth=self.params['arrowwidth'], arrowlength=self.params['arrowlength'],
+            lw=self.params['arrow_lw'], color=self.params['arrow_color']))
 
 
 class Rshunt(ResistorIEC):
@@ -132,15 +201,40 @@ class Capacitor2(Element2Term):
 
 
 class CapacitorVar(Capacitor):
-    ''' Variable capacitor '''
+    ''' Variable capacitor
+
+        Keyword Arguments:
+            arrowwidth: Width of arrowhead
+            arrowlength: Length of arrowhead
+            arrow_lw: Line width of arrow
+            arrow_color: Color of arrow
+    '''
+    _element_defaults = {
+        'arrowwidth': .16,
+        'arrowlength': .2,
+        'arrow_lw': None,
+        'arrow_color': None,
+        }
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.segments.append(Segment([(-2*reswidth, -resheight), (3*reswidth, reswidth*2)],
-                                     arrow='->', arrowwidth=.2, arrowlength=.2))
+        self.segments.append(
+            Segment([(-2*reswidth, -resheight), (3*reswidth, reswidth*2)],
+            arrow='->',
+            arrowwidth=self.params['arrowwidth'], arrowlength=self.params['arrowlength'],
+            lw=self.params['arrow_lw'], color=self.params['arrow_color']))
 
 
 class CapacitorTrim(Capacitor):
-    ''' Trim capacitor '''
+    ''' Trim capacitor
+
+        Keyword Arguments:
+            trim_lw: Line width of trim
+            trim_color: Color of trim
+    '''
+    _element_defaults = {
+        'trim_lw': None,
+        'trim_color': None,
+        }
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         capgap = 0.18
@@ -150,7 +244,10 @@ class CapacitorTrim(Capacitor):
         dx = p2.x - p1.x
         dy = p2.y - p1.y
 
-        self.segments.append(Segment([p1, p2]))
+        self.segments.append(Segment(
+            [p1, p2],
+            lw=self.params['trim_lw'],
+            color=self.params['trim_color']))
 
         tlen = .14
         theta = math.atan2(dy, dx) + math.radians(90)
@@ -158,7 +255,10 @@ class CapacitorTrim(Capacitor):
                     p2.y + tlen * math.sin(theta)))
         t2 = Point((p2.x + tlen * math.cos(theta-math.pi),
                     p2.y + tlen * math.sin(theta-math.pi)))
-        self.segments.append(Segment([t1, t2]))
+        self.segments.append(Segment(
+            [t1, t2],
+            lw=self.params['trim_lw'],
+            color=self.params['trim_color']))
 
 
 class Crystal(Element2Term):
@@ -256,18 +356,48 @@ class Varactor(Element2Term):
 
 
 class LED(Diode):
-    ''' Light emitting diode '''
+    ''' Light emitting diod
+
+        Keyword Arguments:
+            arrowwidth: Width of arrowhead
+            arrowlength: Length of arrowhead
+            arrow_lw: Line width of arrow
+            arrow_color: Color of arrow
+    '''
+    _element_defaults = {
+        'arrowwidth': .16,
+        'arrowlength': .2,
+        'arrow_lw': None,
+        'arrow_color': None,
+        }
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.segments.append(Segment([(resheight, resheight*1.5), (resheight*2, resheight*3.25)],
-                                     arrow='->', arrowwidth=.16, arrowlength=.2))
-        self.segments.append(Segment([(resheight*.1, resheight*1.5), (resheight*1.1, resheight*3.25)],
-                                     arrow='->', arrowwidth=.16, arrowlength=.2))
+        self.segments.append(Segment(
+            [(resheight, resheight*1.5), (resheight*2, resheight*3.25)],
+            arrow='->', arrowwidth=self.params['arrowwidth'], arrowlength=self.params['arrowlength'],
+            color=self.params['arrow_color']))
+        self.segments.append(Segment(
+            [(resheight*.1, resheight*1.5), (resheight*1.1, resheight*3.25)],
+            arrow='->', arrowwidth=self.params['arrowwidth'], arrowlength=self.params['arrowlength'],
+            color=self.params['arrow_color']))
         self.params['lblloc'] = 'bot'
 
 
 class LED2(Diode):
-    ''' Light emitting diode (curvy light lines) '''
+    ''' Light emitting diode (curvy light lines)
+
+        Keyword Arguments:
+            arrowwidth: Width of arrowhead
+            arrowlength: Length of arrowhead
+            arrow_lw: Line width of arrow
+            arrow_color: Color of arrow
+    '''
+    _element_defaults = {
+        'arrowwidth': .16,
+        'arrowlength': .2,
+        'arrow_lw': None,
+        'arrow_color': None,
+        }
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         x = linspace(-1, 1)
@@ -281,15 +411,32 @@ class LED2(Diode):
         pa = Point((x[0], y[0]+.1)).rotate(theta)
         pa2 = Point((x[0]-.2, y[0]+.1)).rotate(theta)
 
-        self.segments.append(Segment(p))
-        self.segments.append(Segment(p2))
-        self.segments.append(Segment((p[1], pa), arrow='->', arrowwidth=.15, arrowlength=.2))
-        self.segments.append(Segment((p2[1], pa2), arrow='->', arrowwidth=.15, arrowlength=.2))
+        self.segments.append(Segment(p, lw=self.params['arrow_lw'], color=self.params['arrow_color']))
+        self.segments.append(Segment(p2, lw=self.params['arrow_lw'], color=self.params['arrow_color']))
+        self.segments.append(Segment(
+            (p[1], pa), arrow='->', arrowwidth=self.params['arrowwidth'],
+            arrowlength=self.params['arrowlength'], color=self.params['arrow_color']))
+        self.segments.append(Segment(
+            (p2[1], pa2), arrow='->', arrowwidth=self.params['arrowwidth'],
+            arrowlength=self.params['arrowlength'], color=self.params['arrow_color']))
         self.params['lblloc'] = 'bot'
 
 
 class Photodiode(Diode):
-    ''' Photo-sensitive diode '''
+    ''' Photo-sensitive diode
+
+        Keyword Arguments:
+            arrowwidth: Width of arrowhead
+            arrowlength: Length of arrowhead
+            arrow_lw: Line width of arrow
+            arrow_color: Color of arrow
+    '''
+    _element_defaults = {
+        'arrowwidth': .16,
+        'arrowlength': .2,
+        'arrow_lw': None,
+        'arrow_color': None,
+        }
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         x = linspace(-1, 1)
@@ -301,10 +448,17 @@ class Photodiode(Diode):
 
         pa = Point((x[-1], y[-1]-.1)).rotate(theta)
         pa2 = Point((x[-1]-.2, y[-1]-.1)).rotate(theta)
-        self.segments.append(Segment(p))
-        self.segments.append(Segment(p2))
-        self.segments.append(Segment((p[-2], pa), arrow='->', arrowwidth=.15, arrowlength=.2))
-        self.segments.append(Segment((p2[-2], pa2), arrow='->', arrowwidth=.15, arrowlength=.2))
+        self.segments.append(Segment(p, lw=self.params['arrow_lw'], color=self.params['arrow_color']))
+        self.segments.append(Segment(p2, lw=self.params['arrow_lw'], color=self.params['arrow_color']))
+        self.segments.append(Segment(
+            (p[-2], pa), arrow='->', arrowwidth=self.params['arrowwidth'],
+            arrowlength=self.params['arrowlength'], color=self.params['arrow_color']))
+        self.segments.append(Segment(
+            (p2[-2], pa2), arrow='->', arrowwidth=self.params['arrowwidth'],
+            arrowlength=self.params['arrowlength'], color=self.params['arrow_color']))
+
+       # self.segments.append(Segment((p[-2], pa), arrow='->', arrowwidth=.15, arrowlength=.2))
+       # self.segments.append(Segment((p2[-2], pa2), arrow='->', arrowwidth=.15, arrowlength=.2))
         self.params['lblloc'] = 'bot'
 
 
@@ -313,15 +467,27 @@ class PotentiometerIEEE(ResistorIEEE):
 
         Anchors:
             tap
+
+        Keyword Arguments:
+            arrowwidth: Width of arrowhead
+            arrowlength: Length of arrowhead
+            tap_length: Length of tap line
     '''
+    _element_defaults = {
+        'arrowwidth': .15,
+        'arrowlength': .25,
+        'tap_length': 0.72,
+        }
     # Ok, this has three terminals, but is works like a two-term with lead extension
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        potheight = .72
+        potheight = self.params['tap_length']
         self.anchors['tap'] = (reswidth*3, potheight)
         self.params['lblloc'] = 'bot'
-        self.segments.append(Segment([(reswidth*3, potheight), (reswidth*3, reswidth*1.5)],
-                                     arrow='->', arrowwidth=.15, arrowlength=.25))
+        self.segments.append(Segment(
+            [(reswidth*3, potheight), (reswidth*3, reswidth*1.5)],
+            arrow='->', arrowwidth=self.params['arrowwidth'],
+            arrowlength=self.params['arrowlength']))
 
 
 class PotentiometerIEC(ResistorIEC):
@@ -329,14 +495,26 @@ class PotentiometerIEC(ResistorIEC):
 
         Anchors:
             tap
+
+        Keyword Arguments:
+            arrowwidth: Width of arrowhead
+            arrowlength: Length of arrowhead
+            tap_length: Length of tap line
     '''
+    _element_defaults = {
+        'arrowwidth': .15,
+        'arrowlength': .25,
+        'tap_length': 0.72,
+        }
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        potheight = .72
+        potheight = self.params['tap_length']
         self.anchors['tap'] = (reswidth*3, potheight)
         self.elmparams['lblloc'] = 'bot'
-        self.segments.append(Segment([(reswidth*3, potheight), (reswidth*3, reswidth*2)],
-                                     arrow='->', arrowwidth=.15, arrowlength=.22))
+        self.segments.append(Segment(
+            [(reswidth*3, potheight), (reswidth*3, reswidth*1.5)],
+            arrow='->', arrowwidth=self.params['arrowwidth'],
+            arrowlength=self.params['arrowlength']))
 
 
 class Diac(Element2Term):
@@ -441,25 +619,26 @@ class FuseUS(Element2Term):
             dots: Show dots on connections to fuse
     '''
     _element_defaults = {
-        'dots': True
+        'dots': True,
+        'dot_r': .12
     }
     def __init__(self, *, dots: Optional[bool] = None, **kwargs):
         super().__init__(**kwargs)
-        fuser = .12
-        fusex = linspace(fuser*2, 1+fuser)
+        dot_r = self.params['dot_r']
+        fusex = linspace(dot_r*2, 1+dot_r)
         fusey = [math.sin(x) * resheight for x in linspace(0, 2*math.pi)]
         self.segments.append(Segment(list(zip(fusex, fusey))))
-        self.segments.append(Segment([(0, 0), gap, (1+fuser*3, 0)]))
+        self.segments.append(Segment([(0, 0), gap, (1+dot_r*3, 0)]))
         if self.params['dots']:
             self.fill(kwargs.get('fill', 'bg'))
 
     def fill(self, color: bool | str = True) -> 'Element':
         ''' Set element fill '''
-        fuser = .12
+        dot_r = self.params['dot_r']
         self.segments.append(SegmentCircle(
-            (fuser, 0), fuser, zorder=4, fill=color))
+            (dot_r, 0), dot_r, zorder=4, fill=color))
         self.segments.append(SegmentCircle(
-            (fuser*2+1, 0), fuser, zorder=4, fill=color))
+            (dot_r*2+1, 0), dot_r, zorder=4, fill=color))
         super().fill(color)
         return self
 
@@ -484,11 +663,16 @@ class FuseIEC(ResistorIEC):
 class Breaker(Element2Term):
     ''' Circuit breaker
 
-        Args:
+        Keyword Arguments:
             dots: Show connection dots
+            arc_lw: Line width of breaker arc
+            arc_color: Color of breaker arc
     '''
     _element_defaults = {
-        'dots': True
+        'dots': True,
+        'dot_r': .12,
+        'arc_lw': None,
+        'arc_color': None
     }
     def __init__(self, *, dots: Optional[bool] = None, **kwargs):
         super().__init__(**kwargs)
@@ -497,9 +681,10 @@ class Breaker(Element2Term):
         self.segments.append(Segment(
             [(0, 0), gap, (1, 0)]))
         self.segments.append(SegmentArc(
-            (.5, 0), 1, .65, theta1=theta1, theta2=theta2))
+            (.5, 0), 1, .65, theta1=theta1, theta2=theta2,
+            lw=self.params['arc_lw'], color=self.params['arc_color']))
         if self.params['dots']:
-            rad = .12
+            rad = self.params['dot_r']
             self.segments.append(SegmentCircle((rad, 0), rad, zorder=4))
             self.segments.append(SegmentCircle((1-rad, 0), rad, zorder=4))
 
@@ -548,11 +733,16 @@ def cycloid(loops: int = 4, ofst: Sequence[float] = (0, 0),
 class Inductor(Element2Term):
     ''' Inductor
 
-        Args:
+        Keyword Arguments:
             core: Number of core lines to draw parallel to inductor
+            core_ls: Line style of core
+            core_lw: Line width of core
+            core_color: Color of core
     '''
     _element_defaults = {
-        'core_ls': '-',
+        'core_ls': None,
+        'core_lw': None,
+        'core_color': None,
     }
     def __init__(self, core: int = 0, **kwargs):
         super().__init__(**kwargs)
@@ -567,7 +757,11 @@ class Inductor(Element2Term):
         if core > 0:
             for i in range(core):
                 y = ind_w + coregap * i
-                self.segments.append(Segment([(0, y), (1, y)], ls=self.params['core_ls']))
+                self.segments.append(
+                    Segment([(0, y), (1, y)],
+                            ls=self.params['core_ls'],
+                            lw=self.params['core_lw'],
+                            color=self.params['core_color']))
 
         self.anchors['NE'] = (1, ind_w + coregap)
         self.anchors['NW'] = (0, ind_w + coregap)
@@ -578,13 +772,18 @@ class Inductor(Element2Term):
 class Inductor2(Element2Term):
     ''' Inductor, drawn as cycloid (loopy)
 
-        Args:
+        Keyword Arguments:
             loops: Number of inductor loops [default: 4]
             core: Number of core lines to draw parallel to inductor
+            core_ls: Line style of core
+            core_lw: Line width of core
+            core_color: Color of core
     '''
     _element_defaults = {
         'loops': 4,
-        'core_ls': '-',
+        'core_ls': None,
+        'core_lw': None,
+        'core_color': None,
     }
     def __init__(self, *, loops: Optional[int] = None, core: int = 0, **kwargs):
         super().__init__(**kwargs)
@@ -595,7 +794,11 @@ class Inductor2(Element2Term):
         if core > 0:
             for i in range(core):
                 y = coreofst + coregap * i
-                self.segments.append(Segment([(0, y), (1, y)], ls=self.params['core_ls']))
+                self.segments.append(
+                    Segment([(0, y), (1, y)],
+                            ls=self.params['core_ls'],
+                            lw=self.params['core_lw'],
+                            color=self.params['core_color']))
 
         self.anchors['NE'] = (1, coreofst + coregap)
         self.anchors['NW'] = (0, coreofst + coregap)
@@ -620,13 +823,29 @@ class CPE(Element2Term):
 
 
 class SparkGap(Element2Term):
-    ''' Spark Gap '''
+    _element_defaults = {
+        'arrowwidth': .25,
+        'arrowlength': .25,
+        'gap': .08,
+    }
+    ''' Spark Gap
+
+        Keyword Arguments:
+            gap: Width of gap between arrows
+            arrowwidth: Width of arrowheads
+            arrowlength: Length of arrowheads
+    '''
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.segments.append(Segment([(0, 0), (.3, 0), gap, (.7, 0), (1, 0)]))
+        gapw = self.params['gap']
+        self.segments.append(Segment([(0, 0), gap, (1, 0)]))
         # Arrow coords overlap a bit since default arrow is offset by linewidth
-        self.segments.append(Segment([(.3, 0), (.52, 0)], arrow='->', arrowwidth=.2))
-        self.segments.append(Segment([(.7, 0), (.48, 0)], arrow='->', arrowwidth=.2))
+        self.segments.append(Segment([(0, 0), (.5-gapw/2, 0)], arrow='->',
+                                     arrowwidth=self.params['arrowwidth'],
+                                     arrowlength=self.params['arrowlength']))
+        self.segments.append(Segment([(1, 0), (.5+gapw/2, 0)], arrow='->',
+                                     arrowwidth=self.params['arrowwidth'],
+                                     arrowlength=self.params['arrowlength']))
 
 
 class Nullator(Element2Term):

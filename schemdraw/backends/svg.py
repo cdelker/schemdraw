@@ -453,7 +453,10 @@ class Figure:
             color: str = 'black', lw: float = 2, ls: Linestyle = '-',
             fill: Optional[str] = None,
             zorder: int = 1,
-            arrow: Optional[str] = None, clip: Optional[BBox] = None) -> None:
+            arrow: Optional[str] = None,
+            arrowwidth: float = .15,
+            arrowlength: float = .25,
+            clip: Optional[BBox] = None) -> None:
         ''' Draw an arc or ellipse, with optional arrowhead '''
         centerx, centery = self.xform(*center)
         width, height = width*self.scale, height*self.scale
@@ -514,10 +517,6 @@ class Figure:
             angle = -angle
             theta1 = -math.degrees(theta1)
             theta2 = -math.degrees(theta2)
-
-            arrowlength = .25
-            arrowwidth = .15
-
             x, y = math.cos(math.radians(theta2)), math.sin(math.radians(theta2))
             th2 = math.degrees(math.atan2((width/height)*y, x))
             x, y = math.cos(math.radians(theta1)), math.sin(math.radians(theta1))

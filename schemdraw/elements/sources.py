@@ -32,52 +32,129 @@ class SourceV(Source):
 
 
 class SourceI(Source):
-    ''' Current source '''
+    ''' Current source
+
+        Keyword Arguments:
+            arrowwidth: Width of arrowhead
+            arrowlength: length of arrowhead
+            arrow_lw: Line width of arrow
+            arrow_color: Color of arrow
+    '''
+    _element_defaults = {
+        'arrowwidth': .15,
+        'arrowlength': .25,
+        'arrow_lw': None,
+        'arrow_color': None,
+    }
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.segments.append(Segment([(.25, 0), (.75, 0)], arrow='->'))
+        self.segments.append(Segment([(.25, 0), (.75, 0)], arrow='->',
+                                     arrowwidth=self.params['arrowwidth'],
+                                     arrowlength=self.params['arrowlength'],
+                                     lw=self.params['arrow_lw'],
+                                     color=self.params['arrow_color']
+                                     ))
 
 
 class SourceSin(Source):
-    ''' Source with sine '''
+    ''' Source with sine
+
+        Keyword Arguments:
+            sin_lw: Line width of sine curve
+            sin_color: Color of sine curve
+    '''
+    _element_defaults = {
+        'sin_lw': None,
+        'sin_color': None
+        }
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         sin_y = util.linspace(-.25, .25, num=25)
         sin_x = [.2 * math.sin((sy-.25)*math.pi*2/.5) + 0.5 for sy in sin_y]
-        self.segments.append(Segment(list(zip(sin_x, sin_y))))
+        self.segments.append(Segment(list(zip(sin_x, sin_y)),
+                                     lw=self.params['sin_lw'],
+                                     color=self.params['sin_color']
+                                     ))
 
 
 class SourcePulse(Source):
-    ''' Pulse source '''
+    ''' Pulse source
+
+        Keyword Arguments:
+            pulse_lw: Line width of pulse curve
+            pulse_color: Color of pulse curve
+    '''
+    _element_defaults = {
+        'pulse_lw': None,
+        'pulse_color': None
+        }
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         sq = .15
         x = .4
         self.segments.append(Segment(
             [(x, sq*2), (x, sq), (x+sq, sq), (x+sq, -sq),
-             (x, -sq), (x, -sq*2)]))
+             (x, -sq), (x, -sq*2)],
+            lw=self.params['pulse_lw'],
+            color=self.params['pulse_color']
+            ))
 
 
 class SourceTriangle(Source):
-    ''' Triangle source '''
+    ''' Triangle source
+
+        Keyword Arguments:
+            tri_lw: Line width of triangle curve
+            tri_color: Color of triangle curve
+    '''
+    _element_defaults = {
+        'tri_lw': None,
+        'tri_color': None
+        }
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.segments.append(Segment([(.4, .25), (.7, 0), (.4, -.25)]))
+        self.segments.append(Segment([(.4, .25), (.7, 0), (.4, -.25)],
+                                     lw=self.params['tri_lw'],
+                                     color=self.params['tri_color']
+                                     ))
 
 
 class SourceRamp(Source):
-    ''' Ramp/sawtooth source '''
+    ''' Ramp/sawtooth source
+
+        Keyword Arguments:
+            ramp_lw: Line width of ramp curve
+            ramp_color: Color of ramp curve
+    '''
+    _element_defaults = {
+        'ramp_lw': None,
+        'ramp_color': None
+        }
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.segments.append(Segment([(.4, .25), (.8, -.2), (.4, -.2)]))
+        self.segments.append(Segment([(.4, .25), (.8, -.2), (.4, -.2)],
+                                     lw=self.params['ramp_lw'],
+                                     color=self.params['ramp_color']
+                                     ))
 
 
 class SourceSquare(Source):
-    ''' Square wave source '''
+    ''' Square wave source
+
+        Keyword Arguments:
+            square_lw: Line width of square curve
+            square_color: Color of square curve
+    '''
+    _element_defaults = {
+        'square_lw': None,
+        'square_color': None
+        }
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.segments.append(Segment([(.5, .25), (.7, .25), (.7, 0),
-                                      (.3, 0), (.3, -.25), (.5, -.25)]))
+                                      (.3, 0), (.3, -.25), (.5, -.25)],
+                                    lw=self.params['square_lw'],
+                                    color=self.params['square_color']))
 
 
 class SourceControlled(Element2Term):
@@ -103,10 +180,28 @@ class SourceControlledV(SourceControlled):
 
 
 class SourceControlledI(SourceControlled):
-    ''' Controlled current source '''
+    ''' Controlled current source
+
+        Keyword Arguments:
+            arrowwidth: Width of arrowhead
+            arrowlength: length of arrowhead
+            arrow_lw: Line width of arrow
+            arrow_color: Color of arrow
+    '''
+    _element_defaults = {
+        'arrowwidth': .15,
+        'arrowlength': .25,
+        'arrow_lw': None,
+        'arrow_color': None,
+    }
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.segments.append(Segment([(.25, 0), (.75, 0)], arrow='->'))
+        self.segments.append(Segment([(.25, 0), (.75, 0)], arrow='->',
+                                     arrowwidth=self.params['arrowwidth'],
+                                     arrowlength=self.params['arrowlength'],
+                                     lw=self.params['arrow_lw'],
+                                     color=self.params['arrow_color']
+                                     ))
 
 
 batw = resheight*.75
@@ -151,8 +246,22 @@ class BatteryDouble(Element2Term):
         self.segments.append(Segment([(batw*9, bat2), (batw*9, -bat2)]))
         self.anchors['tap'] = (batw*4, bat1)
 
+
 class Solar(Source):
-    ''' Solar source '''
+    ''' Solar source
+
+        Keyword Arguments:
+            arrowwidth: Width of arrowhead
+            arrowlength: length of arrowhead
+            arrow_lw: Line width of arrow
+            arrow_color: Color of arrow
+    '''
+    _element_defaults = {
+        'arrowwidth': .15,
+        'arrowlength': .25,
+        'arrow_lw': None,
+        'arrow_color': None,
+        }
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         cellw = resheight*.5
@@ -164,10 +273,17 @@ class Solar(Source):
                                       (cellx+.2, -cellw2)]))
         self.segments.append(Segment([(0, 0), (cellx, 0), gap,
                                       (cellx+.2, 0), (1, 0)]))
+
+        hwidth = self.params['arrowwidth']
+        hlength = self.params['arrowlength']
+        lw = self.params['arrow_lw']
+        color = self.params['arrow_color']
         self.segments.append(Segment([(1.1, .9), (.8, .6)],
-                                     arrow='->', arrowwidth=.16, arrowlength=.2))
+                                     arrow='->', arrowwidth=hwidth, arrowlength=hlength,
+                                     lw=lw, color=color))
         self.segments.append(Segment([(1.3, .7), (1, .4)],
-                                     arrow='->', arrowwidth=.16, arrowlength=.2))
+                                     arrow='->', arrowwidth=hwidth, arrowlength=hlength,
+                                     lw=lw, color=color))
 
 
 class MeterV(Source):
@@ -199,15 +315,41 @@ class MeterOhm(Source):
 
 
 class MeterArrow(Source):
-    ''' Meter with diagonal arrow'''
+    ''' Meter with diagonal arrow
+
+        Keyword Arguments:
+            arrowwidth: Width of arrowhead
+            arrowlength: length of arrowhead
+            arrow_lw: Line width of arrow
+            arrow_color: Color of arrow
+    '''
+    _element_defaults = {
+        'arrowwidth': .15,
+        'arrowlength': .25,
+        'arrow_lw': None,
+        'arrow_color': None,
+    }
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.segments.append(Segment([ (.25, .16), (.75, -.16)], arrow='->'))
-
+        self.segments.append(Segment([ (.25, .16), (.75, -.16)], arrow='->',
+                                     arrowwidth=self.params['arrowwidth'],
+                                     arrowlength=self.params['arrowlength'],
+                                     lw=self.params['arrow_lw'],
+                                     color=self.params['arrow_color']
+                                     ))
 
 
 class Lamp(Source):
-    ''' Incandescent Lamp '''
+    ''' Incandescent Lamp
+
+        Keyword Arguments:
+            filament_lw: Line width of filament
+            filament_color: Color of filament
+    '''
+    _element_defaults = {
+        'filament_lw': None,
+        'filament_color': None
+    }
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         a = .25
@@ -218,20 +360,38 @@ class Lamp(Source):
         x = [xx - x[0] for xx in x]  # Scale to about the right size
         x = [xx / x[-1] for xx in x]
         y = [(yy - y[0]) * .25 for yy in y]
-        self.segments.append(Segment(list(zip(x, y))))
+        self.segments.append(
+            Segment(
+                list(zip(x, y)),
+                lw=self.params['filament_lw'],
+                color=self.params['filament_color']))
 
 
 class Lamp2(Source):
-    ''' Incandescent Lamp (with X through a Source) '''
+    ''' Incandescent Lamp (with X through a Source)
+
+        Keyword Arguments:
+            filament_lw: Line width of filament
+            filament_color: Color of filament
+    '''
+    _element_defaults = {
+        'filament_lw': None,
+        'filament_color': None
+    }
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         r=0.5
         self.segments.append(Segment(
             [(r-r/2**.5, -r/2**.5),
-             (r+r/2**.5,  r/2**.5)]))
+             (r+r/2**.5,  r/2**.5)],
+            lw=self.params['filament_lw'],
+            color=self.params['filament_color']))
+
         self.segments.append(Segment(
             [(r-r/2**.5,  r/2**.5),
-             (r+r/2**.5, -r/2**.5)]))
+             (r+r/2**.5, -r/2**.5)],
+            lw=self.params['filament_lw'],
+            color=self.params['filament_color']))
 
 
 class Neon(Source):
@@ -248,7 +408,16 @@ class Neon(Source):
 
 
 class MeterBox(Element):
-    ''' Base class for square meter/scope boxes '''
+    ''' Base class for square meter/scope boxes
+
+        Keyword Arguments:
+            width: Width and height of square box
+            corner: Corner radius
+            input_ofst: Distance from corner to input connections
+            input_lw: line width of connector circles
+            input_rad: radius of connector circles
+            input_fill: Fill coloro of connector circles
+    '''
     _element_defaults = {
         'width': 1.5,
         'corner': .2,

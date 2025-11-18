@@ -19,7 +19,17 @@ class Switch(Element2Term):
             action: action arrow ('open' or 'close')
             contacts: Draw contacts as open circles
             nc: Draw normally closed contact line
+            arrowwidth: Width of arrowhead
+            arrowlength: Length of arrowhead
+            arrow_lw: line width of arrow
+            arrow_color: Color of arrow
     '''
+    _element_defaults = {
+        'arrowwidth': .15,
+        'arrowlength': .25,
+        'arrow_lw': None,
+        'arrow_color': None,
+    }
     def __init__(self,
                  action: Optional[ActionType] = None,
                  contacts: bool = True,
@@ -48,12 +58,16 @@ class Switch(Element2Term):
 
         if action == 'open':
             self.segments.append(SegmentArc((.4, .1), width=.5, height=.75,
-                                            theta1=-10, theta2=70,
-                                            arrow='ccw'))
+                                            theta1=-10, theta2=70, arrow='ccw',
+                                            lw=self.params['arrow_lw'], color=self.params['arrow_color'],
+                                            arrowwidth=self.params['arrowwidth'], arrowlength=self.params['arrowlength']
+                                            ))
         if action == 'close':
             self.segments.append(SegmentArc((.4, .25), width=.5, height=.75,
-                                            theta1=-10, theta2=70,
-                                            arrow='cw'))
+                                            theta1=-10, theta2=70, arrow='cw',
+                                            lw=self.params['arrow_lw'], color=self.params['arrow_color'],
+                                            arrowwidth=self.params['arrowwidth'], arrowlength=self.params['arrowlength'],
+                                            ))
 
 
 class SwitchSpdt(Switch):
@@ -90,12 +104,22 @@ class SwitchSpdt2(Element):
         Args:
             action: action arrow ('open' or 'close')
             contacts: Draw contacts as open circles
+            arrowwidth: Width of arrowhead
+            arrowlength: Length of arrowhead
+            arrow_lw: line width of arrow
+            arrow_color: Color of arrow
 
         Anchors:
             * a
             * b
             * c
     '''
+    _element_defaults = {
+        'arrowwidth': .15,
+        'arrowlength': .25,
+        'arrow_lw': None,
+        'arrow_color': None,
+    }
     def __init__(self, action: Optional[ActionType] = None, contacts: bool = True, **kwargs):
         super().__init__(action=action, **kwargs)
 
@@ -116,12 +140,16 @@ class SwitchSpdt2(Element):
 
         if action == 'open':
             self.segments.append(SegmentArc((.35, 0), width=.5, height=.75,
-                                            theta1=-10, theta2=70,
-                                            arrow='ccw'))
+                                            theta1=-10, theta2=70, arrow='ccw',
+                                            lw=self.params['arrow_lw'], color=self.params['arrow_color'],
+                                            arrowwidth=self.params['arrowwidth'], arrowlength=self.params['arrowlength']
+                                            ))
         elif action == 'close':
             self.segments.append(SegmentArc((.3, 0), width=.5, height=.75,
-                                            theta1=-10, theta2=70,
-                                            arrow='cw'))
+                                            theta1=-10, theta2=70, arrow='cw',
+                                            lw=self.params['arrow_lw'], color=self.params['arrow_color'],
+                                            arrowwidth=self.params['arrowwidth'], arrowlength=self.params['arrowlength']
+                                            ))
         self.params['drop'] = (1, .4)
         self._labelhints['a'] = LabelHint((0, -.18), valign='top', halign='center')
         self._labelhints['b'] = LabelHint((0, .18), valign='bottom', halign='center')

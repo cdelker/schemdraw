@@ -814,6 +814,8 @@ class SegmentArc:
                  width: float, height: float,
                  theta1: float = 35, theta2: float = -35,
                  arrow: Optional[Arcdirection] = None,
+                 arrowwidth: float = .15,
+                 arrowlength: float = .25,
                  angle: float = 0,
                  color: Optional[str | tuple[float, float, float]] = None,
                  lw: Optional[float] = None,
@@ -828,6 +830,8 @@ class SegmentArc:
         self.theta1 = theta1
         self.theta2 = theta2
         self.arrow = arrow
+        self.arrowwidth = arrowwidth
+        self.arrowlength = arrowlength
         self.angle = angle
         self.color = color
         self.lw = lw
@@ -873,6 +877,8 @@ class SegmentArc:
                           self.height*transform.zoom[1],
                           angle=angle,
                           arrow=self.arrow,
+                          arrowlength=self.arrowlength,
+                          arrowwidth=self.arrowwidth,
                           theta1=self.theta1,
                           theta2=self.theta2, **params)
 
@@ -926,7 +932,9 @@ class SegmentArc:
         fig.arc(center, width=width, height=height,
                 theta1=self.theta1, theta2=self.theta2, angle=angle,
                 color=color, lw=lw, ls=ls, fill=fill,
-                clip=self.clip, zorder=zorder, arrow=self.arrow)
+                clip=self.clip, zorder=zorder, arrow=self.arrow,
+                arrowwidth=self.arrowwidth, arrowlength=self.arrowlength
+                )
 
 
 class SegmentPath:

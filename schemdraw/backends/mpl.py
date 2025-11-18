@@ -261,7 +261,11 @@ class Figure:
             theta1: float = 0, theta2: float = 90, angle: float = 0,
             color: str = 'black', lw: float = 2, ls: Linestyle = '-',
             fill: Optional[str] = None,
-            zorder: int = 1, clip: Optional[BBox] = None, arrow: Optional[str] = None) -> None:
+            zorder: int = 1, clip: Optional[BBox] = None,
+            arrow: Optional[str] = None,
+            arrowwidth: float = .15,
+            arrowlength: float = .25
+            ) -> None:
         ''' Draw an arc or ellipse, with optional arrowhead '''
 
         if fill is None:
@@ -310,8 +314,10 @@ class Figure:
             s = util.rotate(s, angle, center)
             darrow = util.rotate((dx, dy), angle)
 
-            a = self.ax.arrow(s[0], s[1], darrow[0], darrow[1], head_width=.15,
-                              head_length=.25, color=color, zorder=zorder)
+            a = self.ax.arrow(s[0], s[1], darrow[0], darrow[1],
+                              head_width=arrowwidth,
+                              head_length=arrowlength,
+                              color=color, zorder=zorder)
             self.addclip(a, clip)
 
     def image(self, image: str | BinaryIO, xy: XY, width: float, height: float,

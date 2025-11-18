@@ -90,6 +90,7 @@ from .sources import (
     Lamp2,
     Solar,
     Neon,
+    MeterBox,
     MeterAnalog,
     MeterDigital,
     Oscilloscope
@@ -340,6 +341,7 @@ __all__ = [
 "Lamp2",
 "Solar",
 "Neon",
+"MeterBox",
 "MeterAnalog",
 "MeterDigital",
 "Oscilloscope",

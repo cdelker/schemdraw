@@ -133,8 +133,8 @@ class Transformer(Element):
             y = left_bot
             tapnum = 0
             for i, turns in enumerate(t1):
-                self.anchors[f'p{i*2+1}'] = (0, y)
-                self.anchors[f'p{i*2+2}'] = (0, y+turns*arcw)
+                self.anchors[f'p{i*2+2}'] = (0, y)
+                self.anchors[f'p{i*2+1}'] = (0, y+turns*arcw)
                 for k in range(turns):
                     self.segments.append(SegmentArc(
                         (0, y+arcw/2), theta1=270, theta2=90, width=arcw, height=arcw))
@@ -147,8 +147,8 @@ class Transformer(Element):
             y = right_bot
             tapnum = 0
             for i, turns in enumerate(t2):
-                self.anchors[f's{i*2+1}'] = (corewidth, y)
-                self.anchors[f's{i*2+2}'] = (corewidth, y+turns*arcw)
+                self.anchors[f's{i*2+2}'] = (corewidth, y)
+                self.anchors[f's{i*2+1}'] = (corewidth, y+turns*arcw)
                 for k in range(turns):
                     self.segments.append(SegmentArc(
                         (corewidth, y+arcw/2), theta1=90, theta2=270, width=arcw, height=arcw))

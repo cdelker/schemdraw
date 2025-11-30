@@ -1,13 +1,16 @@
-v0.22 - In progress
+v0.22 - 2025-11-30
 
     Enhancements:
         - Added vacuum tube elements
         - Added box-style meters
-        - Added `shift` method to move a 2-terminal element toward one end or the other
+        - Added parameter to remove contact circles from switches
+        - Added Voltage label as an arc over an element
+        - Added `shift` method to offset a 2-terminal element toward one end or the other
         - Updated `tox` and `toy` methods to work with diagonal placement
         - Updated `Transformer` to allow multi-phase connections
         - Option to draw core lines on Inductor and Inductor2, and defined NE, NW, SE, SW anchors for placing mutual inductance dots.
         - Elements can define label position hints for fine-tuned placement of labels on anchor positions
+        - Added `Drawing.hold()` to create context manager that saves and restores the drawing state
 
     New Elements:
         - VacuumTube

@@ -221,7 +221,7 @@ class Segment:
             elif self.arrow.startswith('o'):
                 fig.circle(path[0], self.arrowwidth/2, color=color, fill=color, lw=lw,
                            clip=self.clip, zorder=zorder)
-            elif self.arrow.startswith('|'):
+            if self.arrow.startswith('|'):
                 theta = math.atan2(path[0].y-path[1].y, path[0].x-path[1].x) + math.pi/2
                 tailx = (path[0].x + self.arrowwidth/2 * math.cos(theta),
                          path[0].x - self.arrowwidth/2 * math.cos(theta))
@@ -237,7 +237,7 @@ class Segment:
             elif self.arrow.endswith('o'):
                 fig.circle(path[-1], self.arrowwidth/2, color=color, fill=color, lw=lw,
                            clip=self.clip, zorder=zorder)
-            elif self.arrow.endswith('|'):
+            if self.arrow.endswith('|'):
                 theta = math.atan2(path[-1].y-path[-2].y, path[-1].x-path[-2].x) + math.pi/2
                 tailx = (path[-1].x + self.arrowwidth/2 * math.cos(theta),
                          path[-1].x - self.arrowwidth/2 * math.cos(theta))

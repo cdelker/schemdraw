@@ -268,6 +268,7 @@ class TimingDiagram(Element):
         '''
         wave = signal.get('wave', '')
         phase = signal.get('phase', 0)
+        level = signal.get('level', '0')
         waverise = signal.get('risetime', None)
         wavekwargs = ChainMap({'color': signal.get('color', None),
                                'lw': signal.get('lw', 1),
@@ -276,16 +277,31 @@ class TimingDiagram(Element):
         if not isinstance(data, list):
             data = data.split()  # Sometimes it's a space-separated string...
 
+        if len(level) == 1:
+            level = level * len(wave)
+        elif len(level) != len(wave):
+            level += level[-1]*(len(wave)-len(level))
+
         period = 2*self.yheight*signal.get('period', 1) * self.hscale
-        y1 = y0 + self.yheight
+        signal_height = self.yheight
         i = 0
         pstate = '-'
+        y1_prev = y0 + signal_height
 
         x = -period*phase
         while i < len(wave):
             state = wave[i]
             splits = []
             periods = 1
+
+            try:
+                signal_height = int(level[i])/10 * self.yheight
+            except ValueError:
+                pass  # Keep height the same
+            else:
+                if signal_height == 0:
+                    signal_height = self.yheight
+
             k = i+1
             while k < len(wave) and wave[k] in '|.':
                 if wave[k] == '|':
@@ -294,6 +310,7 @@ class TimingDiagram(Element):
                 k += 1
             nstate = wave[k] if k < len(wave) else '-'
 
+            y1 = y0 + signal_height
             xend = x+periods*period
             params = {'state': state,
                       'pstate': pstate,
@@ -306,6 +323,7 @@ class TimingDiagram(Element):
                       'xend': xend,
                       'y0': y0,
                       'y1': y1,
+                      'y1_prev': y1_prev,
                       'rise': waverise if waverise is not None else self.risetime,
                       'data': data,
                       'datacolor': self.datacolor,
@@ -319,6 +337,7 @@ class TimingDiagram(Element):
                     getsplit(x + (split+1)*period-period/2, y0, y1))
 
             pstate = state
+            y1_prev = y1
             x += periods*period
             i = k
 

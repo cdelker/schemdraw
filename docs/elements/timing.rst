@@ -156,6 +156,26 @@ WaveDrom does not have a means for defining asynchronous signals - all waves mus
         risetime=.03)
 
 
+Variable Voltage Levels
+***********************
+
+Another Schemdraw extension adds adjustable voltage levels within a signal using the `level` parameter.
+The value can take 10 different values, specified as digits in the `level` string, where a `1` corresponds to 10%, `2` to 20%, etc., with `0` meaning 100% of the normal high voltage level.
+As with the `wave` parameter, a period is used to repeat the previous level value.
+
+Here, the first pulse is 100%, the second at 50%, and the third at 20%.
+
+.. jupyter-execute::
+    :emphasize-lines: 4
+
+    logic.TimingDiagram(
+        {'signal': [
+            {'wave':  '0.1..0.1.0.1.',
+             'level': '0......5...2.',
+            }],
+        })
+
+
 Extended Edge Notation
 **********************
 

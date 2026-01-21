@@ -101,6 +101,7 @@ class Wave0:
         self.xend = self.params.get('xend', 1)
         self.y0 = self.params.get('y0', 0)
         self.y1 = self.params.get('y1', .5)
+        self.y1_prev = self.params.get('y1_prev', .5)
         self.pstate = self.params.get('pstate', '-')
         self.nstate = self.params.get('nstate', '-')
         self.plevel = self.params.get('plevel', '-')
@@ -168,7 +169,10 @@ class Wave1(Wave0):
                  'l': [(self.x0, self.y1)],
                  'L': [(self.x0, self.y1)],
                  '0': [(self.x0, self.y0), (self.xrise, self.y1)],
-                 '1': [(self.x0, self.y1), (self.xrisehalf, self.yhalf), (self.xrise, self.y1)],
+                 '1': ([(self.x0, self.y1_prev), (self.xrise, self.y1)]
+                        if self.y1_prev != self.y1
+                        else [(self.x0, self.y1), (self.xrisehalf, self.yhalf), (self.xrise, self.y1)]
+                      ),
                  'z': [(self.x0, self.yhalf), (self.xrisehalf, self.y1)],
                  'V': [(self.xrise, self.y1)]
                  }.get(self.plevel)

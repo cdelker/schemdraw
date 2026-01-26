@@ -10,9 +10,12 @@ Timing Diagrams
 
 
 Digital timing diagrams may be drawn using the :py:class:`schemdraw.logic.timing.TimingDiagram` Element in the :py:mod:`schemdraw.logic` module.
+Bit Field diagrams may be drawn using :py:class:`schemdraw.logic.bitfield.BitField`.
 
-Timing diagrams are set up using the WaveJSON syntax used by the `WaveDrom <https://wavedrom.com/>`_ JavaScript application.
+Timing diagrams and bit fields are set up using the WaveJSON syntax used by the `WaveDrom <https://wavedrom.com/>`_ JavaScript application.
 
+Timing Diagrams
+---------------
 
 .. code-block:: python
 
@@ -229,3 +232,96 @@ See the :ref:`gallerytiming` Gallery for more examples.
                     {'signal': [
                         {'name': 'A', 'wave': '0..1..01.'},
                         {'name': 'B', 'wave': '101..0...'}]})
+
+Bit Field Diagrams
+------------------
+
+Bit Field diagrams may be drawn using :py:class:`schemdraw.logic.bitfield.BitField`.
+They work similar to timing diagrams, with a single parameter dictionary defining the element, which may also be supplied in a `from_json` class method.
+
+.. jupyter-execute::
+
+    logic.BitField(
+        {'reg': [
+            { "name": "IPO",   "bits": 8, "attr": "RO" },
+            {                  "bits": 7 },
+            { "name": "BRK",   "bits": 5, "attr": "RW", "type": 4 },
+            { "name": "CPK",   "bits": 2 },
+            { "name": "Clear", "bits": 3 },
+            { "bits": 8 }
+        ],
+        }
+    )
+
+
+The dictionary passed to BitField may have two keys: `reg` and `config`.
+The `reg` key is a list of bit groups within the register. Each item in the list may have attributes:
+
+    * name: Text to display within the bit group
+    * bits: Number of bits within the group
+    * attr: Label to show below the group. May be a string, or integer. If integer, the binary representation is shown. May also be a list of multiple lines.
+    * type: 0-9 code to fill the bit group. Or may be any valid color string.
+
+The `config` dictionary may include these key-value pairs:
+    * lanes: Number of lanes
+    * hflip: Reverse order of lanes
+    * vflip: Reverse order of bits
+    * compact: Remove whitespace between lanes
+    * bits: Total number of bits to include (padded out if not included in the `reg` list)
+    * label: Dictionary of either 'left' or 'right' and text to display left or right of the lanes.
+
+Additional parameters may be passed directly to `BitField`. Values in the config dictionary above take precedence.
+
+    * bitheight: Height of a bit register box in drawing units
+    * width: Full width of the register box in drawing units
+    * fontsize: Size of all text labels
+    * lw: Line width for borders
+    * ygap: Distance between lanes. Omit to auto-space based on label heights
+    * vflip: Flip order of bits
+    * hflip: Flip order of lanes
+    * compact: Remove whitespace between lanes
+
+
+Schemdraw's implementation has these known differences compared to WaveDrom:
+
+    * 'type' parameter, which is used to specify a fill color, can be the 0-9 code as in WaveDrom, or any valid color string
+    * hspace defines the full width of the register in pixels, without including any labels
+    * vspace defines the full width of a register in pixels, without including any labels or padding
+    * margins are ignored (but can be set by adding the BitField to a schemdraw Drawing)
+
+Examples are below, many borrowed from [here](https://observablehq.com/collection/@drom/bitfield).
+
+.. jupyter-execute::
+
+    logic.BitField.from_json(r'''
+    {reg:[
+        {name: 'OP-IMM-32', bits: 7,  attr: 0b0011011},
+        {name: 'rd',     bits: 5,  attr: 0},
+        {name: 'func3',  bits: 3,  attr: ['SLLIW', 'SRLIW', 'SRAIW']},
+        {bits: 10},
+        {name: 'imm?',   bits: 7, attr: [0, 32, 32]}
+    ]}
+    '''
+    )
+
+.. jupyter-execute::
+
+    logic.BitField.from_json(r'''
+    {reg: [
+    {bits: 8, name: "'S'", type: 4},
+    {bits: 8, name: "'1'", type: 4, attr: 'type'},
+    {bits: 8, name: "'0'", attr: 'count 0', type: 5},
+    {bits: 8, name: "'C'", attr: 'count 1', type: 5},
+    {bits: 8, attr: 'addr0', type: 2},
+    {bits: 8, attr: 'addr1', type: 2},
+    {bits: 8, attr: 'addr2', type: 2},
+    {bits: 8, attr: 'addr3', type: 2},
+    {bits: 48, name: 'data', type: 6},
+    {bits: 16, name: 'checksum', type: 7},
+    {bits: 8, name: "'\\r'"},
+    {bits: 8, name: "'\\n'"},
+    ], config: {hspace: 800, lanes: 3, bits: 144, vflip: true, hflip: true}}
+    '''
+    )
+
+

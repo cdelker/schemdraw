@@ -13,3 +13,5 @@ Logic Gates
 .. autoclass:: schemdraw.logic.kmap.Kmap
 
 .. autoclass:: schemdraw.logic.timing.TimingDiagram
+
+.. autoclass:: schemdraw.logic.bitfield.BitField

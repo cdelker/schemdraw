@@ -39,26 +39,29 @@ class BitField(Element):
         The reg dictionary may have two keys. 'reg' is a list bitfields, and 'config' tha
         defines configuration options.
         Items in the reg list are dictionaries that may include:
-            * name: Text to display within the bit group
-            * bits: Number of bits within the group
-            * attr: Label to show below the group. May be a string, or integer. If integer,
-                the binary representation is shown. May also be a list of multiple lines.
-            * type: 0-9 code to fill the bit group. Or may be any valid color string.
+
+        * name: Text to display within the bit group
+        * bits: Number of bits within the group
+        * attr: Label to show below the group. May be a string, or integer. If integer,
+            the binary representation is shown. May also be a list of multiple lines.
+        * type: 0-9 code to fill the bit group. Or may be any valid color string.
 
         The config list may include:
-            * lanes: Number of lanes (bit words stacked vertically)
-            * hflip: Reverse order of lanes
-            * vflip: Reverse order of bits
-            * compact: Remove whitespace between lanes
-            * bits: Total number of bits to include (padded out if not included in the `reg` list)
-            * label: Dictionary of either 'left' or 'right' and text to display left or right of the lanes.
+
+        * lanes: Number of lanes (bit words stacked vertically)
+        * hflip: Reverse order of lanes
+        * vflip: Reverse order of bits
+        * compact: Remove whitespace between lanes
+        * bits: Total number of bits to include (padded out if not included in the `reg` list)
+        * label: Dictionary of either 'left' or 'right' and text to display left or right of the lanes.
 
         Schemdraw's implementation has these known differences:
-            * 'type' parameter, which is used to specify a fill color, can
-                be the 0-9 code as in WaveDrom, or any valid color string
-            * hspace defines the full width of the register in pixels, without including any labels
-            * vspace defines the full width of a register in pixels, without including any labels or padding
-            * margins are ignored (but can be set by adding the BitField to a schemdraw Drawing)
+
+        * 'type' parameter, which is used to specify a fill color, can
+            be the 0-9 code as in WaveDrom, or any valid color string
+        * hspace defines the full width of the register in pixels, without including any labels
+        * vspace defines the full width of a register in pixels, without including any labels or padding
+        * margins are ignored (but can be set by adding the BitField to a schemdraw Drawing)
     '''
     _element_defaults = {
         'bitheight': 0.625,

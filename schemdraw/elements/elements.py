@@ -350,12 +350,6 @@ class Element:
         elif isinstance(rotate, bool):
             rotate = True
 
-        if not self._userparams.get('ignore_hints', False) and (hint := self._labelhints.get(str(loc), None)):
-            ofst = ofst if ofst is not None else hint.ofst
-            halign = halign if halign else hint.halign
-            valign = valign if valign else hint.valign
-            fontsize = fontsize if fontsize is not None else hint.fontsize
-
         self._userlabels.append(Label(label, loc, ofst, halign, valign, rotate, fontsize, font, mathfont, color, href, decoration))
         return self
 
@@ -658,6 +652,20 @@ class Element:
                       label.valign, label.rotate, label.fontsize,
                       label.font, label.mathfont, label.color,
                       label.href, label.decoration)
+
+        # Apply label hints for parameters not already defined
+        if not self._userparams.get('ignore_hints', False) and (hint := self._labelhints.get(str(label.loc), None)):
+            label.ofst = label.ofst if label.ofst is not None else hint.ofst
+            label.halign = label.halign if label.halign else hint.halign
+            label.valign = label.valign if label.valign else hint.valign
+            label.fontsize = label.fontsize if label.fontsize is not None else hint.fontsize
+
+        if self._userparams.get('flip'):
+            label.valign = {'top': 'bottom', 'bottom': 'top'}.get(label.valign) if label.valign else None
+            label.ofst = Point(label.ofst).flip() if isinstance(label.ofst, tuple) else label.ofst
+        if self._userparams.get('reverse'):
+            label.halign = {'left': 'right', 'right': 'left'}.get(label.halign) if label.halign else None
+            label.ofst = Point(label.ofst).mirrorx() if isinstance(label.ofst, tuple) else label.ofst
 
         if label.halign is None:
             label.halign = self.params.get('lblalign', (None, None))[0]

@@ -365,6 +365,16 @@ class Ic(Element):
                           'R': ('left', 'bottom'),
                           'T': ('left', 'bottom'),
                           'B': ('left', 'top')}.get(side))
+
+            if self._userparams.get('flip') and side in ['L', 'R']:
+                pofst = pofst.flip()
+            if self._userparams.get('flip') and side in ['T', 'B']:
+                align = align[0], {'T': 'top', 'B': 'bottom'}.get(side)
+            if self._userparams.get('reverse') and side in ['L', 'R']:
+                align = {'L': 'left', 'R': 'right'}.get(side), align[1]
+            if self._userparams.get('reverse') and side in ['T', 'B']:
+                pofst = pofst.mirrorx()
+
             self.segments.append(SegmentText(
                 pos=xy+pofst,
                 label=pin.pin,
@@ -387,6 +397,11 @@ class Ic(Element):
                           'R': ('right', 'center'),
                           'T': ('center', 'top'),
                           'B': ('center', 'bottom')}.get(side))
+
+            if self._userparams.get('flip') and side in ['T', 'B']:
+                align = align[0], {'T': 'bottom', 'B': 'top'}.get(side)
+            if self._userparams.get('reverse') and side in ['L', 'R']:
+                align = {'L': 'right', 'R': 'left'}.get(side), align[1]
 
             self.segments.append(SegmentText(
                 pos=xy+pofst,

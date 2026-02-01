@@ -93,9 +93,9 @@ class SwitchSpdt(Switch):
             self.anchors['a'] = Point((0, 0))
             self.anchors['b'] = Point((1, 0))
             self.anchors['c'] = Point((1, .7))
-        self._labelhints['a'] = LabelHint((0, -.18), valign='top')
-        self._labelhints['b'] = LabelHint((0, -.18), valign='top')
-        self._labelhints['c'] = LabelHint((0, .18), valign='bottom')
+        self._labelhints['a'] = LabelHint((0, -.18), valign='top', halign='center')
+        self._labelhints['b'] = LabelHint((0, -.18), valign='top', halign='center')
+        self._labelhints['c'] = LabelHint((0, .18), valign='bottom', halign='center')
 
 
 class SwitchSpdt2(Element):

@@ -262,6 +262,10 @@ The `reg` key is a list of bit groups within the register. Each item in the list
     * attr: Label to show below the group. May be a string, or integer. If integer, the binary representation is shown. May also be a list of multiple lines.
     * type: 0-9 code to fill the bit group. Or may be any valid color string.
 
+Schemdraw adds these parameters not available in the original WaveDrom:
+    * scale: Scale factor for bit width in the group
+    * number: Show first and last bit numbers above the group
+
 The `config` dictionary may include these key-value pairs:
     * lanes: Number of lanes
     * hflip: Reverse order of lanes
@@ -324,4 +328,15 @@ Examples are below, many borrowed from [here](https://observablehq.com/collectio
     '''
     )
 
+.. jupyter-execute::
 
+    logic.BitField.from_json('''
+    {'reg': [
+        {'name': '0x3',   'bits': 7,  attr: 'CMD' },
+        {'name': '0x001', 'bits': 1,  attr: 'REC', scale: 3 },
+        {'name': 'OP_T',  'bits': 8,  attr: 'OP_T' },
+        {'name': '0x0',   'bits': 13, attr: 'ARG_POINTER', scale: .5, number: false },
+        {'name': '0x2',   'bits': 3,  attr: 'MODE' },
+    ],
+    }
+    ''')

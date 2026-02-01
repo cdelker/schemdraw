@@ -156,19 +156,6 @@ class BitField(Element):
 
         for lane in range(lanes):
 
-            # Main box and ticks
-            self.segments.append(
-                SegmentPoly(((0, y), (lanewidth, y), (lanewidth, y+bitheight), (0, y+bitheight)), closed=True, lw=self.params['lw'])
-            )
-            for b in range(bitsperlane-1):
-                x = (b+1) * bitwidth
-                self.segments.append(
-                    Segment(((x, y+bitheight), (x, y+bitheight-tickh)), lw=self.params['lw'])
-                )
-                self.segments.append(
-                    Segment(((x, y), (x, y+tickh)), lw=self.params['lw'])
-                )
-
             # Labels on left/right side
             if leftlabels:
                 self.segments.append(SegmentText(
@@ -193,6 +180,8 @@ class BitField(Element):
                 rotate = bitgroup.get('rotate', 0)
                 name = bitgroup.get('name', '')
                 color = bitgroup.get('type', None)
+                scale = bitgroup.get('scale', 1)
+                shownum = bitgroup.get('number', True) in [True, 1, 'true', 'True']
 
                 if nbits + rowbit > bitsperlane:
                     nbits, leftoverbits = bitsperlane - rowbit, nbits - (bitsperlane-rowbit)
@@ -200,11 +189,11 @@ class BitField(Element):
                     leftoverbits = 0
 
                 # Draw bitgroup edges and fill
-                centerx = x - dx*nbits*bitwidth/2
+                centerx = x - dx*nbits*bitwidth/2 * scale
                 x0 = x
-                x -= nbits*bitwidth*dx
+                x -= nbits*bitwidth*dx*scale
                 self.segments.append(
-                    Segment(((x, y+bitheight), (x, y)), lw=self.params['lw'])
+                    SegmentPoly(((x, y+bitheight), (x, y), (x0, y), (x0, y+bitheight)), lw=self.params['lw'])
                 )
                 if color or not name:
                     if color is None or len(str(color)) == 1:
@@ -214,6 +203,16 @@ class BitField(Element):
                                     lw=0, color='none', fill=color,
                                     zorder=0,
                                     )
+                    )
+
+                # Ticks
+                for b in range(nbits-1):
+                    tickx = x+(b+1) * dx*bitwidth * scale
+                    self.segments.append(
+                        Segment(((tickx, y+bitheight), (tickx, y+bitheight-tickh)), lw=self.params['lw'])
+                    )
+                    self.segments.append(
+                        Segment(((tickx, y), (tickx, y+tickh)), lw=self.params['lw'])
                     )
 
                 # Draw name in center of bits
@@ -228,19 +227,31 @@ class BitField(Element):
                     )
 
                 # Draw bit numbers above
-                if (hflip and lane == 0) or (not hflip and lane == lanes-1) or not compact:
-                    self.segments.append(
-                        SegmentText((x0-dx*bitwidth/2, y+bitheight+lblofst), str(lane*bitsperlane+rowbit),
-                                    fontsize=fontsize,
-                                    align=('center', 'bottom')
-                                    )
-                    )
-                    self.segments.append(
-                        SegmentText((x+dx*bitwidth/2, y+bitheight+lblofst), str(lane*bitsperlane+rowbit+nbits-1),
-                                    fontsize=fontsize,
-                                    align=('center', 'bottom')
-                                    )
-                    )
+                if shownum:
+                    if (hflip and lane == 0) or (not hflip and lane == lanes-1) or not compact:
+                        if nbits > 1:
+                            tickdx = dx * max(.2, bitwidth/2*scale)
+                            #center = bitwidth < .5
+
+                            self.segments.append(
+                                SegmentText((x0-tickdx, y+bitheight+lblofst), str(lane*bitsperlane+rowbit),
+                                            fontsize=fontsize,
+                                            align=('center', 'bottom')
+                                            )
+                            )
+                            self.segments.append(
+                                SegmentText((x+tickdx, y+bitheight+lblofst), str(lane*bitsperlane+rowbit+nbits-1),
+                                            fontsize=fontsize,
+                                            align=('center', 'bottom')
+                                            )
+                            )
+                        else:
+                            self.segments.append(
+                                SegmentText((centerx, y+bitheight+lblofst), str(lane*bitsperlane+rowbit+nbits-1),
+                                            fontsize=fontsize,
+                                            align=('center', 'bottom')
+                                            )
+                            )
 
                 # Draw attributes below
                 if attr is not None:

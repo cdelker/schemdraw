@@ -329,7 +329,8 @@ class Arc2(Element):
 
     def _place(self, dwgxy: XY, dwgtheta: float, **dwgparams) -> tuple[Point, float]:
         ''' Calculate absolute placement of Element '''
-        self._dwgparams = dwgparams
+        self._dwgparams.clear()
+        self._dwgparams.update(dwgparams)
         if not self._positioned:
             self._position()
 
@@ -441,7 +442,8 @@ class Arc3(Element):
 
     def _place(self, dwgxy: XY, dwgtheta: float, **dwgparams) -> tuple[Point, float]:
         ''' Calculate absolute placement of Element '''
-        self._dwgparams = dwgparams
+        self._dwgparams.clear()
+        self._dwgparams.update(dwgparams)
         if not self._positioned:
             self._position()
 
@@ -653,7 +655,8 @@ class ArcLoop(Element):
 
     def _place(self, dwgxy: XY, dwgtheta: float, **dwgparams) -> tuple[Point, float]:
         ''' Calculate placement of Element '''
-        self._dwgparams = dwgparams
+        self._dwgparams.clear()
+        self._dwgparams.update(dwgparams)
         if not self._positioned:
             self._position()
 
@@ -1046,7 +1049,8 @@ class ZLabel(Element):
         return self
 
     def _place(self, dwgxy, dwgtheta, **dwgparams):
-        self._dwgparams = dwgparams
+        self._dwgparams.clear()
+        self._dwgparams.update(dwgparams)
         if not self._positioned:
             self._position()
 

@@ -24,10 +24,17 @@ from ..util import Point
 from . import svgtext
 from .svgunits import parse_size_to_px, PT_PER_IN, PX_PER_PT
 
+precision = 3
 
 LINE_WIDTH = 2     # Default line width is 2 points
 
 ET.register_namespace("","http://www.w3.org/2000/svg")
+
+def fmt(f: float) -> str:
+    ''' String formatter, stripping trailing zeros '''
+    p = f'.{precision}f'
+    s = format(float(f), p)
+    return s.rstrip('0').rstrip('.')  # Strip trailing zeros
 
 
 class Config:
@@ -243,7 +250,7 @@ class Figure:
                 x0, y0 = self.xform(bbox.xmin, bbox.ymin)
                 x1, y1 = self.xform(bbox.xmax, bbox.ymax)
                 clip = ET.fromstring(f'''<defs><clipPath id="clip{clipid}"><rect x="{x0-1}" y="{y0-1}"'''
-                                     f''' width="{x1-x0+2}" height="{y1-y0+2}" /></clipPath></defs>''')
+                                     f''' width="{fmt(x1-x0+2)}" height="{fmt(y1-y0+2)}" /></clipPath></defs>''')
                 self.svgelements.append((0, clip))
             et.set('clip-path', f'url(#clip{clipid})')
 
@@ -261,7 +268,7 @@ class Figure:
             elif not d.endswith('M '):
                 d += 'L '
             xx, yy = self.xform(xx, yy)
-            d += f'{xx},{yy} '
+            d += f'{fmt(xx)},{fmt(yy)} '
 
         d = d.strip()
         et.set('d', d)
@@ -321,7 +328,7 @@ class Figure:
         points = ''
         for xx, yy in verts:
             xx, yy = self.xform(xx, yy)
-            points += f'{xx},{yy} '
+            points += f'{fmt(xx)},{fmt(yy)} '
         et.set('points', points)
         et.set('style', getstyle(color=color, ls=ls, lw=lw, capstyle=capstyle,
                                  joinstyle=joinstyle, fill=fill, hatch=hatch))
@@ -337,9 +344,9 @@ class Figure:
         x, y = self.xform(*center)
         radius = radius * self.scale
         et = ET.Element('circle')
-        et.set('cx', str(x))
-        et.set('cy', str(y))
-        et.set('r', str(radius))
+        et.set('cx', fmt(x))
+        et.set('cy', fmt(y))
+        et.set('r', fmt(radius))
         et.set('style', getstyle(color=color, lw=lw, ls=ls, fill=fill))
         self.addclip(et, clip)
         self.svgelements.append((zorder, et))
@@ -368,9 +375,9 @@ class Figure:
                       head[1] - lw * 2 * math.sin(math.radians(theta))))
 
         et1 = ET.Element('path')
-        d = f'M {head[0]} {head[1]} '
-        d += f'L {fin1[0]} {fin1[1]} '
-        d += f'L {fin2[0]} {fin2[1]} Z'
+        d = f'M {fmt(head[0])} {fmt(head[1])} '
+        d += f'L {fmt(fin1[0])} {fmt(fin1[1])} '
+        d += f'L {fmt(fin2[0])} {fmt(fin2[1])} Z'
         et1.set('d', d)
         et1.set('style', getstyle(color=color, lw=0, capstyle='butt',
                                   joinstyle='miter', fill=color))
@@ -398,9 +405,9 @@ class Figure:
         order = 'C' if len(p) == 4 else 'Q'
 
         et = ET.Element('path')
-        path = f'M {lpoints[0][0]} {lpoints[0][1]} {order}'
+        path = f'M {fmt(lpoints[0][0])} {fmt(lpoints[0][1])} {order}'
         for p0 in lpoints[1:]:
-            path += f' {p0[0]} {p0[1]}'
+            path += f' {fmt(p0[0])} {fmt(p0[1])}'
         et.set('d', path)
         et.set('style', getstyle(color=color, ls=ls, lw=lw, capstyle=capstyle))
         self.addclip(et, clip)
@@ -439,8 +446,8 @@ class Figure:
                 dstrs.append(point)
             else:
                 x, y = self.xform(*point)
-                dstrs.append(f'{x}')
-                dstrs.append(f'{y}')
+                dstrs.append(f'{fmt(x)}')
+                dstrs.append(f'{fmt(y)}')
         et = ET.Element('path')
         et.set('d', ' '.join(dstrs))
         et.set('style', getstyle(color=color, ls=ls, lw=lw, capstyle=capstyle,
@@ -489,12 +496,12 @@ class Figure:
             # Full ellipse - can't be drawn with a single <path>
             # because when start/end points are the same it draws a dot.
             et = ET.Element('ellipse')
-            et.set('cx', str(centerx))
-            et.set('cy', str(centery))
-            et.set('rx', str(width/2))
-            et.set('ry', str(height/2))
+            et.set('cx', fmt(centerx))
+            et.set('cy', fmt(centery))
+            et.set('rx', fmt(width/2))
+            et.set('ry', fmt(height/2))
             if angle != 0:
-                et.set('transform', f'rotate({angle} {centerx} {centery})')
+                et.set('transform', f'rotate({fmt(angle)} {fmt(centerx)} {fmt(centery)})')
             et.set('style', getstyle(color=color, ls=ls, lw=lw, fill=fill))
             self.addclip(et, clip)
             self.svgelements.append((zorder, et))
@@ -502,8 +509,8 @@ class Figure:
         else:
             flags = '1 1' if abs(t2-t1) >= math.pi else '0 1'
             et = ET.Element('path')
-            d = f'M {startx} {starty}'
-            d += f' a {width/2} {height/2} {angle} {flags} {dx} {dy}'
+            d = f'M {fmt(startx)} {fmt(starty)}'
+            d += f' a {fmt(width/2)} {fmt(height/2)} {fmt(angle)} {flags} {fmt(dx)} {fmt(dy)}'
             et.set('d', d)
             et.set('style', getstyle(color=color, ls=ls, lw=lw, fill=fill))
             self.addclip(et, clip)
@@ -592,10 +599,10 @@ class Figure:
             self.svgelements.append((zorder, et))
             self._need_xlink = True
 
-            et.set('x', str(x0))
-            et.set('y', str(y0))
-            et.set('width', str(width))
-            et.set('height', str(height))
+            et.set('x', fmt(x0))
+            et.set('y', fmt(y0))
+            et.set('width', fmt(width))
+            et.set('height', fmt(height))
             if rotate:
                 et.set('transform', f'rotate({-rotate} {x0} {y0+height})')
         self.svgelements.append((zorder, et))
@@ -645,17 +652,17 @@ class Figure:
 
         if self.showbbox:
             rect = ET.SubElement(svg, 'rect')
-            rect.set('x', str(self.bbox.xmin*self.scale))
-            rect.set('y', str(-self.bbox.ymax*self.scale))
-            rect.set('width', str(self.bbox.xmax*self.scale - self.bbox.xmin*self.scale))
-            rect.set('height', str(-self.bbox.ymin*self.scale + self.bbox.ymax*self.scale))
+            rect.set('x', fmt(self.bbox.xmin*self.scale))
+            rect.set('y', fmt(-self.bbox.ymax*self.scale))
+            rect.set('width', fmt(self.bbox.xmax*self.scale - self.bbox.xmin*self.scale))
+            rect.set('height', fmt(-self.bbox.ymin*self.scale + self.bbox.ymax*self.scale))
             rect.set('style', 'fill:none; stroke-width:0.5; stroke:black;')
 
             rect = ET.SubElement(svg, 'rect')
-            rect.set('x', str((self.bbox.xmin+self.margin)*self.scale))
-            rect.set('y', str(-(self.bbox.ymax-self.margin)*self.scale))
-            rect.set('width', str((self.bbox.xmax-self.margin)*self.scale - (self.bbox.xmin+self.margin)*self.scale))
-            rect.set('height', str(-(self.bbox.ymin+self.margin)*self.scale + (self.bbox.ymax-self.margin)*self.scale))
+            rect.set('x', fmt((self.bbox.xmin+self.margin)*self.scale))
+            rect.set('y', fmt(-(self.bbox.ymax-self.margin)*self.scale))
+            rect.set('width', fmt((self.bbox.xmax-self.margin)*self.scale - (self.bbox.xmin+self.margin)*self.scale))
+            rect.set('height', fmt(-(self.bbox.ymin+self.margin)*self.scale + (self.bbox.ymax-self.margin)*self.scale))
             rect.set('style', 'fill:none; stroke-width:1; stroke:red;')
 
         # sort by zorder

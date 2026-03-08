@@ -230,19 +230,27 @@ class BitField(Element):
                 if shownum:
                     if (hflip and lane == 0) or (not hflip and lane == lanes-1) or not compact:
                         if nbits > 1:
-                            tickdx = dx * max(.2, bitwidth/2*scale)
-                            #center = bitwidth < .5
+                            # Determine whether to center the label within the bit
+                            value1 = lane*bitsperlane + rowbit
+                            value2 = lane*bitsperlane + rowbit + nbits-1
+                            center1 = value1 < 100 and bitwidth/2*scale > .22
+                            center2 = value2 < 100 and bitwidth/2*scale > .22
 
+                            tickdx = dx * bitwidth/2*scale if center1 else 0.12
                             self.segments.append(
-                                SegmentText((x0-tickdx, y+bitheight+lblofst), str(lane*bitsperlane+rowbit),
+                                SegmentText((x0-tickdx, y+bitheight+lblofst),
+                                            str(value1),
                                             fontsize=fontsize,
-                                            align=('center', 'bottom')
+                                            align=('center' if center1 else 'right', 'bottom')
                                             )
                             )
+
+                            tickdx = dx * bitwidth/2*scale if center2 else 0.12
                             self.segments.append(
-                                SegmentText((x+tickdx, y+bitheight+lblofst), str(lane*bitsperlane+rowbit+nbits-1),
+                                SegmentText((x+tickdx, y+bitheight+lblofst),
+                                            str(value2),
                                             fontsize=fontsize,
-                                            align=('center', 'bottom')
+                                            align=('center' if center2 else 'left', 'bottom')
                                             )
                             )
                         else:

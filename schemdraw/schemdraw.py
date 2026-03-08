@@ -257,7 +257,7 @@ class Drawing:
 
         if self.outfile is not None:
             self.save(self.outfile, **self.saveopts)
-        if not self.fig:
+        if self.show and not self.fig:
             self.draw(show=False)
         if self.show and not hasattr(self.canvas, 'plot'):
             try:

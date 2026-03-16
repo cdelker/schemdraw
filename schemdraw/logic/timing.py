@@ -143,6 +143,7 @@ class TimingDiagram(Element):
         'edgecolor': 'blue',
         'tickcolor': '#888888',
         'grid': True,
+        'nodealign': 'signal'  # 'signal' or 'clock'
     }
     def __init__(self, waved: dict, **kwargs):
         super().__init__(**kwargs)
@@ -152,6 +153,7 @@ class TimingDiagram(Element):
         self.risetime = self.params['risetime']
         self.fontsize = self.params['fontsize']
         self.nodesize = self.params['nodesize']
+        self.nodealign = self.params['nodealign']
         self.namecolor = self.params['namecolor']
         self.datacolor = self.params['datacolor']  # default: get color from theme
         self.nodecolor = self.params['nodecolor']
@@ -269,7 +271,7 @@ class TimingDiagram(Element):
         wave = signal.get('wave', '')
         phase = signal.get('phase', 0)
         level = signal.get('level', '0')
-        waverise = signal.get('risetime', None)
+        waverise = signal.get('risetime', self.risetime)
         wavekwargs = ChainMap({'color': signal.get('color', None),
                                'lw': signal.get('lw', 1),
                                'clip': self.kwargs.get('clip')})
@@ -324,7 +326,7 @@ class TimingDiagram(Element):
                       'y0': y0,
                       'y1': y1,
                       'y1_prev': y1_prev,
-                      'rise': waverise if waverise is not None else self.risetime,
+                      'rise': waverise,
                       'data': data,
                       'datacolor': self.datacolor,
                       'kwargs': wavekwargs}
@@ -350,11 +352,10 @@ class TimingDiagram(Element):
         '''
         times = signal.get('async', '')
         wave = signal.get('wave', '')
-        waverise = signal.get('risetime', None)
+        waverise = signal.get('risetime', self.risetime)
         wavekwargs = ChainMap({'color': signal.get('color', None),
                                'lw': signal.get('lw', 1), 
                                'clip': self.kwargs.get('clip')})
-        rise = waverise if waverise is not None else self.risetime
 
         data = copy.copy(signal.get('data', []))
         if not isinstance(data, list):
@@ -386,7 +387,7 @@ class TimingDiagram(Element):
                       'xend': xend,
                       'y0': y0,
                       'y1': y1,
-                      'rise': rise,
+                      'rise': waverise,
                       'data': data,
                       'datacolor': self.datacolor,
                       'kwargs': wavekwargs}
@@ -405,6 +406,7 @@ class TimingDiagram(Element):
         '''
         nodes = signal.get('node', '')
         phase = signal.get('phase', 0)
+        nodealign = signal.get('nodealign', self.nodealign)
         period = 2*self.yheight*signal.get('period', 1) * self.hscale
 
         y1 = y0 + self.yheight
@@ -414,7 +416,9 @@ class TimingDiagram(Element):
             w, h, _ = text_size(node, size=self.nodesize)
             w, h = w*PTS_TO_UNITS*2.5, h*PTS_TO_UNITS*2.5
             ycenter = (y0+y1)/2
-            xnode = j*period + self.risetime/2 - period*phase
+            xnode = j*period - period*phase
+            if nodealign == 'signal':
+                 xnode += self.risetime/2
             if not node.isupper():  # Only uppercase nodes and symbols are drawn
                 self.segments.append(SegmentPoly([(xnode-w/2, ycenter-h/2), (xnode-w/2, ycenter+h/2),
                                                   (xnode+w/2, ycenter+h/2), (xnode+w/2, ycenter-h/2)],
@@ -426,6 +430,7 @@ class TimingDiagram(Element):
 
     def _drawedges(self):
         edges = self.wave.get('edge', [])  # type: ignore
+        signal = self.wave.get('signal', [])
         chrrad = self.nodesize / 60
         caplen = .1
         period = 2*self.yheight * self.hscale
@@ -442,10 +447,13 @@ class TimingDiagram(Element):
                 mode = edge[1:-1]
                 p0 = Point(self.anchors[f'node_{edge[0]}'])
                 pn = Point(self.anchors[f'node_{edge[-1]}'])
+                chrrad1 = 0 if edge[0].isupper() else chrrad
+                chrrad2 = 0 if edge[-1].isupper() else chrrad
 
             else:
                 # Extended node naming - [WaveNumber:Xposition]
                 assert len(nodes) == 2
+                chrrad1 = chrrad2 = 0
                 mode = re.subn(r'\[(.+?)\]', '', edge)[0]
                 endpoints = []
                 for node in nodes:
@@ -458,9 +466,19 @@ class TimingDiagram(Element):
                         ofst = -caplen*2
                     nodewave = nodewave.replace('^', '').replace('v', '')
                     wavenum = int(nodewave)
+                    try:
+                        phase = signal[wavenum].get('phase', 0)
+                        nodealign = signal[wavenum].get('nodealign', self.nodealign)
+                    except IndexError:
+                        phase = 0
+                        nodealign = self.nodealign
+
+                    nodex = nodet*period - period*phase
+                    if nodealign == 'signal':
+                        nodex += self.risetime/2
                     endpoints.append(
-                        Point((nodet*period+self.risetime/2,
-                               -wavenum*(self.yheight + self.ygap) + ofst)))
+                        Point((nodex, -wavenum*(self.yheight + self.ygap) + ofst))
+                    )
                 p0, pn = endpoints
 
             color = self.edgecolor
@@ -485,8 +503,8 @@ class TimingDiagram(Element):
             if mode == '-':  # Straight line
                 center = Point(((p0.x+pn.x)/2, (p0.y+pn.y)/2))
                 th0 = math.atan2((pn.y-p0.y), (pn.x-p0.x))
-                p0 = Point((p0.x + chrrad * math.cos(th0), p0.y + chrrad * math.sin(th0)))
-                pn = Point((pn.x - chrrad * math.cos(th0), pn.y - chrrad * math.sin(th0)))
+                p0 = Point((p0.x + chrrad1 * math.cos(th0), p0.y + chrrad1 * math.sin(th0)))
+                pn = Point((pn.x - chrrad2 * math.cos(th0), pn.y - chrrad2 * math.sin(th0)))
                 self.segments.append(Segment([p0, pn], lw=1, ls=ls, color=color,
                                              arrow=arrow, zorder=3))
 
@@ -505,8 +523,8 @@ class TimingDiagram(Element):
                 center = Point((p0.x, (p0.y+pn.y)/2))
                 dy = 1 if p0.y > pn.y else -1
                 dx = 1 if p0.x < pn.x else -1
-                p0 = p0 - Point((0, chrrad*dy))
-                pn = pn - Point((chrrad*dx, 0))
+                p0 = p0 - Point((0, chrrad1*dy))
+                pn = pn - Point((chrrad2*dx, 0))
                 p1 = Point((p0.x, pn.y))
                 self.segments.append(Segment((p0, p1, pn), lw=1, ls=ls, color=color, zorder=3, arrow=arrow))
 
@@ -514,8 +532,8 @@ class TimingDiagram(Element):
                 center = Point((pn.x, (p0.y+pn.y)/2))
                 dy = -1 if p0.y > pn.y else 1
                 dx = -1 if p0.x < pn.x else 1
-                p0 = p0 - Point((chrrad*dx, 0))
-                pn = pn - Point((0, chrrad*dy))
+                p0 = p0 - Point((chrrad1*dx, 0))
+                pn = pn - Point((0, chrrad2*dy))
                 p1 = Point((pn.x, p0.y))
                 self.segments.append(Segment((p0, p1, pn), lw=1, ls=ls, color=color, arrow=arrow, zorder=3))
 
@@ -525,13 +543,13 @@ class TimingDiagram(Element):
                 p0 = p0 + Point((chrrad*dx, 0))
                 p1 = Point((center.x, p0.y))
                 p2 = Point((center.x, pn.y))
-                pn = pn - Point((chrrad*dx, 0))
+                pn = pn - Point((chrrad1*dx, 0))
                 self.segments.append(Segment((p0, p1, p2, pn), lw=1, ls=ls, color=color, arrow=arrow, zorder=3))
 
             elif mode == '~':  # S-curve, start and end horizontally
                 center = Point(((p0.x+pn.x)/2, (p0.y+pn.y)/2))
-                p0 = p0 + Point((chrrad, 0))
-                p3 = pn - Point((chrrad, 0))
+                p0 = p0 + Point((chrrad1, 0))
+                p3 = pn - Point((chrrad2, 0))
                 dx = p3.x - p0.x
                 p1 = p0 + Point((dx*.6, 0))
                 p2 = p3 - Point((dx*.6, 0))
@@ -544,8 +562,8 @@ class TimingDiagram(Element):
                 p1 = p0 + Point((dx*.7, 0))
                 th0 = math.atan2((p1.y-p0.y), (p1.x-p0.x))
                 th2 = math.atan2((p1.y-pn.y), (p1.x-pn.x))
-                p0 = Point((p0.x + chrrad * math.cos(th0), p0.y + chrrad * math.sin(th0)))
-                pn = Point((pn.x - chrrad * math.cos(th0), pn.y + chrrad * math.sin(th2)))
+                p0 = Point((p0.x + chrrad1 * math.cos(th0), p0.y + chrrad1 * math.sin(th0)))
+                pn = Point((pn.x - chrrad2 * math.cos(th0), pn.y + chrrad2 * math.sin(th2)))
                 self.segments.append(SegmentBezier(
                     [p0, p1, pn], lw=1, ls=ls, color=color, arrow=arrow, zorder=3))
 
@@ -555,8 +573,8 @@ class TimingDiagram(Element):
                 p1 = pn - Point((dx*.6, 0))
                 th0 = math.atan2((p1.y-p0.y), (p1.x-p0.x))
                 th2 = math.atan2((p1.y-pn.y), (p1.x-pn.x))
-                p0 = Point((p0.x + chrrad * math.cos(th0), p0.y + chrrad * math.sin(th0)))
-                pn = Point((pn.x + chrrad * math.cos(th2), pn.y + chrrad * math.sin(th2)))
+                p0 = Point((p0.x + chrrad1 * math.cos(th0), p0.y + chrrad1 * math.sin(th0)))
+                pn = Point((pn.x + chrrad2 * math.cos(th2), pn.y + chrrad2 * math.sin(th2)))
                 self.segments.append(SegmentBezier(
                     [p0, p1, pn], lw=1, ls=ls, color=color, arrow=arrow, zorder=3))
 

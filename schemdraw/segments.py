@@ -36,10 +36,6 @@ def roundcorners(verts: Sequence[XY], radius: float = .5) -> Sequence[XY]:
         dx2 = p2[0]-p3[0]
         dy2 = p2[1]-p3[1]
 
-        angle = (math.atan2(dy1, dx1) - math.atan2(dy2, dx2))/2
-        tan = abs(math.tan(angle))
-        segment = radius/tan
-
         def getlength(x, y):
             return math.sqrt(x*x + y*y)
 
@@ -49,6 +45,15 @@ def roundcorners(verts: Sequence[XY], radius: float = .5) -> Sequence[XY]:
 
         length1 = getlength(dx1, dy1)
         length2 = getlength(dx2, dy2)
+
+        if length1 < 1e-10 or length2 < 1e-10:
+            continue  # Skip degenerate corner (duplicate vertices)
+
+        angle = (math.atan2(dy1, dx1) - math.atan2(dy2, dx2))/2
+        tan = abs(math.tan(angle))
+        if tan < 1e-10:
+            continue  # Skip degenerate corner (collinear/backtracking)
+        segment = radius/tan
         length = min(length1, length2)
 
         if segment > length:

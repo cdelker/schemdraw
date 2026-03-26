@@ -586,6 +586,8 @@ class Figure:
             et = ET.Element('g')
             imageelm = ET.fromstring(imgdat.decode())
             imgwidth = parse_size_to_px(imageelm.get('width', '0'))
+            if imgwidth == 0:
+                raise ValueError('SVG image has no valid width attribute; cannot scale.')
             s = width / imgwidth
             xform = f'translate({x0}, {y0}) scale({s})'
             if rotate:

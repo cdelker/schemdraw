@@ -1000,11 +1000,13 @@ class SegmentPath:
 
     def doreverse(self, centerx: float) -> None:
         ''' Reverse the path (flip horizontal about the center of the path) '''
-        #self.path = [util.mirrorx(p, centerx) for p in self.path[::-1]]
-        
+        self.path = [p if isinstance(p, str) else util.mirrorx(p, centerx)
+                     for p in self.path[::-1]]
+
     def doflip(self) -> None:
         ''' Vertically flip the element '''
-        #self.path = [util.flip(p) for p in self.path]
+        self.path = [p if isinstance(p, str) else util.flip(p)
+                     for p in self.path]
 
     def draw(self, fig, transform, **style) -> None:
         ''' Draw the segment

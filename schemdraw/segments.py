@@ -616,7 +616,7 @@ class SegmentCircle:
         
         # Asymmetric zoom makes circle into ellipse
         params.pop('ref', None)  # Not implemented in SegmentArc
-        return SegmentArc(self.center,
+        return SegmentArc(transform.transform(self.center),
                           width=self.radius*2*transform.zoom[0],
                           height=self.radius*2*transform.zoom[1],
                           angle=transform.theta,

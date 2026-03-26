@@ -16,6 +16,7 @@ from __future__ import annotations
 
 from typing import Optional
 from xml.etree import ElementTree as ET
+from xml.sax.saxutils import escape as xml_escape
 import string
 import re
 
@@ -195,12 +196,12 @@ def mathtextsvg(text: str) -> ET.Element:
                     chrs = ''.join([numsuperscripts[c] for c in chrs])
                     t = t.replace(sup, chrs)
                 else:
-                    t = t.replace(sup, f'<tspan baseline-shift="super" font-size="smaller">{chrs}</tspan>')
+                    t = t.replace(sup, f'<tspan baseline-shift="super" font-size="smaller">{xml_escape(chrs)}</tspan>')
         # Find superscripts single char
         sups = re.split(r'(\^.)', t)
         for sup in sups:
             if sup.startswith('^'):
-                t = t.replace(sup, f'<tspan baseline-shift="super" font-size="smaller">{sup[1]}</tspan>')
+                t = t.replace(sup, f'<tspan baseline-shift="super" font-size="smaller">{xml_escape(sup[1])}</tspan>')
 
         # Find subscripts within {}
         sups = re.split(r'(\_\{.*?\})', t)
@@ -211,24 +212,24 @@ def mathtextsvg(text: str) -> ET.Element:
                     chrs = ''.join([numsubscripts[c] for c in chrs])
                     t = t.replace(sup, chrs)
                 else:
-                    t = t.replace(sup, f'<tspan baseline-shift="-2" font-size="smaller">{chrs}</tspan>')
+                    t = t.replace(sup, f'<tspan baseline-shift="-2" font-size="smaller">{xml_escape(chrs)}</tspan>')
         # Find subscripts single char
         sups = re.split(r'(\_.)', t)
         for sup in sups:
             if sup.startswith('_'):
-                t = t.replace(sup, fr'<tspan baseline-shift="-2" font-size="smaller">{sup[1]}</tspan>')
+                t = t.replace(sup, f'<tspan baseline-shift="-2" font-size="smaller">{xml_escape(sup[1])}</tspan>')
 
         # \sqrt
         sups = re.split(r'(\\sqrt{.*})', t)
         for sup in sups:
             if sup.startswith(r'\sqrt{'):
-                t = t.replace(sup, fr'√\overline{{{sup[6:-1]}}}')
+                t = t.replace(sup, fr'√\overline{{{xml_escape(sup[6:-1])}}}')
 
         # \overline
         sups = re.split(r'(\\overline{.*})', t)
         for sup in sups:
             if sup.startswith(r'\overline{'):
-                t = t.replace(sup, f'<tspan text-decoration="overline">{sup[10:-1]}</tspan>')
+                t = t.replace(sup, f'<tspan text-decoration="overline">{xml_escape(sup[10:-1])}</tspan>')
         svgtext += t
 
     svgtext = '<tspan>' + svgtext + '</tspan>'

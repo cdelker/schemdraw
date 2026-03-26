@@ -38,8 +38,14 @@ jobs:
         run: |
           pip install .
           pip install ".[matplotlib,svgmath]"
-          pip install pytest nbval ipykernel
+          pip install pytest nbval ipykernel pytest-cov
           python -m ipykernel install --user
 
       - name: Run tests
-        run: python -m pytest --nbval-lax test/ -q
+        run: python -m pytest --nbval-lax --cov=schemdraw test/ -q
+
+      - name: Upload coverage to Codecov
+        if: matrix.python-version == '3.12'
+        uses: codecov/codecov-action@v5
+        with:
+          fail_ci_if_error: false

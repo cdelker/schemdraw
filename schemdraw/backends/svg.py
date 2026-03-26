@@ -262,7 +262,7 @@ class Figure:
         et = ET.Element('path')
         d = 'M {},{} '.format(*self.xform(x[0], y[0]))
         for xx, yy in zip(x[1:], y[1:]):
-            if str(xx) == 'nan' or str(yy) == 'nan':
+            if not (math.isfinite(xx) and math.isfinite(yy)):
                 d += 'M '
                 continue
             elif not d.endswith('M '):

@@ -348,13 +348,20 @@ class Drawing:
 
     def undo(self) -> None:
         ''' Removes previously added element '''
+        if not self.elements:
+            return
         self.elements.pop(-1)
-        self.fig.clear()  # type: ignore
-        for element in self.elements:
-            element._draw(self.fig)
-        self._here, self._theta = self.elements[-1].absdrop
-        self.fig.set_bbox(self.get_bbox())  # type: ignore
-        self.fig.getimage()  # type: ignore
+        if self.elements:
+            self._here, self._theta = self.elements[-1].absdrop
+        else:
+            self._here = Point((0, 0))
+            self._theta = 0
+        if self.fig is not None:
+            self.fig.clear()
+            for element in self.elements:
+                element._draw(self.fig)
+            self.fig.set_bbox(self.get_bbox())
+            self.fig.getimage()
 
     def move(self, dx: float = 0, dy: float = 0) -> None:
         ''' Move the current drawing position

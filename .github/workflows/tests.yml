@@ -15,7 +15,11 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install flake8
-      - name: Run flake8
+      # Non-blocking: existing codebase has pre-existing formatting
+      # warnings (whitespace, indentation, line length). These will
+      # be addressed in a future PR. Remove continue-on-error once
+      # the cleanup is done.
+      - name: Run flake8 (informational)
         run: flake8 schemdraw/
         continue-on-error: true
 

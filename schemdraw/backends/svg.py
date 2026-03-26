@@ -596,7 +596,6 @@ class Figure:
             image_b64 = base64.encodebytes(imgdat).decode()
             et = ET.Element('image')
             et.set('xlink:href', f'data:image/{imgfmt};base64,{image_b64}')
-            self.svgelements.append((zorder, et))
             self._need_xlink = True
 
             et.set('x', fmt(x0))

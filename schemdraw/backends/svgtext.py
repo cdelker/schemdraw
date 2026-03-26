@@ -219,13 +219,13 @@ def mathtextsvg(text: str) -> ET.Element:
                 t = t.replace(sup, fr'<tspan baseline-shift="-2" font-size="smaller">{sup[1]}</tspan>')
 
         # \sqrt
-        sups = re.split(r'(\\sqrt{.*})', t)
+        sups = re.split(r'(\\sqrt{.*?})', t)
         for sup in sups:
             if sup.startswith(r'\sqrt{'):
                 t = t.replace(sup, fr'√\overline{{{sup[6:-1]}}}')
 
         # \overline
-        sups = re.split(r'(\\overline{.*})', t)
+        sups = re.split(r'(\\overline{.*?})', t)
         for sup in sups:
             if sup.startswith(r'\overline{'):
                 t = t.replace(sup, f'<tspan text-decoration="overline">{sup[10:-1]}</tspan>')

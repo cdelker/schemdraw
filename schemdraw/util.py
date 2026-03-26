@@ -80,6 +80,8 @@ def dot(a: XY, b: Tuple[Tuple[float, float], Tuple[float, float]]) -> Point:
 
 def linspace(start: float, stop: float, num: int = 50) -> list[float]:
     ''' List of evenly spaced numbers '''
+    if num < 2:
+        return [start] if num == 1 else []
     step = (stop - start) / (num - 1)
     return [start+step*i for i in range(num)]
 

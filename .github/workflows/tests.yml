@@ -42,7 +42,7 @@ jobs:
           python -m ipykernel install --user
 
       - name: Run tests
-        run: python -m pytest --nbval-lax --cov=schemdraw test/ -q
+        run: python -m pytest --nbval-lax --cov=schemdraw --junitxml=junit.xml -o junit_family=legacy test/ -q
 
       - name: Upload coverage to Codecov
         if: matrix.python-version == '3.12'
@@ -50,3 +50,9 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: false
+
+      - name: Upload test results to Codecov
+        if: ${{ !cancelled() && matrix.python-version == '3.12' }}
+        uses: codecov/test-results-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}

@@ -2,7 +2,7 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/schemdraw.svg)](https://pypi.org/project/schemdraw/)
 [![Python versions](https://img.shields.io/pypi/pyversions/schemdraw.svg)](https://pypi.org/project/schemdraw/)
-[![Documentation Status](https://readthedocs.org/projects/schemdraw/badge/?version=latest)](https://schemdraw.readthedocs.io/en/latest/)
+[![Documentation Status](https://readthedocs.org/projects/schemdraw/badge/?version=stable)](https://schemdraw.readthedocs.io/en/stable/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 Schemdraw is a Python package for producing high-quality electrical circuit schematic diagrams. Circuit elements are added one at a time, similar to how you might draw them by hand, using Python methods to set placement and orientation.
@@ -55,16 +55,16 @@ with schemdraw.Drawing() as d:
 
 Elements are placed in a chain: each new element starts where the previous one ended. Use `.up()`, `.down()`, `.left()`, `.right()` to set direction. Use `.at()` and `.anchor()` for precise positioning.
 
-For more examples, see the [Gallery](https://schemdraw.readthedocs.io/en/latest/gallery/index.html).
+For more examples, see the [Gallery](https://schemdraw.readthedocs.io/en/stable/gallery/index.html).
 
 ## Documentation
 
 Full documentation is available at [schemdraw.readthedocs.io](https://schemdraw.readthedocs.io):
 
-- [Getting Started](https://schemdraw.readthedocs.io/en/latest/usage/start.html) -- installation and first circuit
-- [Placement & Positioning](https://schemdraw.readthedocs.io/en/latest/usage/placement.html) -- how elements connect
-- [Element Reference](https://schemdraw.readthedocs.io/en/latest/elements/electrical.html) -- all available components
-- [Gallery](https://schemdraw.readthedocs.io/en/latest/gallery/index.html) -- example circuits and diagrams
+- [Getting Started](https://schemdraw.readthedocs.io/en/stable/usage/start.html) -- installation and first circuit
+- [Placement & Positioning](https://schemdraw.readthedocs.io/en/stable/usage/placement.html) -- how elements connect
+- [Element Reference](https://schemdraw.readthedocs.io/en/stable/elements/electrical.html) -- all available components
+- [Gallery](https://schemdraw.readthedocs.io/en/stable/gallery/index.html) -- example circuits and diagrams
 
 ## Contributing
 

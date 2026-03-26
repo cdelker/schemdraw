@@ -339,7 +339,7 @@ class SegmentText:
             if params['rotation'] is None:
                 params['rotation'] = transform.theta
             else:
-                params['rotation'] = params['rotation'] + transform.theta % 360
+                params['rotation'] = (params['rotation'] + transform.theta) % 360
 
         return SegmentText(transform.transform(self.xy),
                            self.text, **params)
@@ -405,7 +405,7 @@ class SegmentText:
             if rotation is None:
                 rotation = transform.theta
             else:
-                rotation = rotation + transform.theta % 360
+                rotation = (rotation + transform.theta) % 360
 
         fig.text(self.text, xy[0], xy[1],
                  color=color, fontsize=fontsize, fontfamily=font, mathfont=mathfont,

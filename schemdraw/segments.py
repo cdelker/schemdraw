@@ -155,6 +155,8 @@ class Segment:
         hw = self.arrowwidth if self.arrow else 0
         x = [p[0] for p in self.path]
         y = [p[1] for p in self.path]
+        if not x:
+            return BBox(0, 0, 0, 0)
         return BBox(min(x), min(y)-hw, max(x), max(y)+hw)
 
     def doreverse(self, centerx: float) -> None:
@@ -506,6 +508,8 @@ class SegmentPoly:
         '''
         x = [p[0] for p in self.verts]
         y = [p[1] for p in self.verts]
+        if not x:
+            return BBox(0, 0, 0, 0)
         return BBox(min(x), min(y), max(x), max(y))
 
     def draw(self, fig, transform, **style) -> None:
@@ -996,6 +1000,8 @@ class SegmentPath:
         '''
         x = [p[0] for p in self.path if not isinstance(p, str)]
         y = [p[1] for p in self.path if not isinstance(p, str)]
+        if not x:
+            return BBox(0, 0, 0, 0)
         return BBox(min(x), min(y), max(x), max(y))
 
     def doreverse(self, centerx: float) -> None:

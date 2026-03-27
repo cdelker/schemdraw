@@ -306,19 +306,19 @@ The `k` parameter is used to set the distance before the wire first changes dire
 
    * - Shape Parameter
      - Description
-   * - `-`
+   * - ``-``
      - Direct Line
-   * - `-\|`
+   * - ``-|``
      - Horizontal then vertical
-   * - `\|-`
+   * - ``|-``
      - Vertical then horizontal
-   * - `n`
+   * - ``|-|`` or ``n``
      - Vertical-horizontal-vertical (like an n or u)
-   * - `c`
+   * - ``-|-`` or ``c``
      - Horizontal-vertical-horizontal (like a c or ↄ)
-   * - `z`
+   * - ``-/-`` or ``z``
      - Horizontal-diagonal-horizontal
-   * - `N`
+   * - ``|/|`` or ``N``
      - Vertical-diagonal-vertical
 
 .. jupyter-input::

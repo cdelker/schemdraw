@@ -245,7 +245,7 @@ class Wire(Element):
             self.segments.append(Segment([(0, 0), (0, dy), (dx, dy)], arrow=arrow))
             self.anchors['mid'] = (dx/2, dy)
             self.elmparams['droptheta'] = 0 if dx > 0 else 180
-        elif shape in ['z', 'Z']:
+        elif shape in ['z', 'Z', '-/-']:
             if dx > 0:
                 k = abs(k)
             else:
@@ -253,7 +253,7 @@ class Wire(Element):
             self.segments.append(Segment([(0, 0), (k, 0), (dx-k, dy), (dx, dy)], arrow=arrow))
             self.anchors['mid'] = (dx/2, dy/2)
             self.elmparams['droptheta'] = 0 if dx > 0 else 180
-        elif shape == 'N':
+        elif shape in ['N', '|/|']:
             if dy > 0:
                 k = abs(k)
             else:
@@ -261,11 +261,11 @@ class Wire(Element):
             self.segments.append(Segment([(0, 0), (0, k), (dx, dy-k), (dx, dy)], arrow=arrow))
             self.anchors['mid'] = (dx/2, dy/2)
             self.params['droptheta'] = 90 if dy > 0 else -90
-        elif shape == 'n':   # N-shape
+        elif shape in ['n', '|-|']:   # N-shape
             self.segments.append(Segment([(0, 0), (0, k), (dx, k), (dx, dy)], arrow=arrow))
             self.anchors['mid'] = (dx/2, k)
             self.params['droptheta'] = 90 if dy > k else -90
-        elif shape == 'c':   # C-shape
+        elif shape in ['c', '-|-']:   # C-shape
             self.segments.append(Segment([(0, 0), (k, 0), (k, dy), (dx, dy)], arrow=arrow))
             self.anchors['mid'] = (k, dy/2)
             self.params['droptheta'] = 0 if dx > k else 180

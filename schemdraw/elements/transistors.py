@@ -516,7 +516,7 @@ class _AnalogFet(Element):
     _element_defaults = {
         'bulk': False,
         'offset_gate': True,
-        'arrow': True
+        'source_arrow': True,
     }
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -529,7 +529,7 @@ class AnalogNFet(_AnalogFet):
         Args:
             bulk: Draw bulk contact
             offset_gate: Draw gate on the source side of the transistor, rather than middle
-            arrow: Draw source arrow on the transistor if bulk arrow is not drawn
+            source_arrow: Draw source arrow on the transistor if bulk arrow is not drawn
 
         Anchors:
             source
@@ -541,10 +541,10 @@ class AnalogNFet(_AnalogFet):
     def __init__(self, *,
                  bulk: Optional[bool] = None,
                  offset_gate: Optional[bool] = None,
-                 arrow: Optional[bool] = None,
+                 source_arrow: Optional[bool] = None,
                  **kwargs):
         super().__init__(**kwargs)
-        _arrow = self.params['arrow'] if not self.params['bulk'] else False
+        _arrow = self.params['source_arrow'] if not self.params['bulk'] else False
         self.segments.append(Segment([(0, 0), (0, -afetl), (afetw, -afetl),
                                       (afetw, -afetl - afeth), (0, -afetl - afeth),
                                       (0, -2 * afetl - afeth)]))
@@ -581,7 +581,7 @@ class AnalogPFet(_AnalogFet):
         Args:
             bulk: Draw bulk contact
             offset_gate: Draw gate on the source side of the transistor, rather than middle
-            arrow: Draw source arrow on the transistor if bulk arrow is not drawn
+            source_arrow: Draw source arrow on the transistor if bulk arrow is not drawn
 
         Anchors:
             source
@@ -593,10 +593,10 @@ class AnalogPFet(_AnalogFet):
     def __init__(self, *,
                  bulk: Optional[bool] = None,
                  offset_gate: Optional[bool] = None,
-                 arrow: Optional[bool] = None,
+                 source_arrow: Optional[bool] = None,
                  **kwargs):
         super().__init__(**kwargs)
-        _arrow = self.params['arrow'] if not self.params['bulk'] else False
+        _arrow = self.params['source_arrow'] if not self.params['bulk'] else False
         self.segments.append(Segment([(0, 0), (0, -afetl), (afetw, -afetl),
                                       (afetw, -afetl - afeth), (0, -afetl - afeth),
                                       (0, -2 * afetl - afeth)]))
@@ -631,7 +631,7 @@ class AnalogBiasedFet(_AnalogFet):
         Args:
             bulk: Draw bulk contact
             offset_gate: Draw gate on the source side of the transistor, rather than middle
-            arrow: Draw source dot on the transistor if bulk dot is not drawn
+            source_arrow: Draw source dot on the transistor if bulk dot is not drawn
 
         Anchors:
             source
@@ -643,10 +643,10 @@ class AnalogBiasedFet(_AnalogFet):
     def __init__(self, *,
                  bulk: Optional[bool] = None,
                  offset_gate: Optional[bool] = None,
-                 arrow: Optional[bool] = None,
+                 source_arrow: Optional[bool] = None,
                  **kwargs):
         super().__init__(**kwargs)
-        _arrow = self.params['arrow'] if not self.params['bulk'] else False
+        _arrow = self.params['source_arrow'] if not self.params['bulk'] else False
         self.segments.append(Segment([(0, 0), (0, -afetl), (afetw, -afetl),
                                       (afetw, -afetl - afeth), (0, -afetl - afeth),
                                       (0, -2 * afetl - afeth)]))
@@ -836,11 +836,11 @@ hemt_gap = (fetw + 2*fetr) / 5
 class Hemt(Element):
     _element_defaults = {
         'split': True,
-        'arrow': True,
+        'source_arrow': True,
         'arrowlength': .25,
         'arrowwidth': .2,
     }
-    def __init__(self, *, split: Optional[bool] = None, arrow: Optional[str] = None, **kwargs):
+    def __init__(self, *, split: Optional[bool] = None, source_arrow: Optional[str] = None, **kwargs):
         super().__init__(**kwargs)
         self.elmparams['ilabel'] = 'left'  # Draw current labels on this side
         if self.params['split']:
@@ -865,14 +865,14 @@ class Hemt(Element):
             [(fetw, -fetl-fetw/2),
              (fetw+fetl+fetr, -fetl-fetw/2)]))
 
-        if self.params['arrow'] == '>':
+        if self.params['source_arrow'] == '>':
             self.segments.append(Segment(
                 [(0, -fetl-fetw), (fetw, -fetl-fetw)],
                 arrow='->',
                 arrowlength=self.params['arrowlength'],
                 arrowwidth=self.params['arrowwidth']
                 ))
-        elif self.params['arrow']:
+        elif self.params['source_arrow']:
             self.segments.append(Segment(
                 [(0, -fetl-fetw), (fetw, -fetl-fetw)],
                 arrow='<-',

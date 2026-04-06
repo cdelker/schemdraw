@@ -315,7 +315,7 @@ class WaveV(Wave0):
         if self.params.get('data', None) and self.params.get('state', None) != 'x':
             segments.append(SegmentText((self.xtext, self.yhalf), self.params['data'][0],
                                         color=self.params['datacolor'],
-                                        fontsize=11, align=('center', 'center')))
+                                        fontsize=self.params['datasize'], align=('center', 'center')))
             self.params['data'].pop(0)
         return segments
 

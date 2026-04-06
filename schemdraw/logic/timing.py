@@ -107,6 +107,7 @@ class TimingDiagram(Element):
             ygap: Separation between two waveforms
             risetime: Rise/fall time for wave transitions
             fontsize: Size of label fonts
+            datafontsize: Size of data font
             nodesize: Size of node labels
             namecolor: Color for wave names
             datacolor: Color for wave data text
@@ -135,6 +136,7 @@ class TimingDiagram(Element):
         'ygap': 0.3,
         'risetime': 0.15,
         'fontsize': 12,
+        'datafontsize': 11,
         'nodesize': 8,
         'namecolor': 'blue',
         'datacolor': None,  # Inherit
@@ -152,6 +154,7 @@ class TimingDiagram(Element):
         self.ygap = self.params['ygap']
         self.risetime = self.params['risetime']
         self.fontsize = self.params['fontsize']
+        self.datasize = self.params['datafontsize']
         self.nodesize = self.params['nodesize']
         self.nodealign = self.params['nodealign']
         self.namecolor = self.params['namecolor']
@@ -271,6 +274,7 @@ class TimingDiagram(Element):
         wave = signal.get('wave', '')
         phase = signal.get('phase', 0)
         level = signal.get('level', '0')
+        datasize = signal.get('fontsize', self.datasize)
         waverise = signal.get('risetime', self.risetime)
         wavekwargs = ChainMap({'color': signal.get('color', None),
                                'lw': signal.get('lw', 1),
@@ -329,6 +333,7 @@ class TimingDiagram(Element):
                       'rise': waverise,
                       'data': data,
                       'datacolor': self.datacolor,
+                      'datasize': datasize,
                       'kwargs': wavekwargs}
 
             wavecls = self._wavelookup.get(state, WaveV)

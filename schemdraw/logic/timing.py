@@ -585,15 +585,10 @@ class TimingDiagram(Element):
                     [p0, p1, pn], lw=1, ls=ls, color=color, arrow=arrow, zorder=3))
 
             if label:
-                w, h, _ = text_size(label, size=self.nodesize)
-                w, h = w*PTS_TO_UNITS*1.5, h*PTS_TO_UNITS*1.5
-                self.segments.append(SegmentPoly([(center.x-w/2, center.y-h/2),
-                                                  (center.x-w/2, center.y+h/2),
-                                                  (center.x+w/2, center.y+h/2),
-                                                  (center.x+w/2, center.y-h/2)],
-                                     color='none', fill='bg', zorder=4))
                 self.segments.append(SegmentText(center, label, fontsize=self.nodesize,
-                                                 color=self.nodecolor, align=('center', 'center'),
+                                                 color=self.nodecolor,
+                                                 bgcolor='bg',
+                                                 align=('center', 'center'),
                                                  zorder=4))
 
     def _drawgroups(self, signals, labelwidth):

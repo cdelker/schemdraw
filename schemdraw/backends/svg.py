@@ -283,6 +283,7 @@ class Figure:
              rotation: float = 0,
              halign: Halign = 'center',
              valign: Valign = 'center',
+             bgcolor: Optional[str] = None,
              rotation_mode: RotationMode = 'anchor',
              clip: Optional[BBox] = None, zorder: int = 3,
              href: Optional[str] = None,
@@ -301,6 +302,29 @@ class Figure:
             # match MPL.
             nlines = len(s.splitlines())
             y0 -= (nlines-1)*fontsize
+
+        if bgcolor and bgcolor != 'none':
+            w, h, _ = text_size(s, font=fontfamily, size=fontsize)
+            w = w / self.scale
+            h = h /self.scale
+            pad = 2 / self.scale
+            if halign == 'center':
+                xverts = (x-w/2-pad, x+w/2+pad, x+w/2+pad, x-w/2-pad)
+            elif halign == 'left':
+                xverts = (x-pad, x-pad, x+w+pad, x+w+pad)
+            else:
+                xverts = (x-w-pad, x-w-pad, x+pad, x+pad)
+            if valign == 'center':
+                yverts = (y-h/2-pad, y-h/2-pad, y+h/2+pad, y+h/2+pad)
+            elif valign == 'top':
+                yverts = (y+pad, y+pad, y-h-pad, y-h-pad)
+            else:
+                yverts = (y-pad, y-pad, y+h+pad, y+h+pad)
+
+            self.poly(
+                list(zip(xverts, yverts)),
+                color='none', fill=bgcolor, zorder=zorder-1, clip=clip
+            )
 
         if ziamath and config.text == 'path':
             texttag = ET.Element('g')

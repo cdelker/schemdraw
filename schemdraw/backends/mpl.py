@@ -110,11 +110,18 @@ class Figure:
             self.addclip(p, clip)
 
     def text(self, s: str, x: float, y: float, color: str = 'black',
-             fontsize: float = 14, fontfamily: str = 'sans-serif',
-             mathfont: Optional[str] = None, rotation: float = 0,
-             halign: str = 'center', valign: str = 'center',
-             rotation_mode: str = 'anchor', clip: Optional[BBox] = None, zorder=3,
-             href: Optional[str] = None, decoration: Optional[str] = None) -> None:
+             fontsize: float = 14,
+             fontfamily: str = 'sans-serif',
+             mathfont: Optional[str] = None,
+             rotation: float = 0,
+             halign: str = 'center',
+             valign: str = 'center',
+             bgcolor: Optional[str] = None,
+             rotation_mode: str = 'anchor',
+             clip: Optional[BBox] = None,
+             zorder=3,
+             href: Optional[str] = None,
+             decoration: Optional[str] = None) -> None:
         ''' Add text to the figure '''
         valign = 'baseline' if valign == 'base' else valign
         if fontfamily.endswith('.ttf') or fontfamily.endswith('otf'):
@@ -123,11 +130,16 @@ class Figure:
             idx = [f.fname for f in font_manager.fontManager.ttflist].index(fontfamily)
             fontfamily = font_manager.fontManager.ttflist[idx].name
 
+        bbox = None
+        if bgcolor:
+            bbox = {'facecolor': bgcolor, 'pad': 2, 'edgecolor': 'none'}
+
         t = self.ax.text(x, y, s, transform=self.ax.transData, color=color,
                          fontsize=fontsize, fontfamily=fontfamily,
                          math_fontfamily=mathfont, linespacing=1,
                          rotation=rotation, rotation_mode=rotation_mode,
                          horizontalalignment=halign, verticalalignment=valign,
+                         bbox=bbox,
                          zorder=zorder, clip_on=False)
         self.addclip(t, clip)
 

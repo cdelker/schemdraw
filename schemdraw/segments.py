@@ -260,6 +260,7 @@ class SegmentText:
             rotation_mode: See Matplotlib documentation. 'anchor' or 'default'.
             rotation_global: Lock rotation to world rather than component. Defaults to True
             color: Color for this segment
+            bgcolor: Background color under the text
             fontsize: Font size
             font: Font name/family
             mathfont: Math font name/family
@@ -273,6 +274,7 @@ class SegmentText:
                  rotation_mode: Optional[RotationMode] = None,
                  rotation_global: bool = True,
                  color: Optional[str | tuple[float, float, float]] = None,
+                 bgcolor: Optional[str | tuple[float, float, float]] = None,
                  fontsize: float = 14,
                  font: Optional[str] = None,
                  mathfont: Optional[str] = None,
@@ -288,6 +290,7 @@ class SegmentText:
         self.mathfont = mathfont
         self.fontsize = fontsize
         self.color = color
+        self.bgcolor = bgcolor
         self.rotation = rotation
         self.rotation_mode = rotation_mode
         self.rotation_global = rotation_global
@@ -326,6 +329,7 @@ class SegmentText:
             'mathfont': self.mathfont if self.mathfont else style.get('mathfont', None),
             'fontsize': self.fontsize if self.fontsize else style.get('fontsize', style.get('size', None)),
             'color': self.color if self.color else style.get('color', None),
+            'bgcolor': self.bgcolor if self.bgcolor else None,
             'rotation': self.rotation if self.rotation else style.get('rotation', None),
             'rotation_mode': self.rotation_mode if self.rotation_mode else style.get('rotation_mode', None),
             'rotation_global': self.rotation_global,
@@ -393,6 +397,7 @@ class SegmentText:
             return
         xy = transform.transform(self.xy)
         color = self.color if self.color else style.get('color', 'black')
+        bgcolor = self.bgcolor if self.bgcolor != 'bg' else style.get('bgcolor', 'white')
         fontsize = self.fontsize if self.fontsize else style.get('fontsize', style.get('size', 14))
         font = self.font if self.font else style.get('font', 'sans-serif')
         mathfont = self.mathfont if self.mathfont else style.get('mathfont', None)
@@ -408,7 +413,8 @@ class SegmentText:
                 rotation = rotation + transform.theta % 360
 
         fig.text(self.text, xy[0], xy[1],
-                 color=color, fontsize=fontsize, fontfamily=font, mathfont=mathfont,
+                 color=color, bgcolor=bgcolor,
+                 fontsize=fontsize, fontfamily=font, mathfont=mathfont,
                  rotation=rotation, rotation_mode=rotmode,
                  halign=align[0], valign=align[1], clip=self.clip, zorder=zorder,
                  href=self.href, decoration=self.decoration)

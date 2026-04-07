@@ -115,7 +115,7 @@ def delta(a: XY, b: XY) -> Point:
 
 def angle(a: XY, b: XY) -> float:
     ''' Compute angle from point a to b '''
-    theta = math.degrees(math.atan2(b[1] - a[1], b[0] - a[0]))
+    theta = math.degrees(math.atan2(float(b[1]) - float(a[1]), float(b[0]) - float(a[0])))
     return theta
 
 

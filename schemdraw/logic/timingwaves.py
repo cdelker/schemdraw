@@ -121,7 +121,8 @@ class Wave0:
                  '0': [(self.x0, self.y0), (self.xrisehalf, self.yhalf), (self.xrise, self.y0)],
                  '1': [(self.x0, self.y1), (self.xrise, self.y0)],
                  'z': [(self.x0, self.yhalf), (self.xrisehalf, self.y0)],
-                 'V': [(self.xrise, self.y0)]
+                 'V': [(self.xrise, self.y0)],
+                 'Q': [(self.x0, self.y0)]
                  }.get(self.plevel, [])
         return verts
 
@@ -141,7 +142,7 @@ class WaveL(Wave0):
     '''
     def verts_in(self) -> list[tuple[float, float]]:
         ''' Get vertices for input transition '''
-        if self.params['pstate'] in 'pP':
+        if self.params['pstate'] in 'pPQ':
             return [(self.x0, self.y0)]
         else:
             return [(self.x0, self.y1), (self.x0, self.y0)]
@@ -174,8 +175,9 @@ class Wave1(Wave0):
                         else [(self.x0, self.y1), (self.xrisehalf, self.yhalf), (self.xrise, self.y1)]
                       ),
                  'z': [(self.x0, self.yhalf), (self.xrisehalf, self.y1)],
-                 'V': [(self.xrise, self.y1)]
-                 }.get(self.plevel)
+                 'V': [(self.xrise, self.y1)],
+                 'Q': [(self.x0, self.y0), (self.xrise, self.y1)]
+                 }.get(self.plevel, [])
         return verts
 
     def verts_out(self) -> list[tuple[float, float]]:
@@ -219,6 +221,7 @@ class Wavez(Wave0):
                  '0': list(zip(xcurve, ycurveflip)),
                  '1': list(zip(xcurve, ycurve)),
                  'z': [(self.x0, self.yhalf)],
+                 'Q': [(self.x0, self.y0), (self.x0+self.rise, self.yhalf)],
                  'V': [(self.xrise+self.rise, self.yhalf)],   # V gets curves on its output
                  }.get(self.plevel, [])
         return verts
@@ -240,6 +243,8 @@ class WaveV(Wave0):
                        (self.xrise, self.y0)],  # CCW
                  'V': [(self.xrise, self.y1), (self.xrisehalf, self.yhalf),
                        (self.xrise, self.y0)],  # CCW
+                 'Q': [(self.xrise, self.y1), (self.xrisehalf, self.yhalf),
+                       (self.xrise, self.y0)],
                  }.get(self.plevel, [])
         return verts
 
@@ -270,6 +275,7 @@ class WaveV(Wave0):
             'p': [(self.xend, self.y0), (self.xend, self.y1)],
             'N': [(self.xend, self.y0), (self.xend, self.y1)],
             'P': [(self.xend, self.y0), (self.xend, self.y1)],
+            'Q': [(self.xend, self.y0), (self.xend, self.y1)],
             }.get(nstate, [])
         return verts
 
@@ -333,6 +339,7 @@ class WaveU(Wave1):
                  '1': [(self.x0, self.y1)],
                  'z': list(zip(xcurve, ycurvehf)),
                  'V': [(self.xrise, self.y1)],   # V gets the curve on output
+                 'Q': [(self.xrise, self.y1)],   # V gets the curve on output
                  }.get(self.plevel, [])
         return verts
 
@@ -357,7 +364,8 @@ class WaveD(Wave0):
                  '0': [(self.x0, self.y0)],
                  '1': list(zip(xcurve, ycurve)),
                  'z': list(zip(xcurve, ycurveh)),
-                 'V': [(self.x0, self.y0)]
+                 'V': [(self.x0, self.y0)],
+                 'Q': [(self.x0, self.y0)]
                  }.get(self.plevel, [])
         return verts
 
@@ -385,7 +393,7 @@ class WaveClk(Wave0):
             verts.extend([(self.x0+period*p, yl), (self.x0+period*p, yh),
                           (self.x0+period*p+period/2, yh),
                           (self.x0+period*p+period/2, yl)])
-        if ((self.params['state'] in 'nN' and self.params['pstate'] in 'lL') or
+        if ((self.params['state'] in 'nN' and self.params['pstate'] in 'lLQ') or
            (self.params['state'] in 'pP' and self.params['pstate'] in 'hH')):
             verts = verts[1:]  # No blip at beginning
         return verts
@@ -414,4 +422,51 @@ class WaveClk(Wave0):
                 segments.append(Segment(
                     [(xcenter, ytail), (xcenter, yhead)], arrow='->',
                     arrowwidth=awidth, arrowlength=alength, **self.kwargs))
+        return segments
+
+
+class WaveQ(Wave0):
+    ''' Differential Clock wave section 'Q' '''
+    flip = False
+    def verts_in(self) -> list[tuple[float, float]]:
+        ''' Get vertices for input transition '''
+        period = self.params['period']
+        yh, yl = self.y1, self.y0
+        if self.flip:
+            yh, yl = yl, yh
+
+        verts = []
+        for p in range(self.params['periods']):
+            verts.extend([(self.x0+period*p, yl), (self.x0+period*p+self.rise, yh),
+                          (self.x0+period*p+period/2, yh),
+                          (self.x0+period*p+self.rise+period/2, yl)])
+        if self.pstate == 'z':
+            verts[0] = (self.x0, self.yhalf)
+        elif self.pstate in 'nN1h':
+            verts[0] = (self.x0, self.y1)
+
+
+        return verts
+
+    def verts_out(self) -> list[tuple[float, float]]:
+        ''' Get vertices for output transition '''
+        yh, yl = self.y1, self.y0
+        if self.flip:
+            yh, yl = yl, yh
+            verts = [(self.xend, yl)]
+            if self.nstate == 'z':
+                verts.append((self.xend+self.rise, self.yhalf))
+        else:
+            verts = [(self.xend, yl)]
+        return verts
+
+    def segments(self) -> list[SegmentType]:
+        segments = super().segments()
+        self.flip = True
+        verts = self.verts_in() + self.verts_out()
+        self.flip = False
+        kwargs = self.kwargs.copy()
+        kwargs['ls'] = ':'
+        kwargs['color'] = 'gray'
+        segments.append(Segment(verts, **kwargs))
         return segments

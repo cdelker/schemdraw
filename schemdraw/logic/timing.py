@@ -17,7 +17,7 @@ from ..backends.svg import text_size
 from ..types import BBox
 from ..util import Point
 from ..style import validate_color, validate_linestyle
-from .timingwaves import Wave0, Wave1, WaveL, WaveH, Wavez, WaveV, WaveU, WaveD, WaveClk, getsplit
+from .timingwaves import Wave0, Wave1, WaveL, WaveH, Wavez, WaveV, WaveU, WaveD, WaveQ, WaveClk, getsplit
 
 LabelInfo = namedtuple('LabelInfo', ['name', 'row', 'height', 'level'])
 
@@ -130,6 +130,7 @@ class TimingDiagram(Element):
                    'p': WaveClk,
                    'N': WaveClk,
                    'P': WaveClk,
+                   'Q': WaveQ,
                    }
     _element_defaults = {
         'yheight': 0.5,

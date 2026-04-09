@@ -205,8 +205,10 @@ class TimingDiagram(Element):
 
             if 'async' in signal:
                 self._drawasync(signal, y0)
+            elif 'wave' not in signal:
+                self._drawdata(signal, y0, periods)
             else:
-                self._drawwave(signal, y0=y0)
+                self._drawwave(signal, y0=y0, periods=periods)
             self._drawnodes(signal, y0=y0)
             y0 -= (self.yheight+self.ygap)
 
@@ -265,7 +267,7 @@ class TimingDiagram(Element):
                         fontsize=self.fontsize, color=self.namecolor))
         return text_size(name, size=self.fontsize)[0] * PTS_TO_UNITS
 
-    def _drawwave(self, signal, y0=0):
+    def _drawwave(self, signal, y0=0, periods=1):
         ''' Draw one wave.
 
             Args:
@@ -281,8 +283,12 @@ class TimingDiagram(Element):
                                'lw': signal.get('lw', 1),
                                'clip': self.kwargs.get('clip')})
         data = copy.copy(signal.get('data', []))
-        if not isinstance(data, list):
-            data = data.split()  # Sometimes it's a space-separated string...
+        if isinstance(data, str):
+            if data.startswith('{'):
+                data = data[1:-1].replace(',', ' ').split()
+                data = (data * periods)[:periods]
+            else:
+                data = data.split()
 
         if len(level) == 1:
             level = level * len(wave)
@@ -402,6 +408,27 @@ class TimingDiagram(Element):
             self.segments.extend(wavecls(params).segments())
             x = xend
             pstate = state
+
+    def _drawdata(self, signal, y0, periods):
+        ''' Draw data only '''
+        period = 2*self.yheight*signal.get('period', 1) * self.hscale
+        fontsize = signal.get('fontsize', self.datasize)
+        data = signal.get('data', [])
+        if isinstance(data, str):
+            if data.startswith('{'):
+                data = data[1:-1].replace(',', ' ').split()
+                data = (data * periods)[:periods]
+            else:
+                data = data.split()
+
+        for i, data in enumerate(data):
+            x = (i + 0.5) * period
+            self.segments.append(SegmentText(
+                (x, y0),
+                data,
+                color=self.params['datacolor'],
+                fontsize=fontsize,
+                align=('center', 'bottom')))
 
     def _drawnodes(self, signal, y0):
         ''' Draw nodes (labels along the wave) and define anchors for each

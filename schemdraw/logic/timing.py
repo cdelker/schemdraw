@@ -131,6 +131,7 @@ class TimingDiagram(Element):
                    'N': WaveClk,
                    'P': WaveClk,
                    'Q': WaveQ,
+                   'b': WaveQ,
                    }
     _element_defaults = {
         'yheight': 0.5,

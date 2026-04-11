@@ -122,7 +122,8 @@ class Wave0:
                  '1': [(self.x0, self.y1), (self.xrise, self.y0)],
                  'z': [(self.x0, self.yhalf), (self.xrisehalf, self.y0)],
                  'V': [(self.xrise, self.y0)],
-                 'Q': [(self.x0, self.y0)]
+                 'Q': [(self.x0, self.y0)],
+                 'b': [(self.x0, self.y0)]
                  }.get(self.plevel, [])
         return verts
 
@@ -176,7 +177,8 @@ class Wave1(Wave0):
                       ),
                  'z': [(self.x0, self.yhalf), (self.xrisehalf, self.y1)],
                  'V': [(self.xrise, self.y1)],
-                 'Q': [(self.x0, self.y0), (self.xrise, self.y1)]
+                 'Q': [(self.x0, self.y0), (self.xrise, self.y1)],
+                 'b': [(self.x0, self.y0), (self.xrise, self.y1)]
                  }.get(self.plevel, [])
         return verts
 
@@ -222,6 +224,7 @@ class Wavez(Wave0):
                  '1': list(zip(xcurve, ycurve)),
                  'z': [(self.x0, self.yhalf)],
                  'Q': [(self.x0, self.y0), (self.x0+self.rise, self.yhalf)],
+                 'b': [(self.x0, self.y0), (self.x0+self.rise, self.yhalf)],
                  'V': [(self.xrise+self.rise, self.yhalf)],   # V gets curves on its output
                  }.get(self.plevel, [])
         return verts
@@ -244,6 +247,8 @@ class WaveV(Wave0):
                  'V': [(self.xrise, self.y1), (self.xrisehalf, self.yhalf),
                        (self.xrise, self.y0)],  # CCW
                  'Q': [(self.xrise, self.y1), (self.xrisehalf, self.yhalf),
+                       (self.xrise, self.y0)],
+                 'b': [(self.xrise, self.y1), (self.xrisehalf, self.yhalf),
                        (self.xrise, self.y0)],
                  }.get(self.plevel, [])
         return verts
@@ -276,6 +281,7 @@ class WaveV(Wave0):
             'N': [(self.xend, self.y0), (self.xend, self.y1)],
             'P': [(self.xend, self.y0), (self.xend, self.y1)],
             'Q': [(self.xend, self.y0), (self.xend, self.y1)],
+            'b': [(self.xend, self.y0), (self.xend, self.y1)],
             }.get(nstate, [])
         return verts
 
@@ -340,6 +346,7 @@ class WaveU(Wave1):
                  'z': list(zip(xcurve, ycurvehf)),
                  'V': [(self.xrise, self.y1)],   # V gets the curve on output
                  'Q': [(self.xrise, self.y1)],   # V gets the curve on output
+                 'b': [(self.xrise, self.y1)],   # V gets the curve on output
                  }.get(self.plevel, [])
         return verts
 
@@ -365,7 +372,8 @@ class WaveD(Wave0):
                  '1': list(zip(xcurve, ycurve)),
                  'z': list(zip(xcurve, ycurveh)),
                  'V': [(self.x0, self.y0)],
-                 'Q': [(self.x0, self.y0)]
+                 'Q': [(self.x0, self.y0)],
+                 'b': [(self.x0, self.y0)]
                  }.get(self.plevel, [])
         return verts
 
@@ -426,7 +434,7 @@ class WaveClk(Wave0):
 
 
 class WaveQ(Wave0):
-    ''' Differential Clock wave section 'Q' '''
+    ''' Differential Clock wave section 'Q' or half-period bit '''
     flip = False
     def verts_in(self) -> list[tuple[float, float]]:
         ''' Get vertices for input transition '''
@@ -444,7 +452,6 @@ class WaveQ(Wave0):
             verts[0] = (self.x0, self.yhalf)
         elif self.pstate in 'nN1h':
             verts[0] = (self.x0, self.y1)
-
 
         return verts
 
@@ -466,7 +473,20 @@ class WaveQ(Wave0):
         verts = self.verts_in() + self.verts_out()
         self.flip = False
         kwargs = self.kwargs.copy()
-        kwargs['ls'] = ':'
-        kwargs['color'] = 'gray'
+        if self.params['state'] == 'Q':
+            kwargs['ls'] = ':'
+            kwargs['color'] = 'gray'
         segments.append(Segment(verts, **kwargs))
+
+        if self.params.get('data', None):
+            segments.append(SegmentText((self.x0+self.rise/2+self.params['period']/4, self.yhalf), self.params['data'][0],
+                                        color=self.params['datacolor'],
+                                        fontsize=self.params['datasize'], align=('center', 'center')))
+            self.params['data'].pop(0)
+        if self.params.get('data', None):
+            segments.append(SegmentText((self.x0+self.rise/2+self.params['period']*0.75, self.yhalf), self.params['data'][0],
+                                        color=self.params['datacolor'],
+                                        fontsize=self.params['datasize'], align=('center', 'center')))
+            self.params['data'].pop(0)
+
         return segments

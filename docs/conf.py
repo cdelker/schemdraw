@@ -23,7 +23,7 @@ import importlib
 # -- Project information -----------------------------------------------------
 
 project = 'Schemdraw'
-copyright = '2025, Collin J. Delker'
+copyright = '2026, Collin J. Delker'
 author = 'Collin J. Delker'
 
 # The full version, including alpha/beta/rc tags
@@ -38,8 +38,8 @@ release = importlib.metadata.version('schemdraw')
 extensions = [
     'jupyter_sphinx',
     'sphinx.ext.autodoc',
-    'sphinx.ext.autodoc.typehints',
     'sphinx.ext.napoleon',
+    'sphinx_autodoc_typehints',
     'sphinxcontrib.cairosvgconverter',
     'sphinx_design',
     'doc_element'

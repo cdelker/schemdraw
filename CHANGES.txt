@@ -1,3 +1,22 @@
+v0.23 - In Progress
+
+    Enhancements:
+        - Added BitField register diagrams compatible with WaveDROM syntax
+        - Fixed label alignment on flipped and/or reversed IC elements
+        - SVG backend implements rounding of coordinates to n (default 3) significant figures
+        - Prevent matplotlib window when `show` is False
+        - Renamed AnalogNFet and AnalogPFet arrow parameter to `source_arrow` to prevent naming clash
+        - Enhancements to TimingDiagram:
+            * Implement variable-height signals using `level` parameter
+            * Added `nodealign` parameter to align nodes to clock instead of risetime
+            * Added `fontsize` parameter to each signal
+            * Added differential clock `Q` waveform type
+            * Added half-period bit `b` waveform type
+            * Define shading of periods
+            * Allow signal with no wave, for drawing data text only
+            * Improve alignment of edge text and arrows
+
+
 v0.22 - 2025-11-30
 
     Enhancements:

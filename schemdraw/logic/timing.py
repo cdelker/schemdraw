@@ -213,6 +213,7 @@ class TimingDiagram(Element):
             y0 -= (self.yheight+self.ygap)
 
         self._drawedges()
+        self._drawshading(periods, len(signals_flat))
         self._drawgroups(signals, labelwidth)
 
         if head:
@@ -642,6 +643,46 @@ class TimingDiagram(Element):
                 SegmentText((xtext, ycenter), label.name, rotation=90,
                             align=('center', 'bottom'), color=self.namecolor,
                             fontsize=self.fontsize))
+
+    def _drawshading(self, periods, nsignals):
+        ''' Draw shading under certain periods '''
+        shading = self.wave.get('shade', [])
+        width = 2*self.yheight*self.hscale
+        signal_height = self.yheight + self.ygap
+        pad = .1
+
+        for shade in shading:
+            # Each item is a string with three values
+            # designating periods (x), signals (y), and color
+            try:
+                p, signals, color = shade.strip().split()
+            except ValueError as exc:
+                raise ValueError('shade string must have three values: periods, signals, color') from exc
+
+            validate_color(color)
+
+            for i in range(periods):
+                if str(i) in p.split(',') or (p == 'even' and i % 2 == 0) or (p == 'odd' and i % 2 != 0):
+
+                    x0 = i * width
+                    x1 = x0 + width
+                    if signals == '*':
+                        y0, y1 = self.yheight+pad, -signal_height * (nsignals-1) - pad
+                    else:
+
+                        try:
+                            sig1, sig2 = signals.split(':')
+                        except ValueError:
+                            raise ValueError('shade signal be two signal number integers separated by colon, such as (0:2)')
+                        y0 = self.yheight+pad -int(sig1) * signal_height
+                        y1 = -int(sig2) * signal_height - pad
+
+                    self.segments.append(
+                        SegmentPoly(((x0, y0), (x1, y0), (x1, y1), (x0, y1)),
+                                    color='none', fill=color,
+                                    zorder=0
+                            ))
+
 
     @classmethod
     def from_json(cls, wave: str, **kwargs):

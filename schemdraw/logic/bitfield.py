@@ -233,8 +233,8 @@ class BitField(Element):
                             # Determine whether to center the label within the bit
                             value1 = lane*bitsperlane + rowbit
                             value2 = lane*bitsperlane + rowbit + nbits-1
-                            center1 = value1 < 100 and bitwidth/2*scale > .22
-                            center2 = value2 < 100 and bitwidth/2*scale > .22
+                            center1 = value1 < 100 and bitwidth/2*scale > .28
+                            center2 = value2 < 100 and bitwidth/2*scale > .28
 
                             tickdx = dx * bitwidth/2*scale if center1 else 0.12
                             self.segments.append(

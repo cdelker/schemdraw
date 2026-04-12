@@ -177,6 +177,8 @@ class OutletF(OutletC):
         Anchors:
             * hot
             * neutral
+            * groundN
+            * groundS
     '''
     def __init__(self, plug: bool = False, **kwargs):
         super().__init__(plug=plug, **kwargs)
@@ -191,6 +193,8 @@ class OutletF(OutletC):
         self.segments.append(Segment(((-notchw, y2), (-notchw, y2+notchh),
                                       (notchw, y2+notchh), (notchw, y2)),
                                      fill=fill, zorder=3))
+        self.anchors["groundN"] = (0, _outletrad)
+        self.anchors["groundS"] = (0, -_outletrad)
 
 
 class OutletG(Element):

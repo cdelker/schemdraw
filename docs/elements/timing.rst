@@ -354,6 +354,34 @@ The `Signals` parameter may be an asterisk * to shade every signal row, or it ma
         })
 
 
+Titles
+******
+
+The `head` and `foot` dictionaries define items to display above and below the diagram, respectively.
+Titles or captions are added using the `text` key.
+Phases may be numbered using either `tick`, to number phases at the clock edge, or `tock` to number phases at their center, providing the starting value of the first phase.
+The `every` key defines which phases to number.
+
+.. jupyter-execute::
+
+    logic.TimingDiagram({
+        'signal': [
+            {'name': 'clk',    'wave': 'p....' },
+            {'name': 'Data',   'wave': 'x333x', 'data': 'a b c' },
+            {'name':' Enable', 'wave': '01..0' }
+        ],
+        'head': {
+            'text': 'Header Title',
+            'tick': 0,
+            'every': 2
+        },
+        'foot': {
+            'text': 'Footer Caption',
+            'tock': 10
+        },
+    })
+
+
 Configuration
 *************
 
@@ -447,7 +475,7 @@ The `reg` key is a list of bit groups within the register. Each item in the list
     * **name**: Text to display within the bit group
     * **bits**: Number of bits within the group
     * **attr**: Label to show below the group. May be a string, or integer. If integer, the binary representation is shown. May also be a list of multiple lines.
-    * **type**: 0-9 code to fill the bit group. Or may be any valid color string.
+    * **type**: 0-9 color code to fill the bit group. Or may be any valid color string.
 
 Schemdraw adds these parameters not available in the original WaveDrom:
     * **scale**: Scale factor for bit width in the group
@@ -480,7 +508,7 @@ Schemdraw's implementation has these known differences compared to WaveDrom:
     * vspace defines the full width of a register in pixels, without including any labels or padding
     * margins are ignored (but can be set by adding the BitField to a schemdraw Drawing)
 
-Examples are below, many borrowed from [here](https://observablehq.com/collection/@drom/bitfield).
+Examples are below, many borrowed from `here <(https://observablehq.com/collection/@drom/bitfield>`_.
 
 .. jupyter-execute::
 

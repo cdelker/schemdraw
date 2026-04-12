@@ -6,6 +6,7 @@ v0.23 - In Progress
         - SVG backend implements rounding of coordinates to n (default 3) significant figures
         - Prevent matplotlib window when `show` is False
         - Renamed AnalogNFet and AnalogPFet arrow parameter to `source_arrow` to prevent naming clash
+        - Added ground anchors to OutletF.
         - Enhancements to TimingDiagram:
             * Implement variable-height signals using `level` parameter
             * Added `nodealign` parameter to align nodes to clock instead of risetime

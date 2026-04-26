@@ -17,22 +17,32 @@ from ..backends.svg import text_size
 from ..types import BBox
 from ..util import Point
 from ..style import validate_color, validate_linestyle
-from .timingwaves import Wave0, Wave1, WaveL, WaveH, Wavez, WaveV, WaveU, WaveD, WaveQ, WaveClk, getsplit
+from .timingwaves import Wave0, Wave1, WaveL, WaveH, Wavez, WaveV, WaveU, WaveD, WaveC, WaveCbar, WaveClk, WaveQ, getsplit
 
 LabelInfo = namedtuple('LabelInfo', ['name', 'row', 'height', 'level'])
 
 PTS_TO_UNITS = 2/72
 
 
-def state_level(state: str, ud: bool = False, np: bool = False) -> str:
+def state_level(state: str, prev: bool = False) -> str:
     ''' Get level of wave state (0, 1, V, z, -) '''
-    state = re.sub(r'[2-9]|\=|x', 'V', state)
-    state = re.sub('u', '1', state)
-    state = re.sub('d', '0', state)
-    state = re.sub('n|N', '1', state)
-    state = re.sub('p|P', '0', state)
-    state = re.sub('l|L', '0', state)
-    state = re.sub('h|H', '1', state)
+    if state in 'c' and prev:
+        return '0'
+    if state in 'c':
+        return '1'
+    if state in 'C' and prev:
+        return '1'
+    if state in 'C':
+        return '0'
+
+    if state in '23456789=xb':
+        return 'V'  # Low and High
+    if state in '1unNhHQ':
+        return '1'
+    if state in '0dpPlLq':
+        return '0'
+    if state in 'z-':
+        return state
     return state
 
 
@@ -130,7 +140,10 @@ class TimingDiagram(Element):
                    'p': WaveClk,
                    'N': WaveClk,
                    'P': WaveClk,
+                   'c': WaveC,
+                   'C': WaveCbar,
                    'Q': WaveQ,
+                   'q': WaveQ,
                    'b': WaveQ,
                    }
     _element_defaults = {
@@ -330,8 +343,8 @@ class TimingDiagram(Element):
             params = {'state': state,
                       'pstate': pstate,
                       'nstate': nstate,
-                      'plevel': state_level(pstate),
-                      'nlevel': state_level(nstate),
+                      'plevel': state_level(pstate, prev=True),
+                      'nlevel': state_level(nstate, prev=False),
                       'periods': periods,
                       'period': period,
                       'x0': x,
@@ -393,8 +406,8 @@ class TimingDiagram(Element):
             params = {'state': state,
                       'pstate': pstate,
                       'nstate': nstate,
-                      'plevel': state_level(pstate),
-                      'nlevel': state_level(nstate),
+                      'plevel': state_level(pstate, prev=True),
+                      'nlevel': state_level(nstate, prev=False),
                       'periods': 0,
                       'period': period,
                       'x0': x,

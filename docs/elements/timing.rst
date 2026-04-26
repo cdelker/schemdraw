@@ -49,6 +49,8 @@ All the waveform types are shown below.
             {'name': 'p', 'wave': 'p.......'},
             {'name': 'N', 'wave': 'N.......'},
             {'name': 'P', 'wave': 'P.......'},
+            {'name': 'c', 'wave': 'c.......'},
+            {'name': 'C', 'wave': 'C.......'},
             {'name': '0, 1', 'wave': '0.1.0.1.'},
             {'name': 'l, L, h, H', 'wave': 'l.h.L.H.'},
             {'name': '2-9', 'wave': '23456789', 'data': '2 3 4 5 6 7 8 9'},
@@ -72,6 +74,8 @@ All the waveform types are shown below.
 +------------+------------------------------------+
 | P          | Inverted clock signal with arrows  |
 +------------+------------------------------------+
+| c, C [1]_  | Clock signals with rise time       |
++------------+------------------------------------+
 | 0          | Low state, with rise time          |
 +------------+------------------------------------+
 | 1          | High state, with rise time         |
@@ -94,7 +98,7 @@ All the waveform types are shown below.
 +------------+------------------------------------+
 | u          | High state with pull-up curve      |
 +------------+------------------------------------+
-| Q  [1]_    | Differential clock                 |
+| Q, q [1]_  | Differential clock                 |
 +------------+------------------------------------+
 | b  [1]_    | Half-period bit state              |
 +------------+------------------------------------+
@@ -297,6 +301,7 @@ Variable Voltage Levels
 Another Schemdraw extension [1]_ adds adjustable voltage levels within a signal using the `level` parameter.
 The value can take 10 different values, specified as digits in the `level` string, where a `1` corresponds to 10%, `2` to 20%, etc., with `0` meaning 100% of the normal high voltage level.
 As with the `wave` parameter, a period is used to repeat the previous level value.
+The level parameter only applies to wave type `1`.
 
 Here, the first pulse is 100%, the second at 50%, and the third at 20%.
 

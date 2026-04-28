@@ -133,7 +133,9 @@ class Wave0:
     def segments(self) -> list[SegmentType]:
         ''' Get segments for this wave section '''
         verts = self.verts_in() + self.verts_out()
-        return [Segment(verts, **self.kwargs)]
+        if verts:
+            return [Segment(verts, **self.kwargs)]
+        return []
 
 
 class WaveL(Wave0):
@@ -495,3 +497,15 @@ class WaveQ(WaveC):
             self.params['data'].pop(0)
 
         return segments
+
+
+class WaveE(Wave0):
+    ''' Empty wave section '''
+    def verts_in(self) -> list[tuple[float, float]]:
+        ''' Get vertices for input transition '''
+        return []
+
+    def verts_out(self) -> list[tuple[float, float]]:
+        ''' Get vertices for output transition '''
+        return []
+

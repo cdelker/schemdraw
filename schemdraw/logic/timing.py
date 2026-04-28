@@ -17,7 +17,7 @@ from ..backends.svg import text_size
 from ..types import BBox
 from ..util import Point
 from ..style import validate_color, validate_linestyle
-from .timingwaves import Wave0, Wave1, WaveL, WaveH, Wavez, WaveV, WaveU, WaveD, WaveC, WaveCbar, WaveClk, WaveQ, getsplit
+from .timingwaves import Wave0, Wave1, WaveL, WaveH, Wavez, WaveV, WaveU, WaveD, WaveC, WaveCbar, WaveClk, WaveQ, WaveE, getsplit
 
 LabelInfo = namedtuple('LabelInfo', ['name', 'row', 'height', 'level'])
 
@@ -41,6 +41,8 @@ def state_level(state: str, prev: bool = False) -> str:
         return '1'
     if state in '0dpPlLq':
         return '0'
+    if state in 'e':
+        return '-'
     if state in 'z-':
         return state
     return state
@@ -145,6 +147,7 @@ class TimingDiagram(Element):
                    'Q': WaveQ,
                    'q': WaveQ,
                    'b': WaveQ,
+                   'e': WaveE,
                    }
     _element_defaults = {
         'yheight': 0.5,
@@ -157,6 +160,8 @@ class TimingDiagram(Element):
         'datacolor': None,  # Inherit
         'nodecolor': None,  # Inherit
         'gridcolor': '#DDDDDD',
+        'gridlw': 1,
+        'gridls': ':',
         'edgecolor': 'blue',
         'tickcolor': '#888888',
         'grid': True,
@@ -176,6 +181,8 @@ class TimingDiagram(Element):
         self.datacolor = self.params['datacolor']  # default: get color from theme
         self.nodecolor = self.params['nodecolor']
         self.gridcolor = self.params['gridcolor']
+        self.gridlw = self.params['gridlw']
+        self.gridls = self.params['gridls']
         self.edgecolor = self.params['edgecolor']
         self.tickcolor = self.params['tickcolor']
         validate_color(self.namecolor)
@@ -272,7 +279,7 @@ class TimingDiagram(Element):
             self.segments.append(
                 Segment([(p*2*self.yheight*self.hscale, self.yheight+self.ygap/2),
                          (p*2*self.yheight*self.hscale, self.yheight-height)],
-                        ls=':', lw=1, color=self.gridcolor, zorder=0))
+                        ls=self.gridls, lw=self.gridlw, color=self.gridcolor, zorder=0))
 
     def _drawname(self, name, y0):
         ''' Draw name of one wave. Returns calculated unit width of the string. '''

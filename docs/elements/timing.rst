@@ -53,8 +53,9 @@ All the waveform types are shown below.
             {'name': 'C', 'wave': 'C.......'},
             {'name': '0, 1', 'wave': '0.1.0.1.'},
             {'name': 'l, L, h, H', 'wave': 'l.h.L.H.'},
-            {'name': '2-9', 'wave': '23456789', 'data': '2 3 4 5 6 7 8 9'},
+            {'name': '2-9, x', 'wave': '23456789x', 'data': '2 3 4 5 6 7 8 9 x'},
             {'name': 'z', 'wave': '0.z....1'},
+            {'name': 'W, w', 'wave': '0wW.w.W0'},
             {'name': 'd, u', 'wave': '1.d..u..'},
             {'name': 'Q, b', 'wave': 'Q..0.bbb'},
         ]}
@@ -88,7 +89,7 @@ All the waveform types are shown below.
 +------------+------------------------------------+
 | H          | High state with arrow              |
 +------------+------------------------------------+
-| 2-9, =     | Data states, with different colors |
+| 2-9        | Data states, with different colors |
 +------------+------------------------------------+
 | x          | Invalid or don't-care data state   |
 +------------+------------------------------------+
@@ -99,6 +100,8 @@ All the waveform types are shown below.
 | u          | High state with pull-up curve      |
 +------------+------------------------------------+
 | Q, q [1]_  | Differential clock                 |
++------------+------------------------------------+
+| W, w [1]_  | Differential signal                |
 +------------+------------------------------------+
 | b  [1]_    | Half-period bit state              |
 +------------+------------------------------------+

@@ -499,6 +499,57 @@ class WaveQ(WaveC):
         return segments
 
 
+class WaveW(Wave0):
+    ''' Differential Signal, like 2-9 with one state dashed line '''
+    def verts_1(self):
+        ''' Verts for top transition '''
+        if self.plevel in '1':
+            verts = [(self.x0, self.y1), (self.xend, self.y1), (self.xend+self.rise, self.y0)]
+        elif self.plevel in 'z':
+            verts = [(self.x0, self.yhalf), (self.xrise, self.y1), (self.xend, self.y1), (self.xend+self.rise, self.y0)]
+        else:
+            verts = [(self.x0, self.y0), (self.xrise, self.y1), (self.xend, self.y1), (self.xend+self.rise, self.y0)]
+
+        if self.nstate in 'zdnNpPhHlL':
+            verts.pop(-1)
+        return verts
+
+    def verts_2(self):
+        ''' Verts for low transition '''
+        if self.plevel in 'z':
+            p1 = [(self.x0, self.yhalf), (self.xrise, self.y0)]
+        elif self.plevel in '1V':
+            p1 = [(self.x0, self.y1), (self.xrise, self.y0)]
+        else:
+            p1 = [(self.x0, self.y0)] if self.pstate not in 'wW' else [(self.xrise, self.y0)]
+        p2 = [(self.xend+self.rise, self.y0)] if self.nstate not in 'wWzuHhNnPp' else [(self.xend, self.y0)]
+        return p1 + p2
+
+    def segments(self) -> list[SegmentType]:
+        verts1 = self.verts_1()
+        verts0 = self.verts_2()
+
+        segments = []
+        dashed_kwargs = self.kwargs.copy()
+        dashed_kwargs['ls'] = ':'
+        dashed_kwargs['color'] = 'gray'
+
+        if self.state in 'W':
+            segments.append(Segment(verts1, **dashed_kwargs))
+            segments.append(Segment(verts0, **self.kwargs))
+        else:
+            segments.append(Segment(verts1, **self.kwargs))
+            segments.append(Segment(verts0, **dashed_kwargs))
+
+        if self.params.get('data', None):
+            segments.append(
+                SegmentText((self.xcenter, self.yhalf), self.params['data'][0],
+                            color=self.params['datacolor'],
+                            fontsize=self.params['datasize'], align=('center', 'center')))
+            self.params['data'].pop(0)
+        return segments
+
+
 class WaveE(Wave0):
     ''' Empty wave section '''
     def verts_in(self) -> list[tuple[float, float]]:

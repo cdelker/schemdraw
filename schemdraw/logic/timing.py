@@ -17,7 +17,7 @@ from ..backends.svg import text_size
 from ..types import BBox
 from ..util import Point
 from ..style import validate_color, validate_linestyle
-from .timingwaves import Wave0, Wave1, WaveL, WaveH, Wavez, WaveV, WaveU, WaveD, WaveC, WaveCbar, WaveClk, WaveQ, WaveE, getsplit
+from .timingwaves import Wave0, Wave1, WaveL, WaveH, Wavez, WaveV, WaveU, WaveD, WaveC, WaveCbar, WaveClk, WaveQ, WaveE, WaveW, getsplit
 
 LabelInfo = namedtuple('LabelInfo', ['name', 'row', 'height', 'level'])
 
@@ -37,9 +37,9 @@ def state_level(state: str, prev: bool = False) -> str:
 
     if state in '23456789=xb':
         return 'V'  # Low and High
-    if state in '1unNhHQ':
+    if state in '1unNhHQw':
         return '1'
-    if state in '0dpPlLq':
+    if state in '0dpPlLqW':
         return '0'
     if state in 'e':
         return '-'
@@ -148,6 +148,8 @@ class TimingDiagram(Element):
                    'q': WaveQ,
                    'b': WaveQ,
                    'e': WaveE,
+                   'w': WaveW,
+                   'W': WaveW,
                    }
     _element_defaults = {
         'yheight': 0.5,

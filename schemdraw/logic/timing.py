@@ -434,6 +434,7 @@ class TimingDiagram(Element):
     def _drawdata(self, signal, y0, periods):
         ''' Draw data only '''
         period = 2*self.yheight*signal.get('period', 1) * self.hscale
+        phase = signal.get('phase', 0)
         fontsize = signal.get('fontsize', self.datasize)
         data = signal.get('data', [])
         if isinstance(data, str):
@@ -444,7 +445,7 @@ class TimingDiagram(Element):
                 data = data.split()
 
         for i, data in enumerate(data):
-            x = (i + 0.5) * period
+            x = (i + 0.5) * period + period*phase
             self.segments.append(SegmentText(
                 (x, y0),
                 data,

@@ -235,24 +235,27 @@ class BitField(Element):
                             value2 = lane*bitsperlane + rowbit + nbits-1
                             center1 = value1 < 100 and bitwidth/2*scale > .28
                             center2 = value2 < 100 and bitwidth/2*scale > .28
-
-                            tickdx = dx * bitwidth/2*scale if center1 else 0.12
-                            tickdx = tickdx if nbits > 2 else 0.02
+                            tickdx = dx*bitwidth/2*scale if center1 else dx*0.12
+                            if nbits == 2 and not center1:
+                                tickdx = dx*0.02
+                            halign = 'right' if dx > 0 else 'left'
                             self.segments.append(
                                 SegmentText((x0-tickdx, y+bitheight+lblofst),
                                             str(value1),
                                             fontsize=fontsize,
-                                            align=('center' if center1 else 'right', 'bottom')
+                                            align=('center' if center1 else halign, 'bottom')
                                             )
                             )
 
-                            tickdx = dx * bitwidth/2*scale if center2 else 0.12
-                            tickdx = tickdx if nbits > 2 else 0.02
+                            tickdx = dx*bitwidth/2*scale if center2 else dx*0.12
+                            if nbits == 2 and not center2:
+                                tickdx = dx*0.02
+                            halign = 'left' if dx > 0 else 'right'
                             self.segments.append(
                                 SegmentText((x+tickdx, y+bitheight+lblofst),
                                             str(value2),
                                             fontsize=fontsize,
-                                            align=('center' if center2 else 'left', 'bottom')
+                                            align=('center' if center2 else halign, 'bottom')
                                             )
                             )
                         else:

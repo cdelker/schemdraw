@@ -139,7 +139,7 @@ class Figure:
                          math_fontfamily=mathfont, linespacing=1,
                          rotation=rotation, rotation_mode=rotation_mode,
                          horizontalalignment=halign, verticalalignment=valign,
-                         bbox=bbox,
+                         bbox=bbox, url=href,
                          zorder=zorder, clip_on=False)
         self.addclip(t, clip)
 

@@ -237,6 +237,7 @@ class BitField(Element):
                             center2 = value2 < 100 and bitwidth/2*scale > .28
 
                             tickdx = dx * bitwidth/2*scale if center1 else 0.12
+                            tickdx = tickdx if nbits > 2 else 0.02
                             self.segments.append(
                                 SegmentText((x0-tickdx, y+bitheight+lblofst),
                                             str(value1),
@@ -246,6 +247,7 @@ class BitField(Element):
                             )
 
                             tickdx = dx * bitwidth/2*scale if center2 else 0.12
+                            tickdx = tickdx if nbits > 2 else 0.02
                             self.segments.append(
                                 SegmentText((x+tickdx, y+bitheight+lblofst),
                                             str(value2),

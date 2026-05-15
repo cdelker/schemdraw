@@ -227,6 +227,11 @@ class Wavez(Wave0):
                  'z': [(self.x0, self.yhalf)],
                  'V': [(self.xrisehalf, self.yhalf)] if self.pstate in 'b' else [(xcurve[-1], self.yhalf)],
                  }.get(self.plevel, [])
+        if self.pstate in 'wW':
+            if self.plevel in '-0':
+                verts = [(self.x0, self.y0), (self.x0+self.rise/2, self.yhalf)]
+            else:
+                verts = [(self.x0, self.y1), (self.x0+self.rise/2, self.yhalf)]
         return verts
 
     def verts_out(self) -> list[tuple[float, float]]:
@@ -473,11 +478,18 @@ class WaveQ(WaveC):
             dashed_kwargs['ls'] = ':'
             dashed_kwargs['color'] = 'gray'
         if self.state in 'Q':
-            segments.append(Segment(self.verts_in() + self.verts_out(), **dashed_kwargs))
+            verts = self.verts_in() + self.verts_out()
+            if self.nstate in '1pPu':
+                verts += [(self.xend+self.rise, self.y1)]
+            segments.append(Segment(verts, **dashed_kwargs))
             segments.append(Segment(w.verts_in()+w.verts_out(), **self.kwargs))
         else:
+            verts = w.verts_in() + w.verts_out()
+            if self.nstate in '0nNd':
+                verts += [(self.xend+self.rise, self.y0)]
             segments.append(Segment(self.verts_in() + self.verts_out(), **self.kwargs))
-            segments.append(Segment(w.verts_in()+w.verts_out(), **dashed_kwargs))
+            segments.append(Segment(verts, **dashed_kwargs))
+
         if self.nstate in 'qQz' or (self.state == 'b' and self.nstate in 'bcC23456789x='):
             segments.append(Segment(
                 [(self.xend, self.y1), (self.xend+self.rise/2, self.yhalf),
@@ -512,6 +524,13 @@ class WaveW(Wave0):
 
         if self.nstate in 'zdnNpPhHlL':
             verts.pop(-1)
+        if self.nstate in 'z':
+            verts.append((self.xend+self.rise/2, self.yhalf))
+        elif self.nstate in '-':
+            verts[-1] = (self.xend, self.y1)
+        if self.pstate in '-':
+            verts[0] = (self.x0, self.y1)
+
         return verts
 
     def verts_2(self):
@@ -522,7 +541,10 @@ class WaveW(Wave0):
             p1 = [(self.x0, self.y1), (self.xrise, self.y0)]
         else:
             p1 = [(self.x0, self.y0)] if self.pstate not in 'wW' else [(self.xrise, self.y0)]
+
         p2 = [(self.xend+self.rise, self.y0)] if self.nstate not in 'wWzuHhNnPp' else [(self.xend, self.y0)]
+        if self.nstate in 'z':
+            p2 = [(self.xend, self.y0), (self.xend+self.rise/2, self.yhalf)]
         return p1 + p2
 
     def segments(self) -> list[SegmentType]:

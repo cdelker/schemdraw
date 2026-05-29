@@ -15,7 +15,7 @@ from ..style import validate_color
 
 
 # Scale factors in terms of drawing units
-# INCH chosen to scale the dimensioned pictorial elements to 
+# INCH chosen to scale the dimensioned pictorial elements to
 # approximately the right size relative to other schemdraw elements
 INCH = 3.5  # Drawing units per inch
 MILLIMETER = INCH / 25.4   # Drawing units per millimeter
@@ -51,7 +51,7 @@ def resistor_colors(value: float,
         -1: 'gold',
         -2: 'silver',
         -3: 'pink'}
-    
+
     tol = {  # in percent
         1: 'brown',
         2: 'red',
@@ -68,7 +68,7 @@ def resistor_colors(value: float,
     mult = int(math.log10(value))-1  # Third band/multiplier
     base = value / 10**mult
     if base < 10:
-        mult-=1
+        mult -= 1
         base = value / 10**mult
     band1 = int(base / 10)
     band2 = int(base % 10)
@@ -128,22 +128,26 @@ class Resistor(ElementPictorial):
         stripe4 = .68
         stripew = .08
         c1, c2, c3, ct = resistor_colors(value, tolerance)
-        self.segments.append(SegmentPoly(((stripe1, h2), (stripe1, -h2),
-                                          (stripe1+stripew, -h2), (stripe1+stripew, h2)),
-                                          fill=c1, lw=.1, zorder=2))
+        self.segments.append(SegmentPoly(
+            ((stripe1, h2), (stripe1, -h2),
+             (stripe1+stripew, -h2), (stripe1+stripew, h2)),
+            fill=c1, lw=.1, zorder=2))
 
-        self.segments.append(SegmentPoly(((stripe2, h2), (stripe2, -h2),
-                                          (stripe2+stripew, -h2), (stripe2+stripew, h2)),
-                                          fill=c2, lw=.1, zorder=2))
+        self.segments.append(SegmentPoly(
+            ((stripe2, h2), (stripe2, -h2),
+             (stripe2+stripew, -h2), (stripe2+stripew, h2)),
+            fill=c2, lw=.1, zorder=2))
 
-        self.segments.append(SegmentPoly(((stripe3, h2), (stripe3, -h2),
-                                          (stripe3+stripew, -h2), (stripe3+stripew, h2)),
-                                          fill=c3, lw=.1, zorder=2))
+        self.segments.append(SegmentPoly(
+            ((stripe3, h2), (stripe3, -h2),
+             (stripe3+stripew, -h2), (stripe3+stripew, h2)),
+            fill=c3, lw=.1, zorder=2))
 
         if ct:
-            self.segments.append(SegmentPoly(((stripe4, h2), (stripe4, -h2),
-                                              (stripe4+stripew, -h2), (stripe4+stripew, h2)),
-                                              fill=ct, lw=.1, zorder=2))
+            self.segments.append(SegmentPoly(
+                ((stripe4, h2), (stripe4, -h2),
+                 (stripe4+stripew, -h2), (stripe4+stripew, h2)),
+                fill=ct, lw=.1, zorder=2))
 
 
 class Diode(ElementPictorial):
@@ -162,9 +166,12 @@ class Diode(ElementPictorial):
         validate_color(stripe_color)
 
         self.segments.append(Segment(((0, 0), (math.nan, math.nan), (w, 0))))  # 2-term endpoints
-        self.segments.append(SegmentPoly(((0, h), (w, h), (w, -h), (0, -h)), closed=True, lw=1, color='black', zorder=2))
-        self.segments.append(SegmentPoly(((stripex, h), (stripex+stripew, h), (stripex+stripew, -h), (stripex, -h)),
-                                          closed=True, lw=1, color='none', fill=stripe_color, zorder=2))
+        self.segments.append(SegmentPoly(
+            ((0, h), (w, h), (w, -h), (0, -h)),
+            closed=True, lw=1, color='black', zorder=2))
+        self.segments.append(SegmentPoly(
+            ((stripex, h), (stripex+stripew, h), (stripex+stripew, -h), (stripex, -h)),
+            closed=True, lw=1, color='none', fill=stripe_color, zorder=2))
 
 
 class LED(Element):
@@ -470,16 +477,23 @@ class DIP(Element):
         body_left = padx
         body_right = width-padx
         leadw = 5
-        
+
         for n in range(npins//2):
-            self.segments.append(Segment(((0, -n*PINSPACING), (body_left, -n*PINSPACING)), color=LEAD_COLOR, lw=leadw, zorder=1))
-            self.segments.append(Segment(((body_right, -n*PINSPACING), (body_right+padx, -n*PINSPACING)), color=LEAD_COLOR, lw=leadw, zorder=1))
+            self.segments.append(Segment(
+                ((0, -n*PINSPACING), (body_left, -n*PINSPACING)),
+                color=LEAD_COLOR, lw=leadw, zorder=1))
+            self.segments.append(Segment(
+                ((body_right, -n*PINSPACING), (body_right+padx, -n*PINSPACING)),
+                color=LEAD_COLOR, lw=leadw, zorder=1))
             self.anchors[f'pin{n+1}'] = (0, -n*PINSPACING)
             self.anchors[f'pin{npins-n}'] = (body_right+padx, -n*PINSPACING)
 
-        self.segments.append(SegmentPoly(((padx, pady), (body_right, pady),
-                                          (body_right, -pady-height), (padx, -pady-height)), fill=HOUSING_COLOR, lw=1, color='#444'))
-        self.segments.append(SegmentArc((center, pady), notch_r, notch_r, 180, 0, lw=1, color='#777', fill='#555'))
+        self.segments.append(SegmentPoly(
+            ((padx, pady), (body_right, pady),
+            (body_right, -pady-height), (padx, -pady-height)),
+            fill=HOUSING_COLOR, lw=1, color='#444'))
+        self.segments.append(SegmentArc(
+            (center, pady), notch_r, notch_r, 180, 0, lw=1, color='#777', fill='#555'))
 
         self.elmparams['lblloc'] = 'center'
         self.elmparams['lblrotate'] = True
@@ -511,12 +525,14 @@ class Breadboard(Element):
         validate_color(text_color)
 
         def hole(x, y):
-            self.segments.append(SegmentPoly(((x-outer_radius, y+outer_radius), (x+outer_radius, y+outer_radius),
-                                                (x+outer_radius, y-outer_radius)),
-                                                fill=True, color=shadow_color, lw=2))
-            self.segments.append(SegmentPoly(((x-inner_radius, y-inner_radius), (x-inner_radius, y+inner_radius),
-                                                (x+inner_radius, y+inner_radius), (x+inner_radius, y-inner_radius)),
-                                                fill=True, color=HOUSING_COLOR, lw=2))
+            self.segments.append(SegmentPoly(
+                ((x-outer_radius, y+outer_radius), (x+outer_radius, y+outer_radius),
+                (x+outer_radius, y-outer_radius)),
+                fill=True, color=shadow_color, lw=2))
+            self.segments.append(SegmentPoly(
+                ((x-inner_radius, y-inner_radius), (x-inner_radius, y+inner_radius),
+                (x+inner_radius, y+inner_radius), (x+inner_radius, y-inner_radius)),
+                fill=True, color=HOUSING_COLOR, lw=2))
 
         nrows = 30
         ncols = 5
@@ -541,7 +557,7 @@ class Breadboard(Element):
             for row in range(nrows):
                 if row % 6 == 0: continue
                 xy1 = x, y-row*PINSPACING
-                xy2 = x+PINSPACING, y-row*PINSPACING 
+                xy2 = x+PINSPACING, y-row*PINSPACING
                 hole(*xy1)
                 hole(*xy2)
                 self.anchors[f'L1_{row}'] = xy1
@@ -563,34 +579,49 @@ class Breadboard(Element):
         x = strip_w
         for col in range(ncols):
             colname = chr(ord('A')+col)
-            self.segments.append(SegmentText((x+col*PINSPACING, y+PINSPACING), colname,
-                                             fontsize=8, rotation_global=False, align=('center', 'center'),
-                                             color=text_color, zorder=1))
+            self.segments.append(SegmentText(
+                (x+col*PINSPACING, y+PINSPACING), colname,
+                fontsize=8, rotation_global=False, align=('center', 'center'),
+                color=text_color, zorder=1))
             for row in range(nrows):
                 xy = x+col*PINSPACING, y-row*PINSPACING
                 hole(*xy)
                 self.anchors[f'{colname}{row+1}'] = xy
-        
+
         for col in range(ncols):
             colname = chr(ord('F')+col)
-            self.segments.append(SegmentText((x+ PINSPACING*7+col*PINSPACING, y+PINSPACING), colname,
-                                             fontsize=8, rotation_global=False, align=('center', 'center'),
-                                             color=text_color, zorder=1))
+            self.segments.append(SegmentText(
+                (x+ PINSPACING*7+col*PINSPACING, y+PINSPACING), colname,
+                fontsize=8, rotation_global=False, align=('center', 'center'),
+                color=text_color, zorder=1))
             for row in range(nrows):
                 xy = x+ PINSPACING*7 + col*PINSPACING, y-row*PINSPACING
                 hole(*xy)
                 self.anchors[f'{colname}{row+1}'] = xy
-        
+
         # Number Labels
         for row in range(0, nrows):
-            self.segments.append(SegmentText((x-PINSPACING, y-row*PINSPACING-.04), str(row+1), fontsize=8,
-                                             rotation_global=False, align=('center', 'bottom'), color=text_color, zorder=1))
-            self.segments.append(SegmentText((x+PINSPACING*12, y-row*PINSPACING-.04), str(row+1), fontsize=8,
-                                             rotation_global=False, align=('center', 'bottom'), color=text_color, zorder=1))
-
+            self.segments.append(SegmentText(
+                (x-PINSPACING, y-row*PINSPACING-.04), str(row+1), fontsize=8,
+                rotation_global=False, align=('center', 'bottom'), color=text_color, zorder=1))
+            self.segments.append(SegmentText(
+                (x+PINSPACING*12, y-row*PINSPACING-.04), str(row+1), fontsize=8,
+                rotation_global=False, align=('center', 'bottom'), color=text_color, zorder=1))
 
         # Vertical dividing lines
-        self.segments.append(Segment(((left+edgepad*.4, top-PINSPACING*2), (left+edgepad*.4, top-height+PINSPACING)), color='red', lw=.5))
-        self.segments.append(Segment(((left+strip_w-edgepad*.4, top-PINSPACING*2), (left+strip_w-edgepad*.4, top-height+PINSPACING)), color='blue', lw=.5))
-        self.segments.append(Segment(((right-edgepad*.4, top-PINSPACING*2), (right-edgepad*.4, top-height+PINSPACING)), color='blue', lw=.5))
-        self.segments.append(Segment(((right-strip_w+edgepad*.4, top-PINSPACING*2), (right-strip_w+edgepad*.4, top-height+PINSPACING)), color='red', lw=.5))
+        self.segments.append(Segment(
+            ((left+edgepad*.4, top-PINSPACING*2),
+             (left+edgepad*.4, top-height+PINSPACING)),
+            color='red', lw=.5))
+        self.segments.append(Segment(
+            ((left+strip_w-edgepad*.4, top-PINSPACING*2),
+             (left+strip_w-edgepad*.4, top-height+PINSPACING)),
+            color='blue', lw=.5))
+        self.segments.append(Segment(
+            ((right-edgepad*.4, top-PINSPACING*2),
+             (right-edgepad*.4, top-height+PINSPACING)),
+            color='blue', lw=.5))
+        self.segments.append(Segment(
+            ((right-strip_w+edgepad*.4, top-PINSPACING*2),
+             (right-strip_w+edgepad*.4, top-height+PINSPACING)),
+            color='red', lw=.5))

@@ -63,6 +63,14 @@ IcBox = namedtuple('IcBox', 'w h y1 y2')
 
 
 class Ic(Element):
+    ''' Integrated Circuit - box with arbitrary pins and labels along each side
+
+        Args:
+            size: (width, height) in drawing units
+            pins: list of IcPin instances
+            slant: Angle to slant top/bottom of IC (ie for multiplexers)
+            pinspacing: spacing between pins, in drawing units
+    '''
     _element_defaults = {
         'pinspacing': 0.0,
         'edgepadH': 0.5,
@@ -73,6 +81,7 @@ class Ic(Element):
         'plblofst': 0.075,
         'plblsize': 11
     }
+
     def __init__(self,
                  size: Optional[XY] = None,
                  pins: Optional[Sequence[IcPin]] = None,
@@ -99,7 +108,7 @@ class Ic(Element):
                 side = cast(Side, pin.side[0].upper())
                 self.pins[side].append(pin)
 
-        self._icbox = IcBox(0,0,0,0)
+        self._icbox = IcBox(0, 0, 0, 0)
         self._setsize()
 
     def __getattr__(self, name: str) -> Any:
@@ -113,9 +122,9 @@ class Ic(Element):
         anchornames += [f'pin{p.pin}' for p in self.pins.get('R', [])]
         anchornames += [f'pin{p.pin}' for p in self.pins.get('T', [])]
         anchornames += [f'pin{p.pin}' for p in self.pins.get('B', [])]
-        if (name in anchornames and not name in vars(self).get('absanchors', {})):
-                # Not placed yet
-                drawing_stack.push_element(self)
+        if (name in anchornames and name not in vars(self).get('absanchors', {})):
+            # Not placed yet
+            drawing_stack.push_element(self)
 
         if name in vars(self).get('absanchors', {}):
             return vars(self).get('absanchors')[name]  # type: ignore
@@ -197,7 +206,7 @@ class Ic(Element):
 
     def _countpins(self) -> dict[Side, int]:
         ''' Count the number of pins (or slots) on each side '''
-        pincount = {}
+        pincount: dict[Side, int] = {}
         for side, pins in self.pins.items():
             slotnames = [p.slot for p in pins]
             # Add a 0 - can't max an empty list
@@ -253,7 +262,7 @@ class Ic(Element):
             length = self.size[0] if side in ['T', 'B'] else self.size[1]
             pad = sideparam.pad
             if sideparam.spacing == 0:
-                #use PAD to evenly space pins over (length-2*pad)
+                # use PAD to evenly space pins over (length-2*pad)
                 if self.pincount[side] > 1:
                     sideparam.spacing = (length - 2*pad) / (self.pincount[side] - 1)
                 else:
@@ -335,7 +344,7 @@ class Ic(Element):
         if pin.pin:
             self.anchors[f'pin{pin.pin}'] = anchorpos
 
-        # Lead        
+        # Lead
         if sidesetup.leadlen > 0:
             if pin.invert:  # Add invert-bubble
                 invertradius = pin.invertradius
@@ -366,13 +375,13 @@ class Ic(Element):
                           'T': ('left', 'bottom'),
                           'B': ('left', 'top')}.get(side))
 
-            if self._userparams.get('flip') and side in ['L', 'R']:
+            if pofst and self._userparams.get('flip') and side in ['L', 'R']:
                 pofst = pofst.flip()
-            if self._userparams.get('flip') and side in ['T', 'B']:
-                align = align[0], {'T': 'top', 'B': 'bottom'}.get(side)
-            if self._userparams.get('reverse') and side in ['L', 'R']:
-                align = {'L': 'left', 'R': 'right'}.get(side), align[1]
-            if self._userparams.get('reverse') and side in ['T', 'B']:
+            if align and self._userparams.get('flip') and side in ['T', 'B']:
+                align = align[0], cast(Valign, {'T': 'top', 'B': 'bottom'}.get(side))
+            if align and self._userparams.get('reverse') and side in ['L', 'R']:
+                align = cast(Halign, {'L': 'left', 'R': 'right'}.get(side)), align[1]
+            if pofst and self._userparams.get('reverse') and side in ['T', 'B']:
                 pofst = pofst.mirrorx()
 
             self.segments.append(SegmentText(
@@ -382,7 +391,7 @@ class Ic(Element):
                 fontsize=pin.pinlblsize if pin.pinlblsize is not None else sidesetup.pinlabel_size))
 
         if pin.name == '>':
-            self._drawclkpin(xy, leadext, side, pin, num)
+            self._drawclkpin(xy, leadext, side)
             return
 
         # Label (inside the box)
@@ -398,10 +407,10 @@ class Ic(Element):
                           'T': ('center', 'top'),
                           'B': ('center', 'bottom')}.get(side))
 
-            if self._userparams.get('flip') and side in ['T', 'B']:
-                align = align[0], {'T': 'bottom', 'B': 'top'}.get(side)
-            if self._userparams.get('reverse') and side in ['L', 'R']:
-                align = {'L': 'right', 'R': 'left'}.get(side), align[1]
+            if align and self._userparams.get('flip') and side in ['T', 'B']:
+                align = align[0], cast(Valign, {'T': 'bottom', 'B': 'top'}.get(side))
+            if align and self._userparams.get('reverse') and side in ['L', 'R']:
+                align = cast(Halign, {'L': 'right', 'R': 'left'}.get(side)), align[1]
 
             self.segments.append(SegmentText(
                 pos=xy+pofst,
@@ -412,22 +421,20 @@ class Ic(Element):
                 rotation=pin.rotation,
                 rotation_mode='default', href=pin.href, decoration=pin.decoration))
 
-    def _drawclkpin(self, xy: Point, leadext: Point,
-                    side: Side, pin: IcPin, num: int) -> None:
+    def _drawclkpin(self, xy: Point, leadext: Point, side: Side) -> None:
         ''' Draw clock pin > '''
         sidesetup = self.sides.get(side, self._dflt_side)
-        sidesetup.label_size
         clkw, clkh = 0.4 * sidesetup.label_size/16, 0.2 * sidesetup.label_size/16
         if side in ['T', 'B']:
             clkw = math.copysign(clkw, leadext[1]) if leadext[1] != 0 else clkw
             clkpath = [Point((xy[0]-clkh, xy[1])),
-                        Point((xy[0], xy[1]-clkw)),
-                        Point((xy[0]+clkh, xy[1]))]
+                       Point((xy[0], xy[1]-clkw)),
+                       Point((xy[0]+clkh, xy[1]))]
         else:
             clkw = math.copysign(clkw, -leadext[0]) if leadext[0] != 0 else clkw
             clkpath = [Point((xy[0], xy[1]+clkh)),
-                        Point((xy[0]+clkw, xy[1])),
-                        Point((xy[0], xy[1]-clkh))]
+                       Point((xy[0]+clkw, xy[1])),
+                       Point((xy[0], xy[1]-clkh))]
         self.segments.append(Segment(clkpath))
 
     def _drawpins(self) -> None:
@@ -465,7 +472,7 @@ class Multiplexer(Ic):
             pins: List of IcPin instances defining the inputs/outputs
             slant: Slant angle of top/bottom edges
 
-        Keyword Args:            
+        Keyword Args:
             pinspacing: Spacing between pins [default: 0.6]
             edgepadH: Padding between top/bottom and first pin [default: 0.25]
             edgepadW: Padding between left/right and first pin [default: 0.25]
@@ -633,7 +640,7 @@ class JKFlipFlop(Ic):
         Args:
             preclr: Show preset and clear inputs
             preclrinvert: Add invert bubble to preset and clear inputs
-            
+
         Keyword Args:
             size: Size of the box [default: (2, 3)]
 
@@ -685,6 +692,7 @@ class VoltageRegulator(Ic):
 
 
 class Ic555(Ic):
+    ''' 555 Timer IC '''
     _element_defaults = {
         'edgepadW': 0.5,
         'edgepadH': 1,

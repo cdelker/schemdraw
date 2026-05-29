@@ -166,7 +166,7 @@ class Wave1(Wave0):
     ''' Wave section in high state - `1` '''
     def verts_in(self):
         ''' Get vertices for input transition '''
-        v1 = [(self.x0, self.y1_prev), (self.xrisehalf, self.yhalf), (self.xrise, self.y1)] if self.pstate in '1hH' else [(self.x0, self.y1)],
+        v1 = [(self.x0, self.y1_prev), (self.xrisehalf, self.yhalf), (self.xrise, self.y1)] if self.pstate in '1hH' else [(self.x0, self.y1)]
         if self.pstate in '1hH':
             if self.y1_prev != self.y1:
                 v1 = [(self.x0, self.y1_prev), (self.xrise, self.y1)]
@@ -258,9 +258,7 @@ class WaveV(Wave0):
         ''' Get vertices for output transition '''
         xcurve, yexp = expcurve((self.y1-self.y0))
         xcurve = [self.xend+xc*self.rise*6 for xc in xcurve]
-        ycurve = [self.y0+yc for yc in yexp]      # Exp fall
         ycurveh = [self.y0+yc/2 for yc in yexp]   # Half exp fall
-        ycurvef = [self.y1-yc for yc in yexp]     # Flipped
         ycurvehf = [self.y1-yc/2 for yc in yexp]  # Flipped half
         verts = {
             '0': [(self.xend+self.rise, self.y0), (self.xend, self.y1)],  # Fall
@@ -469,9 +467,8 @@ class WaveCbar(Wave0):
 
 class WaveQ(WaveC):
     ''' Differential Clock wave section 'Q' or half-period bit '''
-
     def segments(self) -> list[SegmentType]:
-        segments = []
+        segments: list[SegmentType] = []
         w = WaveCbar(self.params)
         dashed_kwargs = self.kwargs.copy()
         if self.state not in 'b':
@@ -498,14 +495,16 @@ class WaveQ(WaveC):
             segments.append(Segment([(self.xend, self.y0), (self.xend+self.rise, self.y0)], **self.kwargs))
 
         if self.params.get('data', None):
-            segments.append(SegmentText((self.x0+self.rise/2+self.params['period']/4, self.yhalf), self.params['data'][0],
-                                        color=self.params['datacolor'],
-                                        fontsize=self.params['datasize'], align=('center', 'center')))
+            segments.append(SegmentText(
+                (self.x0+self.rise/2+self.params['period']/4, self.yhalf), self.params['data'][0],
+                color=self.params['datacolor'],
+                fontsize=self.params['datasize'], align=('center', 'center')))
             self.params['data'].pop(0)
         if self.params.get('data', None):
-            segments.append(SegmentText((self.x0+self.rise/2+self.params['period']*0.75, self.yhalf), self.params['data'][0],
-                                        color=self.params['datacolor'],
-                                        fontsize=self.params['datasize'], align=('center', 'center')))
+            segments.append(SegmentText(
+                (self.x0+self.rise/2+self.params['period']*0.75, self.yhalf), self.params['data'][0],
+                color=self.params['datacolor'],
+                fontsize=self.params['datasize'], align=('center', 'center')))
             self.params['data'].pop(0)
 
         return segments
@@ -551,7 +550,7 @@ class WaveW(Wave0):
         verts1 = self.verts_1()
         verts0 = self.verts_2()
 
-        segments = []
+        segments: list[SegmentType] = []
         dashed_kwargs = self.kwargs.copy()
         dashed_kwargs['ls'] = ':'
         dashed_kwargs['color'] = 'gray'
@@ -581,4 +580,3 @@ class WaveE(Wave0):
     def verts_out(self) -> list[tuple[float, float]]:
         ''' Get vertices for output transition '''
         return []
-

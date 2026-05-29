@@ -4,7 +4,7 @@ from typing import Optional
 from functools import partial
 
 from ..types import Point, Linestyle
-from ..segments import Segment, SegmentText, Segment
+from ..segments import Segment, SegmentText
 from .compound import ElementCompound
 from .elements import Element2Term, LabelHint
 from .lines import Line, Rect, Gap, CurrentLabelInline
@@ -44,7 +44,9 @@ class ElementTwoport(ElementCompound):
                  output_element: type[Element2Term],
                  boxpadx: float = .2, boxpady: float = .2, minw: float = .5,
                  terminals: bool = True, unit: float = 1.5, width: float = 2.15,
-                 box: bool = True, boxfill: Optional[str] = None, boxlw: Optional[float] = None, boxls: Optional[Linestyle] = None, **kwargs):
+                 box: bool = True, boxfill: Optional[str] = None,
+                 boxlw: Optional[float] = None, boxls: Optional[Linestyle] = None,
+                 **kwargs):
         self.input_element = input_element
         self.output_element = output_element
         self.boxpadx = boxpadx

@@ -84,4 +84,3 @@ class Opamp(Element):
         self._labelhints['n1a'] = LabelHint(ofst=(-.1, -.3), halign='right', valign='top', fontsize=9)
         self._labelhints['n2'] = LabelHint(ofst=(-.1, .25), halign='right', valign='bottom', fontsize=9)
         self._labelhints['n2a'] = LabelHint(ofst=(-.1, .3), halign='right', valign='bottom', fontsize=9)
-

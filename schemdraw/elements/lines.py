@@ -24,7 +24,8 @@ class Line(Element2Term):
     '''
     _element_defaults = {
         'arrowwidth': 0.15,
-        'arrowlength': 0.25}
+        'arrowlength': 0.25
+    }
     def __init__(self, *, arrow: Optional[str] = None, **kwargs):
         super().__init__(**kwargs)
         arrowwidth: float = self.params['arrowwidth']
@@ -97,7 +98,8 @@ class Dot(Element):
     '''
     _element_defaults = {
         'radius': 0.075,
-        'open': False}
+        'open': False
+    }
     def __init__(self, *,
                  radius: Optional[float] = None,
                  open: Optional[bool] = None,
@@ -116,7 +118,7 @@ class Dot(Element):
 
 class Arrowhead(Element):
     ''' Arrowhead 
-    
+
         Args:
             headwidth: width of arrow head [default: .15]
             headlength: length of arrow head [default: .25]
@@ -129,7 +131,7 @@ class Arrowhead(Element):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         headwidth = self.params['headwidth']
-        headlength = self.params['headlength'] 
+        headlength = self.params['headlength']
         self.segments.append(Segment([
             (-headlength, 0), (0, 0)], arrowwidth=headwidth, arrowlength=headlength, arrow='->'))
         self.anchors['start'] = (0, 0)
@@ -840,7 +842,7 @@ class CurrentLabel(Element):
                 pos = Point(((bbox.xmin, (bbox.ymax + bbox.ymin)/2)))
                 self.elmparams['lblloc'] = 'top'
                 theta += 90
-            
+
             pos = xy.transform.transform(pos)
             self._side = side
             super().at(pos)
@@ -1055,7 +1057,7 @@ class ZLabel(Element):
             self._position()
 
         a = Point((-self.params['hofst'], self.params['ofst']))
-        b = Point((-self.params['hofst']-self.params['lengthtip'], 
+        b = Point((-self.params['hofst']-self.params['lengthtip'],
                    self.params['ofst']))
         c = Point((-self.params['hofst']-self.params['lengthtip'],
                    self.params['ofst']-self.params['length']))

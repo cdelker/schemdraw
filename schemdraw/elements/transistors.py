@@ -44,8 +44,7 @@ class _Mosfet(Element):
                  **kwargs):
         if variant not in self.__variants:
             raise ValueError(
-                "Parameter 'variant' must be one of {}, not {}.".format(
-                    self.__variants, variant))
+                f"Parameter 'variant' must be one of {self.__variants}, not {variant}.")
 
         super().__init__(**kwargs)
         self.elmparams['ilabel'] = 'right'  # Draw current labels on this side
@@ -55,25 +54,25 @@ class _Mosfet(Element):
             Segment([(-3*u, -6.5*u), (-3*u, -7.5*u)]),
             Segment([(-3*u, -9.5*u), (-3*u, -10.5*u)]),
             Segment([(-3*u, -12.5*u), (-3*u, -13.5*u)]),
-            ])
+        ])
 
         # top lead
         self.segments.extend([
             Segment([(0, -7*u), (0, 0)]),
             Segment([(-3*u, -7*u), (0, -7*u)]),
-            ])
+        ])
 
         # bottom lead
         self.segments.extend([
             Segment([(0, -20*u), (0, -13*u)]),
             Segment([(-3*u, -13*u), (0, -13*u)]),
-            ])
+        ])
 
         if variant == 'nmos':
             # gate
             self.segments.extend([
-            Segment([(-10*u, -14*u), (-5*u, -14*u)]),
-            Segment([(-5*u, -14*u), (-5*u, -6*u)]),
+                Segment([(-10*u, -14*u), (-5*u, -14*u)]),
+                Segment([(-5*u, -14*u), (-5*u, -6*u)]),
             ])
             # source
             self.segments.extend([
@@ -81,7 +80,7 @@ class _Mosfet(Element):
                     [(-3*u, -10*u), (0, -10*u)],
                     arrow='<-', arrowwidth=2*u, arrowlength=2*u),
                 Segment([(0, -10*u), (0, -13*u)]),
-                ])
+            ])
 
             self.anchors['drain'] = (0, 0)
             self.anchors['gate'] = (-10*u, -14*u)
@@ -197,8 +196,7 @@ class _Mosfet2(Element2Term):
                  **kwargs):
         if variant not in self.__variants:
             raise ValueError(
-                "Parameter 'variant' must be one of {}, not {}.".format(
-                    self.__variants, variant))
+                f"Parameter 'variant' must be one of {self.__variants}, not {variant}.")
 
         super().__init__(**kwargs)
         self.variant = variant
@@ -728,8 +726,10 @@ class JFetN(JFet):
     '''
     def __init__(self, *, circle: Optional[bool] = None, **kwargs):
         super().__init__(circle=circle, **kwargs)
-        self.segments.append(Segment([(jfetw+.1, -fetl-jfetw), (jfetw+.3, -fetl-jfetw)],
-                                     arrow='->', arrowwidth=self.params['arrowwidth'], arrowlength=self.params['arrowlength']))
+        self.segments.append(Segment(
+            [(jfetw+.1, -fetl-jfetw), (jfetw+.3, -fetl-jfetw)],
+            arrow='->', arrowwidth=self.params['arrowwidth'],
+            arrowlength=self.params['arrowlength']))
 
 
 class JFet2(Element2Term):
@@ -834,6 +834,14 @@ hemt_gap = (fetw + 2*fetr) / 5
 
 
 class Hemt(Element):
+    ''' HEMT Transistor
+
+        Args:
+            split: Split the transistor
+            source_arrow: Draw arrow at the source
+            arrowlength: Length of source arrow
+            arrowwidth: Width of source arrow
+    '''
     _element_defaults = {
         'split': True,
         'source_arrow': True,
@@ -846,21 +854,21 @@ class Hemt(Element):
         if self.params['split']:
             self.segments.append(Segment(
                 [(0, 0), (0, -fetl), (fetw, -fetl),
-                  gap,
-                  (fetw, -fetl+fetr), (fetw, -fetl+fetr-hemt_gap), gap,
-                  (fetw, -fetl+fetr-2*hemt_gap), (fetw, -fetl+fetr-3*hemt_gap), gap,
-                  (fetw, -fetl+fetr-4*hemt_gap), (fetw, -fetl+fetr-5*hemt_gap), gap,
-                  (fetw, -fetl-fetw),
-                  (0, -fetl-fetw),
-                  (0, -2*fetl-fetw)]))
+                 gap,
+                 (fetw, -fetl+fetr), (fetw, -fetl+fetr-hemt_gap), gap,
+                 (fetw, -fetl+fetr-2*hemt_gap), (fetw, -fetl+fetr-3*hemt_gap), gap,
+                 (fetw, -fetl+fetr-4*hemt_gap), (fetw, -fetl+fetr-5*hemt_gap), gap,
+                 (fetw, -fetl-fetw),
+                 (0, -fetl-fetw),
+                 (0, -2*fetl-fetw)]))
         else:
             self.segments.append(Segment(
                 [(0, 0), (0, -fetl), (fetw, -fetl),
-                  gap, (fetw, -fetl+fetr),
-                  (fetw, -fetl-fetw-fetr),
-                  gap, (fetw, -fetl-fetw),
-                  (0, -fetl-fetw),
-                  (0, -2*fetl-fetw)]))
+                 gap, (fetw, -fetl+fetr),
+                 (fetw, -fetl-fetw-fetr),
+                 gap, (fetw, -fetl-fetw),
+                 (0, -fetl-fetw),
+                 (0, -2*fetl-fetw)]))
         self.segments.append(Segment(
             [(fetw, -fetl-fetw/2),
              (fetw+fetl+fetr, -fetl-fetw/2)]))

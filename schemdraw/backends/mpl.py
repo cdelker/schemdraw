@@ -144,8 +144,10 @@ class Figure:
         self.addclip(t, clip)
 
     def poly(self, verts: Sequence[XY], closed: bool = True,
-             color: str = 'black', fill: Optional[str] = None, lw: float = 2, ls: Linestyle = '-', hatch: bool = False,
-             capstyle: Capstyle = 'round', joinstyle: Joinstyle = 'round', clip: Optional[BBox] = None, zorder: int = 1) -> None:
+             color: str = 'black', fill: Optional[str] = None,
+             lw: float = 2, ls: Linestyle = '-', hatch: bool = False,
+             capstyle: Capstyle = 'round', joinstyle: Joinstyle = 'round',
+             clip: Optional[BBox] = None, zorder: int = 1) -> None:
         ''' Draw a polynomial '''
         h = '///////' if hatch else None
         p = plt.Polygon(verts, closed=closed, ec=color,
@@ -235,22 +237,22 @@ class Figure:
                             clip=clip, zorder=zorder)
 
     def path(self, path: Sequence[XY | str],
-            color: str = 'black', lw: float = 2, ls: Linestyle = '-',
-            fill: Optional[str] = None,
-            capstyle: Capstyle = 'round',
-            joinstyle: Joinstyle = 'round', 
-            zorder: int = 1,
-            clip: Optional[BBox] = None,
-            ) -> None:
+             color: str = 'black', lw: float = 2, ls: Linestyle = '-',
+             fill: Optional[str] = None,
+             capstyle: Capstyle = 'round',
+             joinstyle: Joinstyle = 'round',
+             zorder: int = 1,
+             clip: Optional[BBox] = None,
+             ) -> None:
         CODES = {
             'M': [Path.MOVETO],
-            'C': [Path.CURVE4, Path.CURVE4, Path.CURVE4], 
+            'C': [Path.CURVE4, Path.CURVE4, Path.CURVE4],
             'Q': [Path.CURVE3, Path.CURVE3],
             'L': [Path.LINETO],
             'Z': [Path.CLOSEPOLY]}
 
         points = [p for p in path if not isinstance(p, str)]
-        strcodes =  [p for p in path if isinstance(p, str)]
+        strcodes = [p for p in path if isinstance(p, str)]
         codes: list[int] = []
         for s in strcodes:
             codes.extend(CODES.get(s, [Path.MOVETO]))  # type: ignore
@@ -282,8 +284,8 @@ class Figure:
 
         if fill is None:
             arc = Arc(center, width=width, height=height, theta1=theta1,
-                    theta2=theta2, angle=angle, color=color,
-                    lw=lw, ls=ls, zorder=zorder)
+                      theta2=theta2, angle=angle, color=color,
+                      lw=lw, ls=ls, zorder=zorder)
             self.ax.add_patch(arc)
             self.addclip(arc, clip)
         else:
@@ -292,15 +294,16 @@ class Figure:
                 theta1 -= 360
 
             theta = util.linspace(math.radians(theta2), math.radians(theta1), 50)
-            points = [(width/2*math.cos(th) + center[0], 
+            points = [(width/2*math.cos(th) + center[0],
                        height/2*math.sin(th) + center[1]) for th in theta]
             poly = plt.Polygon(points, closed=False,
-                              ec=color,
-                              fc=fill, fill=fill is not None,
-                              lw=lw, ls=ls, zorder=zorder)
+                               ec=color,
+                               fc=fill, fill=fill is not None,
+                               lw=lw, ls=ls, zorder=zorder)
 
             if angle:
-                tr = transforms.Affine2D().translate(-center[0], -center[1]).rotate_deg(angle).translate(center[0], center[1])
+                tr = transforms.Affine2D().translate(
+                    -center[0], -center[1]).rotate_deg(angle).translate(center[0], center[1])
                 poly.set_transform(tr+self.ax.transData)
 
             self.ax.add_patch(poly)
@@ -311,6 +314,7 @@ class Figure:
             th2 = math.degrees(math.atan2((width/height)*y, x))
             x, y = math.cos(math.radians(theta1)), math.sin(math.radians(theta1))
             th1 = math.degrees(math.atan2((width/height)*y, x))
+            dx = dy = 0.
             if arrow in ['ccw', 'both'] or '>' in arrow:
                 dx = math.cos(math.radians(th2+90)) / 100
                 dy = math.sin(math.radians(theta2+90)) / 100
@@ -335,7 +339,7 @@ class Figure:
     def image(self, image: str | BinaryIO, xy: XY, width: float, height: float,
               rotate: float = 0, zorder: int = 1, imgfmt: Optional[str] = None):
         ''' Add an image to the figure
-        
+
             Args:
                 image: File name or open file pointer
                 xy: Position for the image
@@ -377,9 +381,14 @@ class Figure:
             self.plot((self.bbox.xmin, self.bbox.xmin, self.bbox.xmax, self.bbox.xmax, self.bbox.xmin),
                       (self.bbox.ymin, self.bbox.ymax, self.bbox.ymax, self.bbox.ymin, self.bbox.ymin),
                       color='red', lw=.5)
-            self.plot((self.bbox.xmin-self.margin, self.bbox.xmin-self.margin, self.bbox.xmax+self.margin, self.bbox.xmax+self.margin, self.bbox.xmin-self.margin),
-                      (self.bbox.ymin-self.margin, self.bbox.ymax+self.margin, self.bbox.ymax+self.margin, self.bbox.ymin-self.margin, self.bbox.ymin-self.margin),
-                      color='black', lw=.5)
+            self.plot(
+                (self.bbox.xmin-self.margin, self.bbox.xmin-self.margin,
+                 self.bbox.xmax+self.margin, self.bbox.xmax+self.margin,
+                 self.bbox.xmin-self.margin),
+                (self.bbox.ymin-self.margin, self.bbox.ymax+self.margin,
+                 self.bbox.ymax+self.margin, self.bbox.ymin-self.margin,
+                 self.bbox.ymin-self.margin),
+                color='black', lw=.5)
 
         if not self.userfig:
             x1, x2 = self.bbox.xmin - self.margin, self.bbox.xmax + self.margin

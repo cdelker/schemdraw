@@ -27,9 +27,6 @@ class TubeBase(Element):
         'dot_radius': 0.075,
         'theta': 0,
     }
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
     def _draw_envelope(self, height: float, width: float, split: str = 'none'):
         ''' Draw tube envelope '''
         bot = -height    # (0, 0) is top center (anode) position
@@ -119,15 +116,19 @@ class TubeBase(Element):
             if grids == 1:
                 self.anchors[f'grid{anchorid}'] = (grid_left-grid_xgap, grid_y)
                 self.anchors[f'grid{anchorid}_R'] = (grid_right+grid_xgap, grid_y)
-                self._labelhints[f'grid{anchorid}'] = LabelHint((-width/2-grid_left+.1, .1), halign='right', valign='bottom', fontsize=11)
-                self._labelhints[f'grid{anchorid}_R'] = LabelHint((width/2-grid_right-.1, .1), halign='left', valign='bottom', fontsize=11)
+                self._labelhints[f'grid{anchorid}'] = LabelHint(
+                    (-width/2-grid_left+.1, .1), halign='right', valign='bottom', fontsize=11)
+                self._labelhints[f'grid{anchorid}_R'] = LabelHint(
+                    (width/2-grid_right-.1, .1), halign='left', valign='bottom', fontsize=11)
 
             else:
                 self.anchors[f'grid{anchorid}_{j+1}'] = (grid_left-grid_xgap, grid_y)
                 self.anchors[f'grid{anchorid}_{j+1}R'] = (grid_right+grid_xgap, grid_y)
 
-                self._labelhints[f'grid{anchorid}_{j+1}'] = LabelHint((-width/2-grid_left+.1, .1), halign='right', valign='bottom', fontsize=11)
-                self._labelhints[f'grid{anchorid}_{j+1}R'] = LabelHint((width/2-grid_right-.1, .1), halign='left', valign='bottom', fontsize=11)
+                self._labelhints[f'grid{anchorid}_{j+1}'] = LabelHint(
+                    (-width/2-grid_left+.1, .1), halign='right', valign='bottom', fontsize=11)
+                self._labelhints[f'grid{anchorid}_{j+1}R'] = LabelHint(
+                    (width/2-grid_right-.1, .1), halign='left', valign='bottom', fontsize=11)
 
         # Draw Cathode
         cat_y = grid_bot - grid_ygap
@@ -141,7 +142,8 @@ class TubeBase(Element):
                 SegmentCircle((x, cat_y-dot_r), dot_r)
             )
             self.anchors[f'cathode{anchorid}'] = (x, -height)
-            self._labelhints[f'cathode{anchorid}'] = LabelHint((.1, -.1), halign='left', valign='top', fontsize=11)
+            self._labelhints[f'cathode{anchorid}'] = LabelHint(
+                (.1, -.1), halign='left', valign='top', fontsize=11)
 
         elif cathode not in ['none', None]:  # 'heated' or True
             self.segments.append(
@@ -151,8 +153,10 @@ class TubeBase(Element):
             )
             self.anchors[f'cathode{anchorid}'] = (grid_left, cat_y-cat_drop)
             self.anchors[f'cathode{anchorid}_R'] = (grid_right, cat_y-cat_drop)
-            self._labelhints[f'cathode{anchorid}'] = LabelHint((-.1, -height-cat_y+cat_drop), halign='right', valign='top', fontsize=11)
-            self._labelhints[f'cathode{anchorid}_R'] = LabelHint((.1, -height-cat_y+cat_drop), halign='left', valign='top', fontsize=11)
+            self._labelhints[f'cathode{anchorid}'] = LabelHint(
+                (-.1, -height-cat_y+cat_drop), halign='right', valign='top', fontsize=11)
+            self._labelhints[f'cathode{anchorid}_R'] = LabelHint(
+                (.1, -height-cat_y+cat_drop), halign='left', valign='top', fontsize=11)
 
         return cat_y
 
@@ -172,8 +176,8 @@ class TubeBase(Element):
         )
         self.anchors['heat1'] = (heat_left, heat_bot)
         self.anchors['heat2'] = (heat_right, heat_bot)
-        self._labelhints[f'heat1'] = LabelHint((-.1, 0), halign='right', valign='bottom', fontsize=11)
-        self._labelhints[f'heat2'] = LabelHint((.1, 0), halign='left', valign='bottom', fontsize=11)
+        self._labelhints['heat1'] = LabelHint((-.1, 0), halign='right', valign='bottom', fontsize=11)
+        self._labelhints['heat2'] = LabelHint((.1, 0), halign='left', valign='bottom', fontsize=11)
 
 
 class VacuumTube(TubeBase):
@@ -297,12 +301,8 @@ class NixieTube(TubeBase):
                  grid: bool = False,
                  **kwargs):
         super().__init__(**kwargs)
-
         height = tube_w
         width = max(tube_w, (anodes-1)*anode_xgap+tube_w)
-        left = -width*.2
-        right = width*.2
-
         self._draw_envelope(height, width)
 
         if grid:
@@ -317,8 +317,6 @@ class NixieTube(TubeBase):
         anodew = (n-1)*anode_xgap
         left = -anodew/2
         dot_r = self.params['dot_radius']
-        grid_left = -grid_w/2
-        grid_right = grid_w/2
 
         for i in range(n):
             x = left + i*anode_xgap
@@ -351,10 +349,10 @@ class NixieTube(TubeBase):
                         lw=self.params['grid_lw'])
             )
 
-        self.anchors[f'grid'] = (left-grid_xgap, grid_y)
-        self.anchors[f'grid_R'] = (left+anodew+grid_xgap, grid_y)
-        self._labelhints[f'grid'] = LabelHint((-width/2-left, .1), halign='right', valign='bottom', fontsize=11)
-        self._labelhints[f'grid_R'] = LabelHint((width/2-anodew/2, .1), halign='left', valign='bottom', fontsize=11)
+        self.anchors['grid'] = (left-grid_xgap, grid_y)
+        self.anchors['grid_R'] = (left+anodew+grid_xgap, grid_y)
+        self._labelhints['grid'] = LabelHint((-width/2-left, .1), halign='right', valign='bottom', fontsize=11)
+        self._labelhints['grid_R'] = LabelHint((width/2-anodew/2, .1), halign='left', valign='bottom', fontsize=11)
 
 
     def _draw_cathode(self, nanodes: int, cathode: str):

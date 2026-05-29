@@ -43,7 +43,7 @@ class Switch(Element2Term):
                     ))
             else:
                 self.segments.append(Segment(
-                [(0, 0), gap, (sw_dot_r*2, .1), (.8, .45), gap, (1, 0)]))
+                    [(0, 0), gap, (sw_dot_r*2, .1), (.8, .45), gap, (1, 0)]))
             self.segments.append(SegmentCircle((sw_dot_r, 0), sw_dot_r, fill='bg', zorder=3))
             self.segments.append(SegmentCircle((1-sw_dot_r, 0), sw_dot_r, fill='bg', zorder=3))
 
@@ -59,14 +59,18 @@ class Switch(Element2Term):
         if action == 'open':
             self.segments.append(SegmentArc((.4, .1), width=.5, height=.75,
                                             theta1=-10, theta2=70, arrow='ccw',
-                                            lw=self.params['arrow_lw'], color=self.params['arrow_color'],
-                                            arrowwidth=self.params['arrowwidth'], arrowlength=self.params['arrowlength']
+                                            lw=self.params['arrow_lw'],
+                                            color=self.params['arrow_color'],
+                                            arrowwidth=self.params['arrowwidth'],
+                                            arrowlength=self.params['arrowlength']
                                             ))
         if action == 'close':
             self.segments.append(SegmentArc((.4, .25), width=.5, height=.75,
                                             theta1=-10, theta2=70, arrow='cw',
-                                            lw=self.params['arrow_lw'], color=self.params['arrow_color'],
-                                            arrowwidth=self.params['arrowwidth'], arrowlength=self.params['arrowlength'],
+                                            lw=self.params['arrow_lw'],
+                                            color=self.params['arrow_color'],
+                                            arrowwidth=self.params['arrowwidth'],
+                                            arrowlength=self.params['arrowlength'],
                                             ))
 
 

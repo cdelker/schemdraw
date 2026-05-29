@@ -12,7 +12,7 @@ _gnd_lead = 0.4
 
 class Ground(Element):
     ''' Ground connection
-    
+
         Keyword Args:
             lead: Show lead wire [default: True]
     '''
@@ -39,7 +39,7 @@ class Ground(Element):
 
 class GroundSignal(Element):
     ''' Signal ground
-    
+
         Keyword Args:
             lead: Show lead wire
     '''
@@ -63,7 +63,7 @@ class GroundSignal(Element):
 
 class GroundChassis(Element):
     ''' Chassis ground
- 
+
         Keyword Args:
             lead: Show lead wire
     '''
@@ -146,7 +146,7 @@ class AntennaLoop2(Element):
 
 class Vss(Element):
     ''' Vss connection
-        
+
         Keyword Args:
             lead: Show lead wire
     '''
@@ -170,7 +170,7 @@ class Vss(Element):
 
 class Vdd(Element):
     ''' Vdd connection
-        
+
         Keyword Args:
             lead: Show lead wire
     '''

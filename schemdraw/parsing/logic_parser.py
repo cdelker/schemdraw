@@ -132,7 +132,7 @@ def drawlogic(tree, gateH=.7, gateW=2, outlabel=None):
                 l=gateW, inputs=len(root.children))
         if outlabel:
             g.label(outlabel, loc='end')
-        
+
         for i, child in enumerate(root.children):
             anchorname = 'start' if elm in [logic.Not, logic.Buf] else f'in{i+1}'
             if child.node not in elmdefs:

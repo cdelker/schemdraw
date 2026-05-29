@@ -1,11 +1,14 @@
 ''' Draw Bit Fields compatible with WaveDrom '''
 from __future__ import annotations
+from typing import cast
 import io
 import ast
 import tokenize
 
 from ..elements import Element
 from ..segments import Segment, SegmentText, SegmentPoly
+from ..types import Halign, Valign
+
 
 SCALE = 2/72 * 3/4  # Roughly match WaveDrom pixels
 COLORS = {
@@ -243,7 +246,7 @@ class BitField(Element):
                                 SegmentText((x0-tickdx, y+bitheight+lblofst),
                                             str(value1),
                                             fontsize=fontsize,
-                                            align=('center' if center1 else halign, 'bottom')
+                                            align=(cast(Halign, 'center' if center1 else halign), cast(Valign, 'bottom'))
                                             )
                             )
 
@@ -255,7 +258,7 @@ class BitField(Element):
                                 SegmentText((x+tickdx, y+bitheight+lblofst),
                                             str(value2),
                                             fontsize=fontsize,
-                                            align=('center' if center2 else halign, 'bottom')
+                                            align=(cast(Halign, 'center' if center2 else halign), 'bottom')
                                             )
                             )
                         else:

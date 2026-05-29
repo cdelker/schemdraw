@@ -4,13 +4,12 @@
     use case for tables.
 '''
 from __future__ import annotations
-
+from typing import Optional
 import re
 
 from ..segments import Segment, SegmentText
 from ..elements import Element
 from ..backends import svg
-from typing import Optional
 
 
 def parse_colfmt(colfmt: str) -> tuple[str, str]:

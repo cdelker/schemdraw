@@ -1,9 +1,8 @@
 ''' Two-terminal element definitions '''
 
 from __future__ import annotations
-from typing import Optional
+from typing import Optional, Sequence
 import math
-from typing import Sequence
 
 from .elements import Element, Element2Term, gap
 from ..util import Point, linspace
@@ -53,10 +52,10 @@ class ResistorVarIEEE(ResistorIEEE):
         super().__init__(**kwargs)
         self.segments.append(
             Segment([(1.5*reswidth, -resheight*2), (4.5*reswidth, reswidth*3.5)],
-            arrow='->', arrowwidth=self.params['arrowwidth'],
-            arrowlength=self.params['arrowlength'],
-            lw=self.params['arrow_lw'],
-            color=self.params['arrow_color']
+                arrow='->', arrowwidth=self.params['arrowwidth'],
+                arrowlength=self.params['arrowlength'],
+                lw=self.params['arrow_lw'],
+                color=self.params['arrow_color']
             ))
 
 
@@ -111,12 +110,12 @@ class PhotoresistorIEEE(ResistorIEEE):
         super().__init__(**kwargs)
         self.segments.append(
             Segment([(.7, .75), (.4, .4)], arrow='->',
-            arrowwidth=self.params['arrowwidth'], arrowlength=self.params['arrowlength'],
-            lw=self.params['arrow_lw'], color=self.params['arrow_color']))
+                arrowwidth=self.params['arrowwidth'], arrowlength=self.params['arrowlength'],
+                lw=self.params['arrow_lw'], color=self.params['arrow_color']))
         self.segments.append(
             Segment([(1, .75), (.7, .4)], arrow='->',
-            arrowwidth=self.params['arrowwidth'], arrowlength=self.params['arrowlength'],
-            lw=self.params['arrow_lw'], color=self.params['arrow_color']))
+                arrowwidth=self.params['arrowwidth'], arrowlength=self.params['arrowlength'],
+                lw=self.params['arrow_lw'], color=self.params['arrow_color']))
 
 
 class PhotoresistorIEC(ResistorIEC):
@@ -138,12 +137,12 @@ class PhotoresistorIEC(ResistorIEC):
         super().__init__(**kwargs)
         self.segments.append(
             Segment([(.7, .75), (.4, .4)], arrow='->',
-            arrowwidth=self.params['arrowwidth'], arrowlength=self.params['arrowlength'],
-            lw=self.params['arrow_lw'], color=self.params['arrow_color']))
+                arrowwidth=self.params['arrowwidth'], arrowlength=self.params['arrowlength'],
+                lw=self.params['arrow_lw'], color=self.params['arrow_color']))
         self.segments.append(
             Segment([(1, .75), (.7, .4)], arrow='->',
-            arrowwidth=self.params['arrowwidth'], arrowlength=self.params['arrowlength'],
-            lw=self.params['arrow_lw'], color=self.params['arrow_color']))
+                arrowwidth=self.params['arrowwidth'], arrowlength=self.params['arrowlength'],
+                lw=self.params['arrow_lw'], color=self.params['arrow_color']))
 
 
 class Rshunt(ResistorIEC):
@@ -457,8 +456,8 @@ class Photodiode(Diode):
             (p2[-2], pa2), arrow='->', arrowwidth=self.params['arrowwidth'],
             arrowlength=self.params['arrowlength'], color=self.params['arrow_color']))
 
-       # self.segments.append(Segment((p[-2], pa), arrow='->', arrowwidth=.15, arrowlength=.2))
-       # self.segments.append(Segment((p2[-2], pa2), arrow='->', arrowwidth=.15, arrowlength=.2))
+        # self.segments.append(Segment((p[-2], pa), arrow='->', arrowwidth=.15, arrowlength=.2))
+        # self.segments.append(Segment((p2[-2], pa2), arrow='->', arrowwidth=.15, arrowlength=.2))
         self.params['lblloc'] = 'bot'
 
 
@@ -823,11 +822,6 @@ class CPE(Element2Term):
 
 
 class SparkGap(Element2Term):
-    _element_defaults = {
-        'arrowwidth': .25,
-        'arrowlength': .25,
-        'gap': .08,
-    }
     ''' Spark Gap
 
         Keyword Arguments:
@@ -835,6 +829,12 @@ class SparkGap(Element2Term):
             arrowwidth: Width of arrowheads
             arrowlength: Length of arrowheads
     '''
+    _element_defaults = {
+        'arrowwidth': .25,
+        'arrowlength': .25,
+        'gap': .08,
+    }
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         gapw = self.params['gap']

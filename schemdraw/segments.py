@@ -619,7 +619,6 @@ class SegmentCircle:
             # It stays a circle
             return SegmentCircle(transform.transform(self.center),
                                  self.radius*transform.zoom[0], **params)
-        
         # Asymmetric zoom makes circle into ellipse
         params.pop('ref', None)  # Not implemented in SegmentArc
         return SegmentArc(self.center,
@@ -948,7 +947,7 @@ class SegmentPath:
         M, L, C, Q, Z, etc....
     '''
     def __init__(self,
-                 path: Sequence[XY | str], 
+                 path: Sequence[XY | str],
                  color: Optional[str | tuple[float, float, float]] = None,
                  lw: Optional[float] = None,
                  ls: Optional[Linestyle] = None,
@@ -973,6 +972,13 @@ class SegmentPath:
         self.visible = visible
 
     def xform(self, transform, **style) -> 'SegmentPath':
+        ''' Return a new SegmentPath that has been transformed
+            to its global position
+
+            Args:
+                transform: Transformation to apply
+                style: Style parameters from Element to apply as default
+        '''
         params: dict[str, Any] = {
             'zorder': self.zorder if self.zorder is not None else style.get('zorder', None),
             'color': self.color if self.color else style.get('color', None),
@@ -1007,7 +1013,7 @@ class SegmentPath:
     def doreverse(self, centerx: float) -> None:
         ''' Reverse the path (flip horizontal about the center of the path) '''
         #self.path = [util.mirrorx(p, centerx) for p in self.path[::-1]]
-        
+
     def doflip(self) -> None:
         ''' Vertically flip the element '''
         #self.path = [util.flip(p) for p in self.path]
@@ -1094,7 +1100,7 @@ class SegmentImage:
         '''
         params: dict[str, Any] = {
             'zorder': self.zorder if self.zorder is not None else style.get('zorder', None)}
-        
+
         style = {k: v for k, v in style.items() if params.get(k) is None and k in params.keys()}
         params.update(style)
         return SegmentImage(self.image, transform.transform(self.xy),
@@ -1134,4 +1140,6 @@ class SegmentImage:
                   zorder=zorder)
 
 
-SegmentType = Union[Segment, SegmentText, SegmentPoly, SegmentArc, SegmentCircle, SegmentBezier, SegmentPath, SegmentImage]
+SegmentType = Union[Segment, SegmentText, SegmentPoly,
+                    SegmentArc, SegmentCircle, SegmentBezier,
+                    SegmentPath, SegmentImage]

@@ -151,10 +151,10 @@ class SourceSquare(Source):
         }
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.segments.append(Segment([(.5, .25), (.7, .25), (.7, 0),
-                                      (.3, 0), (.3, -.25), (.5, -.25)],
-                                    lw=self.params['square_lw'],
-                                    color=self.params['square_color']))
+        self.segments.append(Segment(
+            [(.5, .25), (.7, .25), (.7, 0), (.3, 0), (.3, -.25), (.5, -.25)],
+            lw=self.params['square_lw'],
+            color=self.params['square_color']))
 
 
 class SourceControlled(Element2Term):
@@ -331,7 +331,7 @@ class MeterArrow(Source):
     }
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.segments.append(Segment([ (.25, .16), (.75, -.16)], arrow='->',
+        self.segments.append(Segment([(.25, .16), (.75, -.16)], arrow='->',
                                      arrowwidth=self.params['arrowwidth'],
                                      arrowlength=self.params['arrowlength'],
                                      lw=self.params['arrow_lw'],
@@ -433,7 +433,6 @@ class MeterBox(Element):
         input_ofst = self.params['input_ofst']
         input_lw = self.params['input_lw']
         input_rad = self.params['input_rad']
-        center = w/2
 
         # Box
         self.segments.append(SegmentPoly([(0, 0), (0, w), (w, w), (w, 0)],
@@ -441,8 +440,12 @@ class MeterBox(Element):
                                          ))
         # Inputs
         if inputs:
-            self.segments.append(SegmentCircle((input_ofst[0], input_ofst[1]), input_rad, lw=input_lw, fill=self.params['input_fill'], zorder=4))
-            self.segments.append(SegmentCircle((w-input_ofst[0], input_ofst[1]), input_rad, lw=input_lw, fill=self.params['input_fill'], zorder=4))
+            self.segments.append(SegmentCircle(
+                (input_ofst[0], input_ofst[1]), input_rad, lw=input_lw,
+                fill=self.params['input_fill'], zorder=4))
+            self.segments.append(SegmentCircle(
+                (w-input_ofst[0], input_ofst[1]), input_rad, lw=input_lw,
+                fill=self.params['input_fill'], zorder=4))
 
         self.anchors['N'] = (w/2, w)
         self.anchors['S'] = (w/2, 0)
@@ -556,10 +559,16 @@ class Oscilloscope(MeterBox):
         if self.params['grid']:
             for i in range(gridN):
                 x = wleft + (i+1)*grid
-                self.segments.append(Segment(((x, wbot), (x, wtop)), lw=self.params['grid_lw'], color=self.params['grid_color']))
+                self.segments.append(Segment(
+                    ((x, wbot), (x, wtop)),
+                    lw=self.params['grid_lw'],
+                    color=self.params['grid_color']))
             for i in range(2):
                 y = wbot + (i+1)*grid
-                self.segments.append(Segment(((wleft, y), (wright, y)), lw=self.params['grid_lw'], color=self.params['grid_color']))
+                self.segments.append(Segment(
+                    ((wleft, y), (wright, y)),
+                    lw=self.params['grid_lw'],
+                    color=self.params['grid_color']))
 
         # Signal
         if signal == 'sine':
@@ -608,11 +617,8 @@ class MeterDigital(MeterBox):
     def __init__(self, inputs: bool = True, **kwargs):
         super().__init__(inputs=inputs, **kwargs)
         w = self.params['width']
-        center = w/2
-
         wleft = w*.1
         wright = w*.9
-        wwidth = wright-wleft
         wheight = w/3
         wtop = w*.85
         wbot = wtop - wheight

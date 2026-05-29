@@ -4,14 +4,12 @@ from __future__ import annotations
 
 from typing import Sequence, Optional, BinaryIO
 from xml.etree import ElementTree as ET
-from collections import namedtuple
 
 import os
 import sys
 import subprocess
 import tempfile
 import math
-import warnings
 import base64
 
 try:
@@ -22,13 +20,14 @@ except ImportError:
 from ..types import Capstyle, Joinstyle, Linestyle, BBox, Halign, Valign, RotationMode, TextMode, XY, Gradient
 from ..util import Point
 from . import svgtext
-from .svgunits import parse_size_to_px, PT_PER_IN, PX_PER_PT
+from .svgunits import parse_size_to_px, PT_PER_IN
 
 precision = 3
 
 LINE_WIDTH = 2     # Default line width is 2 points
 
-ET.register_namespace("","http://www.w3.org/2000/svg")
+ET.register_namespace("", "http://www.w3.org/2000/svg")
+
 
 def fmt(f: float) -> str:
     ''' String formatter, stripping trailing zeros '''
@@ -86,7 +85,7 @@ class Config:
     @precision.setter
     def precision(self, value: float) -> None:
         ziamath.config.precision = value
-        
+
     @property
     def useBatik(self) -> bool:
         ''' No use of dominant-baseline '''
@@ -124,7 +123,7 @@ def getstyle(color: Optional[str] = None, ls: Optional[Linestyle] = None, lw: Op
     # tag, since multiple images in one HTML page may share <styles>.
     s = ''
     if isinstance(color, tuple):
-        s += f'stroke:rgb({int(color[0]*255)},{int(color[1]*255)},{int(color[2]*255)});'  
+        s += f'stroke:rgb({int(color[0]*255)},{int(color[1]*255)},{int(color[2]*255)});'
     elif color:
         s += f'stroke:{color};'
     if hatch:
@@ -457,13 +456,13 @@ class Figure:
                             clip=clip, zorder=zorder)
 
     def path(self, path: Sequence[XY | str],
-            color: str = 'black', lw: float = 2, ls: Linestyle = '-',
-            fill: Optional[str] = None,
-            capstyle: Capstyle = 'round',
-            joinstyle: Joinstyle = 'round', 
-            zorder: int = 1,
-            clip: Optional[BBox] = None,
-            ) -> None:
+             color: str = 'black', lw: float = 2, ls: Linestyle = '-',
+             fill: Optional[str] = None,
+             capstyle: Capstyle = 'round',
+             joinstyle: Joinstyle = 'round',
+             zorder: int = 1,
+             clip: Optional[BBox] = None,
+             ) -> None:
         dstrs = []
         for point in path:
             if isinstance(point, str):
@@ -578,7 +577,7 @@ class Figure:
     def image(self, image: str | BinaryIO, xy: XY, width: float, height: float,
               rotate: float = 0, zorder: int = 1, imgfmt: Optional[str] = None):
         ''' Add an image to the figure
-        
+
             Args:
                 image: File name or open file pointer
                 xy: Position for the image
@@ -620,7 +619,6 @@ class Figure:
             image_b64 = base64.encodebytes(imgdat).decode()
             et = ET.Element('image')
             et.set('xlink:href', f'data:image/{imgfmt};base64,{image_b64}')
-            self.svgelements.append((zorder, et))
             self._need_xlink = True
 
             et.set('x', fmt(x0))
@@ -643,8 +641,7 @@ class Figure:
     def _svg_defs(self, svg) -> None:
         if self.gradients or self.svgdefs:
             defstr = '<defs>'
-            for svgdef in self.svgdefs:
-                defstr += svgdef
+            defstr += ''.join(self.svgdefs)
 
             for gradid, (c1, c2, vert) in self.gradients.items():
                 gradstr = f'''

@@ -1,7 +1,7 @@
 ''' Schemdraw base Element class '''
 
 from __future__ import annotations
-from typing import Sequence, MutableMapping, Any, Union, Optional
+from typing import Sequence, MutableMapping, Any, Union, Optional, cast
 from collections import ChainMap
 from dataclasses import dataclass
 import warnings
@@ -45,6 +45,7 @@ class Label:
 
 @dataclass
 class LabelHint:
+    ''' Hint for label positioning '''
     ofst: XY | float | None
     halign: Halign | None = None
     valign: Valign | None = None
@@ -72,7 +73,8 @@ class Element:
         element in a Drawing.
     '''
     _element_defaults: dict[str, Any] = {}     # Default parameters for subclassed elements
-    defaults: ChainMap[str, Any] = ChainMap()  # Subclasses will chainmap this with parents  
+    defaults: ChainMap[str, Any] = ChainMap()  # Subclasses will chainmap this with parents
+
     def __init__(self, **kwargs) -> None:
         self._userparams.update(kwargs)         # Specified by user
         self._localshift: XY = Point((0, 0))
@@ -99,17 +101,17 @@ class Element:
         new.params = ChainMap(new._userparams, new.elmparams, new.defaults, new._dwgparams)
         return new
 
-    def __init_subclass__(self):
+    def __init_subclass__(cls):
         ''' Initialize an Element subclass, building chainmap of default parameters
             from parent classes.
         '''
-        if len(self.__mro__) > 1 and hasattr(self.__mro__[1], 'defaults'):
-            if self.__mro__[1]._element_defaults is not self._element_defaults:
-                self.defaults = self.__mro__[1].defaults.new_child(self._element_defaults)
+        if len(cls.__mro__) > 1 and hasattr(cls.__mro__[1], 'defaults'):
+            if cls.__mro__[1]._element_defaults is not cls._element_defaults:
+                cls.defaults = cls.__mro__[1].defaults.new_child(cls._element_defaults)
             else:
-                self.defaults = self.__mro__[1].defaults.new_child()
+                cls.defaults = cls.__mro__[1].defaults.new_child()
         else:
-            self.defaults = ChainMap()
+            cls.defaults = ChainMap()
 
     def __getattr__(self, name: str) -> Any:
         ''' Allow getting anchor position as attribute '''
@@ -117,7 +119,7 @@ class Element:
                        'N', 'S', 'E', 'W', 'NE', 'NW', 'SE', 'SW',
                        'NNE', 'NNW', 'ENE', 'WNW', 'SSE', 'SSW', 'ESE', 'WSW']
         if (name in anchornames + list(vars(self).get('anchors', {}).keys()) and
-            not name in vars(self).get('absanchors', {})):
+            name not in vars(self).get('absanchors', {})):
                 # Not placed yet
                 drawing_stack.push_element(self)
 
@@ -350,7 +352,10 @@ class Element:
         elif isinstance(rotate, bool):
             rotate = True
 
-        self._userlabels.append(Label(label, loc, ofst, halign, valign, rotate, fontsize, font, mathfont, color, href, decoration))
+        self._userlabels.append(Label(
+            label, loc, ofst, halign, valign,
+            rotate, fontsize, font, mathfont,
+            color, href, decoration))
         return self
 
     def _position(self) -> None:
@@ -389,12 +394,12 @@ class Element:
 
     def _place(self, dwgxy: XY, dwgtheta: float, **dwgparams) -> tuple[Point, float]:
         ''' Calculate element position within the drawing
-        
+
             Args:
                 dwgxy: Current XY position within drawing
                 dwgtheta: Current theta in the drawing
                 dwgparams: Default parameters of the drawing
-            
+
             Returns:
                 xy: New XY position after placing the element
                 theta: New theta after placing the element
@@ -503,7 +508,7 @@ class Element:
 
     def _position_label(self, label: Label, theta: float = 0) -> Label:
         ''' Calculate position of label
-        
+
             Args:
                 label: The label to position
                 theta: Element drawing direction
@@ -566,7 +571,7 @@ class Element:
             newhalign: Halign = 'center'
             newvalign: Valign = 'center'
 
-        elif label.loc and label.loc in self.anchors: 
+        elif label.loc and label.loc in self.anchors:
             # Anchor is on an edge
             x1, y1, x2, y2 = self.get_bbox(includetext=False)
             newhalign = newvalign = 'center'
@@ -661,10 +666,10 @@ class Element:
             label.fontsize = label.fontsize if label.fontsize is not None else hint.fontsize
 
         if self._userparams.get('flip'):
-            label.valign = {'top': 'bottom', 'bottom': 'top'}.get(label.valign) if label.valign else None
+            label.valign = cast(Valign, {'top': 'bottom', 'bottom': 'top'}.get(label.valign)) if label.valign else None
             label.ofst = Point(label.ofst).flip() if isinstance(label.ofst, tuple) else label.ofst
         if self._userparams.get('reverse'):
-            label.halign = {'left': 'right', 'right': 'left'}.get(label.halign) if label.halign else None
+            label.halign = cast(Halign, {'left': 'right', 'right': 'left'}.get(label.halign)) if label.halign else None
             label.ofst = Point(label.ofst).mirrorx() if isinstance(label.ofst, tuple) else label.ofst
 
         if label.halign is None:
@@ -674,7 +679,7 @@ class Element:
 
         if label.ofst is None:
             label.ofst = self.params.get('lblofst', .1)
-        
+
         label = self._position_label(label, theta)
         halign, valign, ofst = self._align_label(label, theta)
         label.halign = label.halign if label.halign is not None else halign
@@ -801,7 +806,7 @@ class ElementDrawing(Element):
         self.anchors = self.drawing.anchors
         self.elmparams['drop'] = self.drawing._here
         self.elmparams['d'] = 'right'  # Reset drawing direction
-        
+
 
 class Element2Term(Element):
     ''' Two terminal element. The element leads can be automatically
@@ -816,6 +821,7 @@ class Element2Term(Element):
         'leadcolor': None,  # Inherit
         'dotradius': 0.075
     }
+
     def to(self, xy: XY, dx: float = 0, dy: float = 0) -> 'Element2Term':
         ''' Sets ending position of element
 

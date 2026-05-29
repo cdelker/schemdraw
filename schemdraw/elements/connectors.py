@@ -261,7 +261,7 @@ class Header(Element):
                     pnumber = str(row + col*rows + 1)
                 else:  # number == 'ccw'
                     pnumber = str(rows*col+(rows-row)) if col % 2 else str(row+1)
-                self.anchors['pin{}'.format(pnumber)] = xy
+                self.anchors[f'pin{pnumber}'] = xy
 
                 if self.params['shownumber']:
                     numxy = (w+.05 if col % 2 else -.05, xy[1])
@@ -678,7 +678,7 @@ class CoaxConnect(Element):
         'fillinner': 'bg'
     }
     def __init__(self, *,
-                 radius: Optional[float] = None, 
+                 radius: Optional[float] = None,
                  radiusinner: Optional[float] = None,
                  fillinner: Optional[str] = None,
                  **kwargs):

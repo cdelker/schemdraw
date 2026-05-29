@@ -76,7 +76,7 @@ class Box(Element):
         w, h = self.params['w'], self.params['h']
         self.segments.append(Segment([(0, 0), (0, h/2), (w, h/2),
                                       (w, -h/2), (0, -h/2), (0, 0)]))
-    
+
     def _place(self, dwgxy, dwgtheta, **dwgparams):
         ''' Make the box flow in the current drawing direction '''
         self._set_size()
@@ -121,7 +121,7 @@ class RoundBox(Box):
         self.segments = [SegmentPoly(
             [(0, h/2), (w, h/2), (w, -h/2), (0, -h/2)],
             cornerradius=self.params['cornerradius'])]
-        
+
     def _set_anchors(self):
         super()._set_anchors()
         w, h = self.params['w'], self.params['h']
@@ -303,7 +303,8 @@ class Decision(Box):
         Anchors:
             * 16 compass points (N, S, E, W, NE, NNE, etc.)
     '''
-    def __init__(self, N: Optional[str] = None, E: Optional[str] = None, S: Optional[str] = None, W: Optional[str] = None,
+    def __init__(self, N: Optional[str] = None, E: Optional[str] = None,
+                 S: Optional[str] = None, W: Optional[str] = None,
                  font: Optional[str] = None, fontsize: float = 14,
                  **kwargs):
         super().__init__(**kwargs)
@@ -321,7 +322,7 @@ class Decision(Box):
         mainlabels = [label for label in self._userlabels if label.loc is None]
         if mainlabels:
             minw, minh = labelsize(mainlabels[0], pad)
-            tantheta = math.tan(math.radians(25)) # = h/2 / extraw
+            tantheta = math.tan(math.radians(25))
             fullw = minw + (minh/2/tantheta)
             fullh = minh + (tantheta*minw)
             minw = max(fullw, self.params['minsize'][0])
@@ -330,7 +331,7 @@ class Decision(Box):
         self._userparams.setdefault('w', minw)
         self._userparams.setdefault('h', minh)
         return self._userparams['w'], self._userparams['h']
-        
+
     def _set_segments(self):
         w, h = self.params['w'], self.params['h']
         font = self._font
@@ -390,7 +391,7 @@ class Connect(Box):
     }
     def _set_size(self) -> tuple[float, float]:
         pad = self.params['pad']
-        mainlabels = [label for label in self._userlabels if label.loc is None]        
+        mainlabels = [label for label in self._userlabels if label.loc is None]
         if mainlabels:
             w, h = labelsize(mainlabels[0], pad)
             w = max(self.params['minsize'][0], w)
@@ -447,7 +448,7 @@ class StateEnd(Connect):
         self.elmparams['w'] = w+dr*2
         self.elmparams['h'] = h+dr*2
         return self.params['w'], self.params['h']
-        
+
     def _set_segments(self):
         super()._set_segments()
         r2 = self.params['w']

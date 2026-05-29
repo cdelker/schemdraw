@@ -1,14 +1,12 @@
 ''' Timing Diagrams, based on WaveJSON format '''
 
 from __future__ import annotations
-from typing import Any
 import re
 import io
 import ast
 import tokenize
 import math
 import copy
-from contextlib import suppress
 from collections import namedtuple, ChainMap
 
 from ..elements import Element
@@ -17,7 +15,11 @@ from ..backends.svg import text_size
 from ..types import BBox
 from ..util import Point
 from ..style import validate_color, validate_linestyle
-from .timingwaves import Wave0, Wave1, WaveL, WaveH, Wavez, WaveV, WaveU, WaveD, WaveC, WaveCbar, WaveClk, WaveQ, WaveE, WaveW, getsplit
+from .timingwaves import (
+    Wave0, Wave1, WaveL, WaveH, Wavez,
+    WaveV, WaveU, WaveD, WaveC, WaveCbar,
+    WaveClk, WaveQ, WaveE, WaveW, getsplit
+    )
 
 LabelInfo = namedtuple('LabelInfo', ['name', 'row', 'height', 'level'])
 
@@ -68,9 +70,9 @@ def get_nrows(sig) -> int:
     ''' Get the number of signal rows in the signal list '''
     if isinstance(sig, dict):
         return 1
-    elif isinstance(sig[0], list):
+    if isinstance(sig[0], list):
         return sum(map(get_nrows, sig[0]))
-    elif isinstance(sig[0], str):
+    if isinstance(sig[0], str):
         return sum(map(get_nrows, sig[1:]))
     return 0
 
@@ -79,22 +81,22 @@ def getlabels(sig, row: int = 0, level: int = 0) -> list[LabelInfo]:
     ''' Get a list of group label info '''
     if isinstance(sig, dict) or sig == []:
         return []
-    elif all(isinstance(s, dict) for s in sig):
+    if all(isinstance(s, dict) for s in sig):
         return []
-    elif isinstance(sig[0], str):
+    if isinstance(sig[0], str):
         lbl = [LabelInfo(sig[0], row, get_nrows(sig), level)]
         n = 0
         for s in sig[1:]:
             lbl.extend(getlabels(s, row=row+n, level=level+1))
             n += get_nrows(s)
         return lbl
-    else:
-        lbl = []
-        n = 0
-        for s in sig:
-            lbl.extend(getlabels(s, row=row+n, level=level+1))
-            n += get_nrows(s)
-        return lbl
+
+    lbl = []
+    n = 0
+    for s in sig:
+        lbl.extend(getlabels(s, row=row+n, level=level+1))
+        n += get_nrows(s)
+    return lbl
 
 
 class TimingDiagram(Element):
@@ -390,7 +392,7 @@ class TimingDiagram(Element):
         wave = signal.get('wave', '')
         waverise = signal.get('risetime', self.risetime)
         wavekwargs = ChainMap({'color': signal.get('color', None),
-                               'lw': signal.get('lw', 1), 
+                               'lw': signal.get('lw', 1),
                                'clip': self.kwargs.get('clip')})
 
         data = copy.copy(signal.get('data', []))
@@ -405,11 +407,10 @@ class TimingDiagram(Element):
         period = 2*self.yheight*signal.get('period', 1) * self.hscale
         y1 = y0 + self.yheight
         pstate = '-'
-        for i in range(len(wave)):
-            state = wave[i]
+        for i, state in enumerate(wave):
             t0 = times[i]
             t1 = times[i+1]
-            nstate = wave[i+1] if i<len(wave)-1 else '-'
+            nstate = wave[i+1] if i < len(wave)-1 else '-'
             x = t0*period
             xend = t1*period
             params = {'state': state,
@@ -476,7 +477,7 @@ class TimingDiagram(Element):
             ycenter = (y0+y1)/2
             xnode = j*period - period*phase
             if nodealign == 'signal':
-                 xnode += self.risetime/2
+                xnode += self.risetime/2
             if not node.isupper():  # Only uppercase nodes and symbols are drawn
                 self.segments.append(SegmentPoly([(xnode-w/2, ycenter-h/2), (xnode-w/2, ycenter+h/2),
                                                   (xnode+w/2, ycenter+h/2), (xnode+w/2, ycenter-h/2)],
@@ -696,8 +697,8 @@ class TimingDiagram(Element):
 
                         try:
                             sig1, sig2 = signals.split(':')
-                        except ValueError:
-                            raise ValueError('shade signal be two signal number integers separated by colon, such as (0:2)')
+                        except ValueError as exc:
+                            raise ValueError('shade signal be two signal number integers separated by colon, such as (0:2)') from exc
                         y0 = self.yheight+pad -int(sig1) * signal_height
                         y1 = -int(sig2) * signal_height - pad
 

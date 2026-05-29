@@ -68,7 +68,7 @@ class And(Element):
         # Add the inputs and define anchor names
         for i in range(inputs):
             y = (i+1 - (inputs/2+.5)) * dy
-            self.anchors['in%d' % (inputs-i)] = (0, y)
+            self.anchors[f'in{inputs-i}'] = (0, y)
 
             if inputnots and (inputs-i) in inputnots:
                 self.segments.append(SegmentCircle((_leadin-notbubble, y), notbubble))
@@ -252,16 +252,16 @@ class Tristate(Element2Term):
         kwargs['control'] = controlnot
         super().__init__(**kwargs)
         if outputnot:
-          self.segments.append(Segment([(0, 0), gap, (gatel+notbubble*2, 0)]))
-          self.segments.append(SegmentCircle((gatel+notbubble, 0), notbubble))
+            self.segments.append(Segment([(0, 0), gap, (gatel+notbubble*2, 0)]))
+            self.segments.append(SegmentCircle((gatel+notbubble, 0), notbubble))
         else:
-          self.segments.append(Segment([(0, 0), gap, (gatel, 0)]))
+            self.segments.append(Segment([(0, 0), gap, (gatel, 0)]))
         self.segments.append(Segment([(0, gateh/2), (gatel, 0), (0, -gateh/2), (0, gateh/2)]))
         if controlnot:
-          self.segments.append(SegmentCircle((gatel/2, .42), notbubble))
-          self.segments.append(Segment([(gatel/2, .42+notbubble), (gatel/2, .7)]))
-        else:  
-          self.segments.append(Segment([(gatel/2, .28), (gatel/2, .7)]))
+            self.segments.append(SegmentCircle((gatel/2, .42), notbubble))
+            self.segments.append(Segment([(gatel/2, .42+notbubble), (gatel/2, .7)]))
+        else:
+            self.segments.append(Segment([(gatel/2, .28), (gatel/2, .7)]))
         self.anchors['out'] = (gatel+notbubble*2, 0)
         self.anchors['in1'] = (0, 0)
         self.anchors['c'] = (gatel/2, .7)

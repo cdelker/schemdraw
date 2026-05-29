@@ -40,11 +40,12 @@ class ElementCompound(Element):
         namedelms = {name: subelm for name, subelm in vars(self).items() if isinstance(subelm, Element)}
         for elmname, subelm in namedelms.items():
             for anchorname in subelm.anchors.keys():
-                self.anchors[f'{elmname}.{anchorname}'] = subelm[anchorname]  # Gets placed anchor position, within compound
+                # Gets placed anchor position, within compound
+                self.anchors[f'{elmname}.{anchorname}'] = subelm[anchorname]
 
     def __contains__(self, element):
         return element in self.elements
-        
+
     def move_from(self, xy: Point, dx: float = 0, dy: float = 0, theta: Optional[float] = None) -> None:
         ''' Move relative to xy position '''
         xy = Point(xy)
@@ -89,7 +90,7 @@ class Optocoupler(ElementCompound):
         self.boxpad = boxpad
         self.base = base
         super().__init__(unit=self.unit, **kwargs)
-    
+
     def setup(self):
         D = self.add(Diode(d='d'))
         bjt = BjtNpn(d='r', at=(1, -self.unit/2))

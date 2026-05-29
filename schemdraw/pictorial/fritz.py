@@ -46,11 +46,11 @@ def extract(elm: ET.Element, tag: str) -> Optional[str]:
 
 def fritz_parts(fname: str) -> list[str | None]:
     ''' List titles of all Fritzing parts in the file '''
-    zip = zipfile.ZipFile(fname)
-    parts = [f.filename for f in zip.infolist() if f.filename.endswith('.fzp')]
+    zp = zipfile.ZipFile(fname)
+    parts = [f.filename for f in zp.infolist() if f.filename.endswith('.fzp')]
     names = []
-    for part in parts:    
-        module = ET.fromstring(zip.read(part))
+    for part in parts:
+        module = ET.fromstring(zp.read(part))
         title = module.find('title')
         if title is not None:
             names.append(title.text)
@@ -236,4 +236,3 @@ class FritzingPart(ElementImage):
 
             if anchorx is not None and anchory is not None:
                 self.anchors[name] = Point((anchorx, anchory))
-

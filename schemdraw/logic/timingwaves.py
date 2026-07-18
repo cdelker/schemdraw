@@ -523,6 +523,8 @@ class WaveW(Wave0):
 
         if self.nstate in 'zdnNpPhHlL':
             verts.pop(-1)
+        if self.pstate in 'w':
+            verts[0] = (self.xrise, self.y1)
         if self.nstate in 'z':
             verts.append((self.xend+self.rise/2, self.yhalf))
         elif self.nstate in '-':
@@ -544,6 +546,8 @@ class WaveW(Wave0):
         p2 = [(self.xend+self.rise, self.y0)] if self.nstate not in 'wWzuHhNnPp' else [(self.xend, self.y0)]
         if self.nstate in 'z':
             p2 = [(self.xend, self.y0), (self.xend+self.rise/2, self.yhalf)]
+        if self.nstate in 'Ww':
+            p2 = [(self.xend, self.y0), (self.xend+self.rise, self.y1)]
         return p1 + p2
 
     def segments(self) -> list[SegmentType]:

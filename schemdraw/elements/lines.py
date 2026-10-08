@@ -720,8 +720,13 @@ class Label(Element):
         super().__init__(**kwargs)
         self.elmparams['lblloc'] = 'center'
         self.elmparams['lblofst'] = 0
+
+        labelkeys = ['loc', 'ofst', 'halign', 'valign',
+                     'rotate', 'fontsize', 'font', 'mathfont',
+                     'color', 'href', 'decoration']
+        labelkwargs = {key: kwargs.pop(key) for key in labelkeys if key in kwargs}
         if label:
-            self.label(label)
+            self.label(label, **labelkwargs)
 
 
 class Tag(Element):

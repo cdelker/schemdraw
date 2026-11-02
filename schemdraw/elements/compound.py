@@ -96,9 +96,9 @@ class Optocoupler(ElementCompound):
         bjt = BjtNpn(d='r', at=(1, -self.unit/2))
         bjt.segments.pop(0)  # Remove base contact
         B = self.add(bjt)
-        self.add(Arrow(d='r', at=(.5, -self.unit/2 + .2), l=.6,
+        self.add(Arrow(d='r', at=(.5, -self.unit/2 + .2), length=.6,
                        arrowwidth=.15, arrowlength=.2))
-        self.add(Arrow(d='r', at=(.5, -self.unit/2 - .2), l=.6,
+        self.add(Arrow(d='r', at=(.5, -self.unit/2 - .2), length=.6,
                        arrowwidth=.15, arrowlength=.2))
 
         bbox = self.get_bbox()
@@ -110,12 +110,12 @@ class Optocoupler(ElementCompound):
                 fill=self.boxfill, zorder=0))
 
         if self.base:
-            self.add(Line(d='l', at=Point((B.get_bbox(transform=True).xmin, D.center[1])), l=.15))  # type: ignore
+            self.add(Line(d='l', at=Point((B.get_bbox(transform=True).xmin, D.center[1])), length=.15))  # type: ignore
             E = self.add(Line(d='d', toy=bbox.ymax+self.boxpad))
             self.anchors['base'] = E.end
 
-        A = self.add(Line(d='r', at=bjt.collector, l=self.boxpad))
-        B = self.add(Line(d='r', at=bjt.emitter, l=self.boxpad))
+        A = self.add(Line(d='r', at=bjt.collector, length=self.boxpad))
+        B = self.add(Line(d='r', at=bjt.emitter, length=self.boxpad))
         C = self.add(Line(d='l', at=D.start, tox=bbox.xmin-self.boxpad))
         D = self.add(Line(d='l', at=D.end, tox=bbox.xmin-self.boxpad))
         self.anchors['anode'] = C.end
@@ -168,7 +168,7 @@ class Relay(ElementCompound):
         swleft = Lleft + .6
         if self.core:
             self.add(Line(d='d', at=(Lleft+.15, -self.unit/2),
-                          anchor='center', l=1))
+                          anchor='center', length=1))
             swleft += .1
 
         SW: Union[Switch, SwitchSpdt2, SwitchDpst, SwitchDpdt]

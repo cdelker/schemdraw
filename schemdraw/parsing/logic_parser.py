@@ -129,7 +129,7 @@ def drawlogic(tree, gateH=.7, gateW=2, outlabel=None):
         y = -root.x * gateH
 
         g = elm(d='r', at=(x, y), anchor='end',
-                l=gateW, inputs=len(root.children))
+                length=gateW, inputs=len(root.children))
         if outlabel:
             g.label(outlabel, loc='end')
 

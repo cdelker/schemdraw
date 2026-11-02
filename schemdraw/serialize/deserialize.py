@@ -36,7 +36,7 @@ def get_element(name: str) -> Type[elm.Element]:
         module, element = name.split('.')
         return getattr(globals().get(module.strip()), element.strip())
 
-    raise AttributeError(f'Element `{name} not found`')
+    raise AttributeError(f'Element `{name}` not found')
 
 
 def named_args_to_element(rawargs: dict, named: dict, subdrawings: dict) -> dict:
